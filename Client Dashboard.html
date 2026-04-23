@@ -43,51 +43,9 @@
             background: #f0f2f8;
         }
 
-        /* ── PORTAL SWITCHER ── */
-        .portal-switcher {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 2000;
-            background: var(--navy);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            padding: 6px;
-        }
-
-        .portal-btn {
-            font-size: .8rem;
-            font-weight: 600;
-            padding: 5px 20px;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            font-family: 'DM Sans', sans-serif;
-            transition: all .2s;
-        }
-
-        .portal-btn.active {
-            background: var(--accent);
-            color: #fff;
-        }
-
-        .portal-btn:not(.active) {
-            background: rgba(255, 255, 255, .1);
-            color: rgba(255, 255, 255, .7);
-        }
-
-        .portal-btn:not(.active):hover {
-            background: rgba(255, 255, 255, .18);
-            color: #fff;
-        }
-
         /* ── PORTAL VIEWS ── */
         .portal {
             display: none;
-            padding-top: 36px;
             height: 100%;
         }
 
@@ -102,13 +60,13 @@
         ══════════════════════════════════════ */
         .c-app {
             display: flex;
-            height: calc(100vh - 36px);
+            height: 100vh;
             overflow: hidden;
         }
 
         /* Client Sidebar */
         .c-sidebar {
-            width: 200px;
+            width: 240px;
             flex-shrink: 0;
             background: linear-gradient(180deg, #0f2057 0%, #0d1b3e 100%);
             display: flex;
@@ -118,21 +76,89 @@
         }
 
         .c-brand {
-            padding: 14px 16px 10px;
+            padding: 24px 24px 18px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             border-bottom: 1px solid rgba(255, 255, 255, .08);
         }
 
-        .c-brand-icon {
-            width: 28px;
-            height: 28px;
-            background: linear-gradient(135deg, var(--accent), var(--teal));
-            border-radius: 7px;
+        .c-brand-badge {
+            font-size: .65rem;
+            background: #1d8cf8;
+            color: #fff;
+            padding: 2px 9px;
+            border-radius: 6px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            flex-shrink: 0;
+        }
+        @media (max-width: 1200px) {
+            .c-brand-badge { font-size: .55rem; padding: 1px 7px; }
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, .15);
             display: grid;
             place-items: center;
+            color: #fff;
+            font-size: 1.2rem;
         }
+
+        /* Forms & Toggles */
+        .settings-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f2f8;
+        }
+        .settings-row:last-child { border-bottom: none; }
+        .settings-row-label { font-size: .82rem; font-weight: 600; color: var(--navy); }
+        .settings-row-sub { font-size: .72rem; color: var(--muted); margin-top: 1px; }
+        .form-input {
+            padding: 7px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: .82rem;
+            font-family: 'DM Sans', sans-serif;
+            color: #344767;
+        }
+        .toggle { position: relative; display: inline-block; width: 38px; height: 20px; }
+        .toggle input { opacity: 0; width: 0; height: 0; }
+        .toggle-slider { position: absolute; cursor: pointer; inset: 0; background: #ccc; border-radius: 20px; transition: .3s; }
+        .toggle-slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: .3s; }
+        input:checked+.toggle-slider { background: var(--accent); }
+        input:checked+.toggle-slider:before { transform: translateX(18px); }
+
+        /* Account Page Styles */
+        .account-wrap { padding: 20px 24px; }
+        .account-header {
+            background: linear-gradient(135deg, #0f2057, #0d1b3e);
+            border-radius: 14px;
+            padding: 24px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .account-avatar-lg {
+            width: 64px; height: 64px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--teal));
+            display: grid; place-items: center; color: #fff;
+            font-size: 1.4rem; font-weight: 800; font-family: 'Sora', sans-serif;
+            border: 3px solid rgba(255,255,255,.15);
+        }
+        .account-name { font-family: 'Sora', sans-serif; font-size: 1.15rem; font-weight: 800; color: #fff; }
+        .account-email { font-size: .8rem; color: rgba(255,255,255,.5); margin-top: 2px; }
+        .account-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+        .notif-card { background: #fff; border-radius: 12px; border: 1px solid var(--border); padding: 18px; }
+        .notif-card-title { font-family: 'Sora', sans-serif; font-size: .9rem; font-weight: 700; color: var(--navy); margin-bottom: 14px; }
+
 
         .c-brand-name {
             font-family: 'Sora', sans-serif;
@@ -156,7 +182,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            padding: 9px 16px;
+            padding: 10px 24px;
             font-size: .83rem;
             font-weight: 500;
             color: rgba(255, 255, 255, .55);
@@ -179,6 +205,21 @@
         .c-nav-item i {
             font-size: 1rem;
             width: 18px;
+        }
+
+        /* Buttons */
+        .btn-accent {
+            background: var(--accent) !important;
+            color: #fff !important;
+            border: none !important;
+            font-weight: 700 !important;
+            transition: all .2s;
+            box-shadow: 0 4px 10px rgba(29, 140, 248, .2);
+        }
+        .btn-accent:hover {
+            background: #1171ef !important;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(29, 140, 248, .4);
         }
 
         /* Client Top Bar */
@@ -241,58 +282,56 @@
         .stat-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 14px;
+            gap: 16px;
             margin-bottom: 20px;
+        }
+        @media (max-width: 1200px) {
+            .stat-grid { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+        }
+        @media (max-width: 576px) {
+            .stat-grid { grid-template-columns: 1fr; }
         }
 
         .stat-box {
-            background: var(--dark-card);
+            background: #fff;
             border-radius: 12px;
-            padding: 16px 18px;
+            border: 1px solid var(--border);
+            padding: 18px 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+            transition: transform .2s;
         }
-
-        .stat-box.blue {
-            background: linear-gradient(135deg, #1d8cf8, #1171ef);
-        }
-
-        .stat-box.teal {
-            background: linear-gradient(135deg, #11cdef, #1171ef);
-        }
-
-        .stat-box.green {
-            background: linear-gradient(135deg, #2dce89, #1aae6f);
-        }
-
-        .stat-box.purple {
-            background: linear-gradient(135deg, #7c4dff, #5e35b1);
-        }
+        .stat-box:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
 
         .stat-val {
             font-family: 'Sora', sans-serif;
-            font-size: 1.6rem;
+            font-size: 1.4rem;
             font-weight: 800;
-            color: #fff;
+            color: var(--navy);
         }
 
         .stat-lbl {
-            font-size: .72rem;
-            color: rgba(255, 255, 255, .7);
-            margin-top: 2px;
+            font-size: .75rem;
+            color: var(--muted);
+            margin-top: 1px;
+            font-weight: 500;
         }
 
         .stat-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            background: rgba(255, 255, 255, .15);
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
             display: grid;
             place-items: center;
-            color: #fff;
-            font-size: 1.2rem;
+            font-size: 1.25rem;
+            flex-shrink: 0;
         }
+        .stat-icon.blue { background: rgba(29, 140, 248, .1); color: var(--accent); }
+        .stat-icon.teal { background: rgba(17, 205, 239, .1); color: #1171ef; }
+        .stat-icon.green { background: rgba(45, 206, 137, .1); color: #2dce89; }
+        .stat-icon.purple { background: rgba(124, 77, 255, .1); color: var(--purple); }
 
         .orders-card,
         .actions-card {
@@ -436,6 +475,10 @@
             display: flex;
             gap: 20px;
             align-items: flex-start;
+        }
+        @media (max-width: 991px) {
+            .c-order { flex-direction: column; padding: 16px; }
+            .c-order-sidebar { width: 100%; }
         }
 
         .c-order-main {
@@ -1046,9 +1089,9 @@
 
         .spend-bar-val {
             font-size: .72rem;
-            font-weight: 600;
-            color: #344767;
-            width: 54px;
+            font-weight: 700;
+            color: var(--navy);
+            width: 60px;
             text-align: right;
             flex-shrink: 0;
         }
@@ -1101,6 +1144,12 @@
             width: 28px;
             flex-shrink: 0;
             text-align: right;
+        }
+
+        @media (max-width: 576px) {
+            .invoice-id, .invoice-date { display: none; }
+            .billing-header-row { flex-direction: column !important; align-items: flex-start !important; gap: 10px !important; }
+            .billing-header-row button { width: 100%; margin-top: 4px; }
         }
 
         .invoice-dl a {
@@ -1766,41 +1815,170 @@
             border-radius: 10px;
         }
 
-        @media (max-width: 768px) {
+        }
 
-            .c-sidebar,
-            .a-sidebar {
-                width: 56px;
+        /* ── RESPONSIVE CLIENT ── */
+        @media (max-width: 1199px) {
+            .c-sidebar {
+                position: fixed;
+                left: -260px;
+                top: 0;
+                bottom: 0;
+                z-index: 1050;
+                transition: left .3s cubic-bezier(0.4, 0, 0.2, 1);
+                box-shadow: 15px 0 45px rgba(10,18,40,0.15);
+                width: 260px !important;
             }
-
-            .c-brand-name,
-            .c-brand-sub,
-            .c-nav-item span,
-            .a-brand-name,
-            .a-nav-item span {
+            .c-sidebar.active {
+                left: 0;
+            }
+            .c-sidebar span {
+                display: inline !important;
+            }
+            .c-sidebar-overlay {
                 display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(10,18,40,0.5);
+                backdrop-filter: blur(5px);
+                -webkit-backdrop-filter: blur(5px);
+                z-index: 1040;
             }
+            .c-sidebar-overlay.active {
+                display: block;
+            }
+            .c-topbar {
+                padding: 0 16px !important;
+            }
+            .c-search {
+                flex: 1;
+                max-width: 300px;
+            }
+            .c-app {
+                margin-top: 0;
+                height: 100vh;
+            }
+        }
 
+        @media (max-width: 768px) {
+            .c-content {
+                padding: 12px !important;
+            }
             .kpi-grid {
-                grid-template-columns: 1fr 1fr;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+                gap: 12px !important;
             }
+            .c-search {
+                display: none !important;
+            }
+            .c-welcome-hero {
+                padding: 16px !important;
+            }
+            .c-welcome-hero h2 {
+                font-size: 1.25rem !important;
+            }
+            .c-welcome-hero p {
+                font-size: .8rem !important;
+                margin-bottom: 12px !important;
+            }
+            .c-quick-actions {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)) !important;
+                gap: 10px !important;
+            }
+            .c-action-card {
+                padding: 16px !important;
+            }
+            .c-dash-grid {
+                grid-template-columns: 1fr !important;
+                gap: 15px !important;
+            }
+            .c-table-responsive {
+                width: 100%;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            .orders-table {
+                min-width: 600px; /* Ensure table doesn't squash */
+            }
+        }
 
-            .stat-grid {
-                grid-template-columns: 1fr;
+        @media (max-width: 576px) {
+            .c-app-header-title {
+                font-size: 1rem !important;
             }
+        }
+        .c-mobile-logo {
+            display: none;
+            height: 24px;
+            width: auto;
+            object-fit: contain;
+        }
+        @media (max-width: 1199px) {
+            .c-mobile-logo {
+                display: block;
+            }
+        }
+
+        /* ══ FINAL CLIENT RESPONSIVE OVERHAUL ══ */
+        @media (max-width: 991px) {
+            .c-dash { padding: 12px 14px !important; }
+            .stat-grid { grid-template-columns: 1fr !important; gap: 10px !important; }
+            .c-dash-grid, .track-details, .profile-stats, .dim-grid { 
+                grid-template-columns: 1fr !important; 
+                gap: 16px !important; 
+            }
+            .c-order {
+                flex-direction: column !important;
+            }
+            .c-order-sidebar, .files-sidebar { 
+                width: 100% !important; 
+                flex-shrink: 0; 
+                border-right: none !important; 
+                border-top: 1px solid var(--border);
+                padding: 15px !important;
+            }
+            .c-welcome-hero { 
+                padding: 16px !important; 
+                text-align: center;
+                flex-direction: column;
+            }
+            .c-welcome-hero i { display: none; }
+            .c-quick-actions { grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)) !important; gap: 8px !important; }
+            .c-action-card { padding: 14px !important; }
+            .c-table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+            .orders-table, .users-table { min-width: 600px; }
+            .tpl-grid { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)) !important; }
+            .steps-row { overflow-x: auto; padding-bottom: 10px; }
+            .track-detail { border-right: none !important; border-bottom: 1px solid var(--border); }
+        }
+        @media (max-width: 1199px) {
+            .c-sidebar {
+                position: fixed;
+                left: -260px;
+                top: 0;
+                bottom: 0;
+                z-index: 1050;
+                transition: left .3s ease;
+                box-shadow: 10px 0 30px rgba(0,0,0,0.1);
+            }
+            .c-sidebar.active { left: 0; }
         }
     </style>
 </head>
 
 <body>
 
-    <!-- ══ PORTAL SWITCHER ══ -->
-    <div class="portal-switcher">
-        <span style="color:rgba(255,255,255,.5);font-size:.75rem;margin-right:6px;">View:</span>
-        <button class="portal-btn active" onclick="switchPortal('client')">
-            <i class="bi bi-person-fill"></i> Client Portal
-        </button>
-    </div>
+    <!-- ── AUTH GUARD ── -->
+    <script>
+        (function () {
+            const session = sessionStorage.getItem('pp_user');
+            if (!session) { window.location.href = 'homepage.html#login'; return; }
+            const user = JSON.parse(session);
+            if (user.role !== 'client') { window.location.href = 'homepage.html#login'; }
+        })();
+    </script>
+
+
 
 
     <!-- ══════════════════════════════════════════════════
@@ -1808,16 +1986,19 @@
     ══════════════════════════════════════════════════ -->
     <div class="portal active" id="portal-client">
         <div class="c-app">
+            <!-- Sidebar Overlay -->
+            <div class="c-sidebar-overlay" id="clientSidebarOverlay" onclick="toggleClientSidebar()"></div>
 
             <!-- Sidebar -->
             <div class="c-sidebar">
-                <div class="c-brand">
-                    <div class="c-brand-icon">
-                        <i class="bi bi-printer-fill text-white" style="font-size:.75rem;"></i>
-                    </div>
-                    <div>
-                        <div class="c-brand-name">PrintPro</div>
-                        <div class="c-brand-sub">BUSINESS SUITE</div>
+                <div class="c-brand" style="justify-content: flex-start; overflow: hidden; white-space: nowrap; gap:8px;">
+                    <button class="btn p-0 d-xl-none border-0 text-white me-1" onclick="toggleClientSidebar()" style="font-size:1rem; line-height:1;">
+                        <i class="bi bi-chevron-left"></i>
+                    </button>
+                    <div onclick="showClientPage('dashboard', null)" style="display:flex; align-items:center; gap:6px; cursor:pointer; flex:1; overflow:hidden;">
+                        <img src="assets/img/logo.png" alt="PrintPro"
+                            style="height:24px;width:auto;object-fit:contain;max-width:90px;filter:brightness(0) invert(1); flex-shrink: 0;">
+                        <span class="c-brand-badge">Client</span>
                     </div>
                 </div>
                 <nav class="c-nav">
@@ -1842,7 +2023,16 @@
                     <div class="c-nav-item" onclick="showClientPage('billing', this)">
                         <i class="bi bi-credit-card"></i> <span>Billing</span>
                     </div>
+                    <div class="c-nav-item" onclick="showClientPage('account', this)">
+                        <i class="bi bi-person-circle"></i> <span>Account</span>
+                    </div>
                 </nav>
+                <!-- Logout -->
+                <div style="padding:12px 14px;border-top:1px solid rgba(255,255,255,.08);margin-top:auto;">
+                    <a href="#" onclick="ppLogout(event)" style="display:flex;align-items:center;gap:8px;font-size:.8rem;color:rgba(255,255,255,.45);text-decoration:none;transition:color .15s;" onmouseover="this.style.color='#f5365c'" onmouseout="this.style.color='rgba(255,255,255,.45)'">
+                        <i class="bi bi-box-arrow-left"></i> <span>Logout</span>
+                    </a>
+                </div>
             </div>
 
             <!-- Main area -->
@@ -1850,13 +2040,24 @@
 
                 <!-- Topbar -->
                 <div class="c-topbar">
-                    <div class="c-search">
-                        <i class="bi bi-search" style="font-size:.75rem;"></i>
-                        Search orders, files…
+                    <div style="display:flex;align-items:center;gap:12px;">
+                        <button class="btn border-0 p-0 d-xl-none" onclick="toggleClientSidebar()" style="font-size:1.4rem;color:var(--navy);">
+                            <i class="bi bi-list"></i>
+                        </button>
+                        <div style="display:flex; align-items:center; gap:6px;" onclick="showClientPage('dashboard', null)">
+                            <img src="assets/img/logo.png" alt="PrintPro" class="c-mobile-logo">
+                            <span class="c-brand-badge d-xl-none">Client</span>
+                        </div>
+                        <div class="c-search">
+                            <i class="bi bi-search" style="font-size:.75rem;"></i>
+                            Search orders, files…
+                        </div>
                     </div>
                     <div style="display:flex;align-items:center;gap:12px;">
                         <i class="bi bi-bell" style="color:var(--muted);cursor:pointer;font-size:1.05rem;"></i>
-                        <div class="c-avatar">J</div>
+                        <div style="display:flex;align-items:center;gap:8px;cursor:pointer;" onclick="showClientPage('account', null)">
+                            <div class="c-avatar" id="clientAvatar" title="">J</div>
+                        </div>
                     </div>
                 </div>
 
@@ -1872,40 +2073,53 @@
                                     <h4
                                         style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:#1a2340;margin:0;">
                                         Executive Dashboard</h4>
-                                    <p style="font-size:.75rem;color:var(--muted);margin:0;">Summer Campaign 2024</p>
-                                </div>
-                                <button onclick="showClientPage('create',null)"
-                                    style="background:var(--accent);color:#fff;border:none;padding:7px 16px;border-radius:8px;font-size:.8rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">
-                                    <i class="bi bi-plus-lg"></i> New Order
-                                </button>
-                            </div>
-
-                            <!-- Stats -->
-                            <div class="stat-grid">
-                                <div class="stat-box blue">
-                                    <div>
-                                        <div class="stat-val">12</div>
-                                        <div class="stat-lbl">Active Orders</div>
-                                    </div>
-                                    <div class="stat-icon"><i class="bi bi-box-seam"></i></div>
-                                </div>
-                                <div class="stat-box teal">
-                                    <div>
-                                        <div class="stat-val">$14,250</div>
-                                        <div class="stat-lbl">Total Spend</div>
-                                    </div>
-                                    <div class="stat-icon"><i class="bi bi-currency-dollar"></i></div>
-                                </div>
-                                <div class="stat-box green">
-                                    <div>
-                                        <div class="stat-val">3</div>
-                                        <div class="stat-lbl">Pending Review</div>
-                                    </div>
-                                    <div class="stat-icon"><i class="bi bi-clock-history"></i></div>
+                                    <p style="font-size:.75rem;color:var(--muted);margin:0;">Manage your printing operations</p>
                                 </div>
                             </div>
 
-                            <div style="display:grid;grid-template-columns:1.6fr 1fr;gap:14px;">
+                            <!-- Welcome Hero -->
+                            <div class="c-welcome-hero" style="background: linear-gradient(135deg, var(--navy), #2a3558); border-radius: 16px; padding: 24px; color: #fff; margin-bottom: 24px; position: relative; overflow: hidden;">
+                                <div style="position: relative; z-index: 2;">
+                                    <h2 id="clientGreeting" style="font-family:'Sora',sans-serif; font-weight: 800; margin-bottom: 8px;">Welcome back!</h2>
+                                    <p style="color: rgba(255,255,255,.7); font-size: .9rem; max-width: 400px; margin-bottom: 12px;">
+                                        Your projects are on track. You have 3 orders ready for review and 2 active shipments.
+                                    </p>
+                                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 24px; background: rgba(255,255,255,.1); width: fit-content; padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,.15);">
+                                        <div style="font-size: .75rem; color: rgba(255,255,255,.8);">Current Plan: <strong style="color: #fff;">Premium</strong></div>
+                                        <div style="width: 1px; height: 12px; background: rgba(255,255,255,.2);"></div>
+                                        <div style="font-size: .75rem; color: rgba(255,255,255,.8);">Renews: <strong style="color: #fff;">Nov 12, 2024</strong></div>
+                                    </div>
+                                    <button class="btn btn-accent rounded-pill px-4" onclick="showClientPage('create', null)">+ New Project</button>
+                                </div>
+                                <i class="bi bi-rocket-takeoff" style="position: absolute; right: 20px; bottom: -10px; font-size: 6rem; color: rgba(255,255,255,.05);"></i>
+                            </div>
+
+                            <!-- Quick Actions -->
+                            <div class="c-quick-actions" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px;">
+                                <div class="c-action-card" style="background: #fff; border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; text-align: center; padding: 24px; border-radius: 14px; cursor: pointer; transition: transform .2s;" onclick="showClientPage('orders', null)" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
+                                    <div style="width: 40px; height: 40px; background: rgba(79, 126, 247, .1); color: var(--accent); border-radius: 10px; display: grid; place-items: center; font-size: 1.2rem; margin-bottom: 8px;">
+                                        <i class="bi bi-box-seam"></i>
+                                    </div>
+                                    <div style="font-size: 1.1rem; font-weight: 800; color: var(--navy);">12</div>
+                                    <div style="font-size: .7rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em;">Active Orders</div>
+                                </div>
+                                <div class="c-action-card" style="background: #fff; border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; text-align: center; padding: 24px; border-radius: 14px; cursor: pointer; transition: transform .2s;" onclick="showClientPage('files', null)" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
+                                    <div style="width: 40px; height: 40px; background: rgba(62, 198, 198, .1); color: var(--teal); border-radius: 10px; display: grid; place-items: center; font-size: 1.2rem; margin-bottom: 8px;">
+                                        <i class="bi bi-folder2"></i>
+                                    </div>
+                                    <div style="font-size: 1.1rem; font-weight: 800; color: var(--navy);">48</div>
+                                    <div style="font-size: .7rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em;">Assets</div>
+                                </div>
+                                <div class="c-action-card" style="background: #fff; border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; text-align: center; padding: 24px; border-radius: 14px; cursor: pointer; transition: transform .2s;" onclick="showClientPage('billing', null)" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
+                                    <div style="width: 40px; height: 40px; background: rgba(45, 206, 137, .1); color: #2dce89; border-radius: 10px; display: grid; place-items: center; font-size: 1.2rem; margin-bottom: 8px;">
+                                        <i class="bi bi-credit-card"></i>
+                                    </div>
+                                    <div style="font-size: 1.1rem; font-weight: 800; color: var(--navy);">₱14k</div>
+                                    <div style="font-size: .7rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em;">Credits</div>
+                                </div>
+                            </div>
+
+                            <div class="c-dash-grid" style="display:grid;grid-template-columns:1.6fr 1fr;gap:14px;">
                                 <!-- Recent Orders -->
                                 <div class="orders-card">
                                     <div class="card-hdr">
@@ -1914,17 +2128,18 @@
                                             style="font-size:.75rem;color:var(--accent);text-decoration:none;">View
                                             all</a>
                                     </div>
-                                    <table class="orders-table">
-                                        <thead>
-                                            <tr>
-                                                <th>ID</th>
-                                                <th>JOB NAME</th>
-                                                <th>QTY</th>
-                                                <th>STATUS</th>
-                                                <th>DUE</th>
-                                                <th>TOTAL</th>
-                                            </tr>
-                                        </thead>
+                                    <div class="c-table-responsive">
+                                        <table class="orders-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>JOB NAME</th>
+                                                    <th>QTY</th>
+                                                    <th>STATUS</th>
+                                                    <th>DUE</th>
+                                                    <th>TOTAL</th>
+                                                </tr>
+                                            </thead>
                                         <tbody>
                                             <tr>
                                                 <td style="font-weight:600;">#PPR-48</td>
@@ -1933,7 +2148,7 @@
                                                 <td>1,000</td>
                                                 <td><span class="badge-status badge-active">Active</span></td>
                                                 <td>Oct 24</td>
-                                                <td style="font-weight:700;">$2,340.00</td>
+                                                <td style="font-weight:700;">₱4,250.00</td>
                                             </tr>
                                             <tr>
                                                 <td style="font-weight:600;">#PPR-45</td>
@@ -1942,7 +2157,7 @@
                                                 <td>250</td>
                                                 <td><span class="badge-status badge-pending">Reprint</span></td>
                                                 <td>—</td>
-                                                <td style="font-weight:700;">$3,500.00</td>
+                                                <td style="font-weight:700;">₱12,800.00</td>
                                             </tr>
                                             <tr>
                                                 <td style="font-weight:600;">#PPR-43</td>
@@ -1952,7 +2167,7 @@
                                                 <td>1,200</td>
                                                 <td><span class="badge-status badge-done">Delivery</span></td>
                                                 <td>Oct 21</td>
-                                                <td style="font-weight:700;">$4,800.00</td>
+                                                <td style="font-weight:700;">₱15,500.00</td>
                                             </tr>
                                             <tr>
                                                 <td style="font-weight:600;">#PPR-41</td>
@@ -1961,11 +2176,12 @@
                                                 <td>5,000</td>
                                                 <td><span class="badge-status badge-active">Active</span></td>
                                                 <td>Nov 2</td>
-                                                <td style="font-weight:700;">$4,260.00</td>
+                                                <td style="font-weight:700;">₱8,750.00</td>
                                             </tr>
                                         </tbody>
                                     </table>
                                 </div>
+                            </div>
 
                                 <!-- Quick Actions -->
                                 <div class="actions-card">
@@ -2051,7 +2267,7 @@
                                             <td>1,000</td>
                                             <td><span class="badge-status badge-active">Active</span></td>
                                             <td>Oct 24</td>
-                                            <td style="font-weight:700;">$2,340</td>
+                                            <td style="font-weight:700;">₱4,250</td>
                                         </tr>
                                         <tr>
                                             <td>#PPR-47</td>
@@ -2060,7 +2276,7 @@
                                             <td>5,000</td>
                                             <td><span class="badge-status badge-done">Done</span></td>
                                             <td>Oct 18</td>
-                                            <td style="font-weight:700;">$890</td>
+                                            <td style="font-weight:700;">₱2,450</td>
                                         </tr>
                                         <tr>
                                             <td>#PPR-45</td>
@@ -2069,7 +2285,7 @@
                                             <td>250</td>
                                             <td><span class="badge-status badge-pending">Reprint</span></td>
                                             <td>—</td>
-                                            <td style="font-weight:700;">$3,500</td>
+                                            <td style="font-weight:700;">₱12,800</td>
                                         </tr>
                                         <tr>
                                             <td>#PPR-43</td>
@@ -2078,7 +2294,7 @@
                                             <td>1,200</td>
                                             <td><span class="badge-status badge-done">Delivered</span></td>
                                             <td>Oct 21</td>
-                                            <td style="font-weight:700;">$4,800</td>
+                                            <td style="font-weight:700;">₱15,500</td>
                                         </tr>
                                         <tr>
                                             <td>#PPR-41</td>
@@ -2087,7 +2303,7 @@
                                             <td>5,000</td>
                                             <td><span class="badge-status badge-active">Active</span></td>
                                             <td>Nov 2</td>
-                                            <td style="font-weight:700;">$4,260</td>
+                                            <td style="font-weight:700;">₱8,750</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -2172,7 +2388,6 @@
                                     </div>
                                 </div>
 
-                                <!-- Step 3: Quantity & Production -->
                                 <div class="wizard-card">
                                     <div class="wizard-hdr">
                                         <div class="step-num">3</div>
@@ -2181,10 +2396,10 @@
                                     <div class="wizard-body">
                                         <div style="margin-bottom:12px;">
                                             <div class="form-label-sm">Print Quantity</div>
-                                            <div style="display:flex;align-items:center;gap:12px;margin-top:6px;">
+                                            <div style="display:flex;align-items:center;gap:12px;margin-top:6px; flex-wrap: wrap;">
                                                 <input type="range" class="qty-slider" min="100" max="10000" step="100"
                                                     value="2500" id="qtySlider"
-                                                    oninput="document.getElementById('qtyVal').textContent=parseInt(this.value).toLocaleString()">
+                                                    oninput="document.getElementById('qtyVal').textContent=parseInt(this.value).toLocaleString()" style="flex: 1; min-width: 200px;">
                                                 <span id="qtyVal"
                                                     style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:700;color:var(--navy);min-width:60px;">2,500</span>
                                             </div>
@@ -2215,7 +2430,7 @@
                             <div class="c-order-sidebar">
                                 <div class="summary-card">
                                     <div class="summary-title">PRODUCT SUMMARY</div>
-                                    <div class="summary-sub">Summer Campaign 2024</div>
+                                    <div class="summary-sub">Personalized Printing Solution</div>
                                     <div class="summary-row"><span>Product</span><span>Flyers</span></div>
                                     <div class="summary-row"><span>Quantity</span><span>2,500</span></div>
                                     <div class="summary-row"><span>Size</span><span>4" × 6"</span></div>
@@ -2235,11 +2450,11 @@
                                         </div>
                                     </div>
                                     <hr class="summary-divider">
-                                    <div class="summary-row"><span>Subtotal</span><span>$600.00</span></div>
-                                    <div class="summary-row"><span>Estimated Tax (8%)</span><span>$48.00</span></div>
+                                    <div class="summary-row"><span>Subtotal</span><span>₱3,200.00</span></div>
+                                    <div class="summary-row"><span>Estimated Tax (12%)</span><span>₱384.00</span></div>
                                     <div class="summary-total">
                                         <span class="summary-total-lbl">Total Estimate</span>
-                                        <span class="summary-total-val">$648.00</span>
+                                        <span class="summary-total-val">₱3,584.00</span>
                                     </div>
                                     <button class="btn-continue">Continue to Upload →</button>
                                 </div>
@@ -2737,9 +2952,9 @@
                         <div class="c-order">
                             <div class="c-order-main">
 
-                                <div
-                                    style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-                                    <div>
+                                <div class="billing-header-row"
+                                    style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px;">
+                                    <div style="flex: 1; min-width: 200px;">
                                         <h4
                                             style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:#1a2340;margin:0;">
                                             Billing &amp; Invoices</h4>
@@ -2747,33 +2962,32 @@
                                             download invoices</p>
                                     </div>
                                     <button
-                                        style="background:var(--accent);color:#fff;border:none;padding:7px 16px;border-radius:8px;font-size:.8rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">
+                                        style="background:var(--accent);color:#fff;border:none;padding:10px 20px;border-radius:8px;font-size:.82rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;box-shadow: 0 4px 10px rgba(29, 140, 248, .2);">
                                         <i class="bi bi-download"></i> Export All
                                     </button>
                                 </div>
 
-                                <!-- Billing stats -->
                                 <div class="stat-grid">
-                                    <div class="stat-box blue">
+                                    <div class="stat-box">
                                         <div>
-                                            <div class="stat-val">$14,250</div>
+                                            <div class="stat-val">₱42,500</div>
                                             <div class="stat-lbl">Total Spend YTD</div>
                                         </div>
-                                        <div class="stat-icon"><i class="bi bi-currency-dollar"></i></div>
+                                        <div class="stat-icon blue"><i class="bi bi-currency-php">₱</i></div>
                                     </div>
-                                    <div class="stat-box teal">
+                                    <div class="stat-box">
                                         <div>
-                                            <div class="stat-val">$3,500</div>
+                                            <div class="stat-val">₱12,800</div>
                                             <div class="stat-lbl">Outstanding Balance</div>
                                         </div>
-                                        <div class="stat-icon"><i class="bi bi-exclamation-circle"></i></div>
+                                        <div class="stat-icon teal"><i class="bi bi-exclamation-circle"></i></div>
                                     </div>
-                                    <div class="stat-box green">
+                                    <div class="stat-box">
                                         <div>
-                                            <div class="stat-val">$10,750</div>
+                                            <div class="stat-val">₱29,700</div>
                                             <div class="stat-lbl">Paid to Date</div>
                                         </div>
-                                        <div class="stat-icon"><i class="bi bi-check-circle"></i></div>
+                                        <div class="stat-icon green"><i class="bi bi-check-circle"></i></div>
                                     </div>
                                 </div>
 
@@ -2789,42 +3003,42 @@
                                             <div class="spend-bar-wrap">
                                                 <div class="spend-bar-fill" style="width:30%;"></div>
                                             </div>
-                                            <div class="spend-bar-val">$1,200</div>
+                                            <div class="spend-bar-val">₱5,200</div>
                                         </div>
                                         <div class="spend-bar-row">
                                             <div class="spend-bar-label">Jun</div>
                                             <div class="spend-bar-wrap">
                                                 <div class="spend-bar-fill" style="width:45%;"></div>
                                             </div>
-                                            <div class="spend-bar-val">$1,800</div>
+                                            <div class="spend-bar-val">₱6,800</div>
                                         </div>
                                         <div class="spend-bar-row">
                                             <div class="spend-bar-label">Jul</div>
                                             <div class="spend-bar-wrap">
                                                 <div class="spend-bar-fill" style="width:60%;"></div>
                                             </div>
-                                            <div class="spend-bar-val">$2,400</div>
+                                            <div class="spend-bar-val">₱8,400</div>
                                         </div>
                                         <div class="spend-bar-row">
                                             <div class="spend-bar-label">Aug</div>
                                             <div class="spend-bar-wrap">
                                                 <div class="spend-bar-fill" style="width:40%;"></div>
                                             </div>
-                                            <div class="spend-bar-val">$1,600</div>
+                                            <div class="spend-bar-val">₱5,600</div>
                                         </div>
                                         <div class="spend-bar-row">
                                             <div class="spend-bar-label">Sep</div>
                                             <div class="spend-bar-wrap">
                                                 <div class="spend-bar-fill" style="width:75%;"></div>
                                             </div>
-                                            <div class="spend-bar-val">$3,000</div>
+                                            <div class="spend-bar-val">₱10,000</div>
                                         </div>
                                         <div class="spend-bar-row">
                                             <div class="spend-bar-label">Oct</div>
                                             <div class="spend-bar-wrap">
                                                 <div class="spend-bar-fill" style="width:100%;"></div>
                                             </div>
-                                            <div class="spend-bar-val">$4,250</div>
+                                            <div class="spend-bar-val">₱12,500</div>
                                         </div>
                                     </div>
                                 </div>
@@ -2846,7 +3060,7 @@
                                             <div class="invoice-name">3D Marketing Brochure — #PPR-48</div>
                                             <span class="badge-status badge-active" style="flex-shrink:0;">Paid</span>
                                             <div class="invoice-date">Oct 18</div>
-                                            <div class="invoice-amt">$2,340.00</div>
+                                            <div class="invoice-amt">₱4,250.00</div>
                                             <div class="invoice-dl"><a href="#"><i class="bi bi-download"></i></a></div>
                                         </div>
                                         <div class="invoice-row">
@@ -2854,7 +3068,7 @@
                                             <div class="invoice-name">Corporate Annual Report — #PPR-45</div>
                                             <span class="badge-status badge-pending" style="flex-shrink:0;">Due</span>
                                             <div class="invoice-date">Oct 10</div>
-                                            <div class="invoice-amt">$3,500.00</div>
+                                            <div class="invoice-amt">₱12,800.00</div>
                                             <div class="invoice-dl"><a href="#"><i class="bi bi-download"></i></a></div>
                                         </div>
                                         <div class="invoice-row">
@@ -2862,7 +3076,7 @@
                                             <div class="invoice-name">Conference Banner Set — #PPR-43</div>
                                             <span class="badge-status badge-active" style="flex-shrink:0;">Paid</span>
                                             <div class="invoice-date">Oct 1</div>
-                                            <div class="invoice-amt">$4,800.00</div>
+                                            <div class="invoice-amt">₱15,500.00</div>
                                             <div class="invoice-dl"><a href="#"><i class="bi bi-download"></i></a></div>
                                         </div>
                                         <div class="invoice-row">
@@ -2870,7 +3084,7 @@
                                             <div class="invoice-name">Promotional Mailers — #PPR-41</div>
                                             <span class="badge-status badge-active" style="flex-shrink:0;">Paid</span>
                                             <div class="invoice-date">Sep 22</div>
-                                            <div class="invoice-amt">$4,260.00</div>
+                                            <div class="invoice-amt">₱8,750.00</div>
                                             <div class="invoice-dl"><a href="#"><i class="bi bi-download"></i></a></div>
                                         </div>
                                         <div class="invoice-row">
@@ -2878,7 +3092,7 @@
                                             <div class="invoice-name">Holiday Flyer Pack — #PPR-47</div>
                                             <span class="badge-status badge-done" style="flex-shrink:0;">Paid</span>
                                             <div class="invoice-date">Sep 10</div>
-                                            <div class="invoice-amt">$890.00</div>
+                                            <div class="invoice-amt">₱2,450.00</div>
                                             <div class="invoice-dl"><a href="#"><i class="bi bi-download"></i></a></div>
                                         </div>
                                     </div>
@@ -2888,6 +3102,34 @@
 
                             <!-- Billing sidebar -->
                             <div class="c-order-sidebar">
+                                <!-- Active Subscription -->
+                                <div class="orders-card" style="margin-bottom:14px; background: linear-gradient(135deg, #1a2340, #2a3558); color: #fff; border: none;">
+                                    <div class="card-hdr" style="border-bottom: 1px solid rgba(255,255,255,.1);">
+                                        <span class="card-hdr-title" style="color: #fff;">Active Subscription</span>
+                                        <span class="badge-status badge-active" style="background: rgba(45, 206, 137, .2); color: #2dce89; border: 1px solid rgba(45, 206, 137, .3);">Active</span>
+                                    </div>
+                                    <div style="padding: 16px;">
+                                        <div style="font-size: .75rem; color: rgba(255,255,255,.6); margin-bottom: 4px;">CURRENT PLAN</div>
+                                        <div style="font-family: 'Sora', sans-serif; font-size: 1.2rem; font-weight: 800; margin-bottom: 12px;">Premium Plan</div>
+                                        
+                                        <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;">
+                                            <div style="display: flex; justify-content: space-between; font-size: .8rem;">
+                                                <span style="color: rgba(255,255,255,.6);">Billing Cycle</span>
+                                                <span style="font-weight: 600;">Monthly</span>
+                                            </div>
+                                            <div style="display: flex; justify-content: space-between; font-size: .8rem;">
+                                                <span style="color: rgba(255,255,255,.6);">Renews On</span>
+                                                <span style="font-weight: 600;">Nov 12, 2024</span>
+                                            </div>
+                                            <div style="display: flex; justify-content: space-between; font-size: .8rem;">
+                                                <span style="color: rgba(255,255,255,.6);">Amount</span>
+                                                <span style="font-weight: 600;">₱1,899.00</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <button style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid rgba(255,255,255,.2); background: rgba(255,255,255,.1); color: #fff; font-size: .8rem; font-weight: 600; cursor: pointer; transition: background .2s;" onmouseover="this.style.background='rgba(255,255,255,.2)'" onmouseout="this.style.background='rgba(255,255,255,.1)'">Upgrade Plan</button>
+                                    </div>
+                                </div>
 
                                 <!-- Payment Methods -->
                                 <div class="orders-card" style="margin-bottom:14px;">
@@ -2925,11 +3167,11 @@
                                 <div class="summary-card">
                                     <div class="summary-title">OUTSTANDING BALANCE</div>
                                     <div class="summary-sub">Due in 14 days</div>
-                                    <div class="summary-row"><span>INV-2024-09</span><span>$3,500.00</span></div>
+                                    <div class="summary-row"><span>INV-2024-09</span><span>₱12,800.00</span></div>
                                     <hr class="summary-divider">
                                     <div class="summary-total">
                                         <span class="summary-total-lbl">Total Due</span>
-                                        <span class="summary-total-val">$3,500</span>
+                                        <span class="summary-total-val">₱12,800</span>
                                     </div>
                                     <button class="btn-continue">Pay Now →</button>
                                     <div
@@ -2940,6 +3182,116 @@
                             </div><!-- /billing sidebar -->
                         </div>
                     </div><!-- /billing -->
+
+                    <!-- ══ ACCOUNT PAGE ══ -->
+                    <div class="c-page" id="c-account">
+                        <div class="account-wrap">
+                            <div class="account-header">
+                                <div class="account-avatar-lg" id="accountAvatarBig">J</div>
+                                <div>
+                                    <div class="account-name" id="accountName">Juan Dela Cruz</div>
+                                    <div class="account-email" id="accountEmail">juan@company.ph</div>
+                                    <div style="display: flex; gap: 8px; margin-top: 10px;">
+                                        <button class="btn btn-sm btn-accent px-3" onclick="alert('Profile edit mode enabled.')"><i class="bi bi-pencil"></i> Edit Profile</button>
+                                        <button class="btn btn-sm btn-outline-light border-0" style="background:rgba(255,255,255,.1); font-size:.75rem;" onclick="ppLogout(event)"><i class="bi bi-box-arrow-left"></i> Logout</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="account-grid">
+                                <div>
+                                    <div class="notif-card" style="margin-bottom:16px;">
+                                        <div class="notif-card-title">Personal Details</div>
+                                        <div class="settings-row">
+                                            <div class="settings-row-label">Full Name</div>
+                                            <input type="text" class="form-input" value="Juan Dela Cruz" style="width:200px;">
+                                        </div>
+                                        <div class="settings-row">
+                                            <div class="settings-row-label">Business Name</div>
+                                            <input type="text" class="form-input" value="Manila Design Hub" style="width:200px;">
+                                        </div>
+                                        <div class="settings-row">
+                                            <div class="settings-row-label">Industry</div>
+                                            <select class="form-input" style="width:200px;">
+                                                <option>Creative Agency</option>
+                                                <option>Corporate</option>
+                                                <option>Education</option>
+                                            </select>
+                                        </div>
+                                        <div style="margin-top:14px;">
+                                            <button class="btn-accent rounded-3 px-4 py-2" onclick="alert('Changes saved!')">Save Details</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="notif-card">
+                                        <div class="notif-card-title">Security</div>
+                                        <div class="settings-row">
+                                            <div>
+                                                <div class="settings-row-label">Password</div>
+                                                <div class="settings-row-sub">Last changed 3 months ago</div>
+                                            </div>
+                                            <button class="btn btn-sm border" onclick="alert('Password reset link sent.')">Change</button>
+                                        </div>
+                                        <div class="settings-row">
+                                            <div>
+                                                <div class="settings-row-label">Two-Factor Auth</div>
+                                                <div class="settings-row-sub">Add extra security to your login</div>
+                                            </div>
+                                            <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <!-- Subscription Management -->
+                                    <div class="orders-card" style="margin-bottom:16px; background: linear-gradient(135deg, var(--navy), #2a3558); color: #fff; border: none; padding:20px;">
+                                        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
+                                            <div>
+                                                <div style="font-size: .72rem; color: rgba(255,255,255,.6); margin-bottom: 4px; text-transform:uppercase;">Current Plan</div>
+                                                <div style="font-family: 'Sora', sans-serif; font-size: 1.4rem; font-weight: 800;">Premium Plan</div>
+                                            </div>
+                                            <span class="badge-status badge-active" style="background: rgba(45, 206, 137, .2); color: #2dce89; border: 1px solid rgba(45, 206, 137, .3);">ACTIVE</span>
+                                        </div>
+                                        
+                                        <div style="background:rgba(255,255,255,.05); border-radius:10px; padding:14px; margin-bottom:16px;">
+                                            <div style="display: flex; justify-content: space-between; font-size: .85rem; margin-bottom:8px;">
+                                                <span style="color: rgba(255,255,255,.6);">Renews On</span>
+                                                <span style="font-weight: 600;">Nov 12, 2024</span>
+                                            </div>
+                                            <div style="display: flex; justify-content: space-between; font-size: .85rem;">
+                                                <span style="color: rgba(255,255,255,.6);">Billing Amount</span>
+                                                <span style="font-weight: 600;">₱1,899.00</span>
+                                            </div>
+                                        </div>
+
+                                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                                            <button class="btn btn-light w-100" style="font-size:.8rem; font-weight:700;" onclick="showClientPage('billing', null)">Manage Billing</button>
+                                            <button class="btn btn-outline-light w-100" style="font-size:.8rem; font-weight:600; border-color:rgba(255,255,255,.2);" onclick="alert('Loading plans...')">Change Plan</button>
+                                        </div>
+                                        <div style="margin-top:16px; text-align:center;">
+                                            <a href="#" style="color:rgba(255,255,255,.4); font-size:.7rem; text-decoration:none;" onclick="confirm('Are you sure you want to cancel your subscription? All premium features will be lost at the end of the current cycle.')">Cancel Subscription</a>
+                                        </div>
+                                    </div>
+
+                                    <div class="notif-card">
+                                        <div class="notif-card-title">Communication</div>
+                                        <div class="settings-row">
+                                            <span class="settings-row-label">Order Updates</span>
+                                            <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                                        </div>
+                                        <div class="settings-row">
+                                            <span class="settings-row-label">Promotional Emails</span>
+                                            <label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label>
+                                        </div>
+                                        <div class="settings-row">
+                                            <span class="settings-row-label">Monthly Reports</span>
+                                            <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                 </div><!-- /c-content -->
             </div>
@@ -2982,6 +3334,56 @@
             btn.addEventListener('click', function () {
                 document.querySelectorAll('#c-templates .pt-btn').forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
+            });
+        });
+    </script>
+
+    <!-- ── AUTH INIT & LOGOUT ── -->
+    <script>
+        // Populate client info from session
+        (function () {
+            const session = sessionStorage.getItem('pp_user');
+            if (!session) return;
+            const user = JSON.parse(session);
+            const initial = (user.name || user.email || 'J')[0].toUpperCase();
+            
+            // Update Topbar
+            const avatarEl = document.getElementById('clientAvatar');
+            if (avatarEl) {
+                avatarEl.textContent = initial;
+                avatarEl.title = user.email;
+            }
+
+            // Update Account Page
+            const bigAvatar = document.getElementById('accountAvatarBig');
+            const accName = document.getElementById('accountName');
+            const accEmail = document.getElementById('accountEmail');
+            if (bigAvatar) bigAvatar.textContent = initial;
+            if (accName && user.name) accName.textContent = user.name;
+            if (accEmail) accEmail.textContent = user.email;
+
+            // Update dashboard greeting
+            const greetEl = document.getElementById('clientGreeting');
+            if (greetEl && user.name) greetEl.textContent = 'Welcome back, ' + user.name + '!';
+        })();
+
+        function ppLogout(e) {
+            e.preventDefault();
+            sessionStorage.removeItem('pp_user');
+            window.location.href = 'homepage.html#login';
+        }
+
+        function toggleClientSidebar() {
+            const sidebar = document.querySelector('.c-sidebar');
+            const overlay = document.getElementById('clientSidebarOverlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        // Close sidebar when clicking a nav item on mobile
+        document.querySelectorAll('.c-nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                if (window.innerWidth < 1200) toggleClientSidebar();
             });
         });
     </script>

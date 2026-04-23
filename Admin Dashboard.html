@@ -40,42 +40,16 @@
             background: #f0f2f8;
         }
 
-        /* ── PORTAL SWITCHER ── */
-        .portal-switcher {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 2000;
-            background: var(--navy);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            padding: 6px;
-        }
-
-        .portal-label {
-            font-size: .8rem;
-            font-weight: 600;
-            padding: 5px 20px;
-            border-radius: 6px;
-            background: var(--accent);
-            color: #fff;
-            font-family: 'DM Sans', sans-serif;
-        }
-
         /* ── APP SHELL ── */
         .a-app {
             display: flex;
-            height: calc(100vh - 36px);
+            height: 100vh;
             overflow: hidden;
-            margin-top: 36px;
         }
 
         /* Sidebar */
         .a-sidebar {
-            width: 190px;
+            width: 240px;
             flex-shrink: 0;
             background: #fff;
             border-right: 1px solid var(--border);
@@ -84,11 +58,12 @@
         }
 
         .a-brand {
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--border);
+            padding: 24px 24px;
+            background: var(--navy);
             display: flex;
             align-items: center;
             gap: 8px;
+            cursor: pointer;
         }
 
         .a-brand-icon {
@@ -108,12 +83,17 @@
         }
 
         .a-brand-badge {
-            font-size: .6rem;
-            background: var(--accent);
+            font-size: .65rem;
+            background: #1d8cf8;
             color: #fff;
-            padding: 1px 6px;
-            border-radius: 4px;
-            font-weight: 700;
+            padding: 2px 9px;
+            border-radius: 6px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        @media (max-width: 1200px) {
+            .a-brand-badge { font-size: .55rem; padding: 1px 7px; }
         }
 
         .a-nav {
@@ -125,7 +105,7 @@
             display: flex;
             align-items: center;
             gap: 9px;
-            padding: 9px 16px;
+            padding: 10px 24px;
             font-size: .83rem;
             font-weight: 500;
             color: var(--muted);
@@ -807,7 +787,7 @@
 
         .device-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 16px;
             margin-bottom: 20px;
         }
@@ -1238,25 +1218,150 @@
             background: rgba(0, 0, 0, .15);
             border-radius: 10px;
         }
+
+        /* ── RESPONSIVE ADMIN ── */
+        @media (max-width: 1199px) {
+            .a-sidebar {
+                position: fixed;
+                left: -260px;
+                top: 0;
+                bottom: 0;
+                z-index: 1050;
+                transition: left .3s cubic-bezier(0.4, 0, 0.2, 1);
+                box-shadow: 15px 0 45px rgba(10,18,40,0.15);
+                width: 260px !important;
+            }
+            .a-sidebar.show {
+                left: 0;
+            }
+            .a-sidebar-overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(10,18,40,0.5);
+                backdrop-filter: blur(5px);
+                -webkit-backdrop-filter: blur(5px);
+                z-index: 1040;
+            }
+            .a-sidebar-overlay.show {
+                display: block;
+            }
+            .a-topbar {
+                padding: 0 16px !important;
+            }
+            .a-app {
+                margin-top: 0;
+                height: 100vh;
+            }
+            .portal-switcher {
+                display: none;
+            }
+        }
+
+        @media (max-width: 1199px) {
+            .a-tabs {
+                display: none !important;
+            }
+            .a-topbar {
+                justify-content: space-between;
+            }
+            .a-mobile-logo {
+                display: block;
+                height: 24px;
+                width: auto;
+                object-fit: contain;
+                margin-left: 8px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .a-content {
+                padding: 15px !important;
+            }
+            .kpi-grid {
+                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)) !important;
+                gap: 15px !important;
+            }
+            .stat-grid {
+                grid-template-columns: 1fr !important;
+                gap: 15px !important;
+            }
+            .charts-row, .bottom-row {
+                grid-template-columns: 1fr !important;
+                gap: 15px !important;
+            }
+            .a-table-responsive {
+                width: 100%;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            .recent-orders-table {
+                min-width: 650px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .a-kpi-item {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: 12px !important;
+            }
+        }
+        .a-mobile-logo {
+            display: none;
+            height: 24px;
+            width: auto;
+            cursor: pointer;
+        }
+        @media (max-width: 1200px) {
+            .a-mobile-logo {
+                display: block;
+            }
+        }
+        .a-kpi-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .a-kpi-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
     </style>
 </head>
 
 <body>
 
-    <!-- Portal Switcher -->
-    <div class="portal-switcher">
-        <i class="bi bi-shield-fill" style="color:rgba(255,255,255,.5);font-size:.8rem;"></i>
-        <span class="portal-label"><i class="bi bi-shield-fill"></i> Admin Portal</span>
-    </div>
+    <!-- ── AUTH GUARD ── -->
+    <script>
+        (function () {
+            const session = sessionStorage.getItem('pp_user');
+            if (!session) { window.location.href = 'homepage.html#login'; return; }
+            const user = JSON.parse(session);
+            if (user.role !== 'admin') { window.location.href = 'homepage.html#login'; }
+        })();
+    </script>
 
     <div class="a-app">
+        <!-- Sidebar Overlay -->
+        <div class="a-sidebar-overlay" id="sidebarOverlay" onclick="toggleMobileSidebar()"></div>
 
         <!-- Sidebar -->
         <div class="a-sidebar">
-            <div class="a-brand" style="padding:10px 12px;">
-                <img src="assets/img/logo.png" alt="PrintPro"
-                    style="height:32px;width:auto;object-fit:contain;max-width:140px;">
-                <span class="a-brand-badge ms-1">Admin</span>
+            <div class="a-brand" style="justify-content: flex-start; overflow: hidden; white-space: nowrap; gap:8px;">
+                <button class="btn p-0 d-xl-none border-0 text-white me-1" onclick="toggleMobileSidebar()" style="font-size:1rem; line-height:1;">
+                    <i class="bi bi-chevron-left"></i>
+                </button>
+                <div onclick="showPage('dashboard', null)" style="display:flex; align-items:center; gap:6px; cursor:pointer; flex:1; overflow:hidden;">
+                    <img src="assets/img/logo.png" alt="PrintPro"
+                        style="height:22px;width:auto;object-fit:contain;max-width:90px;filter:brightness(0) invert(1); flex-shrink: 0;">
+                    <span class="a-brand-badge" style="flex-shrink: 0;">Admin</span>
+                </div>
             </div>
             <nav class="a-nav">
                 <div class="a-nav-item active" onclick="showPage('dashboard', this)" id="nav-dashboard">
@@ -1271,12 +1376,15 @@
                 <div class="a-nav-item" onclick="showPage('devices', this)" id="nav-devices">
                     <i class="bi bi-printer"></i> <span>Devices</span>
                 </div>
+                <div class="a-nav-item" onclick="showPage('account', this)" id="nav-account">
+                    <i class="bi bi-person-circle"></i> <span>Account</span>
+                </div>
                 <div class="a-nav-item" onclick="showPage('settings', this)" id="nav-settings">
                     <i class="bi bi-gear"></i> <span>Settings</span>
                 </div>
             </nav>
             <div class="a-logout">
-                <a href="#"><i class="bi bi-box-arrow-left"></i> <span>Logout</span></a>
+                <a href="#" onclick="ppLogout(event)"><i class="bi bi-box-arrow-left"></i> <span>Logout</span></a>
             </div>
         </div>
 
@@ -1284,16 +1392,26 @@
         <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
             <!-- Topbar -->
             <div class="a-topbar">
-                <div class="a-tabs" id="adminTabs">
-                    <div class="a-tab active" onclick="showPage('dashboard', null)" data-page="dashboard">Dashboard
-                    </div>
-                    <div class="a-tab" onclick="showPage('orders', null)" data-page="orders">Orders</div>
-                    <div class="a-tab" onclick="showPage('devices', null)" data-page="devices">Devices</div>
-                    <div class="a-tab" onclick="showPage('account', null)" data-page="account">Account</div>
-                </div>
                 <div style="display:flex;align-items:center;gap:12px;">
+                    <button class="d-xl-none btn border-0 p-0" onclick="toggleMobileSidebar()" style="font-size:1.4rem;color:var(--navy);">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <div style="display:flex; align-items:center; gap:6px;" onclick="showPage('dashboard', null)">
+                        <img src="assets/img/logo.png" alt="PrintPro" class="a-mobile-logo" style="height:22px;">
+                        <span class="a-brand-badge d-xl-none">Admin</span>
+                    </div>
+                    <div class="a-tabs" id="adminTabs">
+                        <div class="a-tab active" onclick="showPage('dashboard', null)" data-page="dashboard">Dashboard</div>
+                        <div class="a-tab" onclick="showPage('orders', null)" data-page="orders">Orders</div>
+                        <div class="a-tab" onclick="showPage('devices', null)" data-page="devices">Devices</div>
+                        <div class="a-tab" onclick="showPage('account', null)" data-page="account">Account</div>
+                    </div>
+                </div>
+                <div class="a-topbar-right" style="display:flex;align-items:center;gap:12px;">
                     <i class="bi bi-bell" style="color:var(--muted);font-size:1.05rem;cursor:pointer;"></i>
-                    <div class="c-avatar">A</div>
+                    <div style="cursor:pointer;" onclick="showPage('account', null)">
+                        <div class="c-avatar" id="adminAvatar" title="">A</div>
+                    </div>
                 </div>
             </div>
 
@@ -1311,26 +1429,41 @@
                         </div>
 
                         <div class="kpi-grid">
-                            <div class="kpi-card">
-                                <div class="kpi-lbl">Total Revenue</div>
-                                <div class="kpi-val">$10,000</div>
-                                <div class="kpi-change kpi-up"><i class="bi bi-arrow-up"></i> 40% vs last month</div>
-                            </div>
-                            <div class="kpi-card">
-                                <div class="kpi-lbl">Active Orders</div>
-                                <div class="kpi-val">142</div>
-                                <div class="kpi-change kpi-up"><i class="bi bi-arrow-up"></i> 80 new orders today</div>
-                            </div>
-                            <div class="kpi-card">
-                                <div class="kpi-lbl">New Customers</div>
-                                <div class="kpi-val">14</div>
-                                <div class="kpi-change kpi-up"><i class="bi bi-arrow-up"></i> 5× higher vs last month
+                            <div class="kpi-card a-kpi-item">
+                                <div class="a-kpi-icon" style="background:rgba(29,140,248,.1); color:var(--accent);">
+                                    <i class="bi bi-graph-up"></i>
+                                </div>
+                                <div>
+                                    <div class="kpi-lbl">Total Revenue</div>
+                                    <div class="kpi-val">₱2.4M</div>
                                 </div>
                             </div>
-                            <div class="kpi-card">
-                                <div class="kpi-lbl">Completed Today</div>
-                                <div class="kpi-val">47</div>
-                                <div class="kpi-change kpi-up"><i class="bi bi-arrow-up"></i> 3× vs last month</div>
+                            <div class="kpi-card a-kpi-item">
+                                <div class="a-kpi-icon" style="background:rgba(45,206,137,.1); color:var(--success);">
+                                    <i class="bi bi-check2-circle"></i>
+                                </div>
+                                <div>
+                                    <div class="kpi-lbl">Completed</div>
+                                    <div class="kpi-val">428</div>
+                                </div>
+                            </div>
+                            <div class="kpi-card a-kpi-item">
+                                <div class="a-kpi-icon" style="background:rgba(251,99,64,.1); color:var(--warning);">
+                                    <i class="bi bi-hourglass-split"></i>
+                                </div>
+                                <div>
+                                    <div class="kpi-lbl">Pending</div>
+                                    <div class="kpi-val">14</div>
+                                </div>
+                            </div>
+                            <div class="kpi-card a-kpi-item">
+                                <div class="a-kpi-icon" style="background:rgba(124,77,255,.1); color:var(--purple);">
+                                    <i class="bi bi-people"></i>
+                                </div>
+                                <div>
+                                    <div class="kpi-lbl">New Users</div>
+                                    <div class="kpi-val">8</div>
+                                </div>
                             </div>
                         </div>
 
@@ -1437,37 +1570,38 @@
                                         style="font-size:.73rem;color:var(--accent);text-decoration:none;">View All
                                         →</a>
                                 </div>
-                                <table class="recent-orders-table">
-                                    <thead>
-                                        <tr>
-                                            <th>ORDER</th>
-                                            <th>CLIENT</th>
-                                            <th>PRODUCT</th>
-                                            <th>STATUS</th>
-                                            <th>TOTAL</th>
-                                        </tr>
-                                    </thead>
+                                <div class="a-table-responsive">
+                                    <table class="recent-orders-table">
+                                        <thead>
+                                            <tr>
+                                                <th>ORDER</th>
+                                                <th>CLIENT</th>
+                                                <th>PRODUCT</th>
+                                                <th>STATUS</th>
+                                                <th>TOTAL</th>
+                                            </tr>
+                                        </thead>
                                     <tbody>
                                         <tr>
                                             <td style="font-weight:600;">#PPR-048</td>
                                             <td>Gamma Agency</td>
                                             <td>Brochure</td>
                                             <td><span class="badge-status badge-active">Active</span></td>
-                                            <td style="font-weight:700;">$2,248.00</td>
+                                            <td style="font-weight:700;">₱4,250.00</td>
                                         </tr>
                                         <tr>
                                             <td style="font-weight:600;">#PPR-045</td>
                                             <td>Urban Core</td>
                                             <td>Mailer</td>
                                             <td><span class="badge-status badge-pending">Reprint</span></td>
-                                            <td style="font-weight:700;">$3,550.00</td>
+                                            <td style="font-weight:700;">₱12,800.00</td>
                                         </tr>
                                         <tr>
                                             <td style="font-weight:600;">#PPR-043</td>
                                             <td>TechStart Inc</td>
                                             <td>Poster</td>
                                             <td><span class="badge-status badge-done">Printing</span></td>
-                                            <td style="font-weight:700;">$4,290.00</td>
+                                            <td style="font-weight:700;">₱15,500.00</td>
                                         </tr>
                                         <tr>
                                             <td style="font-weight:600;">#PPR-041</td>
@@ -1481,11 +1615,12 @@
                                             <td>Citybeats</td>
                                             <td>Banner</td>
                                             <td><span class="badge-status badge-done">Done</span></td>
-                                            <td style="font-weight:700;">$540.00</td>
+                                            <td style="font-weight:700;">₱2,450.00</td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
+                        </div>
 
                             <div class="chart-card">
                                 <div class="card-hdr" style="padding:12px 0 10px 0;border:none;">
@@ -1624,7 +1759,7 @@
                                         </td>
                                         <td><span class="badge-status badge-active">Active</span></td>
                                         <td>Oct 24, 2024</td>
-                                        <td style="font-weight:700;">$2,248</td>
+                                        <td style="font-weight:700;">₱4,250</td>
                                         <td><button onclick="alert('Opening order #PPR-048…')"
                                                 style="font-size:.72rem;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:#fff;cursor:pointer;"><i
                                                     class="bi bi-eye"></i></button></td>
@@ -1642,7 +1777,7 @@
                                         </td>
                                         <td><span class="badge-status badge-pending">Reprint</span></td>
                                         <td>—</td>
-                                        <td style="font-weight:700;">$3,550</td>
+                                        <td style="font-weight:700;">₱12,800</td>
                                         <td><button onclick="alert('Opening order #PPR-045…')"
                                                 style="font-size:.72rem;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:#fff;cursor:pointer;"><i
                                                     class="bi bi-eye"></i></button></td>
@@ -1660,7 +1795,7 @@
                                         </td>
                                         <td><span class="badge-status badge-done">Printing</span></td>
                                         <td>Oct 21, 2024</td>
-                                        <td style="font-weight:700;">$4,290</td>
+                                        <td style="font-weight:700;">₱15,500</td>
                                         <td><button onclick="alert('Opening order #PPR-043…')"
                                                 style="font-size:.72rem;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:#fff;cursor:pointer;"><i
                                                     class="bi bi-eye"></i></button></td>
@@ -1678,7 +1813,7 @@
                                         </td>
                                         <td><span class="badge-status badge-active">Active</span></td>
                                         <td>Nov 2, 2024</td>
-                                        <td style="font-weight:700;">$4,260</td>
+                                        <td style="font-weight:700;">₱8,750</td>
                                         <td><button onclick="alert('Opening order #PPR-041…')"
                                                 style="font-size:.72rem;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:#fff;cursor:pointer;"><i
                                                     class="bi bi-eye"></i></button></td>
@@ -1696,7 +1831,7 @@
                                         </td>
                                         <td><span class="badge-status badge-done">Done</span></td>
                                         <td>Oct 18, 2024</td>
-                                        <td style="font-weight:700;">$540</td>
+                                        <td style="font-weight:700;">₱2,450</td>
                                         <td><button onclick="alert('Opening order #PPR-038…')"
                                                 style="font-size:.72rem;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:#fff;cursor:pointer;"><i
                                                     class="bi bi-eye"></i></button></td>
@@ -1714,7 +1849,7 @@
                                         </td>
                                         <td><span class="badge-status badge-done">Printing</span></td>
                                         <td>Oct 26, 2024</td>
-                                        <td style="font-weight:700;">$1,890</td>
+                                        <td style="font-weight:700;">₱3,850</td>
                                         <td><button onclick="alert('Opening order #PPR-036…')"
                                                 style="font-size:.72rem;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:#fff;cursor:pointer;"><i
                                                     class="bi bi-eye"></i></button></td>
@@ -1732,7 +1867,7 @@
                                         </td>
                                         <td><span class="badge-status badge-done">Done</span></td>
                                         <td>Oct 14, 2024</td>
-                                        <td style="font-weight:700;">$320</td>
+                                        <td style="font-weight:700;">₱1,250</td>
                                         <td><button onclick="alert('Opening order #PPR-033…')"
                                                 style="font-size:.72rem;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:#fff;cursor:pointer;"><i
                                                     class="bi bi-eye"></i></button></td>
@@ -1906,7 +2041,7 @@
                                             <div class="pstat-lbl">Managed Users</div>
                                         </div>
                                         <div class="pstat">
-                                            <div class="pstat-val">$43k</div>
+                                            <div class="pstat-val">₱2.4M</div>
                                             <div class="pstat-lbl">Orders Total</div>
                                         </div>
                                     </div>
@@ -2145,7 +2280,7 @@
                                 Notifications</div>
                             <div class="settings-nav-item" onclick="showSettingsSection('security', this)">Security
                             </div>
-                            <div class="settings-nav-item" onclick="showSettingsSection('billing', this)">Billing</div>
+
                             <div class="settings-nav-item" onclick="showSettingsSection('integrations', this)">
                                 Integrations</div>
                         </div>
@@ -2355,63 +2490,7 @@
                                 </div>
                             </div>
 
-                            <!-- Billing -->
-                            <div class="settings-section" id="settings-billing">
-                                <div class="settings-card">
-                                    <div class="settings-card-hdr">
-                                        <div class="settings-card-title">Current Plan</div>
-                                        <div class="settings-card-sub">Manage your subscription and payment method</div>
-                                    </div>
-                                    <div class="settings-card-body">
-                                        <div
-                                            style="background:linear-gradient(135deg,var(--accent),#0060d4);border-radius:10px;padding:18px;color:#fff;margin-bottom:16px;">
-                                            <div style="font-size:.72rem;opacity:.7;margin-bottom:4px;">ACTIVE PLAN
-                                            </div>
-                                            <div
-                                                style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:700;">
-                                                Enterprise</div>
-                                            <div
-                                                style="font-family:'Sora',sans-serif;font-size:1.8rem;font-weight:800;margin:4px 0;">
-                                                $499<span style="font-size:.9rem;opacity:.7;">/month</span></div>
-                                            <div style="font-size:.75rem;opacity:.7;">Next billing: November 1, 2024
-                                            </div>
-                                            <div style="display:flex;gap:16px;margin-top:12px;">
-                                                <div style="font-size:.75rem;opacity:.9;"><i
-                                                        class="bi bi-check-circle-fill"></i> Unlimited orders</div>
-                                                <div style="font-size:.75rem;opacity:.9;"><i
-                                                        class="bi bi-check-circle-fill"></i> 40 users</div>
-                                                <div style="font-size:.75rem;opacity:.9;"><i
-                                                        class="bi bi-check-circle-fill"></i> API access</div>
-                                            </div>
-                                        </div>
-                                        <div class="settings-row">
-                                            <div>
-                                                <div class="settings-row-label">Payment Method</div>
-                                                <div class="settings-row-sub">Visa ending in 4242</div>
-                                            </div>
-                                            <button
-                                                style="padding:6px 14px;border-radius:7px;border:1px solid var(--border);background:#fff;font-size:.75rem;font-weight:600;cursor:pointer;"
-                                                onclick="alert('Update payment method…')">Update Card</button>
-                                        </div>
-                                        <div class="settings-row">
-                                            <div>
-                                                <div class="settings-row-label">Billing Email</div>
-                                                <div class="settings-row-sub">billing@printpro.com</div>
-                                            </div>
-                                            <button
-                                                style="padding:6px 14px;border-radius:7px;border:1px solid var(--border);background:#fff;font-size:.75rem;font-weight:600;cursor:pointer;"
-                                                onclick="alert('Change billing email…')">Change</button>
-                                        </div>
-                                        <div style="margin-top:14px;display:flex;gap:8px;">
-                                            <button class="btn-save" onclick="alert('Viewing invoice history…')"><i
-                                                    class="bi bi-file-text"></i> View Invoices</button>
-                                            <button
-                                                style="padding:8px 22px;border-radius:8px;border:1px solid var(--border);background:#fff;font-size:.82rem;font-weight:600;color:var(--navy);cursor:pointer;font-family:'DM Sans',sans-serif;"
-                                                onclick="alert('Cancel subscription?')">Cancel Plan</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+
 
                             <!-- Integrations -->
                             <div class="settings-section" id="settings-integrations">
@@ -2574,24 +2653,7 @@
                             </div>
 
                             <div>
-                                <div class="billing-plan" style="margin-bottom:16px;">
-                                    <div style="font-size:.7rem;opacity:.7;margin-bottom:4px;">YOUR PLAN</div>
-                                    <div class="billing-plan-name">Enterprise Plan</div>
-                                    <div class="billing-plan-price">$499<span class="billing-plan-cycle"> /month</span>
-                                    </div>
-                                    <div class="billing-feature"><i class="bi bi-check-circle-fill"></i> Unlimited
-                                        orders</div>
-                                    <div class="billing-feature"><i class="bi bi-check-circle-fill"></i> 40 user
-                                        accounts</div>
-                                    <div class="billing-feature"><i class="bi bi-check-circle-fill"></i> Priority
-                                        support</div>
-                                    <div class="billing-feature"><i class="bi bi-check-circle-fill"></i> Full API access
-                                    </div>
-                                    <button
-                                        style="margin-top:14px;width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.15);color:#fff;font-size:.8rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;"
-                                        onclick="showPage('settings',null);showSettingsSection('billing', document.querySelector('.settings-nav-item:nth-child(4)'))">Manage
-                                        Billing →</button>
-                                </div>
+
 
                                 <div class="notif-card">
                                     <div class="notif-card-title">Notification Preferences</div>
@@ -2689,6 +2751,42 @@
       <div class="profile-info-row"><span>Role</span><span>${role}</span></div>
     `;
         }
+    </script>
+
+    <!-- ── AUTH INIT & LOGOUT ── -->
+    <script>
+        // Populate admin info from session
+        (function () {
+            const session = sessionStorage.getItem('pp_user');
+            if (!session) return;
+            const user = JSON.parse(session);
+            const initial = (user.email || 'A')[0].toUpperCase();
+            const avatarEl = document.getElementById('adminAvatar');
+            if (avatarEl) {
+                avatarEl.textContent = initial;
+                avatarEl.title = user.email;
+            }
+        })();
+
+        function ppLogout(e) {
+            e.preventDefault();
+            sessionStorage.removeItem('pp_user');
+            window.location.href = 'homepage.html#login';
+        }
+
+        function toggleMobileSidebar() {
+            const sidebar = document.querySelector('.a-sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.toggle('show');
+            overlay.classList.toggle('show');
+        }
+
+        // Close sidebar when clicking a nav item on mobile
+        document.querySelectorAll('.a-nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                if (window.innerWidth < 1200) toggleMobileSidebar();
+            });
+        });
     </script>
 </body>
 

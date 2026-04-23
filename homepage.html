@@ -28,6 +28,55 @@
             --slate: #8a96b0;
         }
 
+        @media (max-width: 768px) {
+            .navbar-brand img {
+                height: 28px !important;
+            }
+            .hero-title {
+                font-size: 2.25rem !important;
+            }
+            .hero-desc {
+                font-size: 1rem !important;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            #hero {
+                text-align: center;
+                padding-top: 3rem !important;
+            }
+            #hero .d-flex {
+                justify-content: center;
+            }
+            .dashboard-mockup {
+                display: none;
+            }
+        }
+
+        /* ── MODAL RESPONSIVENESS ── */
+        @media (max-width: 576px) {
+            #loginModal {
+                padding: 10px;
+                align-items: flex-end; /* Mobile bottom sheet style */
+            }
+            #loginModal > div:last-child {
+                border-radius: 20px 20px 0 0 !important;
+                max-width: 100% !important;
+                animation: modalSlideUp .3s cubic-bezier(.34,1.56,.64,1);
+            }
+            #loginModal .modal-header {
+                padding: 18px 20px 14px !important;
+            }
+            #loginModal .modal-body {
+                padding: 20px 20px 30px !important;
+                max-height: 70vh;
+                overflow-y: auto;
+            }
+        }
+        @keyframes modalSlideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
         html {
             scroll-behavior: smooth;
         }
@@ -464,7 +513,7 @@
 ════════════════════════════ -->
     <nav class="navbar navbar-expand-lg bg-white sticky-top py-2">
         <div class="container-xl">
-            <a class="navbar-brand d-flex align-items-center" href="#">
+            <a class="navbar-brand d-flex align-items-center" href="#" onclick="handleLogoClick(event)">
                 <img src="assets/img/logo.png" alt="PrintPro" style="height:36px;width:auto;object-fit:contain;">
             </a>
 
@@ -481,8 +530,8 @@
                     <li class="nav-item"><a class="nav-link px-3" href="#pricing">Pricing</a></li>
                 </ul>
                 <div class="d-flex gap-2 mt-3 mt-lg-0">
-                    <button class="btn btn-outline-navy rounded-3 px-3 py-2">Log In</button>
-                    <button class="btn btn-accent rounded-3 px-3 py-2">Get Started</button>
+                    <button class="btn btn-outline-navy rounded-3 px-3 py-2" onclick="openLoginModal('client')">Log In</button>
+                    <button class="btn btn-accent rounded-3 px-3 py-2" onclick="openLoginModal('client')">Get Started</button>
                 </div>
             </div>
         </div>
@@ -503,14 +552,14 @@
                         Turn Your Ideas into Professional Prints with
                         <span class="text-accent">PrintPro.</span>
                     </h1>
-                    <p class="text-muted-pp mb-4" style="max-width:440px;line-height:1.75;">
+                    <p class="hero-desc text-muted-pp mb-4" style="max-width:440px;line-height:1.75;font-size:clamp(0.9rem, 1.5vw, 1rem);">
                         Bring your brand to life with high-quality, seamless printing solutions designed for businesses.
                         At PrintPro, we make it easy to order and get the best results the printing industry can
                         deliver.
                     </p>
                     <div class="d-flex flex-wrap gap-3 mb-3">
-                        <button class="btn btn-accent btn-lg rounded-3 px-4">Get Started →</button>
-                        <button class="btn btn-outline-navy btn-lg rounded-3 px-4">Watch Demo</button>
+                        <button class="btn btn-accent btn-lg rounded-3 px-4" onclick="openLoginModal('client')">Get Started →</button>
+                        <a href="#features" class="btn btn-outline-navy btn-lg rounded-3 px-4">Learn More</a>
                     </div>
                     <p class="text-slate small mb-0">Trusted by 800+ print-ready businesses</p>
                 </div>
@@ -632,48 +681,48 @@
 
             <div class="row g-4">
                 <div class="col-md-6 col-lg-4">
-                    <div class="feature-card bg-white p-4 h-100">
-                        <div class="feature-icon mb-3"><i class="bi bi-clock-history"></i></div>
+                    <div class="feature-card bg-white p-4 h-100 border-top border-4 border-accent">
+                        <div class="feature-icon mb-3" style="color:var(--accent);"><i class="bi bi-clock-history"></i></div>
                         <h5 class="font-sora fw-bold mb-2" style="color:var(--navy);">Real-time Tracking</h5>
                         <p class="text-muted-pp small mb-0">Monitor every print job from submission to delivery with
                             live status updates, automated alerts, and full audit trails for every order.</p>
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-4">
-                    <div class="feature-card bg-white p-4 h-100">
-                        <div class="feature-icon mb-3"><i class="bi bi-lightning-charge"></i></div>
+                    <div class="feature-card bg-white p-4 h-100 border-top border-4 border-teal">
+                        <div class="feature-icon mb-3" style="color:var(--teal);"><i class="bi bi-lightning-charge"></i></div>
                         <h5 class="font-sora fw-bold mb-2" style="color:var(--navy);">Fast Delivery</h5>
                         <p class="text-muted-pp small mb-0">Integrated shipping and courier management that ensures
                             prints reach customers on time. Real-time ETAs and route optimization built in.</p>
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-4">
-                    <div class="feature-card bg-white p-4 h-100">
-                        <div class="feature-icon mb-3"><i class="bi bi-shield-lock"></i></div>
+                    <div class="feature-card bg-white p-4 h-100 border-top border-4 border-navy">
+                        <div class="feature-icon mb-3" style="color:var(--navy);"><i class="bi bi-shield-lock"></i></div>
                         <h5 class="font-sora fw-bold mb-2" style="color:var(--navy);">Enterprise Security</h5>
                         <p class="text-muted-pp small mb-0">Bank-grade encryption for all print assets. Role-based
                             access controls, SSO support, and full compliance with industry data standards.</p>
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-4">
-                    <div class="feature-card bg-white p-4 h-100">
-                        <div class="feature-icon mb-3"><i class="bi bi-bar-chart-line"></i></div>
+                    <div class="feature-card bg-white p-4 h-100 border-bottom border-4 border-accent-light">
+                        <div class="feature-icon mb-3" style="color:var(--accent-light);"><i class="bi bi-bar-chart-line"></i></div>
                         <h5 class="font-sora fw-bold mb-2" style="color:var(--navy);">Advanced Analytics</h5>
                         <p class="text-muted-pp small mb-0">Comprehensive dashboards revealing production efficiency,
                             waste reduction opportunities, cost-per-job breakdowns, and revenue forecasting.</p>
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-4">
-                    <div class="feature-card bg-white p-4 h-100">
-                        <div class="feature-icon mb-3"><i class="bi bi-globe2"></i></div>
+                    <div class="feature-card bg-white p-4 h-100 border-bottom border-4 border-accent">
+                        <div class="feature-icon mb-3" style="color:var(--accent);"><i class="bi bi-globe2"></i></div>
                         <h5 class="font-sora fw-bold mb-2" style="color:var(--navy);">Global Fulfillment</h5>
                         <p class="text-muted-pp small mb-0">Connect with a worldwide network of print partners and
                             fulfillment centers. Scale globally without managing your own print infrastructure.</p>
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-4">
-                    <div class="feature-card bg-white p-4 h-100">
-                        <div class="feature-icon mb-3"><i class="bi bi-patch-check"></i></div>
+                    <div class="feature-card bg-white p-4 h-100 border-bottom border-4 border-teal">
+                        <div class="feature-icon mb-3" style="color:var(--teal);"><i class="bi bi-patch-check"></i></div>
                         <h5 class="font-sora fw-bold mb-2" style="color:var(--navy);">Quality Work</h5>
                         <p class="text-muted-pp small mb-0">AI-powered pre-flight checks, color profile management,
                             resolution validation, and automated proofing so every job ships print-perfect.</p>
@@ -705,7 +754,7 @@
                 <!-- Starter -->
                 <div class="col-md-4">
                     <div class="plan-card p-4 h-100 d-flex flex-column">
-                        <div class="plan-name mb-2">Starter</div>
+                        <div class="plan-name mb-2">Pro</div>
                         <div class="plan-price mb-1">₱999<small>/mo</small></div>
                         <p class="plan-desc mb-4">Perfect for small print shops just getting started with digital order
                             management.</p>
@@ -723,7 +772,7 @@
                 <div class="col-md-4">
                     <div class="plan-card featured p-4 h-100 d-flex flex-column">
                         <div class="plan-badge">Most Popular</div>
-                        <div class="plan-name mb-2">Short Run</div>
+                        <div class="plan-name mb-2">Premium</div>
                         <div class="plan-price mb-1">₱1899<small>/mo</small></div>
                         <p class="plan-desc mb-4">Designed for growing teams managing multiple customers and high-volume
                             daily orders.</p>
@@ -828,6 +877,364 @@
 
     <!-- Bootstrap 5 JS bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+
+    <!-- ════════════════════════════
+         LOGIN MODAL
+    ════════════════════════════ -->
+    <div id="loginModal" style="
+        display:none;
+        position:fixed;inset:0;z-index:9999;
+        align-items:center;justify-content:center;
+        padding:20px;
+    ">
+        <!-- Backdrop -->
+        <div id="modalBackdrop" onclick="closeLoginModal()" style="
+            position:absolute;inset:0;
+            background:rgba(10,18,40,.65);
+            backdrop-filter:blur(6px);
+            -webkit-backdrop-filter:blur(6px);
+        "></div>
+
+        <!-- Modal Card -->
+        <div class="login-card" style="
+            position:relative;z-index:1;
+            background:#fff;
+            border-radius:20px;
+            width:100%;max-width:460px;
+            box-shadow:0 32px 80px rgba(10,18,40,.28),0 4px 20px rgba(10,18,40,.10);
+            overflow:hidden;
+            animation:modalIn .25s cubic-bezier(.34,1.56,.64,1);
+        ">
+            <!-- Modal Header -->
+            <div class="login-header-wrap login-header" style="
+                background:linear-gradient(135deg,#1a2340 0%,#0f2057 100%);
+                padding:28px 32px 24px;
+                position:relative;
+            ">
+                <img src="assets/img/logo.png" alt="PrintPro"
+                    style="height:34px;width:auto;object-fit:contain;filter:brightness(0) invert(1);margin-bottom:16px;display:block;">
+                <h2 style="font-family:'Sora',sans-serif;font-size:1.2rem;font-weight:800;color:#fff;margin:0 0 4px;">
+                    Welcome back
+                </h2>
+                <p style="font-size:.82rem;color:rgba(255,255,255,.5);margin:0;">Sign in to continue to your portal</p>
+                <button onclick="closeLoginModal()" style="
+                    position:absolute;top:18px;right:18px;
+                    background:rgba(255,255,255,.12);border:none;border-radius:8px;
+                    width:30px;height:30px;cursor:pointer;color:#fff;font-size:1rem;
+                    display:flex;align-items:center;justify-content:center;
+                    transition:background .15s;
+                " onmouseover="this.style.background='rgba(255,255,255,.22)'" onmouseout="this.style.background='rgba(255,255,255,.12)'">
+                    <i class="bi bi-x"></i>
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="login-body-wrap login-body" style="padding:28px 32px 32px;">
+
+                <!-- Portal Tabs -->
+                <div id="mPortalTabs" style="
+                    display:flex;background:#f4f6fb;
+                    border-radius:10px;padding:4px;margin-bottom:22px;gap:4px;
+                ">
+                    <button id="mTabClient" onclick="mSwitchTab('client')" style="
+                        flex:1;padding:8px;border-radius:8px;border:none;
+                        font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:600;
+                        cursor:pointer;transition:all .2s;
+                        display:flex;align-items:center;justify-content:center;gap:6px;
+                        background:#fff;color:#1a2340;
+                        box-shadow:0 2px 8px rgba(26,35,64,.10);
+                    ">
+                        <i class="bi bi-person-fill"></i> Client Portal
+                    </button>
+                    <button id="mTabAdmin" onclick="mSwitchTab('admin')" style="
+                        flex:1;padding:8px;border-radius:8px;border:none;
+                        font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:600;
+                        cursor:pointer;transition:all .2s;
+                        display:flex;align-items:center;justify-content:center;gap:6px;
+                        background:transparent;color:#6b7a99;
+                    ">
+                        <i class="bi bi-shield-fill"></i> Admin Portal
+                    </button>
+                </div>
+
+                <!-- Admin hint -->
+                <div id="mAdminHint" style="
+                    display:none;
+                    background:rgba(124,77,255,.07);
+                    border:1px solid rgba(124,77,255,.18);
+                    border-radius:10px;padding:10px 13px;
+                    font-size:.77rem;color:#5e35b1;
+                    align-items:flex-start;gap:8px;margin-bottom:18px;
+                ">
+                    <i class="bi bi-info-circle-fill" style="margin-top:1px;flex-shrink:0;"></i>
+                    <span>Admin access requires an approved admin email. Contact your system administrator if needed.</span>
+                </div>
+
+                <!-- Alert -->
+                <div id="mAlert" style="
+                    display:none;
+                    background:rgba(245,54,92,.08);
+                    border:1px solid rgba(245,54,92,.2);
+                    border-radius:10px;padding:10px 13px;
+                    font-size:.82rem;color:#f5365c;
+                    align-items:center;gap:8px;margin-bottom:16px;
+                ">
+                    <i class="bi bi-exclamation-circle-fill"></i>
+                    <span id="mAlertMsg"></span>
+                </div>
+
+                <!-- Form -->
+                <form id="mLoginForm" onsubmit="mHandleLogin(event)" novalidate>
+
+                    <!-- Email -->
+                    <div style="margin-bottom:16px;">
+                        <label style="display:block;font-size:.78rem;font-weight:600;color:#1a2340;margin-bottom:6px;" for="mEmail">
+                            <span id="mEmailLabel">Business Email</span>
+                        </label>
+                        <div style="position:relative;">
+                            <i class="bi bi-envelope" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#6b7a99;font-size:.9rem;pointer-events:none;"></i>
+                            <input type="email" id="mEmail" autocomplete="email" placeholder="you@yourcompany.com"
+                                style="width:100%;padding:11px 14px 11px 36px;border:1.5px solid #dde3f0;border-radius:10px;
+                                font-family:'DM Sans',sans-serif;font-size:.88rem;color:#1a2340;outline:none;
+                                transition:border-color .2s,box-shadow .2s;"
+                                onfocus="this.style.borderColor='#1d8cf8';this.style.boxShadow='0 0 0 3px rgba(29,140,248,.12)'"
+                                onblur="this.style.borderColor='#dde3f0';this.style.boxShadow='none'">
+                        </div>
+                        <div id="mEmailErr" style="display:none;font-size:.76rem;color:#f5365c;margin-top:5px;">
+                            <i class="bi bi-exclamation-circle"></i> <span id="mEmailErrMsg">Please enter a valid email.</span>
+                        </div>
+                    </div>
+
+                    <!-- Password -->
+                    <div style="margin-bottom:16px;">
+                        <label style="display:block;font-size:.78rem;font-weight:600;color:#1a2340;margin-bottom:6px;" for="mPass">Password</label>
+                        <div style="position:relative;">
+                            <i class="bi bi-lock" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#6b7a99;font-size:.9rem;pointer-events:none;"></i>
+                            <input type="password" id="mPass" autocomplete="current-password" placeholder="Enter your password"
+                                style="width:100%;padding:11px 38px 11px 36px;border:1.5px solid #dde3f0;border-radius:10px;
+                                font-family:'DM Sans',sans-serif;font-size:.88rem;color:#1a2340;outline:none;
+                                transition:border-color .2s,box-shadow .2s;"
+                                onfocus="this.style.borderColor='#1d8cf8';this.style.boxShadow='0 0 0 3px rgba(29,140,248,.12)'"
+                                onblur="this.style.borderColor='#dde3f0';this.style.boxShadow='none'">
+                            <button type="button" onclick="mTogglePass()" style="
+                                position:absolute;right:12px;top:50%;transform:translateY(-50%);
+                                background:none;border:none;cursor:pointer;color:#6b7a99;font-size:.9rem;padding:0;
+                            "><i class="bi bi-eye" id="mEyeIcon"></i></button>
+                        </div>
+                        <div id="mPassErr" style="display:none;font-size:.76rem;color:#f5365c;margin-top:5px;">
+                            <i class="bi bi-exclamation-circle"></i> Password must be at least 6 characters.
+                        </div>
+                    </div>
+
+                    <!-- Remember / Forgot -->
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+                        <label style="display:flex;align-items:center;gap:6px;font-size:.8rem;color:#6b7a99;cursor:pointer;">
+                            <input type="checkbox" style="accent-color:#1d8cf8;"> Remember me
+                        </label>
+                        <a href="#" style="font-size:.8rem;color:#1d8cf8;font-weight:600;text-decoration:none;">Forgot password?</a>
+                    </div>
+
+                    <!-- Submit -->
+                    <button type="submit" id="mLoginBtn" style="
+                        width:100%;padding:12px;
+                        background:linear-gradient(90deg,#1d8cf8,#00c6ff);
+                        color:#fff;border:none;border-radius:10px;
+                        font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:700;
+                        cursor:pointer;transition:opacity .2s,transform .15s;
+                        display:flex;align-items:center;justify-content:center;gap:8px;
+                    " onmouseover="this.style.opacity='.9'" onmouseout="this.style.opacity='1'">
+                        <span id="mBtnContent"><i class="bi bi-box-arrow-in-right"></i> Sign In</span>
+                        <svg id="mSpinner" style="display:none;width:18px;height:18px;animation:spin .6s linear infinite;" viewBox="0 0 24 24" fill="none">
+                            <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,.3)" stroke-width="3"/>
+                            <path d="M12 2a10 10 0 0 1 10 10" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+                        </svg>
+                    </button>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        @keyframes modalIn {
+            from { opacity:0; transform:scale(.92) translateY(12px); }
+            to   { opacity:1; transform:scale(1) translateY(0); }
+        }
+        @keyframes spin { to { transform:rotate(360deg); } }
+
+        @media (max-width: 576px) {
+            .login-card { margin: 10px; width: calc(100% - 20px) !important; border-radius: 16px !important; }
+            .login-header { padding: 22px 20px 18px !important; display: block !important; }
+            .login-header img { height: 24px !important; margin-bottom: 10px !important; display: block !important; }
+            .login-header h2 { font-size: 1.05rem !important; margin-bottom: 2px !important; }
+            .login-header p { font-size: .75rem !important; }
+            .login-body { padding: 20px 18px 24px !important; }
+            #mPortalTabs { margin-bottom: 18px !important; padding: 3px !important; }
+            #mPortalTabs button { font-size: .72rem !important; padding: 6px 3px !important; }
+            #mAdminHint, #mAlert { padding: 8px 10px !important; font-size: .72rem !important; }
+            #mLoginForm label { font-size: .75rem !important; }
+            #mLoginForm input { padding-top: 9px !important; padding-bottom: 9px !important; font-size: .85rem !important; }
+        }
+    </style>
+
+    <script>
+        /* ── CONFIG ── */
+        const ADMIN_EMAILS = [
+            'admin@printpro.com',
+            'superadmin@printpro.com',
+            'manager@printpro.com',
+            'admin@printpro.ph',
+        ];
+        const FREE_DOMAINS = ['gmail.com','yahoo.com','hotmail.com','outlook.com','icloud.com','aol.com','live.com','msn.com','mail.com','protonmail.com','ymail.com'];
+
+        let mCurrentTab = 'client';
+
+        /* ── OPEN / CLOSE ── */
+        function openLoginModal(tab = 'client') {
+            mSwitchTab(tab);
+            mClearErrors();
+            document.getElementById('mEmail').value = '';
+            document.getElementById('mPass').value = '';
+            const modal = document.getElementById('loginModal');
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            setTimeout(() => document.getElementById('mEmail').focus(), 80);
+        }
+
+        function closeLoginModal() {
+            document.getElementById('loginModal').style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+        // Close on Escape key
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLoginModal(); });
+
+        /* ── TAB SWITCH ── */
+        function mSwitchTab(tab) {
+            mCurrentTab = tab;
+            const cBtn = document.getElementById('mTabClient');
+            const aBtn = document.getElementById('mTabAdmin');
+            const hint = document.getElementById('mAdminHint');
+            const lbl  = document.getElementById('mEmailLabel');
+            const inp  = document.getElementById('mEmail');
+
+            if (tab === 'client') {
+                cBtn.style.background = '#fff'; cBtn.style.color = '#1a2340';
+                cBtn.style.boxShadow = '0 2px 8px rgba(26,35,64,.10)';
+                aBtn.style.background = 'transparent'; aBtn.style.color = '#6b7a99';
+                aBtn.style.boxShadow = 'none';
+                hint.style.display = 'none';
+                lbl.textContent = 'Business Email';
+                inp.placeholder = 'you@yourcompany.com';
+            } else {
+                aBtn.style.background = '#fff'; aBtn.style.color = '#1a2340';
+                aBtn.style.boxShadow = '0 2px 8px rgba(26,35,64,.10)';
+                cBtn.style.background = 'transparent'; cBtn.style.color = '#6b7a99';
+                cBtn.style.boxShadow = 'none';
+                hint.style.display = 'flex';
+                lbl.textContent = 'Admin Email';
+                inp.placeholder = 'admin@printpro.com';
+            }
+            mClearErrors();
+        }
+
+        /* ── TOGGLE PASSWORD ── */
+        function mTogglePass() {
+            const i = document.getElementById('mPass');
+            const icon = document.getElementById('mEyeIcon');
+            i.type = i.type === 'password' ? 'text' : 'password';
+            icon.className = i.type === 'password' ? 'bi bi-eye' : 'bi bi-eye-slash';
+        }
+
+        /* ── CLEAR ERRORS ── */
+        function mClearErrors() {
+            document.getElementById('mAlert').style.display = 'none';
+            document.getElementById('mEmailErr').style.display = 'none';
+            document.getElementById('mPassErr').style.display = 'none';
+        }
+
+        /* ── SHOW ALERT ── */
+        function mShowAlert(msg) {
+            document.getElementById('mAlertMsg').textContent = msg;
+            document.getElementById('mAlert').style.display = 'flex';
+        }
+
+        /* ── HELPERS ── */
+        const isValidEmail = e => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+        const isBusinessEmail = e => !FREE_DOMAINS.includes((e.split('@')[1] || '').toLowerCase());
+
+        /* ── LOGIN HANDLER ── */
+        function mHandleLogin(e) {
+            e.preventDefault();
+            mClearErrors();
+
+            const email = document.getElementById('mEmail').value.trim().toLowerCase();
+            const pass  = document.getElementById('mPass').value;
+            const btn   = document.getElementById('mLoginBtn');
+
+            if (!isValidEmail(email)) {
+                document.getElementById('mEmailErrMsg').textContent = 'Please enter a valid email address.';
+                document.getElementById('mEmailErr').style.display = 'block';
+                return;
+            }
+            if (pass.length < 6) {
+                document.getElementById('mPassErr').style.display = 'block';
+                return;
+            }
+
+            // Loading state
+            btn.style.opacity = '.7'; btn.style.pointerEvents = 'none';
+            document.getElementById('mBtnContent').style.display = 'none';
+            document.getElementById('mSpinner').style.display = 'block';
+
+            setTimeout(() => {
+                btn.style.opacity = '1'; btn.style.pointerEvents = '';
+                document.getElementById('mBtnContent').style.display = 'flex';
+                document.getElementById('mSpinner').style.display = 'none';
+
+                if (mCurrentTab === 'admin') {
+                    if (!ADMIN_EMAILS.includes(email)) {
+                        document.getElementById('mEmailErrMsg').textContent = 'This email is not approved for admin access.';
+                        document.getElementById('mEmailErr').style.display = 'block';
+                        mShowAlert('Access denied. This email is not registered as an admin account.');
+                        return;
+                    }
+                    if (pass !== 'admin123') {
+                        mShowAlert('Incorrect password. Please try again.');
+                        return;
+                    }
+                    sessionStorage.setItem('pp_user', JSON.stringify({ email, role:'admin', name:'Admin', loginTime:Date.now() }));
+                    window.location.href = 'Admin Dashboard.html';
+
+                } else {
+                    if (!isBusinessEmail(email)) {
+                        document.getElementById('mEmailErrMsg').textContent = 'Please use your business email (not Gmail, Yahoo, etc.).';
+                        document.getElementById('mEmailErr').style.display = 'block';
+                        mShowAlert('A business email address is required for client access.');
+                        return;
+                    }
+                    const name = email.split('@')[0].replace(/[._]/g,' ').replace(/\b\w/g, c => c.toUpperCase());
+                    sessionStorage.setItem('pp_user', JSON.stringify({ email, role:'client', name, loginTime:Date.now() }));
+                    window.location.href = 'Client Dashboard.html';
+                }
+            }, 900);
+        }
+
+        /* ── AUTO-OPEN IF REDIRECTED FROM DASHBOARD ── */
+        if (window.location.hash === '#login') openLoginModal('client');
+        function handleLogoClick(e) {
+            const session = sessionStorage.getItem('pp_user');
+            if (session) {
+                e.preventDefault();
+                const user = JSON.parse(session);
+                if (user.role === 'admin') window.location.href = 'Admin Dashboard.html';
+                else window.location.href = 'Client Dashboard.html';
+            } else {
+                // Let the default href="#" behavior scroll to top
+            }
+        }
+    </script>
 </body>
 
 </html>

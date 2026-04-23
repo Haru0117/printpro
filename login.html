@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrintPro — Sign In</title>
+    <meta name="description" content="Sign in to your PrintPro account to manage print jobs, orders, and more.">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --navy: #1a2340;
+            --navy-mid: #2a3558;
+            --accent: #1d8cf8;
+            --accent2: #00c6ff;
+            --teal: #3ec6c6;
+            --border: #dde3f0;
+            --muted: #6b7a99;
+            --off-white: #f4f6fb;
+            --danger: #f5365c;
+            --success: #2dce89;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: #f0f2f8;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── BACKGROUND DECORATION ── */
+        .bg-deco {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-deco::before {
+            content: '';
+            position: absolute;
+            top: -200px;
+            left: -200px;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(29,140,248,.12) 0%, transparent 70%);
+        }
+
+        .bg-deco::after {
+            content: '';
+            position: absolute;
+            bottom: -200px;
+            right: -150px;
+            width: 700px;
+            height: 700px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(62,198,198,.10) 0%, transparent 70%);
+        }
+
+        /* ── LAYOUT ── */
+        .login-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-container {
+            display: flex;
+            width: 100%;
+            max-width: 920px;
+            min-height: 560px;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 32px 80px rgba(26,35,64,.18), 0 4px 20px rgba(26,35,64,.08);
+        }
+
+        /* ── LEFT PANEL ── */
+        .left-panel {
+            flex: 1;
+            background: linear-gradient(160deg, #1a2340 0%, #0d1b3e 50%, #0f2057 100%);
+            padding: 50px 44px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .left-panel::before {
+            content: '';
+            position: absolute;
+            top: -80px;
+            right: -80px;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(29,140,248,.15) 0%, transparent 70%);
+        }
+
+        .left-panel::after {
+            content: '';
+            position: absolute;
+            bottom: -60px;
+            left: -60px;
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(62,198,198,.12) 0%, transparent 70%);
+        }
+
+        .left-brand {
+            position: relative;
+            z-index: 1;
+        }
+
+        .left-brand img {
+            height: 44px;
+            width: auto;
+            object-fit: contain;
+            filter: brightness(0) invert(1);
+        }
+
+        .left-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .left-title {
+            font-family: 'Sora', sans-serif;
+            font-size: 1.65rem;
+            font-weight: 800;
+            color: #fff;
+            line-height: 1.25;
+            margin-bottom: 14px;
+        }
+
+        .left-title span {
+            color: var(--accent2);
+        }
+
+        .left-desc {
+            font-size: .9rem;
+            color: rgba(255,255,255,.55);
+            line-height: 1.7;
+            margin-bottom: 28px;
+        }
+
+        .left-feature {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .left-feature-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent2);
+            flex-shrink: 0;
+        }
+
+        .left-feature span {
+            font-size: .82rem;
+            color: rgba(255,255,255,.65);
+        }
+
+        .left-footer {
+            position: relative;
+            z-index: 1;
+            font-size: .75rem;
+            color: rgba(255,255,255,.3);
+        }
+
+        /* ── RIGHT PANEL ── */
+        .right-panel {
+            width: 420px;
+            flex-shrink: 0;
+            background: #fff;
+            padding: 50px 44px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .form-heading {
+            font-family: 'Sora', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--navy);
+            margin-bottom: 6px;
+        }
+
+        .form-subheading {
+            font-size: .84rem;
+            color: var(--muted);
+            margin-bottom: 32px;
+        }
+
+        /* ── PORTAL TABS ── */
+        .portal-tabs {
+            display: flex;
+            background: var(--off-white);
+            border-radius: 10px;
+            padding: 4px;
+            margin-bottom: 28px;
+            gap: 4px;
+        }
+
+        .portal-tab {
+            flex: 1;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: none;
+            background: transparent;
+            font-family: 'DM Sans', sans-serif;
+            font-size: .82rem;
+            font-weight: 600;
+            color: var(--muted);
+            cursor: pointer;
+            transition: all .2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .portal-tab.active {
+            background: #fff;
+            color: var(--navy);
+            box-shadow: 0 2px 8px rgba(26,35,64,.10);
+        }
+
+        .portal-tab i { font-size: .9rem; }
+
+        /* ── FORM FIELDS ── */
+        .field-group {
+            margin-bottom: 18px;
+        }
+
+        .field-label {
+            display: block;
+            font-size: .78rem;
+            font-weight: 600;
+            color: var(--navy);
+            margin-bottom: 6px;
+            letter-spacing: .02em;
+        }
+
+        .field-wrap {
+            position: relative;
+        }
+
+        .field-icon {
+            position: absolute;
+            left: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+            font-size: .95rem;
+            pointer-events: none;
+        }
+
+        .field-input {
+            width: 100%;
+            padding: 11px 14px 11px 38px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: .9rem;
+            color: var(--navy);
+            background: #fff;
+            transition: border-color .2s, box-shadow .2s;
+            outline: none;
+        }
+
+        .field-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(29,140,248,.12);
+        }
+
+        .field-input.error {
+            border-color: var(--danger);
+            box-shadow: 0 0 0 3px rgba(245,54,92,.10);
+        }
+
+        .field-input.success {
+            border-color: var(--success);
+        }
+
+        .toggle-pass {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--muted);
+            font-size: .95rem;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .toggle-pass:hover { color: var(--navy); }
+
+        /* ── ERROR MESSAGE ── */
+        .error-msg {
+            display: none;
+            font-size: .76rem;
+            color: var(--danger);
+            margin-top: 5px;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .error-msg.show {
+            display: flex;
+        }
+
+        /* ── ALERT BOX ── */
+        .alert-box {
+            display: none;
+            padding: 11px 14px;
+            border-radius: 10px;
+            font-size: .82rem;
+            margin-bottom: 18px;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .alert-box.show { display: flex; }
+        .alert-box.danger { background: rgba(245,54,92,.08); color: var(--danger); border: 1px solid rgba(245,54,92,.2); }
+        .alert-box.success { background: rgba(45,206,137,.08); color: #1aae6f; border: 1px solid rgba(45,206,137,.2); }
+
+        /* ── SUBMIT BUTTON ── */
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: .95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: opacity .2s, transform .15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 6px;
+        }
+
+        .btn-login:hover { opacity: .9; transform: translateY(-1px); }
+        .btn-login:active { transform: translateY(0); }
+
+        .btn-login.loading { opacity: .7; pointer-events: none; }
+
+        /* ── DIVIDER ── */
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 20px 0;
+            font-size: .75rem;
+            color: var(--muted);
+        }
+
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        /* ── FOOTER LINK ── */
+        .form-footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: .82rem;
+            color: var(--muted);
+        }
+
+        .form-footer a {
+            color: var(--accent);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .form-footer a:hover { text-decoration: underline; }
+
+        /* ── ADMIN HINT ── */
+        .admin-hint {
+            background: rgba(124,77,255,.07);
+            border: 1px solid rgba(124,77,255,.18);
+            border-radius: 10px;
+            padding: 10px 13px;
+            font-size: .77rem;
+            color: #5e35b1;
+            display: none;
+            align-items: flex-start;
+            gap: 8px;
+            margin-bottom: 18px;
+        }
+
+        .admin-hint.show { display: flex; }
+        .admin-hint i { margin-top: 1px; flex-shrink: 0; }
+
+        /* ── SPINNER ── */
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,.4);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin .6s linear infinite;
+            display: none;
+        }
+
+        .btn-login.loading .spinner { display: block; }
+        .btn-login.loading .btn-text { display: none; }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── BACK LINK ── */
+        .back-link {
+            text-align: center;
+            margin-top: 16px;
+        }
+
+        .back-link a {
+            font-size: .8rem;
+            color: var(--muted);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: color .2s;
+        }
+
+        .back-link a:hover { color: var(--navy); }
+
+        @media (max-width: 700px) {
+            .login-container { flex-direction: column; max-width: 440px; }
+            .left-panel { display: none; }
+            .right-panel { width: 100%; padding: 40px 28px; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="bg-deco"></div>
+
+    <div class="login-wrapper">
+        <div class="login-container">
+
+            <!-- ── LEFT PANEL ── -->
+            <div class="left-panel">
+                <div class="left-brand">
+                    <img src="assets/img/logo.png" alt="PrintPro">
+                </div>
+
+                <div class="left-content">
+                    <h1 class="left-title">
+                        Professional print<br>management for<br><span>modern businesses.</span>
+                    </h1>
+                    <p class="left-desc">
+                        Access your PrintPro portal to manage orders, track deliveries, and run your print operations seamlessly.
+                    </p>
+                    <div class="left-feature">
+                        <div class="left-feature-dot"></div>
+                        <span>Real-time job tracking & status updates</span>
+                    </div>
+                    <div class="left-feature">
+                        <div class="left-feature-dot"></div>
+                        <span>Automated pricing & order management</span>
+                    </div>
+                    <div class="left-feature">
+                        <div class="left-feature-dot"></div>
+                        <span>Enterprise-grade security & access control</span>
+                    </div>
+                </div>
+
+                <div class="left-footer">
+                    &copy; 2026 PrintPro. All rights reserved.
+                </div>
+            </div>
+
+            <!-- ── RIGHT PANEL ── -->
+            <div class="right-panel">
+                <div class="form-heading">Welcome back</div>
+                <div class="form-subheading">Sign in to continue to your portal</div>
+
+                <!-- Portal Toggle -->
+                <div class="portal-tabs">
+                    <button class="portal-tab active" id="tab-client" onclick="switchTab('client')">
+                        <i class="bi bi-person-fill"></i> Client Portal
+                    </button>
+                    <button class="portal-tab" id="tab-admin" onclick="switchTab('admin')">
+                        <i class="bi bi-shield-fill"></i> Admin Portal
+                    </button>
+                </div>
+
+                <!-- Admin hint -->
+                <div class="admin-hint" id="adminHint">
+                    <i class="bi bi-info-circle-fill"></i>
+                    <span>Admin access requires an approved admin email address. Contact your system administrator if you need access.</span>
+                </div>
+
+                <!-- Alert -->
+                <div class="alert-box danger" id="alertBox">
+                    <i class="bi bi-exclamation-circle-fill"></i>
+                    <span id="alertMsg"></span>
+                </div>
+
+                <!-- Form -->
+                <form id="loginForm" onsubmit="handleLogin(event)" novalidate>
+
+                    <!-- Email -->
+                    <div class="field-group">
+                        <label class="field-label" for="emailInput">
+                            <span id="emailLabel">Business Email</span>
+                        </label>
+                        <div class="field-wrap">
+                            <i class="bi bi-envelope field-icon"></i>
+                            <input type="email" id="emailInput" class="field-input"
+                                placeholder="you@yourcompany.com" autocomplete="email" required>
+                        </div>
+                        <div class="error-msg" id="emailError">
+                            <i class="bi bi-exclamation-circle"></i>
+                            <span id="emailErrorMsg">Please enter a valid email address.</span>
+                        </div>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="field-group">
+                        <label class="field-label" for="passInput">Password</label>
+                        <div class="field-wrap">
+                            <i class="bi bi-lock field-icon"></i>
+                            <input type="password" id="passInput" class="field-input"
+                                placeholder="Enter your password" autocomplete="current-password" required>
+                            <button type="button" class="toggle-pass" onclick="togglePassword()" id="toggleBtn">
+                                <i class="bi bi-eye" id="eyeIcon"></i>
+                            </button>
+                        </div>
+                        <div class="error-msg" id="passError">
+                            <i class="bi bi-exclamation-circle"></i>
+                            <span>Password must be at least 6 characters.</span>
+                        </div>
+                    </div>
+
+                    <!-- Remember / Forgot -->
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+                        <label style="display:flex;align-items:center;gap:7px;font-size:.82rem;color:var(--muted);cursor:pointer;">
+                            <input type="checkbox" id="rememberMe" style="accent-color:var(--accent);width:14px;height:14px;">
+                            Remember me
+                        </label>
+                        <a href="#" style="font-size:.82rem;color:var(--accent);text-decoration:none;font-weight:600;">Forgot password?</a>
+                    </div>
+
+                    <button type="submit" class="btn-login" id="loginBtn">
+                        <div class="spinner"></div>
+                        <span class="btn-text">
+                            <i class="bi bi-box-arrow-in-right"></i> Sign In
+                        </span>
+                    </button>
+                </form>
+
+                <div class="back-link">
+                    <a href="homepage.html"><i class="bi bi-arrow-left"></i> Back to Homepage</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        /* ─────────────────────────────────────────────
+           CONFIGURATION
+           Add approved admin emails below.
+        ───────────────────────────────────────────── */
+        const ADMIN_EMAILS = [
+            'admin@printpro.com',
+            'superadmin@printpro.com',
+            'manager@printpro.com',
+            'admin@printpro.ph',
+        ];
+
+        // Free/personal email domains that are NOT considered business emails
+        const FREE_EMAIL_DOMAINS = [
+            'gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com',
+            'icloud.com', 'aol.com', 'live.com', 'msn.com',
+            'mail.com', 'protonmail.com', 'ymail.com'
+        ];
+
+        let currentTab = 'client'; // 'client' | 'admin'
+
+        /* ── TAB SWITCHING ── */
+        function switchTab(tab) {
+            currentTab = tab;
+            document.getElementById('tab-client').classList.toggle('active', tab === 'client');
+            document.getElementById('tab-admin').classList.toggle('active', tab === 'admin');
+            document.getElementById('adminHint').classList.toggle('show', tab === 'admin');
+            document.getElementById('emailLabel').textContent = tab === 'admin' ? 'Admin Email' : 'Business Email';
+            document.getElementById('emailInput').placeholder = tab === 'admin'
+                ? 'admin@printpro.com'
+                : 'you@yourcompany.com';
+            clearErrors();
+        }
+
+        /* ── PASSWORD TOGGLE ── */
+        function togglePassword() {
+            const input = document.getElementById('passInput');
+            const icon = document.getElementById('eyeIcon');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'bi bi-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'bi bi-eye';
+            }
+        }
+
+        /* ── CLEAR ERRORS ── */
+        function clearErrors() {
+            document.getElementById('alertBox').classList.remove('show');
+            document.getElementById('emailError').classList.remove('show');
+            document.getElementById('passError').classList.remove('show');
+            document.getElementById('emailInput').classList.remove('error');
+            document.getElementById('passInput').classList.remove('error');
+        }
+
+        /* ── SHOW ALERT ── */
+        function showAlert(msg) {
+            document.getElementById('alertMsg').textContent = msg;
+            document.getElementById('alertBox').classList.add('show');
+        }
+
+        /* ── VALIDATE BUSINESS EMAIL ── */
+        function isBusinessEmail(email) {
+            const domain = email.split('@')[1]?.toLowerCase();
+            if (!domain) return false;
+            return !FREE_EMAIL_DOMAINS.includes(domain);
+        }
+
+        /* ── VALIDATE EMAIL FORMAT ── */
+        function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        /* ── MAIN LOGIN HANDLER ── */
+        function handleLogin(e) {
+            e.preventDefault();
+            clearErrors();
+
+            const email = document.getElementById('emailInput').value.trim().toLowerCase();
+            const password = document.getElementById('passInput').value;
+            const btn = document.getElementById('loginBtn');
+
+            // Validate email
+            if (!isValidEmail(email)) {
+                document.getElementById('emailInput').classList.add('error');
+                document.getElementById('emailErrorMsg').textContent = 'Please enter a valid email address.';
+                document.getElementById('emailError').classList.add('show');
+                return;
+            }
+
+            // Validate password
+            if (password.length < 6) {
+                document.getElementById('passInput').classList.add('error');
+                document.getElementById('passError').classList.add('show');
+                return;
+            }
+
+            // Show loading
+            btn.classList.add('loading');
+
+            // Simulate auth delay
+            setTimeout(() => {
+                btn.classList.remove('loading');
+
+                if (currentTab === 'admin') {
+                    // Admin: must be in approved list
+                    if (!ADMIN_EMAILS.includes(email)) {
+                        document.getElementById('emailInput').classList.add('error');
+                        document.getElementById('emailErrorMsg').textContent = 'This email is not approved for admin access.';
+                        document.getElementById('emailError').classList.add('show');
+                        showAlert('Access denied. This email is not registered as an admin account.');
+                        return;
+                    }
+                    // Simulate password check (all approved admins use "admin123" in demo)
+                    if (password !== 'admin123') {
+                        document.getElementById('passInput').classList.add('error');
+                        showAlert('Incorrect password. Please try again.');
+                        return;
+                    }
+                    // Grant admin session
+                    sessionStorage.setItem('pp_user', JSON.stringify({
+                        email,
+                        role: 'admin',
+                        name: 'Admin',
+                        loginTime: Date.now()
+                    }));
+                    window.location.href = 'Admin Dashboard.html';
+
+                } else {
+                    // Client: must be a business email
+                    if (!isBusinessEmail(email)) {
+                        document.getElementById('emailInput').classList.add('error');
+                        document.getElementById('emailErrorMsg').textContent = 'Please use your business email address (not Gmail, Yahoo, etc.).';
+                        document.getElementById('emailError').classList.add('show');
+                        showAlert('A business email address is required for client access.');
+                        return;
+                    }
+                    // Simulate password check (demo: any password ≥6 chars works)
+                    // Grant client session
+                    const name = email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+                    sessionStorage.setItem('pp_user', JSON.stringify({
+                        email,
+                        role: 'client',
+                        name,
+                        loginTime: Date.now()
+                    }));
+                    window.location.href = 'Client Dashboard.html';
+                }
+            }, 900);
+        }
+
+        /* ── CHECK IF ALREADY LOGGED IN ── */
+        (function() {
+            const session = sessionStorage.getItem('pp_user');
+            if (session) {
+                const user = JSON.parse(session);
+                if (user.role === 'admin') window.location.href = 'Admin Dashboard.html';
+                else window.location.href = 'Client Dashboard.html';
+            }
+        })();
+    </script>
+</body>
+
+</html>
