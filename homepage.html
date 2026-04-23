@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrintPro — Engineers for Efficiency</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --navy: #1a2340;
+            --navy-mid: #2a3558;
+            --accent: #4f7ef7;
+            --accent-light: #7ba3ff;
+            --teal: #3ec6c6;
+            --off-white: #f4f6fb;
+            --muted: #6b7a99;
+            --border: #dde3f0;
+            --slate: #8a96b0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            color: var(--navy);
+            overflow-x: hidden;
+        }
+
+        /* ── UTILITIES ── */
+        .font-sora {
+            font-family: 'Sora', sans-serif;
+        }
+
+        .bg-navy {
+            background-color: var(--navy) !important;
+        }
+
+        .bg-navy-mid {
+            background-color: var(--navy-mid) !important;
+        }
+
+        .bg-off-white {
+            background-color: var(--off-white) !important;
+        }
+
+        .text-accent {
+            color: var(--accent) !important;
+        }
+
+        .text-accent-light {
+            color: var(--accent-light) !important;
+        }
+
+        .text-muted-pp {
+            color: var(--muted) !important;
+        }
+
+        .text-slate {
+            color: var(--slate) !important;
+        }
+
+        /* ── NAVBAR ── */
+        .navbar {
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 2px 16px rgba(26, 35, 64, .06);
+        }
+
+        .navbar-brand {
+            font-family: 'Sora', sans-serif;
+            font-weight: 700;
+            font-size: 1.15rem;
+            color: var(--navy);
+        }
+
+        .logo-icon {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, var(--accent), var(--teal));
+            border-radius: 7px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-link {
+            color: var(--muted) !important;
+            font-weight: 500;
+            font-size: .9rem;
+            transition: color .2s;
+        }
+
+        .nav-link:hover {
+            color: var(--navy) !important;
+        }
+
+        /* ── BUTTONS ── */
+        .btn-accent {
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            font-weight: 600;
+            transition: background .2s, transform .15s;
+        }
+
+        .btn-accent:hover {
+            background: #3a6be8;
+            color: #fff;
+            transform: translateY(-1px);
+        }
+
+        .btn-outline-navy {
+            border: 1px solid var(--border);
+            color: var(--navy);
+            background: transparent;
+            font-weight: 500;
+            transition: background .2s;
+        }
+
+        .btn-outline-navy:hover {
+            background: var(--off-white);
+            color: var(--navy);
+        }
+
+        /* ── EYEBROW ── */
+        .eyebrow {
+            display: inline-block;
+            font-size: .72rem;
+            font-weight: 700;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: var(--accent);
+            background: rgba(79, 126, 247, .1);
+            padding: 4px 14px;
+            border-radius: 20px;
+        }
+
+        /* ── SECTION TITLE ── */
+        .section-title {
+            font-family: 'Sora', sans-serif;
+            font-size: clamp(1.6rem, 3vw, 2rem);
+            font-weight: 800;
+        }
+
+        /* ── HERO ── */
+        #hero {
+            position: relative;
+            overflow: hidden;
+        }
+
+        #hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse 60% 70% at 80% 50%, rgba(79, 126, 247, .09) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-title {
+            font-family: 'Sora', sans-serif;
+            font-size: clamp(2rem, 4vw, 2.8rem);
+            font-weight: 800;
+            line-height: 1.15;
+        }
+
+        /* ── DASHBOARD MOCKUP ── */
+        .dashboard-mockup {
+            border-radius: 16px;
+            box-shadow: 0 24px 80px rgba(26, 35, 64, .18), 0 4px 16px rgba(26, 35, 64, .08);
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .mockup-bar {
+            background: var(--navy);
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .mockup-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .2);
+        }
+
+        .stat-card {
+            background: var(--off-white);
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            padding: 14px;
+        }
+
+        .stat-num {
+            font-family: 'Sora', sans-serif;
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        .stat-label {
+            font-size: .7rem;
+            color: var(--muted);
+        }
+
+        .stat-up {
+            font-size: .7rem;
+            color: #22c55e;
+            font-weight: 600;
+        }
+
+        .mockup-chart {
+            background: var(--off-white);
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            height: 100px;
+            display: flex;
+            align-items: flex-end;
+            gap: 6px;
+            padding: 10px;
+        }
+
+        .chart-bar {
+            flex: 1;
+            border-radius: 4px 4px 0 0;
+            background: linear-gradient(180deg, var(--accent) 0%, var(--accent-light) 100%);
+            transition: opacity .2s;
+        }
+
+        .chart-bar:hover {
+            opacity: .75;
+        }
+
+        /* ── ABOUT ── */
+        .about-logo-big {
+            font-family: 'Sora', sans-serif;
+            font-weight: 800;
+            font-size: 1.9rem;
+            color: #fff;
+        }
+
+        .logo-icon-big {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--accent), var(--teal));
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ── FEATURE CARDS ── */
+        .feature-card {
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            transition: box-shadow .2s, transform .2s;
+        }
+
+        .feature-card:hover {
+            box-shadow: 0 12px 40px rgba(26, 35, 64, .1);
+            transform: translateY(-4px);
+        }
+
+        .feature-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 10px;
+            background: rgba(79, 126, 247, .1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            color: var(--accent);
+        }
+
+        /* ── PRICING ── */
+        .plan-card {
+            border: 1px solid rgba(255, 255, 255, .12);
+            border-radius: 16px;
+            background: rgba(255, 255, 255, .05);
+            transition: background .2s, border-color .2s;
+            position: relative;
+        }
+
+        .plan-card:hover {
+            background: rgba(255, 255, 255, .09);
+            border-color: rgba(255, 255, 255, .22);
+        }
+
+        .plan-card.featured {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .plan-badge {
+            position: absolute;
+            top: -13px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--teal);
+            color: #fff;
+            font-size: .68rem;
+            font-weight: 700;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            padding: 4px 14px;
+            border-radius: 20px;
+            white-space: nowrap;
+        }
+
+        .plan-name {
+            font-size: .78rem;
+            font-weight: 700;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, .65);
+        }
+
+        .plan-price {
+            font-family: 'Sora', sans-serif;
+            font-size: 2.4rem;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .plan-price small {
+            font-size: 1rem;
+            font-weight: 400;
+            opacity: .55;
+        }
+
+        .plan-desc {
+            font-size: .82rem;
+            color: rgba(255, 255, 255, .5);
+            line-height: 1.55;
+        }
+
+        .plan-features {
+            list-style: none;
+            padding: 0;
+        }
+
+        .plan-features li {
+            font-size: .85rem;
+            color: rgba(255, 255, 255, .82);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 0;
+        }
+
+        .plan-features li i {
+            color: var(--teal);
+        }
+
+        .plan-card.featured .plan-features li i {
+            color: #fff;
+        }
+
+        .btn-plan {
+            width: 100%;
+            padding: 10px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: .9rem;
+            border: 1px solid rgba(255, 255, 255, .3);
+            background: rgba(255, 255, 255, .1);
+            color: #fff;
+            cursor: pointer;
+            transition: background .2s;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .btn-plan:hover {
+            background: rgba(255, 255, 255, .2);
+        }
+
+        .plan-card.featured .btn-plan {
+            background: #fff;
+            color: var(--accent);
+            border-color: #fff;
+        }
+
+        .plan-card.featured .btn-plan:hover {
+            background: var(--off-white);
+        }
+
+        /* ── FOOTER ── */
+        .footer-col h5 {
+            font-family: 'Sora', sans-serif;
+            font-size: .875rem;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        .footer-col ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-col ul li a {
+            font-size: .875rem;
+            color: var(--muted);
+            text-decoration: none;
+            transition: color .2s;
+        }
+
+        .footer-col ul li a:hover {
+            color: var(--navy);
+        }
+
+        .social-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: var(--navy);
+            color: #fff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-size: .85rem;
+            transition: background .2s;
+        }
+
+        .social-btn:hover {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .footer-bottom {
+            font-size: .8rem;
+            color: var(--slate);
+        }
+
+        .footer-bottom a {
+            color: var(--slate);
+            text-decoration: none;
+        }
+
+        .footer-bottom a:hover {
+            color: var(--navy);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ════════════════════════════
+     NAVBAR
+════════════════════════════ -->
+    <nav class="navbar navbar-expand-lg bg-white sticky-top py-2">
+        <div class="container-xl">
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <img src="assets/img/logo.png" alt="PrintPro" style="height:36px;width:auto;object-fit:contain;">
+            </a>
+
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
+                aria-controls="mainNav" aria-expanded="false">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav mx-auto gap-lg-1">
+                    <li class="nav-item"><a class="nav-link px-3" href="#hero">Home</a></li>
+                    <li class="nav-item"><a class="nav-link px-3" href="#about">About Us</a></li>
+                    <li class="nav-item"><a class="nav-link px-3" href="#features">Services</a></li>
+                    <li class="nav-item"><a class="nav-link px-3" href="#pricing">Pricing</a></li>
+                </ul>
+                <div class="d-flex gap-2 mt-3 mt-lg-0">
+                    <button class="btn btn-outline-navy rounded-3 px-3 py-2">Log In</button>
+                    <button class="btn btn-accent rounded-3 px-3 py-2">Get Started</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- ════════════════════════════
+     HERO
+════════════════════════════ -->
+    <section id="hero" class="bg-off-white py-5">
+        <div class="container-xl py-lg-5">
+            <div class="row align-items-center g-5">
+
+                <!-- Copy -->
+                <div class="col-lg-6">
+                    <span class="eyebrow mb-3 d-inline-block">Professional Print Management</span>
+                    <h1 class="hero-title text-navy mb-4" style="color:var(--navy);">
+                        Turn Your Ideas into Professional Prints with
+                        <span class="text-accent">PrintPro.</span>
+                    </h1>
+                    <p class="text-muted-pp mb-4" style="max-width:440px;line-height:1.75;">
+                        Bring your brand to life with high-quality, seamless printing solutions designed for businesses.
+                        At PrintPro, we make it easy to order and get the best results the printing industry can
+                        deliver.
+                    </p>
+                    <div class="d-flex flex-wrap gap-3 mb-3">
+                        <button class="btn btn-accent btn-lg rounded-3 px-4">Get Started →</button>
+                        <button class="btn btn-outline-navy btn-lg rounded-3 px-4">Watch Demo</button>
+                    </div>
+                    <p class="text-slate small mb-0">Trusted by 800+ print-ready businesses</p>
+                </div>
+
+                <!-- Dashboard mockup -->
+                <div class="col-lg-6 d-flex justify-content-center">
+                    <div class="dashboard-mockup bg-white w-100" style="max-width:460px;">
+                        <div class="mockup-bar">
+                            <div class="mockup-dot"></div>
+                            <div class="mockup-dot"></div>
+                            <div class="mockup-dot"></div>
+                        </div>
+                        <div class="p-3">
+                            <div class="row g-2 mb-3">
+                                <div class="col-4">
+                                    <div class="stat-card">
+                                        <div class="stat-num">2,847</div>
+                                        <div class="stat-label">Jobs Today</div>
+                                        <div class="stat-up">↑ 12%</div>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="stat-card">
+                                        <div class="stat-num">99.2%</div>
+                                        <div class="stat-label">On-Time Rate</div>
+                                        <div class="stat-up">↑ 0.4%</div>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="stat-card">
+                                        <div class="stat-num">₱236k</div>
+                                        <div class="stat-label">Revenue</div>
+                                        <div class="stat-up">↑ 8%</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mockup-chart">
+                                <div class="chart-bar" style="height:40%"></div>
+                                <div class="chart-bar" style="height:60%"></div>
+                                <div class="chart-bar" style="height:50%"></div>
+                                <div class="chart-bar" style="height:80%"></div>
+                                <div class="chart-bar" style="height:65%"></div>
+                                <div class="chart-bar" style="height:90%"></div>
+                                <div class="chart-bar" style="height:75%"></div>
+                                <div class="chart-bar" style="height:100%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ════════════════════════════
+     ABOUT
+════════════════════════════ -->
+    <section id="about" class="bg-navy-mid py-5">
+        <div class="container-xl py-lg-5">
+            <div class="row align-items-center g-5">
+
+                <!-- Brand -->
+                <div class="col-lg-5">
+                    <div class="mb-3">
+                        <img src="assets/img/logo.png" alt="PrintPro" style="height:48px;width:auto;object-fit:contain;filter:brightness(0) invert(1);">
+                    </div>
+                    <p style="color:rgba(255,255,255,.5);font-size:.9rem;line-height:1.75;max-width:300px;margin:0;">
+                        Professional print management for modern enterprises. Scalable, secure, and built to grow with
+                        you.
+                    </p>
+                </div>
+
+                <!-- Description -->
+                <div class="col-lg-7 text-lg-end">
+                    <h2 class="section-title text-white mb-4">
+                        About <span class="text-accent-light">PrintPro</span>
+                    </h2>
+                    <p style="color:rgba(255,255,255,.65);line-height:1.8;" class="mb-3">
+                        PrintPro provides smart, high-quality printing solutions for modern businesses. With a focus on
+                        <strong class="text-white">efficiency and precision</strong>, our platform simplifies print jobs
+                        across your entire company — from a single person to thousands, all in one seamless system.
+                    </p>
+                    <p style="color:rgba(255,255,255,.65);line-height:1.8;" class="mb-3">
+                        Driven by innovation, we combine advanced printing technology with an intuitive ordering
+                        experience.
+                        Our platform supports high-resolution file uploads, production-grade print quality, and
+                        automates
+                        real-time pricing, shipping status, order recurrence, and visual edits.
+                    </p>
+                    <p style="color:rgba(255,255,255,.65);line-height:1.8;" class="mb-0">
+                        With PrintPro's range, we offer unlimited printing and a business-first experience delivering
+                        <strong class="text-white">reliability, speed, and professional results</strong> — from small
+                        batch orders to high-volume production.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ════════════════════════════
+     FEATURES
+════════════════════════════ -->
+    <section id="features" class="bg-off-white py-5">
+        <div class="container-xl py-lg-5">
+
+            <div class="text-center mb-5">
+                <span class="eyebrow mb-3 d-inline-block">Why PrintPro</span>
+                <h2 class="section-title mb-3" style="color:var(--navy);">
+                    Built for the demanding needs of modern print shops.
+                </h2>
+                <p class="text-muted-pp mx-auto mb-0" style="max-width:540px;line-height:1.75;">
+                    Stop juggling spreadsheets and legacy software. PrintPro brings everything into a single,
+                    unified interface designed for high-throughput operations.
+                </p>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card bg-white p-4 h-100">
+                        <div class="feature-icon mb-3"><i class="bi bi-clock-history"></i></div>
+                        <h5 class="font-sora fw-bold mb-2" style="color:var(--navy);">Real-time Tracking</h5>
+                        <p class="text-muted-pp small mb-0">Monitor every print job from submission to delivery with
+                            live status updates, automated alerts, and full audit trails for every order.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card bg-white p-4 h-100">
+                        <div class="feature-icon mb-3"><i class="bi bi-lightning-charge"></i></div>
+                        <h5 class="font-sora fw-bold mb-2" style="color:var(--navy);">Fast Delivery</h5>
+                        <p class="text-muted-pp small mb-0">Integrated shipping and courier management that ensures
+                            prints reach customers on time. Real-time ETAs and route optimization built in.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card bg-white p-4 h-100">
+                        <div class="feature-icon mb-3"><i class="bi bi-shield-lock"></i></div>
+                        <h5 class="font-sora fw-bold mb-2" style="color:var(--navy);">Enterprise Security</h5>
+                        <p class="text-muted-pp small mb-0">Bank-grade encryption for all print assets. Role-based
+                            access controls, SSO support, and full compliance with industry data standards.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card bg-white p-4 h-100">
+                        <div class="feature-icon mb-3"><i class="bi bi-bar-chart-line"></i></div>
+                        <h5 class="font-sora fw-bold mb-2" style="color:var(--navy);">Advanced Analytics</h5>
+                        <p class="text-muted-pp small mb-0">Comprehensive dashboards revealing production efficiency,
+                            waste reduction opportunities, cost-per-job breakdowns, and revenue forecasting.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card bg-white p-4 h-100">
+                        <div class="feature-icon mb-3"><i class="bi bi-globe2"></i></div>
+                        <h5 class="font-sora fw-bold mb-2" style="color:var(--navy);">Global Fulfillment</h5>
+                        <p class="text-muted-pp small mb-0">Connect with a worldwide network of print partners and
+                            fulfillment centers. Scale globally without managing your own print infrastructure.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card bg-white p-4 h-100">
+                        <div class="feature-icon mb-3"><i class="bi bi-patch-check"></i></div>
+                        <h5 class="font-sora fw-bold mb-2" style="color:var(--navy);">Quality Work</h5>
+                        <p class="text-muted-pp small mb-0">AI-powered pre-flight checks, color profile management,
+                            resolution validation, and automated proofing so every job ships print-perfect.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- ════════════════════════════
+     PRICING
+════════════════════════════ -->
+    <section id="pricing" class="bg-navy py-5">
+        <div class="container-xl py-lg-5">
+
+            <div class="text-center mb-5">
+                <span class="eyebrow mb-3 d-inline-block"
+                    style="color:var(--accent-light);background:rgba(123,163,255,.12);">Simple Pricing</span>
+                <h2 class="section-title text-white mb-3">Choose the plan that fits your shop.</h2>
+                <p class="mx-auto mb-0" style="color:rgba(255,255,255,.5);max-width:460px;line-height:1.75;">
+                    No hidden fees. Cancel any time. Start free and upgrade when your volume demands it.
+                </p>
+            </div>
+
+            <div class="row g-4 justify-content-center mb-4">
+
+                <!-- Starter -->
+                <div class="col-md-4">
+                    <div class="plan-card p-4 h-100 d-flex flex-column">
+                        <div class="plan-name mb-2">Starter</div>
+                        <div class="plan-price mb-1">₱999<small>/mo</small></div>
+                        <p class="plan-desc mb-4">Perfect for small print shops just getting started with digital order
+                            management.</p>
+                        <ul class="plan-features flex-grow-1 mb-4">
+                            <li><i class="bi bi-check-circle-fill"></i> Up to 200 jobs/month</li>
+                            <li><i class="bi bi-check-circle-fill"></i> Real-time tracking</li>
+                            <li><i class="bi bi-check-circle-fill"></i> Basic analytics</li>
+                            <li><i class="bi bi-check-circle-fill"></i> Email support</li>
+                        </ul>
+                        <button class="btn-plan">Get Started</button>
+                    </div>
+                </div>
+
+                <!-- Short Run (featured) -->
+                <div class="col-md-4">
+                    <div class="plan-card featured p-4 h-100 d-flex flex-column">
+                        <div class="plan-badge">Most Popular</div>
+                        <div class="plan-name mb-2">Short Run</div>
+                        <div class="plan-price mb-1">₱1899<small>/mo</small></div>
+                        <p class="plan-desc mb-4">Designed for growing teams managing multiple customers and high-volume
+                            daily orders.</p>
+                        <ul class="plan-features flex-grow-1 mb-4">
+                            <li><i class="bi bi-check-circle-fill"></i> Up to 2,000 jobs/month</li>
+                            <li><i class="bi bi-check-circle-fill"></i> Advanced analytics</li>
+                            <li><i class="bi bi-check-circle-fill"></i> Global fulfillment</li>
+                            <li><i class="bi bi-check-circle-fill"></i> Priority support</li>
+                            <li><i class="bi bi-check-circle-fill"></i> Enterprise security</li>
+                        </ul>
+                        <button class="btn-plan">Get Started</button>
+                    </div>
+                </div>
+
+                <!-- Premium+ -->
+                <div class="col-md-4">
+                    <div class="plan-card p-4 h-100 d-flex flex-column">
+                        <div class="plan-name mb-2">Premium+</div>
+                        <div class="plan-price mb-1">₱2199<small>/mo</small></div>
+                        <p class="plan-desc mb-4">For high-volume print operations with custom workflows and dedicated
+                            SLA guarantees.</p>
+                        <ul class="plan-features flex-grow-1 mb-4">
+                            <li><i class="bi bi-check-circle-fill"></i> Unlimited jobs</li>
+                            <li><i class="bi bi-check-circle-fill"></i> Custom integrations</li>
+                            <li><i class="bi bi-check-circle-fill"></i> Dedicated account manager</li>
+                            <li><i class="bi bi-check-circle-fill"></i> 99.99% uptime SLA</li>
+                            <li><i class="bi bi-check-circle-fill"></i> White-label options</li>
+                        </ul>
+                        <button class="btn-plan">Contact Sales</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <p class="text-center mb-0" style="color:rgba(255,255,255,.45);font-size:.875rem;">
+                Need a custom plan?
+                <a href="#" style="color:var(--accent-light);">Talk to our team →</a>
+            </p>
+
+        </div>
+    </section>
+
+
+    <!-- ════════════════════════════
+     FOOTER
+════════════════════════════ -->
+    <footer class="py-5 bg-off-white" id="contact" style="border-top:1px solid var(--border);">
+        <div class="container-xl">
+
+            <div class="row g-5 mb-5">
+
+                <!-- Brand -->
+                <div class="col-lg-5">
+                    <a href="#" class="d-inline-flex align-items-center text-decoration-none mb-3">
+                        <img src="assets/img/logo.png" alt="PrintPro" style="height:36px;width:auto;object-fit:contain;">
+                    </a>
+                    <p class="mb-3 text-muted-pp" style="max-width:280px;line-height:1.7;font-size:.875rem;">
+                        Professional print asset management for modern enterprises. Scalable, secure, and built to last.
+                    </p>
+                    <div class="d-flex gap-2">
+                        <a href="#" class="social-btn"><i class="bi bi-twitter-x"></i></a>
+                        <a href="#" class="social-btn"><i class="bi bi-linkedin"></i></a>
+                        <a href="#" class="social-btn"><i class="bi bi-github"></i></a>
+                    </div>
+                </div>
+
+                <!-- Product -->
+                <div class="col-6 col-lg-3 footer-col">
+                    <h5 class="mb-3">Product</h5>
+                    <ul>
+                        <li class="mb-2"><a href="#">Features</a></li>
+                        <li class="mb-2"><a href="#">Enterprise</a></li>
+                        <li class="mb-2"><a href="#">Security</a></li>
+                    </ul>
+                </div>
+
+                <!-- Company -->
+                <div class="col-6 col-lg-3 footer-col">
+                    <h5 class="mb-3">Company</h5>
+                    <ul>
+                        <li class="mb-2"><a href="#">About Us</a></li>
+                        <li class="mb-2"><a href="#">Careers</a></li>
+                        <li class="mb-2"><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <hr style="border-color:var(--border);">
+
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 footer-bottom pt-2">
+                <p class="mb-0">© 2026 PRINTPRO. ENGINEERED FOR EFFICIENCY.</p>
+                <div class="d-flex gap-3">
+                    <a href="#">Legal Policy</a>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Status</a>
+                </div>
+            </div>
+
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

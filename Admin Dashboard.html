@@ -1,0 +1,2695 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrintPro Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --navy: #0d1b3e;
+            --accent: #1d8cf8;
+            --accent2: #00c6ff;
+            --teal: #3ec6c6;
+            --danger: #f5365c;
+            --warning: #fb6340;
+            --success: #2dce89;
+            --purple: #7c4dff;
+            --border: #dde3f0;
+            --muted: #8898aa;
+            --off: #f4f6fb;
+            --dark-card: #111e40;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            height: 100%;
+            font-family: 'DM Sans', sans-serif;
+            background: #f0f2f8;
+        }
+
+        /* ── PORTAL SWITCHER ── */
+        .portal-switcher {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 2000;
+            background: var(--navy);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 6px;
+        }
+
+        .portal-label {
+            font-size: .8rem;
+            font-weight: 600;
+            padding: 5px 20px;
+            border-radius: 6px;
+            background: var(--accent);
+            color: #fff;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        /* ── APP SHELL ── */
+        .a-app {
+            display: flex;
+            height: calc(100vh - 36px);
+            overflow: hidden;
+            margin-top: 36px;
+        }
+
+        /* Sidebar */
+        .a-sidebar {
+            width: 190px;
+            flex-shrink: 0;
+            background: #fff;
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .a-brand {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .a-brand-icon {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, var(--accent), var(--teal));
+            border-radius: 7px;
+            display: grid;
+            place-items: center;
+        }
+
+        .a-brand-name {
+            font-family: 'Sora', sans-serif;
+            font-weight: 700;
+            font-size: .95rem;
+            color: var(--navy);
+        }
+
+        .a-brand-badge {
+            font-size: .6rem;
+            background: var(--accent);
+            color: #fff;
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+        }
+
+        .a-nav {
+            padding: 10px 0;
+            flex: 1;
+        }
+
+        .a-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 9px 16px;
+            font-size: .83rem;
+            font-weight: 500;
+            color: var(--muted);
+            cursor: pointer;
+            transition: all .15s;
+        }
+
+        .a-nav-item:hover {
+            color: var(--navy);
+            background: var(--off);
+        }
+
+        .a-nav-item.active {
+            color: var(--accent);
+            background: rgba(29, 140, 248, .08);
+            font-weight: 600;
+        }
+
+        .a-nav-item i {
+            font-size: .95rem;
+            width: 16px;
+        }
+
+        .a-logout {
+            padding: 12px 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .a-logout a {
+            font-size: .8rem;
+            color: var(--muted);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .a-logout a:hover {
+            color: var(--danger);
+        }
+
+        /* Top bar */
+        .a-topbar {
+            height: 48px;
+            background: #fff;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+        }
+
+        .a-tabs {
+            display: flex;
+            gap: 2px;
+        }
+
+        .a-tab {
+            padding: 6px 16px;
+            font-size: .82rem;
+            font-weight: 500;
+            border-radius: 6px;
+            cursor: pointer;
+            color: var(--muted);
+            transition: all .15s;
+        }
+
+        .a-tab.active {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .a-tab:hover:not(.active) {
+            background: var(--off);
+            color: var(--navy);
+        }
+
+        .c-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--purple), var(--accent));
+            display: grid;
+            place-items: center;
+            color: #fff;
+            font-size: .8rem;
+            font-weight: 700;
+        }
+
+        /* Content area */
+        .a-content {
+            flex: 1;
+            overflow-y: auto;
+            background: #f0f2f8;
+        }
+
+        .a-page {
+            display: none;
+        }
+
+        .a-page.active {
+            display: block;
+        }
+
+        /* Shared card styles */
+        .chart-card {
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 16px 18px;
+        }
+
+        .card-hdr {
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-hdr-title {
+            font-family: 'Sora', sans-serif;
+            font-size: .9rem;
+            font-weight: 700;
+            color: #1a2340;
+        }
+
+        .badge-status {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: .68rem;
+            font-weight: 700;
+        }
+
+        .badge-active {
+            background: rgba(45, 206, 137, .15);
+            color: #1aae6f;
+        }
+
+        .badge-pending {
+            background: rgba(251, 99, 64, .15);
+            color: var(--warning);
+        }
+
+        .badge-done {
+            background: rgba(29, 140, 248, .15);
+            color: var(--accent);
+        }
+
+        .role-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: .68rem;
+            font-weight: 700;
+        }
+
+        .role-admin {
+            background: rgba(124, 77, 255, .12);
+            color: var(--purple);
+        }
+
+        .role-manager {
+            background: rgba(29, 140, 248, .12);
+            color: var(--accent);
+        }
+
+        .role-operator {
+            background: rgba(45, 206, 137, .12);
+            color: var(--success);
+        }
+
+        /* ════════════════════════
+       DASHBOARD
+    ════════════════════════ */
+        .a-dash {
+            padding: 20px 24px;
+        }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .kpi-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 16px 18px;
+            border: 1px solid var(--border);
+        }
+
+        .kpi-lbl {
+            font-size: .72rem;
+            color: var(--muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            margin-bottom: 6px;
+        }
+
+        .kpi-val {
+            font-family: 'Sora', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--navy);
+        }
+
+        .kpi-change {
+            font-size: .72rem;
+            margin-top: 4px;
+        }
+
+        .kpi-up {
+            color: var(--success);
+        }
+
+        .charts-row {
+            display: grid;
+            grid-template-columns: 1.6fr 1fr;
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        .chart-title {
+            font-family: 'Sora', sans-serif;
+            font-size: .85rem;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 4px;
+        }
+
+        .chart-sub {
+            font-size: .72rem;
+            color: var(--muted);
+            margin-bottom: 12px;
+        }
+
+        .mini-chart svg {
+            width: 100%;
+            height: 120px;
+        }
+
+        .donut-wrap {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .donut-legend {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: .75rem;
+            color: #344767;
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .bottom-row {
+            display: grid;
+            grid-template-columns: 1.4fr 1fr;
+            gap: 14px;
+        }
+
+        .recent-orders-table {
+            width: 100%;
+            font-size: .78rem;
+        }
+
+        .recent-orders-table th {
+            padding: 7px 12px;
+            color: var(--muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: .65rem;
+            letter-spacing: .05em;
+            background: var(--off);
+        }
+
+        .recent-orders-table td {
+            padding: 9px 12px;
+            border-bottom: 1px solid #f0f2f8;
+            color: #344767;
+            vertical-align: middle;
+        }
+
+        .recent-orders-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .activity-feed {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .feed-item {
+            display: flex;
+            gap: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--off);
+        }
+
+        .feed-item:last-child {
+            border-bottom: none;
+        }
+
+        .feed-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            display: grid;
+            place-items: center;
+            color: #fff;
+            font-size: .75rem;
+            font-weight: 700;
+        }
+
+        .feed-name {
+            font-size: .78rem;
+            font-weight: 600;
+            color: var(--navy);
+        }
+
+        .feed-text {
+            font-size: .73rem;
+            color: var(--muted);
+            line-height: 1.4;
+        }
+
+        .feed-time {
+            font-size: .68rem;
+            color: var(--muted);
+        }
+
+        /* ════════════════════════
+       ORDERS
+    ════════════════════════ */
+        .orders-wrap {
+            padding: 20px 24px;
+        }
+
+        .orders-table {
+            width: 100%;
+            font-size: .78rem;
+        }
+
+        .orders-table th {
+            padding: 8px 14px;
+            color: var(--muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: .68rem;
+            letter-spacing: .05em;
+            background: var(--off);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .orders-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid #f0f2f8;
+            color: #344767;
+            vertical-align: middle;
+        }
+
+        .orders-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .orders-table tr:hover td {
+            background: #f8f9ff;
+            cursor: pointer;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: .75rem;
+            font-weight: 600;
+            border: 1px solid var(--border);
+            background: #fff;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            color: var(--muted);
+            transition: all .15s;
+        }
+
+        .filter-btn.active {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+
+        .filter-btn:hover:not(.active) {
+            background: var(--off);
+            color: var(--navy);
+        }
+
+        .search-input {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 5px 12px;
+            font-size: .8rem;
+            color: var(--muted);
+        }
+
+        .search-input input {
+            border: none;
+            outline: none;
+            font-size: .8rem;
+            font-family: 'DM Sans', sans-serif;
+            color: #344767;
+            background: transparent;
+            width: 180px;
+        }
+
+        .progress-bar-wrap {
+            width: 80px;
+            height: 6px;
+            background: #f0f2f8;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            border-radius: 3px;
+        }
+
+        /* ════════════════════════
+       USER MANAGEMENT
+    ════════════════════════ */
+        .a-users {
+            padding: 20px 24px;
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+
+        .a-users-main {
+            flex: 1;
+        }
+
+        .a-users-panel {
+            width: 260px;
+            flex-shrink: 0;
+        }
+
+        .users-card {
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .users-table {
+            width: 100%;
+            font-size: .78rem;
+        }
+
+        .users-table th {
+            padding: 8px 14px;
+            color: var(--muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: .65rem;
+            letter-spacing: .05em;
+            background: var(--off);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .users-table td {
+            padding: 9px 14px;
+            border-bottom: 1px solid #f0f2f8;
+            color: #344767;
+            vertical-align: middle;
+        }
+
+        .users-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .users-table tr:hover td {
+            background: #f8f9ff;
+        }
+
+        .user-row-active {
+            background: rgba(29, 140, 248, .06) !important;
+        }
+
+        .profile-panel {
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .profile-banner {
+            height: 80px;
+            background: linear-gradient(135deg, var(--accent), var(--purple));
+        }
+
+        .profile-body {
+            padding: 0 16px 16px;
+        }
+
+        .profile-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent2), var(--purple));
+            margin-top: -30px;
+            border: 3px solid #fff;
+            display: grid;
+            place-items: center;
+            color: #fff;
+            font-size: 1.2rem;
+            font-weight: 700;
+            font-family: 'Sora', sans-serif;
+        }
+
+        .profile-name {
+            font-family: 'Sora', sans-serif;
+            font-size: .95rem;
+            font-weight: 700;
+            color: var(--navy);
+            margin-top: 8px;
+        }
+
+        .profile-role {
+            font-size: .72rem;
+            color: var(--muted);
+        }
+
+        .profile-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 12px 0;
+        }
+
+        .pstat {
+            text-align: center;
+            background: var(--off);
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        .pstat-val {
+            font-family: 'Sora', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        .pstat-lbl {
+            font-size: .68rem;
+            color: var(--muted);
+        }
+
+        .profile-info-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: .75rem;
+            padding: 5px 0;
+            border-bottom: 1px solid var(--off);
+        }
+
+        .profile-info-row span:first-child {
+            color: var(--muted);
+        }
+
+        .profile-info-row span:last-child {
+            color: var(--navy);
+            font-weight: 500;
+        }
+
+        .ra-title {
+            font-size: .72rem;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            margin-bottom: 8px;
+            margin-top: 12px;
+        }
+
+        .ra-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            font-size: .73rem;
+            margin-bottom: 8px;
+        }
+
+        .ra-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            margin-top: 3px;
+        }
+
+        .ra-text {
+            color: #344767;
+            line-height: 1.4;
+        }
+
+        .ra-time {
+            color: var(--muted);
+            font-size: .67rem;
+        }
+
+        .btn-edit {
+            flex: 1;
+            padding: 7px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: #fff;
+            font-size: .78rem;
+            font-weight: 600;
+            color: var(--navy);
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .btn-edit:hover {
+            background: var(--off);
+        }
+
+        .btn-suspend {
+            flex: 1;
+            padding: 7px;
+            border-radius: 8px;
+            border: none;
+            background: var(--danger);
+            font-size: .78rem;
+            font-weight: 600;
+            color: #fff;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .btn-suspend:hover {
+            opacity: .88;
+        }
+
+        /* ════════════════════════
+       DEVICES
+    ════════════════════════ */
+        .devices-wrap {
+            padding: 20px 24px;
+        }
+
+        .device-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .device-card {
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 18px;
+        }
+
+        .device-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            font-size: 1.3rem;
+            margin-bottom: 12px;
+        }
+
+        .device-name {
+            font-family: 'Sora', sans-serif;
+            font-size: .9rem;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 3px;
+        }
+
+        .device-model {
+            font-size: .72rem;
+            color: var(--muted);
+            margin-bottom: 10px;
+        }
+
+        .device-stat-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: .73rem;
+            margin-bottom: 5px;
+        }
+
+        .device-stat-row span:first-child {
+            color: var(--muted);
+        }
+
+        .device-stat-row span:last-child {
+            color: #344767;
+            font-weight: 600;
+        }
+
+        .usage-bar {
+            height: 5px;
+            background: #f0f2f8;
+            border-radius: 3px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+
+        .usage-fill {
+            height: 100%;
+            border-radius: 3px;
+        }
+
+        .status-dot {
+            display: inline-block;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            margin-right: 4px;
+        }
+
+        .dot-online {
+            background: var(--success);
+        }
+
+        .dot-idle {
+            background: var(--warning);
+        }
+
+        .dot-offline {
+            background: var(--danger);
+        }
+
+        /* ════════════════════════
+       SETTINGS
+    ════════════════════════ */
+        .settings-wrap {
+            padding: 20px 24px;
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 20px;
+        }
+
+        .settings-nav {
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 8px 0;
+            height: fit-content;
+        }
+
+        .settings-nav-item {
+            padding: 9px 16px;
+            font-size: .83rem;
+            cursor: pointer;
+            color: var(--muted);
+            border-left: 3px solid transparent;
+            transition: all .15s;
+        }
+
+        .settings-nav-item:hover {
+            color: var(--navy);
+            background: var(--off);
+        }
+
+        .settings-nav-item.active {
+            color: var(--accent);
+            border-left-color: var(--accent);
+            background: rgba(29, 140, 248, .06);
+            font-weight: 600;
+        }
+
+        .settings-section {
+            display: none;
+        }
+
+        .settings-section.active {
+            display: block;
+        }
+
+        .settings-card {
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .settings-card-hdr {
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .settings-card-title {
+            font-family: 'Sora', sans-serif;
+            font-size: .9rem;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        .settings-card-sub {
+            font-size: .72rem;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        .settings-card-body {
+            padding: 20px;
+        }
+
+        .settings-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f2f8;
+        }
+
+        .settings-row:last-child {
+            border-bottom: none;
+        }
+
+        .settings-row-label {
+            font-size: .83rem;
+            font-weight: 600;
+            color: #344767;
+        }
+
+        .settings-row-sub {
+            font-size: .72rem;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        .form-input {
+            padding: 7px 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            font-size: .82rem;
+            font-family: 'DM Sans', sans-serif;
+            color: #344767;
+            width: 220px;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(29, 140, 248, .1);
+        }
+
+        /* Toggle switch */
+        .toggle {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 22px;
+        }
+
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            inset: 0;
+            background: #ccc;
+            border-radius: 22px;
+            transition: .3s;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 3px;
+            bottom: 3px;
+            background: white;
+            border-radius: 50%;
+            transition: .3s;
+        }
+
+        input:checked+.toggle-slider {
+            background: var(--accent);
+        }
+
+        input:checked+.toggle-slider:before {
+            transform: translateX(18px);
+        }
+
+        .btn-save {
+            padding: 8px 22px;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: .82rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            transition: opacity .2s;
+        }
+
+        .btn-save:hover {
+            opacity: .88;
+        }
+
+        .btn-danger {
+            padding: 8px 22px;
+            background: var(--danger);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: .82rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        /* ════════════════════════
+       ACCOUNT
+    ════════════════════════ */
+        .account-wrap {
+            padding: 20px 24px;
+        }
+
+        .account-header {
+            background: linear-gradient(135deg, #0f2057, #0d1b3e);
+            border-radius: 14px;
+            padding: 28px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .account-avatar-lg {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent2), var(--purple));
+            display: grid;
+            place-items: center;
+            color: #fff;
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: 'Sora', sans-serif;
+            border: 3px solid rgba(255, 255, 255, .2);
+            flex-shrink: 0;
+        }
+
+        .account-name {
+            font-family: 'Sora', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .account-email {
+            font-size: .8rem;
+            color: rgba(255, 255, 255, .55);
+            margin-top: 3px;
+        }
+
+        .account-badge {
+            display: inline-block;
+            margin-top: 8px;
+            font-size: .7rem;
+            background: rgba(29, 140, 248, .3);
+            color: var(--accent2);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-weight: 700;
+        }
+
+        .account-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .billing-plan {
+            background: linear-gradient(135deg, var(--accent), #0060d4);
+            border-radius: 12px;
+            padding: 20px;
+            color: #fff;
+        }
+
+        .billing-plan-name {
+            font-family: 'Sora', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .billing-plan-price {
+            font-family: 'Sora', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+        }
+
+        .billing-plan-cycle {
+            font-size: .72rem;
+            opacity: .7;
+        }
+
+        .billing-feature {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: .78rem;
+            margin-top: 8px;
+            opacity: .9;
+        }
+
+        .billing-feature i {
+            font-size: .8rem;
+        }
+
+        .notif-card {
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 18px;
+        }
+
+        .notif-card-title {
+            font-family: 'Sora', sans-serif;
+            font-size: .9rem;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 14px;
+        }
+
+        .notif-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f2f8;
+        }
+
+        .notif-row:last-child {
+            border-bottom: none;
+        }
+
+        .notif-label {
+            font-size: .8rem;
+            color: #344767;
+        }
+
+        .api-key-box {
+            background: var(--off);
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: .8rem;
+            color: var(--muted);
+            font-family: monospace;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+        }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, .15);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Portal Switcher -->
+    <div class="portal-switcher">
+        <i class="bi bi-shield-fill" style="color:rgba(255,255,255,.5);font-size:.8rem;"></i>
+        <span class="portal-label"><i class="bi bi-shield-fill"></i> Admin Portal</span>
+    </div>
+
+    <div class="a-app">
+
+        <!-- Sidebar -->
+        <div class="a-sidebar">
+            <div class="a-brand" style="padding:10px 12px;">
+                <img src="assets/img/logo.png" alt="PrintPro"
+                    style="height:32px;width:auto;object-fit:contain;max-width:140px;">
+                <span class="a-brand-badge ms-1">Admin</span>
+            </div>
+            <nav class="a-nav">
+                <div class="a-nav-item active" onclick="showPage('dashboard', this)" id="nav-dashboard">
+                    <i class="bi bi-speedometer2"></i> <span>Dashboard</span>
+                </div>
+                <div class="a-nav-item" onclick="showPage('orders', this)" id="nav-orders">
+                    <i class="bi bi-box-seam"></i> <span>Orders</span>
+                </div>
+                <div class="a-nav-item" onclick="showPage('users', this)" id="nav-users">
+                    <i class="bi bi-people"></i> <span>Users</span>
+                </div>
+                <div class="a-nav-item" onclick="showPage('devices', this)" id="nav-devices">
+                    <i class="bi bi-printer"></i> <span>Devices</span>
+                </div>
+                <div class="a-nav-item" onclick="showPage('settings', this)" id="nav-settings">
+                    <i class="bi bi-gear"></i> <span>Settings</span>
+                </div>
+            </nav>
+            <div class="a-logout">
+                <a href="#"><i class="bi bi-box-arrow-left"></i> <span>Logout</span></a>
+            </div>
+        </div>
+
+        <!-- Main -->
+        <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+            <!-- Topbar -->
+            <div class="a-topbar">
+                <div class="a-tabs" id="adminTabs">
+                    <div class="a-tab active" onclick="showPage('dashboard', null)" data-page="dashboard">Dashboard
+                    </div>
+                    <div class="a-tab" onclick="showPage('orders', null)" data-page="orders">Orders</div>
+                    <div class="a-tab" onclick="showPage('devices', null)" data-page="devices">Devices</div>
+                    <div class="a-tab" onclick="showPage('account', null)" data-page="account">Account</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <i class="bi bi-bell" style="color:var(--muted);font-size:1.05rem;cursor:pointer;"></i>
+                    <div class="c-avatar">A</div>
+                </div>
+            </div>
+
+            <!-- Pages -->
+            <div class="a-content">
+
+                <!-- ════ DASHBOARD ════ -->
+                <div class="a-page active" id="page-dashboard">
+                    <div class="a-dash">
+                        <div style="margin-bottom:16px;">
+                            <h4
+                                style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:#1a2340;margin:0;">
+                                Dashboard</h4>
+                            <p style="font-size:.75rem;color:var(--muted);margin:0;">Here's what's happening today</p>
+                        </div>
+
+                        <div class="kpi-grid">
+                            <div class="kpi-card">
+                                <div class="kpi-lbl">Total Revenue</div>
+                                <div class="kpi-val">$10,000</div>
+                                <div class="kpi-change kpi-up"><i class="bi bi-arrow-up"></i> 40% vs last month</div>
+                            </div>
+                            <div class="kpi-card">
+                                <div class="kpi-lbl">Active Orders</div>
+                                <div class="kpi-val">142</div>
+                                <div class="kpi-change kpi-up"><i class="bi bi-arrow-up"></i> 80 new orders today</div>
+                            </div>
+                            <div class="kpi-card">
+                                <div class="kpi-lbl">New Customers</div>
+                                <div class="kpi-val">14</div>
+                                <div class="kpi-change kpi-up"><i class="bi bi-arrow-up"></i> 5× higher vs last month
+                                </div>
+                            </div>
+                            <div class="kpi-card">
+                                <div class="kpi-lbl">Completed Today</div>
+                                <div class="kpi-val">47</div>
+                                <div class="kpi-change kpi-up"><i class="bi bi-arrow-up"></i> 3× vs last month</div>
+                            </div>
+                        </div>
+
+                        <div class="charts-row">
+                            <div class="chart-card">
+                                <div class="chart-title">Revenue Trends</div>
+                                <div class="chart-sub">Annualized cumulative growth targets</div>
+                                <div class="mini-chart">
+                                    <svg viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg">
+                                        <defs>
+                                            <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1">
+                                                <stop offset="0%" stop-color="#1d8cf8" stop-opacity="0.3" />
+                                                <stop offset="100%" stop-color="#1d8cf8" stop-opacity="0" />
+                                            </linearGradient>
+                                            <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1">
+                                                <stop offset="0%" stop-color="#7c4dff" stop-opacity="0.3" />
+                                                <stop offset="100%" stop-color="#7c4dff" stop-opacity="0" />
+                                            </linearGradient>
+                                        </defs>
+                                        <line x1="0" y1="100" x2="400" y2="100" stroke="#eee" stroke-width="1" />
+                                        <line x1="0" y1="75" x2="400" y2="75" stroke="#eee" stroke-width="1" />
+                                        <line x1="0" y1="50" x2="400" y2="50" stroke="#eee" stroke-width="1" />
+                                        <line x1="0" y1="25" x2="400" y2="25" stroke="#eee" stroke-width="1" />
+                                        <path
+                                            d="M0,90 C40,85 80,70 120,60 C160,50 200,45 240,35 C280,25 320,20 400,15 L400,100 L0,100 Z"
+                                            fill="url(#g1)" />
+                                        <path d="M0,90 C40,85 80,70 120,60 C160,50 200,45 240,35 C280,25 320,20 400,15"
+                                            fill="none" stroke="#1d8cf8" stroke-width="2.5" stroke-linecap="round" />
+                                        <path
+                                            d="M0,95 C40,88 80,80 120,72 C160,64 200,56 240,48 C280,40 320,32 400,25 L400,100 L0,100 Z"
+                                            fill="url(#g2)" />
+                                        <path d="M0,95 C40,88 80,80 120,72 C160,64 200,56 240,48 C280,40 320,32 400,25"
+                                            fill="none" stroke="#7c4dff" stroke-width="2" stroke-dasharray="5,4"
+                                            stroke-linecap="round" />
+                                        <text x="0" y="118" fill="#aaa" font-size="9">Jan</text>
+                                        <text x="55" y="118" fill="#aaa" font-size="9">Mar</text>
+                                        <text x="115" y="118" fill="#aaa" font-size="9">May</text>
+                                        <text x="175" y="118" fill="#aaa" font-size="9">Jul</text>
+                                        <text x="235" y="118" fill="#aaa" font-size="9">Sep</text>
+                                        <text x="295" y="118" fill="#aaa" font-size="9">Nov</text>
+                                        <text x="365" y="118" fill="#aaa" font-size="9">Dec</text>
+                                    </svg>
+                                </div>
+                                <div style="display:flex;gap:16px;margin-top:6px;">
+                                    <div
+                                        style="display:flex;align-items:center;gap:5px;font-size:.72rem;color:var(--muted);">
+                                        <span
+                                            style="width:14px;height:2px;background:var(--accent);display:block;border-radius:2px;"></span>
+                                        Actual Revenue
+                                    </div>
+                                    <div
+                                        style="display:flex;align-items:center;gap:5px;font-size:.72rem;color:var(--muted);">
+                                        <span
+                                            style="width:14px;height:2px;border-top:2px dashed var(--purple);display:block;"></span>
+                                        Sales Target
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="chart-card">
+                                <div class="chart-title">Orders by Stage</div>
+                                <div class="chart-sub">Distribution by current production status</div>
+                                <div class="donut-wrap">
+                                    <svg width="100" height="100" viewBox="0 0 100 100">
+                                        <circle cx="50" cy="50" r="36" fill="none" stroke="#f0f2f8" stroke-width="16" />
+                                        <circle cx="50" cy="50" r="36" fill="none" stroke="#1d8cf8" stroke-width="16"
+                                            stroke-dasharray="95 226" stroke-dashoffset="0"
+                                            transform="rotate(-90 50 50)" />
+                                        <circle cx="50" cy="50" r="36" fill="none" stroke="#2dce89" stroke-width="16"
+                                            stroke-dasharray="63 226" stroke-dashoffset="-95"
+                                            transform="rotate(-90 50 50)" />
+                                        <circle cx="50" cy="50" r="36" fill="none" stroke="#fb6340" stroke-width="16"
+                                            stroke-dasharray="41 226" stroke-dashoffset="-158"
+                                            transform="rotate(-90 50 50)" />
+                                        <circle cx="50" cy="50" r="36" fill="none" stroke="#7c4dff" stroke-width="16"
+                                            stroke-dasharray="27 226" stroke-dashoffset="-199"
+                                            transform="rotate(-90 50 50)" />
+                                        <text x="50" y="54" text-anchor="middle" fill="#1a2340" font-size="11"
+                                            font-weight="700" font-family="Sora">142</text>
+                                    </svg>
+                                    <div class="donut-legend">
+                                        <div class="legend-item">
+                                            <div class="legend-dot" style="background:#1d8cf8;"></div> Printing (42%)
+                                        </div>
+                                        <div class="legend-item">
+                                            <div class="legend-dot" style="background:#2dce89;"></div> Prepress (28%)
+                                        </div>
+                                        <div class="legend-item">
+                                            <div class="legend-dot" style="background:#fb6340;"></div> Finishing (18%)
+                                        </div>
+                                        <div class="legend-item">
+                                            <div class="legend-dot" style="background:#7c4dff;"></div> Shipping (12%)
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bottom-row">
+                            <div class="chart-card" style="padding:0;overflow:hidden;">
+                                <div class="card-hdr" style="padding:12px 16px;">
+                                    <span class="card-hdr-title">Recent Orders</span>
+                                    <a href="#" onclick="showPage('orders',null);return false;"
+                                        style="font-size:.73rem;color:var(--accent);text-decoration:none;">View All
+                                        →</a>
+                                </div>
+                                <table class="recent-orders-table">
+                                    <thead>
+                                        <tr>
+                                            <th>ORDER</th>
+                                            <th>CLIENT</th>
+                                            <th>PRODUCT</th>
+                                            <th>STATUS</th>
+                                            <th>TOTAL</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td style="font-weight:600;">#PPR-048</td>
+                                            <td>Gamma Agency</td>
+                                            <td>Brochure</td>
+                                            <td><span class="badge-status badge-active">Active</span></td>
+                                            <td style="font-weight:700;">$2,248.00</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight:600;">#PPR-045</td>
+                                            <td>Urban Core</td>
+                                            <td>Mailer</td>
+                                            <td><span class="badge-status badge-pending">Reprint</span></td>
+                                            <td style="font-weight:700;">$3,550.00</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight:600;">#PPR-043</td>
+                                            <td>TechStart Inc</td>
+                                            <td>Poster</td>
+                                            <td><span class="badge-status badge-done">Printing</span></td>
+                                            <td style="font-weight:700;">$4,290.00</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight:600;">#PPR-041</td>
+                                            <td>Ocean Santana</td>
+                                            <td>Flyer</td>
+                                            <td><span class="badge-status badge-active">Active</span></td>
+                                            <td style="font-weight:700;">—</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight:600;">#PPR-038</td>
+                                            <td>Citybeats</td>
+                                            <td>Banner</td>
+                                            <td><span class="badge-status badge-done">Done</span></td>
+                                            <td style="font-weight:700;">$540.00</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="chart-card">
+                                <div class="card-hdr" style="padding:12px 0 10px 0;border:none;">
+                                    <span class="card-hdr-title">Activity Feed</span>
+                                </div>
+                                <div class="activity-feed">
+                                    <div class="feed-item">
+                                        <div class="feed-avatar"
+                                            style="background:linear-gradient(135deg,var(--accent),var(--teal));">MA
+                                        </div>
+                                        <div>
+                                            <div class="feed-name">Marcus Aurelius <span class="feed-time">4m ago</span>
+                                            </div>
+                                            <div class="feed-text">Approved file requirements for Ocean Santana's poster
+                                                pack.</div>
+                                        </div>
+                                    </div>
+                                    <div class="feed-item">
+                                        <div class="feed-avatar"
+                                            style="background:linear-gradient(135deg,var(--purple),var(--accent));">SM
+                                        </div>
+                                        <div>
+                                            <div class="feed-name">System Monitor <span class="feed-time">17m ago</span>
+                                            </div>
+                                            <div class="feed-text">Corporate Full Art moved to finishing queue.</div>
+                                        </div>
+                                    </div>
+                                    <div class="feed-item">
+                                        <div class="feed-avatar"
+                                            style="background:linear-gradient(135deg,#2dce89,#1aae6f);">DN</div>
+                                        <div>
+                                            <div class="feed-name">Diana Niazi <span class="feed-time">34m ago</span>
+                                            </div>
+                                            <div class="feed-text">Updated shipping invoice for D-12 batch to Express.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="feed-item">
+                                        <div class="feed-avatar"
+                                            style="background:linear-gradient(135deg,var(--warning),#f5365c);">PD</div>
+                                        <div>
+                                            <div class="feed-name">Pat Devir <span class="feed-time">1h ago</span></div>
+                                            <div class="feed-text">System API generated and sent to client agency
+                                                billing.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button
+                                    style="width:100%;margin-top:10px;padding:8px;border-radius:8px;border:1px solid var(--border);background:#fff;font-size:.78rem;font-weight:600;color:var(--navy);cursor:pointer;font-family:'DM Sans',sans-serif;">Load
+                                    More Activity</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ════ ORDERS ════ -->
+                <div class="a-page" id="page-orders">
+                    <div class="orders-wrap">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                            <div>
+                                <h4
+                                    style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:#1a2340;margin:0;">
+                                    All Orders</h4>
+                                <p style="font-size:.75rem;color:var(--muted);margin:0;">Manage and track all print jobs
+                                </p>
+                            </div>
+                            <div style="display:flex;gap:8px;">
+                                <button
+                                    style="background:#fff;color:var(--navy);border:1px solid var(--border);padding:7px 14px;border-radius:8px;font-size:.8rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;"><i
+                                        class="bi bi-download"></i> Export</button>
+                                <button
+                                    style="background:var(--accent);color:#fff;border:none;padding:7px 14px;border-radius:8px;font-size:.8rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;"><i
+                                        class="bi bi-plus-lg"></i> New Order</button>
+                            </div>
+                        </div>
+
+                        <!-- Summary stats -->
+                        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px;">
+                            <div class="kpi-card" style="padding:12px 16px;">
+                                <div class="kpi-lbl">Total Orders</div>
+                                <div class="kpi-val" style="font-size:1.3rem;">238</div>
+                            </div>
+                            <div class="kpi-card" style="padding:12px 16px;">
+                                <div class="kpi-lbl">In Production</div>
+                                <div class="kpi-val" style="font-size:1.3rem;color:var(--accent);">87</div>
+                            </div>
+                            <div class="kpi-card" style="padding:12px 16px;">
+                                <div class="kpi-lbl">Awaiting Proof</div>
+                                <div class="kpi-val" style="font-size:1.3rem;color:var(--warning);">23</div>
+                            </div>
+                            <div class="kpi-card" style="padding:12px 16px;">
+                                <div class="kpi-lbl">Completed</div>
+                                <div class="kpi-val" style="font-size:1.3rem;color:var(--success);">128</div>
+                            </div>
+                        </div>
+
+                        <div class="chart-card" style="padding:0;overflow:hidden;">
+                            <div class="card-hdr">
+                                <div class="filter-bar">
+                                    <button class="filter-btn active" onclick="filterOrders(this,'all')">All</button>
+                                    <button class="filter-btn" onclick="filterOrders(this,'active')">Active</button>
+                                    <button class="filter-btn" onclick="filterOrders(this,'printing')">Printing</button>
+                                    <button class="filter-btn" onclick="filterOrders(this,'reprint')">Reprint</button>
+                                    <button class="filter-btn" onclick="filterOrders(this,'done')">Done</button>
+                                </div>
+                                <div class="search-input">
+                                    <i class="bi bi-search" style="font-size:.75rem;"></i>
+                                    <input type="text" placeholder="Search orders…" oninput="searchOrders(this.value)">
+                                </div>
+                            </div>
+                            <table class="orders-table" id="ordersTable">
+                                <thead>
+                                    <tr>
+                                        <th>ORDER ID</th>
+                                        <th>CLIENT</th>
+                                        <th>PRODUCT</th>
+                                        <th>QTY</th>
+                                        <th>PROGRESS</th>
+                                        <th>STATUS</th>
+                                        <th>DUE DATE</th>
+                                        <th>TOTAL</th>
+                                        <th>ACTIONS</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ordersTbody">
+                                    <tr data-status="active">
+                                        <td style="font-weight:700;">#PPR-048</td>
+                                        <td>Gamma Agency</td>
+                                        <td>Brochure</td>
+                                        <td>1,000</td>
+                                        <td>
+                                            <div class="progress-bar-wrap">
+                                                <div class="progress-bar-fill"
+                                                    style="width:65%;background:var(--accent);"></div>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge-status badge-active">Active</span></td>
+                                        <td>Oct 24, 2024</td>
+                                        <td style="font-weight:700;">$2,248</td>
+                                        <td><button onclick="alert('Opening order #PPR-048…')"
+                                                style="font-size:.72rem;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:#fff;cursor:pointer;"><i
+                                                    class="bi bi-eye"></i></button></td>
+                                    </tr>
+                                    <tr data-status="reprint">
+                                        <td style="font-weight:700;">#PPR-045</td>
+                                        <td>Urban Core</td>
+                                        <td>Mailer</td>
+                                        <td>2,500</td>
+                                        <td>
+                                            <div class="progress-bar-wrap">
+                                                <div class="progress-bar-fill"
+                                                    style="width:30%;background:var(--warning);"></div>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge-status badge-pending">Reprint</span></td>
+                                        <td>—</td>
+                                        <td style="font-weight:700;">$3,550</td>
+                                        <td><button onclick="alert('Opening order #PPR-045…')"
+                                                style="font-size:.72rem;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:#fff;cursor:pointer;"><i
+                                                    class="bi bi-eye"></i></button></td>
+                                    </tr>
+                                    <tr data-status="printing">
+                                        <td style="font-weight:700;">#PPR-043</td>
+                                        <td>TechStart Inc</td>
+                                        <td>Poster</td>
+                                        <td>500</td>
+                                        <td>
+                                            <div class="progress-bar-wrap">
+                                                <div class="progress-bar-fill"
+                                                    style="width:80%;background:var(--accent);"></div>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge-status badge-done">Printing</span></td>
+                                        <td>Oct 21, 2024</td>
+                                        <td style="font-weight:700;">$4,290</td>
+                                        <td><button onclick="alert('Opening order #PPR-043…')"
+                                                style="font-size:.72rem;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:#fff;cursor:pointer;"><i
+                                                    class="bi bi-eye"></i></button></td>
+                                    </tr>
+                                    <tr data-status="active">
+                                        <td style="font-weight:700;">#PPR-041</td>
+                                        <td>Ocean Santana</td>
+                                        <td>Flyer</td>
+                                        <td>5,000</td>
+                                        <td>
+                                            <div class="progress-bar-wrap">
+                                                <div class="progress-bar-fill"
+                                                    style="width:45%;background:var(--accent);"></div>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge-status badge-active">Active</span></td>
+                                        <td>Nov 2, 2024</td>
+                                        <td style="font-weight:700;">$4,260</td>
+                                        <td><button onclick="alert('Opening order #PPR-041…')"
+                                                style="font-size:.72rem;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:#fff;cursor:pointer;"><i
+                                                    class="bi bi-eye"></i></button></td>
+                                    </tr>
+                                    <tr data-status="done">
+                                        <td style="font-weight:700;">#PPR-038</td>
+                                        <td>Citybeats</td>
+                                        <td>Banner</td>
+                                        <td>200</td>
+                                        <td>
+                                            <div class="progress-bar-wrap">
+                                                <div class="progress-bar-fill"
+                                                    style="width:100%;background:var(--success);"></div>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge-status badge-done">Done</span></td>
+                                        <td>Oct 18, 2024</td>
+                                        <td style="font-weight:700;">$540</td>
+                                        <td><button onclick="alert('Opening order #PPR-038…')"
+                                                style="font-size:.72rem;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:#fff;cursor:pointer;"><i
+                                                    class="bi bi-eye"></i></button></td>
+                                    </tr>
+                                    <tr data-status="printing">
+                                        <td style="font-weight:700;">#PPR-036</td>
+                                        <td>Nova Media</td>
+                                        <td>Booklet</td>
+                                        <td>300</td>
+                                        <td>
+                                            <div class="progress-bar-wrap">
+                                                <div class="progress-bar-fill"
+                                                    style="width:55%;background:var(--accent);"></div>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge-status badge-done">Printing</span></td>
+                                        <td>Oct 26, 2024</td>
+                                        <td style="font-weight:700;">$1,890</td>
+                                        <td><button onclick="alert('Opening order #PPR-036…')"
+                                                style="font-size:.72rem;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:#fff;cursor:pointer;"><i
+                                                    class="bi bi-eye"></i></button></td>
+                                    </tr>
+                                    <tr data-status="done">
+                                        <td style="font-weight:700;">#PPR-033</td>
+                                        <td>Bluewave Corp</td>
+                                        <td>Cards</td>
+                                        <td>1,000</td>
+                                        <td>
+                                            <div class="progress-bar-wrap">
+                                                <div class="progress-bar-fill"
+                                                    style="width:100%;background:var(--success);"></div>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge-status badge-done">Done</span></td>
+                                        <td>Oct 14, 2024</td>
+                                        <td style="font-weight:700;">$320</td>
+                                        <td><button onclick="alert('Opening order #PPR-033…')"
+                                                style="font-size:.72rem;padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:#fff;cursor:pointer;"><i
+                                                    class="bi bi-eye"></i></button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div
+                                style="padding:10px 18px;font-size:.72rem;color:var(--muted);display:flex;justify-content:space-between;align-items:center;">
+                                <span>Showing 1–7 of 238 orders</span>
+                                <div style="display:flex;gap:4px;">
+                                    <button
+                                        style="padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:#fff;font-size:.75rem;cursor:pointer;">←
+                                        Prev</button>
+                                    <button
+                                        style="padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--accent);color:#fff;font-size:.75rem;cursor:pointer;">1</button>
+                                    <button
+                                        style="padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:#fff;font-size:.75rem;cursor:pointer;">2</button>
+                                    <button
+                                        style="padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:#fff;font-size:.75rem;cursor:pointer;">Next
+                                        →</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ════ USERS ════ -->
+                <div class="a-page" id="page-users">
+                    <div class="a-users">
+                        <div class="a-users-main">
+                            <div class="users-card">
+                                <div class="card-hdr" style="padding:14px 18px;">
+                                    <div>
+                                        <div class="card-hdr-title">User Management</div>
+                                        <div style="font-size:.72rem;color:var(--muted);">Manage user and registered
+                                            accounts on PrintPro.</div>
+                                    </div>
+                                    <button
+                                        style="background:var(--accent);color:#fff;border:none;padding:7px 14px;border-radius:8px;font-size:.78rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;"><i
+                                            class="bi bi-plus-lg"></i> Invite User</button>
+                                </div>
+                                <div style="padding:12px 18px;border-bottom:1px solid var(--border);">
+                                    <div
+                                        style="display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--border);border-radius:8px;padding:5px 12px;width:fit-content;">
+                                        <i class="bi bi-search" style="font-size:.75rem;color:var(--muted);"></i>
+                                        <input type="text" placeholder="Search name, email or role…"
+                                            style="border:none;outline:none;font-size:.8rem;font-family:'DM Sans',sans-serif;color:#344767;width:220px;">
+                                    </div>
+                                </div>
+                                <table class="users-table">
+                                    <thead>
+                                        <tr>
+                                            <th>NAME</th>
+                                            <th>ROLE</th>
+                                            <th>STATUS</th>
+                                            <th>JOINED DATE</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="user-row-active"
+                                            onclick="selectUser(this,'Alexander Wright','Admin','Multiple','alex@printpro.com','Jan 12, 2023')"
+                                            style="cursor:pointer;">
+                                            <td>
+                                                <div style="display:flex;align-items:center;gap:8px;">
+                                                    <div class="feed-avatar"
+                                                        style="width:28px;height:28px;font-size:.7rem;background:linear-gradient(135deg,var(--accent),var(--teal));flex-shrink:0;">
+                                                        AW</div>
+                                                    <div>
+                                                        <div style="font-weight:600;font-size:.8rem;">Alexander Wright
+                                                        </div>
+                                                        <div style="font-size:.68rem;color:var(--muted);">
+                                                            alex@printpro.com</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td><span class="role-badge role-admin">Admin</span></td>
+                                            <td><span class="badge-status badge-active">Active</span></td>
+                                            <td>Jan 12, 2023</td>
+                                        </tr>
+                                        <tr onclick="selectUser(this,'James Holloway','Manager','Single','james@printpro.com','Mar 04, 2023')"
+                                            style="cursor:pointer;">
+                                            <td>
+                                                <div style="display:flex;align-items:center;gap:8px;">
+                                                    <div class="feed-avatar"
+                                                        style="width:28px;height:28px;font-size:.7rem;background:linear-gradient(135deg,var(--purple),var(--accent));flex-shrink:0;">
+                                                        JH</div>
+                                                    <div>
+                                                        <div style="font-weight:600;font-size:.8rem;">James Holloway
+                                                        </div>
+                                                        <div style="font-size:.68rem;color:var(--muted);">
+                                                            james@printpro.com</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td><span class="role-badge role-manager">Manager</span></td>
+                                            <td><span class="badge-status badge-active">Active</span></td>
+                                            <td>Mar 04, 2023</td>
+                                        </tr>
+                                        <tr onclick="selectUser(this,'Marcus Reid','Operator','Single','marcus@printpro.com','Jun 19, 2023')"
+                                            style="cursor:pointer;">
+                                            <td>
+                                                <div style="display:flex;align-items:center;gap:8px;">
+                                                    <div class="feed-avatar"
+                                                        style="width:28px;height:28px;font-size:.7rem;background:linear-gradient(135deg,#2dce89,#1aae6f);flex-shrink:0;">
+                                                        MR</div>
+                                                    <div>
+                                                        <div style="font-weight:600;font-size:.8rem;">Marcus Reid</div>
+                                                        <div style="font-size:.68rem;color:var(--muted);">
+                                                            marcus@printpro.com</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td><span class="role-badge role-operator">Operator</span></td>
+                                            <td><span class="badge-status badge-active">Active</span></td>
+                                            <td>Jun 19, 2023</td>
+                                        </tr>
+                                        <tr onclick="selectUser(this,'Natasha Brown','Manager','Single','natasha@printpro.com','Sep 01, 2023')"
+                                            style="cursor:pointer;">
+                                            <td>
+                                                <div style="display:flex;align-items:center;gap:8px;">
+                                                    <div class="feed-avatar"
+                                                        style="width:28px;height:28px;font-size:.7rem;background:linear-gradient(135deg,var(--warning),#f5365c);flex-shrink:0;">
+                                                        NB</div>
+                                                    <div>
+                                                        <div style="font-weight:600;font-size:.8rem;">Natasha Brown
+                                                        </div>
+                                                        <div style="font-size:.68rem;color:var(--muted);">
+                                                            natasha@printpro.com</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td><span class="role-badge role-manager">Manager</span></td>
+                                            <td><span class="badge-status badge-pending">Suspended</span></td>
+                                            <td>Sep 01, 2023</td>
+                                        </tr>
+                                        <tr onclick="selectUser(this,'Frank Castillo','Operator','Single','frank@printpro.com','Nov 23, 2023')"
+                                            style="cursor:pointer;">
+                                            <td>
+                                                <div style="display:flex;align-items:center;gap:8px;">
+                                                    <div class="feed-avatar"
+                                                        style="width:28px;height:28px;font-size:.7rem;background:linear-gradient(135deg,#11cdef,#1171ef);flex-shrink:0;">
+                                                        FC</div>
+                                                    <div>
+                                                        <div style="font-weight:600;font-size:.8rem;">Frank Castillo
+                                                        </div>
+                                                        <div style="font-size:.68rem;color:var(--muted);">
+                                                            frank@printpro.com</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td><span class="role-badge role-operator">Operator</span></td>
+                                            <td><span class="badge-status badge-done">Active</span></td>
+                                            <td>Nov 23, 2023</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div style="padding:10px 18px;font-size:.72rem;color:var(--muted);">Showing 1–5 of 40
+                                    users</div>
+                            </div>
+                        </div>
+                        <div class="a-users-panel">
+                            <div class="profile-panel">
+                                <div class="profile-banner"></div>
+                                <div class="profile-body">
+                                    <div class="profile-avatar" id="profileAvatar">AW</div>
+                                    <div class="profile-name" id="profileName">Alexander Wright</div>
+                                    <div class="profile-role" id="profileRole">Multiple Roles · Admin</div>
+                                    <div class="profile-stats">
+                                        <div class="pstat">
+                                            <div class="pstat-val">40</div>
+                                            <div class="pstat-lbl">Managed Users</div>
+                                        </div>
+                                        <div class="pstat">
+                                            <div class="pstat-val">$43k</div>
+                                            <div class="pstat-lbl">Orders Total</div>
+                                        </div>
+                                    </div>
+                                    <div id="profileInfoRows">
+                                        <div class="profile-info-row"><span>Joined</span><span>Jan 12, 2023</span></div>
+                                        <div class="profile-info-row"><span>Email</span><span>alex@printpro.com</span>
+                                        </div>
+                                        <div class="profile-info-row"><span>Status</span><span
+                                                style="color:var(--success);">Active</span></div>
+                                        <div class="profile-info-row"><span>Role</span><span>Admin</span></div>
+                                    </div>
+                                    <div class="ra-title">Recent Activity</div>
+                                    <div class="ra-item">
+                                        <div class="ra-dot" style="background:var(--accent);"></div>
+                                        <div>
+                                            <div class="ra-text">Updated billing settings for Q4 campaign.</div>
+                                            <div class="ra-time">2 days ago</div>
+                                        </div>
+                                    </div>
+                                    <div class="ra-item">
+                                        <div class="ra-dot" style="background:var(--success);"></div>
+                                        <div>
+                                            <div class="ra-text">Approved 12 new print orders in bulk.</div>
+                                            <div class="ra-time">4 days ago</div>
+                                        </div>
+                                    </div>
+                                    <div class="ra-item">
+                                        <div class="ra-dot" style="background:var(--purple);"></div>
+                                        <div>
+                                            <div class="ra-text">Invited 3 new operators to the team.</div>
+                                            <div class="ra-time">May 23, 2024</div>
+                                        </div>
+                                    </div>
+                                    <div class="profile-actions">
+                                        <button class="btn-edit"
+                                            onclick="alert('Edit profile for: ' + document.getElementById('profileName').textContent)"><i
+                                                class="bi bi-pencil"></i> Edit Profile</button>
+                                        <button class="btn-suspend"
+                                            onclick="alert('Suspend user: ' + document.getElementById('profileName').textContent + '?')"><i
+                                                class="bi bi-slash-circle"></i> Suspend</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ════ DEVICES ════ -->
+                <div class="a-page" id="page-devices">
+                    <div class="devices-wrap">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                            <div>
+                                <h4
+                                    style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:#1a2340;margin:0;">
+                                    Devices</h4>
+                                <p style="font-size:.75rem;color:var(--muted);margin:0;">Monitor and manage all
+                                    connected print machines</p>
+                            </div>
+                            <div style="display:flex;gap:8px;">
+                                <button
+                                    style="background:#fff;color:var(--navy);border:1px solid var(--border);padding:7px 14px;border-radius:8px;font-size:.8rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;"
+                                    onclick="alert('Scanning for new devices…')"><i class="bi bi-wifi"></i> Scan
+                                    Network</button>
+                                <button
+                                    style="background:var(--accent);color:#fff;border:none;padding:7px 14px;border-radius:8px;font-size:.8rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;"
+                                    onclick="alert('Add device wizard coming soon.')"><i class="bi bi-plus-lg"></i> Add
+                                    Device</button>
+                            </div>
+                        </div>
+
+                        <!-- Status summary -->
+                        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px;">
+                            <div class="kpi-card" style="padding:12px 16px;display:flex;align-items:center;gap:12px;">
+                                <span class="status-dot dot-online" style="width:10px;height:10px;"></span>
+                                <div>
+                                    <div class="kpi-lbl">Online</div>
+                                    <div class="kpi-val" style="font-size:1.3rem;color:var(--success);">4</div>
+                                </div>
+                            </div>
+                            <div class="kpi-card" style="padding:12px 16px;display:flex;align-items:center;gap:12px;">
+                                <span class="status-dot dot-idle" style="width:10px;height:10px;"></span>
+                                <div>
+                                    <div class="kpi-lbl">Idle</div>
+                                    <div class="kpi-val" style="font-size:1.3rem;color:var(--warning);">2</div>
+                                </div>
+                            </div>
+                            <div class="kpi-card" style="padding:12px 16px;display:flex;align-items:center;gap:12px;">
+                                <span class="status-dot dot-offline" style="width:10px;height:10px;"></span>
+                                <div>
+                                    <div class="kpi-lbl">Offline</div>
+                                    <div class="kpi-val" style="font-size:1.3rem;color:var(--danger);">1</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="device-grid">
+                            <!-- Device 1 -->
+                            <div class="device-card">
+                                <div
+                                    style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+                                    <div class="device-icon"
+                                        style="background:rgba(29,140,248,.1);color:var(--accent);"><i
+                                            class="bi bi-printer-fill"></i></div>
+                                    <span class="badge-status badge-active">Online</span>
+                                </div>
+                                <div class="device-name">Heidelberg Speedmaster</div>
+                                <div class="device-model">XL 106 · Unit #01</div>
+                                <div class="device-stat-row"><span>Sheets/hr</span><span>16,000</span></div>
+                                <div class="device-stat-row"><span>Job Queue</span><span>3 jobs</span></div>
+                                <div class="device-stat-row"><span>Ink Level</span><span>78%</span></div>
+                                <div class="usage-bar">
+                                    <div class="usage-fill" style="width:78%;background:var(--accent);"></div>
+                                </div>
+                                <button onclick="alert('Heidelberg Speedmaster XL 106 details…')"
+                                    style="margin-top:12px;width:100%;padding:7px;border-radius:7px;border:1px solid var(--border);background:#fff;font-size:.75rem;font-weight:600;color:var(--navy);cursor:pointer;font-family:'DM Sans',sans-serif;">View
+                                    Details</button>
+                            </div>
+                            <!-- Device 2 -->
+                            <div class="device-card">
+                                <div
+                                    style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+                                    <div class="device-icon"
+                                        style="background:rgba(45,206,137,.1);color:var(--success);"><i
+                                            class="bi bi-printer-fill"></i></div>
+                                    <span class="badge-status badge-active">Online</span>
+                                </div>
+                                <div class="device-name">Konica Minolta</div>
+                                <div class="device-model">AccurioPress C14000 · Unit #02</div>
+                                <div class="device-stat-row"><span>Sheets/hr</span><span>14,000</span></div>
+                                <div class="device-stat-row"><span>Job Queue</span><span>1 job</span></div>
+                                <div class="device-stat-row"><span>Toner</span><span>92%</span></div>
+                                <div class="usage-bar">
+                                    <div class="usage-fill" style="width:92%;background:var(--success);"></div>
+                                </div>
+                                <button onclick="alert('Konica Minolta AccurioPress details…')"
+                                    style="margin-top:12px;width:100%;padding:7px;border-radius:7px;border:1px solid var(--border);background:#fff;font-size:.75rem;font-weight:600;color:var(--navy);cursor:pointer;font-family:'DM Sans',sans-serif;">View
+                                    Details</button>
+                            </div>
+                            <!-- Device 3 -->
+                            <div class="device-card">
+                                <div
+                                    style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+                                    <div class="device-icon"
+                                        style="background:rgba(251,99,64,.1);color:var(--warning);"><i
+                                            class="bi bi-printer"></i></div>
+                                    <span class="badge-status badge-pending">Idle</span>
+                                </div>
+                                <div class="device-name">Roland VersaUV</div>
+                                <div class="device-model">LEF2-300 · Unit #03</div>
+                                <div class="device-stat-row"><span>Sheets/hr</span><span>—</span></div>
+                                <div class="device-stat-row"><span>Job Queue</span><span>0 jobs</span></div>
+                                <div class="device-stat-row"><span>UV Ink</span><span>55%</span></div>
+                                <div class="usage-bar">
+                                    <div class="usage-fill" style="width:55%;background:var(--warning);"></div>
+                                </div>
+                                <button onclick="alert('Roland VersaUV LEF2-300 details…')"
+                                    style="margin-top:12px;width:100%;padding:7px;border-radius:7px;border:1px solid var(--border);background:#fff;font-size:.75rem;font-weight:600;color:var(--navy);cursor:pointer;font-family:'DM Sans',sans-serif;">View
+                                    Details</button>
+                            </div>
+                            <!-- Device 4 -->
+                            <div class="device-card">
+                                <div
+                                    style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+                                    <div class="device-icon"
+                                        style="background:rgba(29,140,248,.1);color:var(--accent);"><i
+                                            class="bi bi-scissors"></i></div>
+                                    <span class="badge-status badge-active">Online</span>
+                                </div>
+                                <div class="device-name">Duplo System 5000</div>
+                                <div class="device-model">Booklet Maker · Unit #04</div>
+                                <div class="device-stat-row"><span>Books/hr</span><span>2,500</span></div>
+                                <div class="device-stat-row"><span>Job Queue</span><span>2 jobs</span></div>
+                                <div class="device-stat-row"><span>Staples</span><span>61%</span></div>
+                                <div class="usage-bar">
+                                    <div class="usage-fill" style="width:61%;background:var(--accent);"></div>
+                                </div>
+                                <button onclick="alert('Duplo System 5000 details…')"
+                                    style="margin-top:12px;width:100%;padding:7px;border-radius:7px;border:1px solid var(--border);background:#fff;font-size:.75rem;font-weight:600;color:var(--navy);cursor:pointer;font-family:'DM Sans',sans-serif;">View
+                                    Details</button>
+                            </div>
+                            <!-- Device 5 -->
+                            <div class="device-card">
+                                <div
+                                    style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+                                    <div class="device-icon"
+                                        style="background:rgba(45,206,137,.1);color:var(--success);"><i
+                                            class="bi bi-box2"></i></div>
+                                    <span class="badge-status badge-active">Online</span>
+                                </div>
+                                <div class="device-name">Mimaki CJV300</div>
+                                <div class="device-model">Wide Format · Unit #05</div>
+                                <div class="device-stat-row"><span>Width</span><span>130"</span></div>
+                                <div class="device-stat-row"><span>Job Queue</span><span>1 job</span></div>
+                                <div class="device-stat-row"><span>Ink</span><span>84%</span></div>
+                                <div class="usage-bar">
+                                    <div class="usage-fill" style="width:84%;background:var(--success);"></div>
+                                </div>
+                                <button onclick="alert('Mimaki CJV300 details…')"
+                                    style="margin-top:12px;width:100%;padding:7px;border-radius:7px;border:1px solid var(--border);background:#fff;font-size:.75rem;font-weight:600;color:var(--navy);cursor:pointer;font-family:'DM Sans',sans-serif;">View
+                                    Details</button>
+                            </div>
+                            <!-- Device 6 — Offline -->
+                            <div class="device-card" style="opacity:.7;">
+                                <div
+                                    style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+                                    <div class="device-icon" style="background:rgba(245,54,92,.1);color:var(--danger);">
+                                        <i class="bi bi-printer"></i>
+                                    </div>
+                                    <span class="badge-status badge-pending"
+                                        style="background:rgba(245,54,92,.15);color:var(--danger);">Offline</span>
+                                </div>
+                                <div class="device-name">Heidelberg GTO 52</div>
+                                <div class="device-model">Offset Press · Unit #06</div>
+                                <div class="device-stat-row"><span>Status</span><span
+                                        style="color:var(--danger);">Maintenance</span></div>
+                                <div class="device-stat-row"><span>Job Queue</span><span>0 jobs</span></div>
+                                <div class="device-stat-row"><span>Est. Back</span><span>Tomorrow</span></div>
+                                <div class="usage-bar">
+                                    <div class="usage-fill" style="width:0%;background:var(--danger);"></div>
+                                </div>
+                                <button onclick="alert('Viewing maintenance schedule for Heidelberg GTO 52…')"
+                                    style="margin-top:12px;width:100%;padding:7px;border-radius:7px;border:1px solid var(--border);background:#fff;font-size:.75rem;font-weight:600;color:var(--navy);cursor:pointer;font-family:'DM Sans',sans-serif;">View
+                                    Schedule</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ════ SETTINGS ════ -->
+                <div class="a-page" id="page-settings">
+                    <div class="settings-wrap">
+                        <div class="settings-nav">
+                            <div class="settings-nav-item active" onclick="showSettingsSection('general', this)">General
+                            </div>
+                            <div class="settings-nav-item" onclick="showSettingsSection('notifications', this)">
+                                Notifications</div>
+                            <div class="settings-nav-item" onclick="showSettingsSection('security', this)">Security
+                            </div>
+                            <div class="settings-nav-item" onclick="showSettingsSection('billing', this)">Billing</div>
+                            <div class="settings-nav-item" onclick="showSettingsSection('integrations', this)">
+                                Integrations</div>
+                        </div>
+
+                        <div>
+                            <!-- General -->
+                            <div class="settings-section active" id="settings-general">
+                                <div class="settings-card">
+                                    <div class="settings-card-hdr">
+                                        <div class="settings-card-title">Business Information</div>
+                                        <div class="settings-card-sub">Update your company details and branding</div>
+                                    </div>
+                                    <div class="settings-card-body">
+                                        <div
+                                            style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+                                            <div>
+                                                <div
+                                                    style="font-size:.75rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;">
+                                                    Company Name</div>
+                                                <input type="text" class="form-input" value="PrintPro Inc."
+                                                    style="width:100%;">
+                                            </div>
+                                            <div>
+                                                <div
+                                                    style="font-size:.75rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;">
+                                                    Business Email</div>
+                                                <input type="email" class="form-input" value="admin@printpro.com"
+                                                    style="width:100%;">
+                                            </div>
+                                            <div>
+                                                <div
+                                                    style="font-size:.75rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;">
+                                                    Phone Number</div>
+                                                <input type="text" class="form-input" value="+1 (555) 012-3456"
+                                                    style="width:100%;">
+                                            </div>
+                                            <div>
+                                                <div
+                                                    style="font-size:.75rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;">
+                                                    Timezone</div>
+                                                <select class="form-input" style="width:100%;">
+                                                    <option>US/Eastern (UTC-5)</option>
+                                                    <option>US/Central (UTC-6)</option>
+                                                    <option>US/Pacific (UTC-8)</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <button class="btn-save" onclick="alert('General settings saved!')">Save
+                                            Changes</button>
+                                    </div>
+                                </div>
+                                <div class="settings-card">
+                                    <div class="settings-card-hdr">
+                                        <div class="settings-card-title">Preferences</div>
+                                        <div class="settings-card-sub">Configure system-wide defaults</div>
+                                    </div>
+                                    <div class="settings-card-body">
+                                        <div class="settings-row">
+                                            <div>
+                                                <div class="settings-row-label">Dark Mode</div>
+                                                <div class="settings-row-sub">Apply dark theme to admin interface</div>
+                                            </div>
+                                            <label class="toggle"><input type="checkbox"><span
+                                                    class="toggle-slider"></span></label>
+                                        </div>
+                                        <div class="settings-row">
+                                            <div>
+                                                <div class="settings-row-label">Auto-assign Orders</div>
+                                                <div class="settings-row-sub">Automatically assign new orders to
+                                                    available operators</div>
+                                            </div>
+                                            <label class="toggle"><input type="checkbox" checked><span
+                                                    class="toggle-slider"></span></label>
+                                        </div>
+                                        <div class="settings-row">
+                                            <div>
+                                                <div class="settings-row-label">Rush Order Alerts</div>
+                                                <div class="settings-row-sub">Alert all managers when a rush order is
+                                                    placed</div>
+                                            </div>
+                                            <label class="toggle"><input type="checkbox" checked><span
+                                                    class="toggle-slider"></span></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Notifications -->
+                            <div class="settings-section" id="settings-notifications">
+                                <div class="settings-card">
+                                    <div class="settings-card-hdr">
+                                        <div class="settings-card-title">Notification Preferences</div>
+                                        <div class="settings-card-sub">Choose what alerts you receive and how</div>
+                                    </div>
+                                    <div class="settings-card-body">
+                                        <div class="settings-row">
+                                            <div>
+                                                <div class="settings-row-label">New Order Placed</div>
+                                                <div class="settings-row-sub">Notify when a client submits a new order
+                                                </div>
+                                            </div>
+                                            <label class="toggle"><input type="checkbox" checked><span
+                                                    class="toggle-slider"></span></label>
+                                        </div>
+                                        <div class="settings-row">
+                                            <div>
+                                                <div class="settings-row-label">Order Status Updates</div>
+                                                <div class="settings-row-sub">Notify on production stage changes</div>
+                                            </div>
+                                            <label class="toggle"><input type="checkbox" checked><span
+                                                    class="toggle-slider"></span></label>
+                                        </div>
+                                        <div class="settings-row">
+                                            <div>
+                                                <div class="settings-row-label">Device Alerts</div>
+                                                <div class="settings-row-sub">Notify when a device goes offline or needs
+                                                    maintenance</div>
+                                            </div>
+                                            <label class="toggle"><input type="checkbox" checked><span
+                                                    class="toggle-slider"></span></label>
+                                        </div>
+                                        <div class="settings-row">
+                                            <div>
+                                                <div class="settings-row-label">Weekly Revenue Report</div>
+                                                <div class="settings-row-sub">Receive a summary email every Monday</div>
+                                            </div>
+                                            <label class="toggle"><input type="checkbox"><span
+                                                    class="toggle-slider"></span></label>
+                                        </div>
+                                        <div class="settings-row">
+                                            <div>
+                                                <div class="settings-row-label">User Account Changes</div>
+                                                <div class="settings-row-sub">Alert on new user signups or role changes
+                                                </div>
+                                            </div>
+                                            <label class="toggle"><input type="checkbox" checked><span
+                                                    class="toggle-slider"></span></label>
+                                        </div>
+                                        <div style="margin-top:14px;">
+                                            <button class="btn-save"
+                                                onclick="alert('Notification settings saved!')">Save
+                                                Preferences</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Security -->
+                            <div class="settings-section" id="settings-security">
+                                <div class="settings-card">
+                                    <div class="settings-card-hdr">
+                                        <div class="settings-card-title">Password & Authentication</div>
+                                        <div class="settings-card-sub">Manage your login credentials and 2FA</div>
+                                    </div>
+                                    <div class="settings-card-body">
+                                        <div style="display:grid;gap:12px;margin-bottom:16px;">
+                                            <div>
+                                                <div
+                                                    style="font-size:.75rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;">
+                                                    Current Password</div>
+                                                <input type="password" class="form-input" placeholder="••••••••"
+                                                    style="width:100%;">
+                                            </div>
+                                            <div>
+                                                <div
+                                                    style="font-size:.75rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;">
+                                                    New Password</div>
+                                                <input type="password" class="form-input"
+                                                    placeholder="Min. 12 characters" style="width:100%;">
+                                            </div>
+                                            <div>
+                                                <div
+                                                    style="font-size:.75rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;">
+                                                    Confirm New Password</div>
+                                                <input type="password" class="form-input"
+                                                    placeholder="Repeat new password" style="width:100%;">
+                                            </div>
+                                        </div>
+                                        <div class="settings-row">
+                                            <div>
+                                                <div class="settings-row-label">Two-Factor Authentication</div>
+                                                <div class="settings-row-sub">Require 2FA for all admin logins</div>
+                                            </div>
+                                            <label class="toggle"><input type="checkbox" checked><span
+                                                    class="toggle-slider"></span></label>
+                                        </div>
+                                        <div class="settings-row">
+                                            <div>
+                                                <div class="settings-row-label">Session Timeout</div>
+                                                <div class="settings-row-sub">Auto-logout after inactivity</div>
+                                            </div>
+                                            <select class="form-input" style="width:160px;">
+                                                <option>30 minutes</option>
+                                                <option>1 hour</option>
+                                                <option>4 hours</option>
+                                                <option>Never</option>
+                                            </select>
+                                        </div>
+                                        <div style="margin-top:14px;display:flex;gap:8px;">
+                                            <button class="btn-save" onclick="alert('Password updated!')">Update
+                                                Password</button>
+                                            <button class="btn-danger"
+                                                onclick="alert('All sessions terminated.')">Terminate All
+                                                Sessions</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Billing -->
+                            <div class="settings-section" id="settings-billing">
+                                <div class="settings-card">
+                                    <div class="settings-card-hdr">
+                                        <div class="settings-card-title">Current Plan</div>
+                                        <div class="settings-card-sub">Manage your subscription and payment method</div>
+                                    </div>
+                                    <div class="settings-card-body">
+                                        <div
+                                            style="background:linear-gradient(135deg,var(--accent),#0060d4);border-radius:10px;padding:18px;color:#fff;margin-bottom:16px;">
+                                            <div style="font-size:.72rem;opacity:.7;margin-bottom:4px;">ACTIVE PLAN
+                                            </div>
+                                            <div
+                                                style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:700;">
+                                                Enterprise</div>
+                                            <div
+                                                style="font-family:'Sora',sans-serif;font-size:1.8rem;font-weight:800;margin:4px 0;">
+                                                $499<span style="font-size:.9rem;opacity:.7;">/month</span></div>
+                                            <div style="font-size:.75rem;opacity:.7;">Next billing: November 1, 2024
+                                            </div>
+                                            <div style="display:flex;gap:16px;margin-top:12px;">
+                                                <div style="font-size:.75rem;opacity:.9;"><i
+                                                        class="bi bi-check-circle-fill"></i> Unlimited orders</div>
+                                                <div style="font-size:.75rem;opacity:.9;"><i
+                                                        class="bi bi-check-circle-fill"></i> 40 users</div>
+                                                <div style="font-size:.75rem;opacity:.9;"><i
+                                                        class="bi bi-check-circle-fill"></i> API access</div>
+                                            </div>
+                                        </div>
+                                        <div class="settings-row">
+                                            <div>
+                                                <div class="settings-row-label">Payment Method</div>
+                                                <div class="settings-row-sub">Visa ending in 4242</div>
+                                            </div>
+                                            <button
+                                                style="padding:6px 14px;border-radius:7px;border:1px solid var(--border);background:#fff;font-size:.75rem;font-weight:600;cursor:pointer;"
+                                                onclick="alert('Update payment method…')">Update Card</button>
+                                        </div>
+                                        <div class="settings-row">
+                                            <div>
+                                                <div class="settings-row-label">Billing Email</div>
+                                                <div class="settings-row-sub">billing@printpro.com</div>
+                                            </div>
+                                            <button
+                                                style="padding:6px 14px;border-radius:7px;border:1px solid var(--border);background:#fff;font-size:.75rem;font-weight:600;cursor:pointer;"
+                                                onclick="alert('Change billing email…')">Change</button>
+                                        </div>
+                                        <div style="margin-top:14px;display:flex;gap:8px;">
+                                            <button class="btn-save" onclick="alert('Viewing invoice history…')"><i
+                                                    class="bi bi-file-text"></i> View Invoices</button>
+                                            <button
+                                                style="padding:8px 22px;border-radius:8px;border:1px solid var(--border);background:#fff;font-size:.82rem;font-weight:600;color:var(--navy);cursor:pointer;font-family:'DM Sans',sans-serif;"
+                                                onclick="alert('Cancel subscription?')">Cancel Plan</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Integrations -->
+                            <div class="settings-section" id="settings-integrations">
+                                <div class="settings-card">
+                                    <div class="settings-card-hdr">
+                                        <div class="settings-card-title">Integrations & API</div>
+                                        <div class="settings-card-sub">Connect third-party tools and manage API keys
+                                        </div>
+                                    </div>
+                                    <div class="settings-card-body">
+                                        <div class="settings-row">
+                                            <div style="display:flex;align-items:center;gap:10px;">
+                                                <div
+                                                    style="width:32px;height:32px;background:#f5f0ff;border-radius:8px;display:grid;place-items:center;font-size:1rem;">
+                                                    📦</div>
+                                                <div>
+                                                    <div class="settings-row-label">ShipStation</div>
+                                                    <div class="settings-row-sub">Sync shipments automatically</div>
+                                                </div>
+                                            </div>
+                                            <label class="toggle"><input type="checkbox" checked><span
+                                                    class="toggle-slider"></span></label>
+                                        </div>
+                                        <div class="settings-row">
+                                            <div style="display:flex;align-items:center;gap:10px;">
+                                                <div
+                                                    style="width:32px;height:32px;background:#f0fff4;border-radius:8px;display:grid;place-items:center;font-size:1rem;">
+                                                    💳</div>
+                                                <div>
+                                                    <div class="settings-row-label">Stripe</div>
+                                                    <div class="settings-row-sub">Payment processing</div>
+                                                </div>
+                                            </div>
+                                            <label class="toggle"><input type="checkbox" checked><span
+                                                    class="toggle-slider"></span></label>
+                                        </div>
+                                        <div class="settings-row">
+                                            <div style="display:flex;align-items:center;gap:10px;">
+                                                <div
+                                                    style="width:32px;height:32px;background:#fff0f0;border-radius:8px;display:grid;place-items:center;font-size:1rem;">
+                                                    📧</div>
+                                                <div>
+                                                    <div class="settings-row-label">Mailchimp</div>
+                                                    <div class="settings-row-sub">Email campaigns and notifications
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <label class="toggle"><input type="checkbox"><span
+                                                    class="toggle-slider"></span></label>
+                                        </div>
+                                        <div class="settings-row">
+                                            <div style="display:flex;align-items:center;gap:10px;">
+                                                <div
+                                                    style="width:32px;height:32px;background:#f0f8ff;border-radius:8px;display:grid;place-items:center;font-size:1rem;">
+                                                    📊</div>
+                                                <div>
+                                                    <div class="settings-row-label">QuickBooks</div>
+                                                    <div class="settings-row-sub">Accounting and invoicing sync</div>
+                                                </div>
+                                            </div>
+                                            <label class="toggle"><input type="checkbox" checked><span
+                                                    class="toggle-slider"></span></label>
+                                        </div>
+                                        <div
+                                            style="margin-top:16px;border-top:1px solid var(--border);padding-top:16px;">
+                                            <div
+                                                style="font-size:.82rem;font-weight:600;color:#344767;margin-bottom:6px;">
+                                                API Key</div>
+                                            <div class="api-key-box">
+                                                <span>pp_live_sk_••••••••••••••••••2a8f</span>
+                                                <button
+                                                    style="border:none;background:transparent;font-size:.75rem;color:var(--accent);cursor:pointer;font-weight:600;"
+                                                    onclick="alert('API key copied to clipboard!')">Copy</button>
+                                            </div>
+                                            <button
+                                                style="margin-top:10px;padding:7px 14px;border-radius:7px;border:1px solid var(--border);background:#fff;font-size:.75rem;font-weight:600;cursor:pointer;color:var(--danger);"
+                                                onclick="alert('Regenerate API key? This will invalidate the current key.')">Regenerate
+                                                Key</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ════ ACCOUNT ════ -->
+                <div class="a-page" id="page-account">
+                    <div class="account-wrap">
+                        <div class="account-header">
+                            <div class="account-avatar-lg">AW</div>
+                            <div>
+                                <div class="account-name">Alexander Wright</div>
+                                <div class="account-email">alex@printpro.com</div>
+                                <span class="account-badge">Super Admin</span>
+                            </div>
+                            <div style="margin-left:auto;">
+                                <button
+                                    style="background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.2);padding:8px 16px;border-radius:8px;font-size:.8rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;"
+                                    onclick="alert('Edit profile…')"><i class="bi bi-pencil"></i> Edit Profile</button>
+                            </div>
+                        </div>
+
+                        <div class="account-grid">
+                            <div>
+                                <div class="notif-card" style="margin-bottom:16px;">
+                                    <div class="notif-card-title">Personal Details</div>
+                                    <div class="settings-row">
+                                        <div class="settings-row-label">Full Name</div>
+                                        <input type="text" class="form-input" value="Alexander Wright"
+                                            style="width:200px;">
+                                    </div>
+                                    <div class="settings-row">
+                                        <div class="settings-row-label">Display Name</div>
+                                        <input type="text" class="form-input" value="Alex W." style="width:200px;">
+                                    </div>
+                                    <div class="settings-row">
+                                        <div class="settings-row-label">Role</div>
+                                        <span style="font-size:.82rem;color:var(--navy);font-weight:500;">Super
+                                            Admin</span>
+                                    </div>
+                                    <div class="settings-row">
+                                        <div class="settings-row-label">Language</div>
+                                        <select class="form-input" style="width:200px;">
+                                            <option>English (US)</option>
+                                            <option>Spanish</option>
+                                            <option>French</option>
+                                        </select>
+                                    </div>
+                                    <div style="margin-top:14px;">
+                                        <button class="btn-save" onclick="alert('Profile saved!')">Save Changes</button>
+                                    </div>
+                                </div>
+
+                                <div class="notif-card">
+                                    <div class="notif-card-title">Login & Security</div>
+                                    <div class="settings-row">
+                                        <div>
+                                            <div class="settings-row-label">Two-Factor Auth</div>
+                                            <div class="settings-row-sub">Enabled via Authenticator App</div>
+                                        </div>
+                                        <label class="toggle"><input type="checkbox" checked><span
+                                                class="toggle-slider"></span></label>
+                                    </div>
+                                    <div class="settings-row">
+                                        <div>
+                                            <div class="settings-row-label">Login Notifications</div>
+                                            <div class="settings-row-sub">Email me on new login</div>
+                                        </div>
+                                        <label class="toggle"><input type="checkbox" checked><span
+                                                class="toggle-slider"></span></label>
+                                    </div>
+                                    <div style="margin-top:12px;">
+                                        <button
+                                            style="padding:7px 14px;border-radius:7px;border:1px solid var(--border);background:#fff;font-size:.78rem;font-weight:600;color:var(--navy);cursor:pointer;font-family:'DM Sans',sans-serif;"
+                                            onclick="alert('Password change flow…')"><i class="bi bi-key"></i> Change
+                                            Password</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="billing-plan" style="margin-bottom:16px;">
+                                    <div style="font-size:.7rem;opacity:.7;margin-bottom:4px;">YOUR PLAN</div>
+                                    <div class="billing-plan-name">Enterprise Plan</div>
+                                    <div class="billing-plan-price">$499<span class="billing-plan-cycle"> /month</span>
+                                    </div>
+                                    <div class="billing-feature"><i class="bi bi-check-circle-fill"></i> Unlimited
+                                        orders</div>
+                                    <div class="billing-feature"><i class="bi bi-check-circle-fill"></i> 40 user
+                                        accounts</div>
+                                    <div class="billing-feature"><i class="bi bi-check-circle-fill"></i> Priority
+                                        support</div>
+                                    <div class="billing-feature"><i class="bi bi-check-circle-fill"></i> Full API access
+                                    </div>
+                                    <button
+                                        style="margin-top:14px;width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.15);color:#fff;font-size:.8rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;"
+                                        onclick="showPage('settings',null);showSettingsSection('billing', document.querySelector('.settings-nav-item:nth-child(4)'))">Manage
+                                        Billing →</button>
+                                </div>
+
+                                <div class="notif-card">
+                                    <div class="notif-card-title">Notification Preferences</div>
+                                    <div class="notif-row"><span class="notif-label">Order updates</span><label
+                                            class="toggle"><input type="checkbox" checked><span
+                                                class="toggle-slider"></span></label></div>
+                                    <div class="notif-row"><span class="notif-label">Device alerts</span><label
+                                            class="toggle"><input type="checkbox" checked><span
+                                                class="toggle-slider"></span></label></div>
+                                    <div class="notif-row"><span class="notif-label">Team activity</span><label
+                                            class="toggle"><input type="checkbox"><span
+                                                class="toggle-slider"></span></label></div>
+                                    <div class="notif-row"><span class="notif-label">Weekly reports</span><label
+                                            class="toggle"><input type="checkbox" checked><span
+                                                class="toggle-slider"></span></label></div>
+                                    <div class="notif-row"><span class="notif-label">Billing notices</span><label
+                                            class="toggle"><input type="checkbox" checked><span
+                                                class="toggle-slider"></span></label></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- /a-content -->
+        </div>
+    </div><!-- /a-app -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const pageToNav = {
+            dashboard: 'nav-dashboard',
+            orders: 'nav-orders',
+            users: 'nav-users',
+            devices: 'nav-devices',
+            settings: 'nav-settings',
+            account: null
+        };
+
+        const pageToTab = {
+            dashboard: 0,
+            orders: 1,
+            devices: 2,
+            account: 3
+        };
+
+        function showPage(page, el) {
+            document.querySelectorAll('.a-page').forEach(p => p.classList.remove('active'));
+            const target = document.getElementById('page-' + page);
+            if (target) target.classList.add('active');
+
+            document.querySelectorAll('.a-nav-item').forEach(n => n.classList.remove('active'));
+            const navId = pageToNav[page];
+            if (navId) document.getElementById(navId).classList.add('active');
+
+            const tabs = document.querySelectorAll('.a-tab');
+            tabs.forEach(t => t.classList.remove('active'));
+            if (page in pageToTab) tabs[pageToTab[page]].classList.add('active');
+        }
+
+        function showSettingsSection(section, el) {
+            document.querySelectorAll('.settings-section').forEach(s => s.classList.remove('active'));
+            document.getElementById('settings-' + section).classList.add('active');
+            document.querySelectorAll('.settings-nav-item').forEach(i => i.classList.remove('active'));
+            if (el) el.classList.add('active');
+        }
+
+        function filterOrders(btn, status) {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const rows = document.querySelectorAll('#ordersTbody tr');
+            rows.forEach(row => {
+                row.style.display = (status === 'all' || row.dataset.status === status) ? '' : 'none';
+            });
+        }
+
+        function searchOrders(query) {
+            const q = query.toLowerCase();
+            document.querySelectorAll('#ordersTbody tr').forEach(row => {
+                row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+            });
+        }
+
+        function selectUser(row, name, role, scope, email, joined) {
+            document.querySelectorAll('.users-table tbody tr').forEach(r => r.classList.remove('user-row-active'));
+            row.classList.add('user-row-active');
+            const initials = name.split(' ').map(n => n[0]).join('');
+            document.getElementById('profileAvatar').textContent = initials;
+            document.getElementById('profileName').textContent = name;
+            document.getElementById('profileRole').textContent = scope + ' Role · ' + role;
+            document.getElementById('profileInfoRows').innerHTML = `
+      <div class="profile-info-row"><span>Joined</span><span>${joined}</span></div>
+      <div class="profile-info-row"><span>Email</span><span>${email}</span></div>
+      <div class="profile-info-row"><span>Status</span><span style="color:var(--success);">Active</span></div>
+      <div class="profile-info-row"><span>Role</span><span>${role}</span></div>
+    `;
+        }
+    </script>
+</body>
+
+</html>

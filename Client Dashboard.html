@@ -1,0 +1,2990 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrintPro App</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --navy: #0d1b3e;
+            --sidebar: #0f2057;
+            --accent: #1d8cf8;
+            --accent2: #00c6ff;
+            --teal: #3ec6c6;
+            --danger: #f5365c;
+            --warning: #fb6340;
+            --success: #2dce89;
+            --purple: #7c4dff;
+            --border: #dde3f0;
+            --muted: #8898aa;
+            --off: #f4f6fb;
+            --dark-bg: #0a1628;
+            --dark-card: #111e40;
+            --dark-card2: #162048;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            height: 100%;
+            font-family: 'DM Sans', sans-serif;
+            background: #f0f2f8;
+        }
+
+        /* ── PORTAL SWITCHER ── */
+        .portal-switcher {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 2000;
+            background: var(--navy);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 6px;
+        }
+
+        .portal-btn {
+            font-size: .8rem;
+            font-weight: 600;
+            padding: 5px 20px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            transition: all .2s;
+        }
+
+        .portal-btn.active {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .portal-btn:not(.active) {
+            background: rgba(255, 255, 255, .1);
+            color: rgba(255, 255, 255, .7);
+        }
+
+        .portal-btn:not(.active):hover {
+            background: rgba(255, 255, 255, .18);
+            color: #fff;
+        }
+
+        /* ── PORTAL VIEWS ── */
+        .portal {
+            display: none;
+            padding-top: 36px;
+            height: 100%;
+        }
+
+        .portal.active {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        /* ══════════════════════════════════════
+           CLIENT SIDE
+        ══════════════════════════════════════ */
+        .c-app {
+            display: flex;
+            height: calc(100vh - 36px);
+            overflow: hidden;
+        }
+
+        /* Client Sidebar */
+        .c-sidebar {
+            width: 200px;
+            flex-shrink: 0;
+            background: linear-gradient(180deg, #0f2057 0%, #0d1b3e 100%);
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            overflow-y: auto;
+        }
+
+        .c-brand {
+            padding: 14px 16px 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, .08);
+        }
+
+        .c-brand-icon {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, var(--accent), var(--teal));
+            border-radius: 7px;
+            display: grid;
+            place-items: center;
+        }
+
+        .c-brand-name {
+            font-family: 'Sora', sans-serif;
+            font-weight: 700;
+            font-size: .95rem;
+            color: #fff;
+        }
+
+        .c-brand-sub {
+            font-size: .6rem;
+            color: rgba(255, 255, 255, .4);
+            letter-spacing: .05em;
+        }
+
+        .c-nav {
+            padding: 10px 0;
+            flex: 1;
+        }
+
+        .c-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 16px;
+            font-size: .83rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, .55);
+            cursor: pointer;
+            border-left: 3px solid transparent;
+            transition: all .15s;
+        }
+
+        .c-nav-item:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, .05);
+        }
+
+        .c-nav-item.active {
+            color: #fff;
+            background: rgba(29, 140, 248, .18);
+            border-left-color: var(--accent);
+        }
+
+        .c-nav-item i {
+            font-size: 1rem;
+            width: 18px;
+        }
+
+        /* Client Top Bar */
+        .c-topbar {
+            height: 48px;
+            background: #fff;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            box-shadow: 0 1px 6px rgba(0, 0, 0, .06);
+        }
+
+        .c-search {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--off);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 5px 12px;
+            width: 220px;
+            font-size: .8rem;
+            color: var(--muted);
+        }
+
+        .c-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--teal));
+            display: grid;
+            place-items: center;
+            color: #fff;
+            font-size: .8rem;
+            font-weight: 700;
+        }
+
+        /* Client Content */
+        .c-content {
+            flex: 1;
+            overflow-y: auto;
+            background: #f0f2f8;
+        }
+
+        .c-page {
+            display: none;
+        }
+
+        .c-page.active {
+            display: block;
+        }
+
+        /* ── CLIENT DASHBOARD ── */
+        .c-dash {
+            padding: 20px 24px;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            background: var(--dark-card);
+            border-radius: 12px;
+            padding: 16px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .stat-box.blue {
+            background: linear-gradient(135deg, #1d8cf8, #1171ef);
+        }
+
+        .stat-box.teal {
+            background: linear-gradient(135deg, #11cdef, #1171ef);
+        }
+
+        .stat-box.green {
+            background: linear-gradient(135deg, #2dce89, #1aae6f);
+        }
+
+        .stat-box.purple {
+            background: linear-gradient(135deg, #7c4dff, #5e35b1);
+        }
+
+        .stat-val {
+            font-family: 'Sora', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .stat-lbl {
+            font-size: .72rem;
+            color: rgba(255, 255, 255, .7);
+            margin-top: 2px;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, .15);
+            display: grid;
+            place-items: center;
+            color: #fff;
+            font-size: 1.2rem;
+        }
+
+        .orders-card,
+        .actions-card {
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .card-hdr {
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-hdr-title {
+            font-family: 'Sora', sans-serif;
+            font-size: .9rem;
+            font-weight: 700;
+            color: #1a2340;
+        }
+
+        .orders-table {
+            width: 100%;
+            font-size: .78rem;
+        }
+
+        .orders-table th {
+            padding: 8px 14px;
+            color: var(--muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: .68rem;
+            letter-spacing: .05em;
+            background: var(--off);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .orders-table td {
+            padding: 9px 14px;
+            border-bottom: 1px solid #f0f2f8;
+            color: #344767;
+            vertical-align: middle;
+        }
+
+        .orders-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .orders-table tr:hover td {
+            background: #f8f9ff;
+        }
+
+        .badge-status {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: .68rem;
+            font-weight: 700;
+        }
+
+        .badge-active {
+            background: rgba(45, 206, 137, .15);
+            color: #1aae6f;
+        }
+
+        .badge-pending {
+            background: rgba(251, 99, 64, .15);
+            color: var(--warning);
+        }
+
+        .badge-done {
+            background: rgba(29, 140, 248, .15);
+            color: var(--accent);
+        }
+
+        .action-item {
+            padding: 12px 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: background .15s;
+        }
+
+        .action-item:last-child {
+            border-bottom: none;
+        }
+
+        .action-item:hover {
+            background: var(--off);
+        }
+
+        .action-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 9px;
+            display: grid;
+            place-items: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .action-icon.blue {
+            background: rgba(29, 140, 248, .12);
+            color: var(--accent);
+        }
+
+        .action-icon.green {
+            background: rgba(45, 206, 137, .12);
+            color: var(--success);
+        }
+
+        .action-icon.orng {
+            background: rgba(251, 99, 64, .12);
+            color: var(--warning);
+        }
+
+        .action-icon.purple {
+            background: rgba(124, 77, 255, .12);
+            color: var(--purple);
+        }
+
+        .action-title {
+            font-size: .82rem;
+            font-weight: 600;
+            color: #344767;
+        }
+
+        .action-sub {
+            font-size: .72rem;
+            color: var(--muted);
+        }
+
+        /* ── CLIENT CREATE ORDER ── */
+        .c-order {
+            padding: 20px 24px;
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .c-order-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .c-order-sidebar {
+            width: 260px;
+            flex-shrink: 0;
+        }
+
+        .wizard-card {
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .wizard-hdr {
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .step-num {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: #fff;
+            font-size: .78rem;
+            font-weight: 700;
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+        }
+
+        .step-title {
+            font-family: 'Sora', sans-serif;
+            font-size: .9rem;
+            font-weight: 700;
+            color: #1a2340;
+        }
+
+        .wizard-body {
+            padding: 18px;
+        }
+
+        .product-types {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .pt-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 2px solid var(--border);
+            background: #fff;
+            cursor: pointer;
+            font-size: .75rem;
+            color: var(--muted);
+            transition: all .15s;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .pt-btn i {
+            font-size: 1.4rem;
+        }
+
+        .pt-btn.active {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(29, 140, 248, .06);
+        }
+
+        .pt-btn:hover:not(.active) {
+            border-color: #b0bec5;
+            color: #344767;
+        }
+
+        .dim-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .form-label-sm {
+            font-size: .75rem;
+            font-weight: 600;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            margin-bottom: 4px;
+        }
+
+        .form-control-sm-pp {
+            width: 100%;
+            padding: 7px 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            font-size: .82rem;
+            font-family: 'DM Sans', sans-serif;
+            color: #344767;
+            background: #fff;
+        }
+
+        .form-control-sm-pp:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(29, 140, 248, .1);
+        }
+
+        .qty-slider {
+            width: 100%;
+            accent-color: var(--accent);
+        }
+
+        /* Summary card */
+        .summary-card {
+            background: var(--dark-card);
+            border-radius: 12px;
+            padding: 18px;
+        }
+
+        .summary-title {
+            font-family: 'Sora', sans-serif;
+            font-size: .85rem;
+            font-weight: 700;
+            color: rgba(255, 255, 255, .8);
+            margin-bottom: 4px;
+        }
+
+        .summary-sub {
+            font-size: .7rem;
+            color: rgba(255, 255, 255, .4);
+            margin-bottom: 14px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: .78rem;
+            color: rgba(255, 255, 255, .65);
+            margin-bottom: 6px;
+        }
+
+        .summary-row span:last-child {
+            color: rgba(255, 255, 255, .9);
+            font-weight: 600;
+        }
+
+        .summary-divider {
+            border: none;
+            border-top: 1px solid rgba(255, 255, 255, .1);
+            margin: 10px 0;
+        }
+
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-top: 8px;
+        }
+
+        .summary-total-lbl {
+            font-size: .85rem;
+            color: rgba(255, 255, 255, .7);
+            font-weight: 600;
+        }
+
+        .summary-total-val {
+            font-family: 'Sora', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--accent2);
+        }
+
+        .btn-continue {
+            width: 100%;
+            margin-top: 14px;
+            padding: 10px;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            color: #fff;
+            border: none;
+            border-radius: 9px;
+            font-weight: 700;
+            font-size: .88rem;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            transition: opacity .2s;
+        }
+
+        .btn-continue:hover {
+            opacity: .88;
+        }
+
+        .delivery-box {
+            background: rgba(255, 255, 255, .06);
+            border-radius: 8px;
+            padding: 10px 12px;
+            margin-top: 12px;
+        }
+
+        .delivery-lbl {
+            font-size: .7rem;
+            color: rgba(255, 255, 255, .45);
+        }
+
+        .delivery-val {
+            font-size: .82rem;
+            color: #fff;
+            font-weight: 600;
+            margin-top: 2px;
+        }
+
+        /* ── TEMPLATES ── */
+        .tpl-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 14px;
+        }
+
+        .tpl-card {
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+        .tpl-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 4px 18px rgba(29, 140, 248, .12);
+            transform: translateY(-2px);
+        }
+
+        .tpl-preview {
+            height: 110px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+        }
+
+        .tpl-preview.blue-bg {
+            background: linear-gradient(135deg, rgba(29, 140, 248, .12), rgba(0, 198, 255, .08));
+        }
+
+        .tpl-preview.teal-bg {
+            background: linear-gradient(135deg, rgba(62, 198, 198, .12), rgba(29, 140, 248, .08));
+        }
+
+        .tpl-preview.green-bg {
+            background: linear-gradient(135deg, rgba(45, 206, 137, .12), rgba(62, 198, 198, .08));
+        }
+
+        .tpl-preview.purple-bg {
+            background: linear-gradient(135deg, rgba(124, 77, 255, .12), rgba(29, 140, 248, .08));
+        }
+
+        .tpl-preview.orng-bg {
+            background: linear-gradient(135deg, rgba(251, 99, 64, .12), rgba(251, 180, 64, .08));
+        }
+
+        .tpl-info {
+            padding: 12px;
+        }
+
+        .tpl-name {
+            font-family: 'Sora', sans-serif;
+            font-size: .82rem;
+            font-weight: 700;
+            color: #1a2340;
+            margin-bottom: 2px;
+        }
+
+        .tpl-meta {
+            font-size: .7rem;
+            color: var(--muted);
+        }
+
+        .tpl-tag {
+            display: inline-block;
+            padding: 2px 7px;
+            border-radius: 10px;
+            font-size: .65rem;
+            font-weight: 700;
+            margin-top: 6px;
+        }
+
+        .tpl-tag.free {
+            background: rgba(45, 206, 137, .15);
+            color: #1aae6f;
+        }
+
+        .tpl-tag.pro {
+            background: rgba(124, 77, 255, .15);
+            color: var(--purple);
+        }
+
+        .tpl-tag.popular {
+            background: rgba(29, 140, 248, .15);
+            color: var(--accent);
+        }
+
+        /* ── FILES ── */
+        .files-sidebar {
+            width: 180px;
+            flex-shrink: 0;
+            background: #fff;
+            border-right: 1px solid var(--border);
+            padding: 14px 0;
+            overflow-y: auto;
+        }
+
+        .files-sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            font-size: .8rem;
+            color: var(--muted);
+            cursor: pointer;
+            transition: all .15s;
+        }
+
+        .files-sidebar-item:hover {
+            background: var(--off);
+            color: #344767;
+        }
+
+        .files-sidebar-item.active {
+            color: var(--accent);
+            background: rgba(29, 140, 248, .07);
+            font-weight: 600;
+        }
+
+        .files-sidebar-item i {
+            font-size: .9rem;
+            width: 14px;
+        }
+
+        .files-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .file-card {
+            background: #fff;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            padding: 14px;
+            cursor: pointer;
+            transition: all .15s;
+            text-align: center;
+        }
+
+        .file-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 2px 12px rgba(29, 140, 248, .1);
+        }
+
+        .file-icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .file-name {
+            font-size: .75rem;
+            font-weight: 600;
+            color: #344767;
+            margin-bottom: 2px;
+            word-break: break-word;
+        }
+
+        .file-meta {
+            font-size: .68rem;
+            color: var(--muted);
+        }
+
+        /* ── TRACK ── */
+        .track-card {
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+
+        .track-card-hdr {
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(90deg, rgba(29, 140, 248, .04), transparent);
+        }
+
+        .track-order-id {
+            font-family: 'Sora', sans-serif;
+            font-size: .95rem;
+            font-weight: 700;
+            color: #1a2340;
+        }
+
+        .track-order-name {
+            font-size: .78rem;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        .progress-track {
+            padding: 24px 20px;
+        }
+
+        .steps-row {
+            display: flex;
+            align-items: flex-start;
+            position: relative;
+        }
+
+        .step-connector {
+            flex: 1;
+            height: 3px;
+            margin-top: 16px;
+            border-radius: 2px;
+        }
+
+        .step-connector.done {
+            background: var(--accent);
+        }
+
+        .step-connector.pending {
+            background: var(--border);
+        }
+
+        .track-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            min-width: 70px;
+        }
+
+        .step-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            font-size: .8rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .step-circle.done {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .step-circle.current {
+            background: var(--accent2);
+            color: #fff;
+            box-shadow: 0 0 0 4px rgba(0, 198, 255, .2);
+        }
+
+        .step-circle.pending {
+            background: #e8ecf4;
+            color: var(--muted);
+        }
+
+        .step-label {
+            font-size: .68rem;
+            font-weight: 600;
+            color: var(--muted);
+            text-align: center;
+            line-height: 1.3;
+        }
+
+        .step-label.done,
+        .step-label.current {
+            color: #344767;
+        }
+
+        .track-details {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            border-top: 1px solid var(--border);
+        }
+
+        .track-detail {
+            padding: 14px 20px;
+            border-right: 1px solid var(--border);
+        }
+
+        .track-detail:last-child {
+            border-right: none;
+        }
+
+        .track-detail-lbl {
+            font-size: .68rem;
+            color: var(--muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            margin-bottom: 4px;
+        }
+
+        .track-detail-val {
+            font-size: .82rem;
+            font-weight: 600;
+            color: #344767;
+        }
+
+        .track-history {
+            padding: 16px 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .history-item {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+            font-size: .78rem;
+        }
+
+        .history-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .history-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            margin-top: 3px;
+        }
+
+        .history-dot.done {
+            background: var(--accent);
+        }
+
+        .history-dot.current {
+            background: var(--accent2);
+        }
+
+        .history-dot.pending {
+            background: var(--border);
+        }
+
+        .history-text {
+            color: #344767;
+            line-height: 1.5;
+        }
+
+        .history-time {
+            color: var(--muted);
+            font-size: .7rem;
+        }
+
+        /* ── BILLING ── */
+        .spend-chart {
+            padding: 16px 18px;
+        }
+
+        .spend-bar-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .spend-bar-label {
+            font-size: .72rem;
+            color: var(--muted);
+            width: 60px;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .spend-bar-wrap {
+            flex: 1;
+            height: 10px;
+            background: #f0f2f8;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .spend-bar-fill {
+            height: 100%;
+            border-radius: 10px;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+        }
+
+        .spend-bar-val {
+            font-size: .72rem;
+            font-weight: 600;
+            color: #344767;
+            width: 54px;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .invoice-row {
+            display: flex;
+            align-items: center;
+            padding: 11px 16px;
+            border-bottom: 1px solid #f0f2f8;
+            font-size: .78rem;
+            gap: 10px;
+        }
+
+        .invoice-row:last-child {
+            border-bottom: none;
+        }
+
+        .invoice-row:hover {
+            background: #f8f9ff;
+        }
+
+        .invoice-id {
+            font-weight: 700;
+            color: #1a2340;
+            width: 90px;
+            flex-shrink: 0;
+        }
+
+        .invoice-name {
+            flex: 1;
+            color: #344767;
+        }
+
+        .invoice-date {
+            color: var(--muted);
+            width: 80px;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .invoice-amt {
+            font-weight: 700;
+            color: #1a2340;
+            width: 80px;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .invoice-dl {
+            width: 28px;
+            flex-shrink: 0;
+            text-align: right;
+        }
+
+        .invoice-dl a {
+            color: var(--muted);
+            font-size: .85rem;
+            text-decoration: none;
+        }
+
+        .invoice-dl a:hover {
+            color: var(--accent);
+        }
+
+        .pm-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+        }
+
+        .pm-item:last-child {
+            border-bottom: none;
+        }
+
+        .pm-item:hover {
+            background: var(--off);
+        }
+
+        .pm-icon {
+            width: 38px;
+            height: 24px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: .7rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .pm-icon.visa {
+            background: #1a1f71;
+            color: #fff;
+        }
+
+        .pm-icon.mc {
+            background: #eb001b;
+            color: #fff;
+        }
+
+        .pm-icon.ach {
+            background: #2dce89;
+            color: #fff;
+        }
+
+        .pm-label {
+            font-size: .8rem;
+            color: #344767;
+            font-weight: 500;
+        }
+
+        .pm-sub {
+            font-size: .7rem;
+            color: var(--muted);
+        }
+
+        .pm-default {
+            font-size: .65rem;
+            background: rgba(29, 140, 248, .12);
+            color: var(--accent);
+            padding: 2px 7px;
+            border-radius: 10px;
+            font-weight: 700;
+        }
+
+        /* ── ADMIN SIDE ── */
+        .a-app {
+            display: flex;
+            height: calc(100vh - 36px);
+            overflow: hidden;
+        }
+
+        .a-sidebar {
+            width: 190px;
+            flex-shrink: 0;
+            background: #fff;
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .a-brand {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .a-brand-name {
+            font-family: 'Sora', sans-serif;
+            font-weight: 700;
+            font-size: .95rem;
+            color: var(--navy);
+        }
+
+        .a-brand-badge {
+            font-size: .6rem;
+            background: var(--accent);
+            color: #fff;
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+        }
+
+        .a-nav {
+            padding: 10px 0;
+            flex: 1;
+        }
+
+        .a-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 9px 16px;
+            font-size: .83rem;
+            font-weight: 500;
+            color: var(--muted);
+            cursor: pointer;
+            transition: all .15s;
+        }
+
+        .a-nav-item:hover {
+            color: var(--navy);
+            background: var(--off);
+        }
+
+        .a-nav-item.active {
+            color: var(--accent);
+            background: rgba(29, 140, 248, .08);
+            font-weight: 600;
+        }
+
+        .a-nav-item i {
+            font-size: .95rem;
+            width: 16px;
+        }
+
+        .a-logout {
+            padding: 12px 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .a-logout a {
+            font-size: .8rem;
+            color: var(--muted);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .a-logout a:hover {
+            color: var(--danger);
+        }
+
+        .a-topbar {
+            height: 48px;
+            background: #fff;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+        }
+
+        .a-tabs {
+            display: flex;
+            gap: 2px;
+        }
+
+        .a-tab {
+            padding: 6px 16px;
+            font-size: .82rem;
+            font-weight: 500;
+            border-radius: 6px;
+            cursor: pointer;
+            color: var(--muted);
+            transition: all .15s;
+        }
+
+        .a-tab.active {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .a-tab:hover:not(.active) {
+            background: var(--off);
+            color: var(--navy);
+        }
+
+        .a-content {
+            flex: 1;
+            overflow-y: auto;
+            background: #f0f2f8;
+        }
+
+        .a-page {
+            display: none;
+        }
+
+        .a-page.active {
+            display: block;
+        }
+
+        .a-dash {
+            padding: 20px 24px;
+        }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .kpi-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 16px 18px;
+            border: 1px solid var(--border);
+        }
+
+        .kpi-lbl {
+            font-size: .72rem;
+            color: var(--muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            margin-bottom: 6px;
+        }
+
+        .kpi-val {
+            font-family: 'Sora', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--navy);
+        }
+
+        .kpi-change {
+            font-size: .72rem;
+            margin-top: 4px;
+        }
+
+        .kpi-up {
+            color: var(--success);
+        }
+
+        .kpi-down {
+            color: var(--danger);
+        }
+
+        .charts-row {
+            display: grid;
+            grid-template-columns: 1.6fr 1fr;
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        .chart-card {
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 16px 18px;
+        }
+
+        .chart-title {
+            font-family: 'Sora', sans-serif;
+            font-size: .85rem;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 4px;
+        }
+
+        .chart-sub {
+            font-size: .72rem;
+            color: var(--muted);
+            margin-bottom: 12px;
+        }
+
+        .mini-chart svg {
+            width: 100%;
+            height: 120px;
+        }
+
+        .donut-wrap {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .donut-legend {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: .75rem;
+            color: #344767;
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .bottom-row {
+            display: grid;
+            grid-template-columns: 1.4fr 1fr;
+            gap: 14px;
+        }
+
+        .recent-orders-table {
+            width: 100%;
+            font-size: .78rem;
+        }
+
+        .recent-orders-table th {
+            padding: 7px 12px;
+            color: var(--muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: .65rem;
+            letter-spacing: .05em;
+            background: var(--off);
+        }
+
+        .recent-orders-table td {
+            padding: 9px 12px;
+            border-bottom: 1px solid #f0f2f8;
+            color: #344767;
+            vertical-align: middle;
+        }
+
+        .recent-orders-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .activity-feed {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .feed-item {
+            display: flex;
+            gap: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--off);
+        }
+
+        .feed-item:last-child {
+            border-bottom: none;
+        }
+
+        .feed-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            display: grid;
+            place-items: center;
+            color: #fff;
+            font-size: .75rem;
+            font-weight: 700;
+        }
+
+        .feed-content {
+            flex: 1;
+        }
+
+        .feed-name {
+            font-size: .78rem;
+            font-weight: 600;
+            color: var(--navy);
+        }
+
+        .feed-text {
+            font-size: .73rem;
+            color: var(--muted);
+            line-height: 1.4;
+        }
+
+        .feed-time {
+            font-size: .68rem;
+            color: var(--muted);
+        }
+
+        .a-users {
+            padding: 20px 24px;
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+
+        .a-users-main {
+            flex: 1;
+        }
+
+        .a-users-panel {
+            width: 260px;
+            flex-shrink: 0;
+        }
+
+        .users-card {
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .users-table {
+            width: 100%;
+            font-size: .78rem;
+        }
+
+        .users-table th {
+            padding: 8px 14px;
+            color: var(--muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: .65rem;
+            letter-spacing: .05em;
+            background: var(--off);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .users-table td {
+            padding: 9px 14px;
+            border-bottom: 1px solid #f0f2f8;
+            color: #344767;
+            vertical-align: middle;
+        }
+
+        .users-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .users-table tr:hover td {
+            background: #f8f9ff;
+        }
+
+        .user-row-active {
+            background: rgba(29, 140, 248, .06) !important;
+        }
+
+        .profile-panel {
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .profile-banner {
+            height: 80px;
+            background: linear-gradient(135deg, var(--accent), var(--purple));
+        }
+
+        .profile-body {
+            padding: 0 16px 16px;
+        }
+
+        .profile-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent2), var(--purple));
+            margin-top: -30px;
+            border: 3px solid #fff;
+            display: grid;
+            place-items: center;
+            color: #fff;
+            font-size: 1.2rem;
+            font-weight: 700;
+            font-family: 'Sora', sans-serif;
+        }
+
+        .profile-name {
+            font-family: 'Sora', sans-serif;
+            font-size: .95rem;
+            font-weight: 700;
+            color: var(--navy);
+            margin-top: 8px;
+        }
+
+        .profile-role {
+            font-size: .72rem;
+            color: var(--muted);
+        }
+
+        .profile-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 12px 0;
+        }
+
+        .pstat {
+            text-align: center;
+            background: var(--off);
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        .pstat-val {
+            font-family: 'Sora', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        .pstat-lbl {
+            font-size: .68rem;
+            color: var(--muted);
+        }
+
+        .profile-info-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: .75rem;
+            padding: 5px 0;
+            border-bottom: 1px solid var(--off);
+        }
+
+        .profile-info-row span:first-child {
+            color: var(--muted);
+        }
+
+        .profile-info-row span:last-child {
+            color: var(--navy);
+            font-weight: 500;
+        }
+
+        .recent-activity {
+            margin-top: 12px;
+        }
+
+        .ra-title {
+            font-size: .72rem;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            margin-bottom: 8px;
+        }
+
+        .ra-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            font-size: .73rem;
+            margin-bottom: 8px;
+        }
+
+        .ra-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            margin-top: 3px;
+        }
+
+        .ra-text {
+            color: #344767;
+            line-height: 1.4;
+        }
+
+        .ra-time {
+            color: var(--muted);
+            font-size: .67rem;
+        }
+
+        .profile-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 14px;
+        }
+
+        .btn-edit {
+            flex: 1;
+            padding: 7px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: #fff;
+            font-size: .78rem;
+            font-weight: 600;
+            color: var(--navy);
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .btn-edit:hover {
+            background: var(--off);
+        }
+
+        .btn-suspend {
+            flex: 1;
+            padding: 7px;
+            border-radius: 8px;
+            border: none;
+            background: var(--danger);
+            font-size: .78rem;
+            font-weight: 600;
+            color: #fff;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .btn-suspend:hover {
+            opacity: .88;
+        }
+
+        .role-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: .68rem;
+            font-weight: 700;
+        }
+
+        .role-admin {
+            background: rgba(124, 77, 255, .12);
+            color: var(--purple);
+        }
+
+        .role-manager {
+            background: rgba(29, 140, 248, .12);
+            color: var(--accent);
+        }
+
+        .role-operator {
+            background: rgba(45, 206, 137, .12);
+            color: var(--success);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, .15);
+            border-radius: 10px;
+        }
+
+        @media (max-width: 768px) {
+
+            .c-sidebar,
+            .a-sidebar {
+                width: 56px;
+            }
+
+            .c-brand-name,
+            .c-brand-sub,
+            .c-nav-item span,
+            .a-brand-name,
+            .a-nav-item span {
+                display: none;
+            }
+
+            .kpi-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .stat-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ══ PORTAL SWITCHER ══ -->
+    <div class="portal-switcher">
+        <span style="color:rgba(255,255,255,.5);font-size:.75rem;margin-right:6px;">View:</span>
+        <button class="portal-btn active" onclick="switchPortal('client')">
+            <i class="bi bi-person-fill"></i> Client Portal
+        </button>
+    </div>
+
+
+    <!-- ══════════════════════════════════════════════════
+         CLIENT PORTAL
+    ══════════════════════════════════════════════════ -->
+    <div class="portal active" id="portal-client">
+        <div class="c-app">
+
+            <!-- Sidebar -->
+            <div class="c-sidebar">
+                <div class="c-brand">
+                    <div class="c-brand-icon">
+                        <i class="bi bi-printer-fill text-white" style="font-size:.75rem;"></i>
+                    </div>
+                    <div>
+                        <div class="c-brand-name">PrintPro</div>
+                        <div class="c-brand-sub">BUSINESS SUITE</div>
+                    </div>
+                </div>
+                <nav class="c-nav">
+                    <div class="c-nav-item active" onclick="showClientPage('dashboard', this)">
+                        <i class="bi bi-speedometer2"></i> <span>Dashboard</span>
+                    </div>
+                    <div class="c-nav-item" onclick="showClientPage('orders', this)">
+                        <i class="bi bi-box-seam"></i> <span>Orders</span>
+                    </div>
+                    <div class="c-nav-item" onclick="showClientPage('create', this)">
+                        <i class="bi bi-plus-circle"></i> <span>Create Order</span>
+                    </div>
+                    <div class="c-nav-item" onclick="showClientPage('templates', this)">
+                        <i class="bi bi-layout-text-window"></i> <span>Templates</span>
+                    </div>
+                    <div class="c-nav-item" onclick="showClientPage('files', this)">
+                        <i class="bi bi-folder2"></i> <span>Files</span>
+                    </div>
+                    <div class="c-nav-item" onclick="showClientPage('track', this)">
+                        <i class="bi bi-truck"></i> <span>Track</span>
+                    </div>
+                    <div class="c-nav-item" onclick="showClientPage('billing', this)">
+                        <i class="bi bi-credit-card"></i> <span>Billing</span>
+                    </div>
+                </nav>
+            </div>
+
+            <!-- Main area -->
+            <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+
+                <!-- Topbar -->
+                <div class="c-topbar">
+                    <div class="c-search">
+                        <i class="bi bi-search" style="font-size:.75rem;"></i>
+                        Search orders, files…
+                    </div>
+                    <div style="display:flex;align-items:center;gap:12px;">
+                        <i class="bi bi-bell" style="color:var(--muted);cursor:pointer;font-size:1.05rem;"></i>
+                        <div class="c-avatar">J</div>
+                    </div>
+                </div>
+
+                <!-- Pages -->
+                <div class="c-content">
+
+                    <!-- ══ DASHBOARD PAGE ══ -->
+                    <div class="c-page active" id="c-dashboard">
+                        <div class="c-dash">
+                            <div
+                                style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                                <div>
+                                    <h4
+                                        style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:#1a2340;margin:0;">
+                                        Executive Dashboard</h4>
+                                    <p style="font-size:.75rem;color:var(--muted);margin:0;">Summer Campaign 2024</p>
+                                </div>
+                                <button onclick="showClientPage('create',null)"
+                                    style="background:var(--accent);color:#fff;border:none;padding:7px 16px;border-radius:8px;font-size:.8rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">
+                                    <i class="bi bi-plus-lg"></i> New Order
+                                </button>
+                            </div>
+
+                            <!-- Stats -->
+                            <div class="stat-grid">
+                                <div class="stat-box blue">
+                                    <div>
+                                        <div class="stat-val">12</div>
+                                        <div class="stat-lbl">Active Orders</div>
+                                    </div>
+                                    <div class="stat-icon"><i class="bi bi-box-seam"></i></div>
+                                </div>
+                                <div class="stat-box teal">
+                                    <div>
+                                        <div class="stat-val">$14,250</div>
+                                        <div class="stat-lbl">Total Spend</div>
+                                    </div>
+                                    <div class="stat-icon"><i class="bi bi-currency-dollar"></i></div>
+                                </div>
+                                <div class="stat-box green">
+                                    <div>
+                                        <div class="stat-val">3</div>
+                                        <div class="stat-lbl">Pending Review</div>
+                                    </div>
+                                    <div class="stat-icon"><i class="bi bi-clock-history"></i></div>
+                                </div>
+                            </div>
+
+                            <div style="display:grid;grid-template-columns:1.6fr 1fr;gap:14px;">
+                                <!-- Recent Orders -->
+                                <div class="orders-card">
+                                    <div class="card-hdr">
+                                        <span class="card-hdr-title">Recent Orders</span>
+                                        <a href="#"
+                                            style="font-size:.75rem;color:var(--accent);text-decoration:none;">View
+                                            all</a>
+                                    </div>
+                                    <table class="orders-table">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>JOB NAME</th>
+                                                <th>QTY</th>
+                                                <th>STATUS</th>
+                                                <th>DUE</th>
+                                                <th>TOTAL</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td style="font-weight:600;">#PPR-48</td>
+                                                <td>3D Marketing<br><span
+                                                        style="color:var(--muted);font-size:.7rem;">Brochure</span></td>
+                                                <td>1,000</td>
+                                                <td><span class="badge-status badge-active">Active</span></td>
+                                                <td>Oct 24</td>
+                                                <td style="font-weight:700;">$2,340.00</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-weight:600;">#PPR-45</td>
+                                                <td>Corporate Annual<br><span
+                                                        style="color:var(--muted);font-size:.7rem;">Report</span></td>
+                                                <td>250</td>
+                                                <td><span class="badge-status badge-pending">Reprint</span></td>
+                                                <td>—</td>
+                                                <td style="font-weight:700;">$3,500.00</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-weight:600;">#PPR-43</td>
+                                                <td>Conference<br><span
+                                                        style="color:var(--muted);font-size:.7rem;">Banner Set</span>
+                                                </td>
+                                                <td>1,200</td>
+                                                <td><span class="badge-status badge-done">Delivery</span></td>
+                                                <td>Oct 21</td>
+                                                <td style="font-weight:700;">$4,800.00</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-weight:600;">#PPR-41</td>
+                                                <td>Promotional<br><span
+                                                        style="color:var(--muted);font-size:.7rem;">Mailers</span></td>
+                                                <td>5,000</td>
+                                                <td><span class="badge-status badge-active">Active</span></td>
+                                                <td>Nov 2</td>
+                                                <td style="font-weight:700;">$4,260.00</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <!-- Quick Actions -->
+                                <div class="actions-card">
+                                    <div class="card-hdr">
+                                        <span class="card-hdr-title">Quick Actions</span>
+                                    </div>
+                                    <div class="action-item" onclick="showClientPage('create',null)">
+                                        <div class="action-icon blue"><i class="bi bi-plus-circle"></i></div>
+                                        <div>
+                                            <div class="action-title">New Order</div>
+                                            <div class="action-sub">Start a new print job</div>
+                                        </div>
+                                    </div>
+                                    <div class="action-item" onclick="showClientPage('templates',null)">
+                                        <div class="action-icon green"><i class="bi bi-layout-text-window"></i></div>
+                                        <div>
+                                            <div class="action-title">Browse Templates</div>
+                                            <div class="action-sub">Use a ready-made design</div>
+                                        </div>
+                                    </div>
+                                    <div class="action-item" onclick="showClientPage('track',null)">
+                                        <div class="action-icon orng"><i class="bi bi-truck"></i></div>
+                                        <div>
+                                            <div class="action-title">Track Shipment</div>
+                                            <div class="action-sub">Live order tracking</div>
+                                        </div>
+                                    </div>
+                                    <div class="action-item" onclick="showClientPage('billing',null)">
+                                        <div class="action-icon purple"><i class="bi bi-receipt"></i></div>
+                                        <div>
+                                            <div class="action-title">View Invoices</div>
+                                            <div class="action-sub">Download billing history</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- /dashboard -->
+
+                    <!-- ══ ORDERS PAGE ══ -->
+                    <div class="c-page" id="c-orders">
+                        <div class="c-dash">
+                            <div
+                                style="margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;">
+                                <h4
+                                    style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:#1a2340;margin:0;">
+                                    All Orders</h4>
+                                <button onclick="showClientPage('create',null)"
+                                    style="background:var(--accent);color:#fff;border:none;padding:7px 16px;border-radius:8px;font-size:.8rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">
+                                    <i class="bi bi-plus-lg"></i> New Order
+                                </button>
+                            </div>
+                            <div class="orders-card">
+                                <div class="card-hdr">
+                                    <span class="card-hdr-title">Order History</span>
+                                    <div style="display:flex;gap:8px;">
+                                        <select
+                                            style="font-size:.75rem;border:1px solid var(--border);border-radius:6px;padding:4px 8px;color:var(--muted);">
+                                            <option>All Status</option>
+                                            <option>Active</option>
+                                            <option>Pending</option>
+                                            <option>Delivered</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <table class="orders-table">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>JOB NAME</th>
+                                            <th>TYPE</th>
+                                            <th>QTY</th>
+                                            <th>STATUS</th>
+                                            <th>DUE</th>
+                                            <th>TOTAL</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>#PPR-48</td>
+                                            <td>3D Marketing Brochure</td>
+                                            <td>Brochure</td>
+                                            <td>1,000</td>
+                                            <td><span class="badge-status badge-active">Active</span></td>
+                                            <td>Oct 24</td>
+                                            <td style="font-weight:700;">$2,340</td>
+                                        </tr>
+                                        <tr>
+                                            <td>#PPR-47</td>
+                                            <td>Holiday Flyer Pack</td>
+                                            <td>Flyer</td>
+                                            <td>5,000</td>
+                                            <td><span class="badge-status badge-done">Done</span></td>
+                                            <td>Oct 18</td>
+                                            <td style="font-weight:700;">$890</td>
+                                        </tr>
+                                        <tr>
+                                            <td>#PPR-45</td>
+                                            <td>Corporate Annual Report</td>
+                                            <td>Booklet</td>
+                                            <td>250</td>
+                                            <td><span class="badge-status badge-pending">Reprint</span></td>
+                                            <td>—</td>
+                                            <td style="font-weight:700;">$3,500</td>
+                                        </tr>
+                                        <tr>
+                                            <td>#PPR-43</td>
+                                            <td>Conference Banner Set</td>
+                                            <td>Banner</td>
+                                            <td>1,200</td>
+                                            <td><span class="badge-status badge-done">Delivered</span></td>
+                                            <td>Oct 21</td>
+                                            <td style="font-weight:700;">$4,800</td>
+                                        </tr>
+                                        <tr>
+                                            <td>#PPR-41</td>
+                                            <td>Promotional Mailers</td>
+                                            <td>Mailer</td>
+                                            <td>5,000</td>
+                                            <td><span class="badge-status badge-active">Active</span></td>
+                                            <td>Nov 2</td>
+                                            <td style="font-weight:700;">$4,260</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div><!-- /orders -->
+
+                    <!-- ══ CREATE ORDER PAGE ══ -->
+                    <div class="c-page" id="c-create">
+                        <div class="c-order">
+                            <div class="c-order-main">
+
+                                <!-- Step 1: Product Type -->
+                                <div class="wizard-card">
+                                    <div class="wizard-hdr">
+                                        <div class="step-num">1</div>
+                                        <div class="step-title">Product Type</div>
+                                    </div>
+                                    <div class="wizard-body">
+                                        <div class="product-types">
+                                            <button class="pt-btn active"><i
+                                                    class="bi bi-card-image"></i>Flyers</button>
+                                            <button class="pt-btn"><i class="bi bi-book-half"></i>Brochures</button>
+                                            <button class="pt-btn"><i
+                                                    class="bi bi-journal-richtext"></i>Booklets</button>
+                                            <button class="pt-btn"><i class="bi bi-card-text"></i>Posters</button>
+                                            <button class="pt-btn"><i class="bi bi-envelope-open"></i>Mailers</button>
+                                            <button class="pt-btn"><i class="bi bi-badge-cc"></i>Cards</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Step 2: Dimensions & Material -->
+                                <div class="wizard-card">
+                                    <div class="wizard-hdr">
+                                        <div class="step-num">2</div>
+                                        <div class="step-title">Dimensions &amp; Material</div>
+                                    </div>
+                                    <div class="wizard-body">
+                                        <div class="dim-grid">
+                                            <div>
+                                                <div class="form-label-sm">Standard Size</div>
+                                                <select class="form-control-sm-pp">
+                                                    <option>4" × 6" — Standard Flyer</option>
+                                                    <option>5.5" × 8.5" — Half Letter</option>
+                                                    <option>8.5" × 11" — Full Letter</option>
+                                                    <option>11" × 17" — Tabloid</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <div class="form-label-sm">Paper Weight &amp; Finish</div>
+                                                <select class="form-control-sm-pp">
+                                                    <option>100lb Gloss Cover</option>
+                                                    <option>80lb Matte Text</option>
+                                                    <option>14pt Silk Laminate</option>
+                                                    <option>100lb Uncoated</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <div class="form-label-sm">Custom Width (in)</div>
+                                                <input type="number" class="form-control-sm-pp" value="4" min="1">
+                                            </div>
+                                            <div>
+                                                <div class="form-label-sm">Custom Height (in)</div>
+                                                <input type="number" class="form-control-sm-pp" value="6" min="1">
+                                            </div>
+                                            <div>
+                                                <div class="form-label-sm">Print Sides</div>
+                                                <select class="form-control-sm-pp">
+                                                    <option>Double Sided</option>
+                                                    <option>Single Sided</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <div class="form-label-sm">Bleed Option</div>
+                                                <select class="form-control-sm-pp">
+                                                    <option>With Bleed (0.125")</option>
+                                                    <option>No Bleed</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Step 3: Quantity & Production -->
+                                <div class="wizard-card">
+                                    <div class="wizard-hdr">
+                                        <div class="step-num">3</div>
+                                        <div class="step-title">Quantity &amp; Production</div>
+                                    </div>
+                                    <div class="wizard-body">
+                                        <div style="margin-bottom:12px;">
+                                            <div class="form-label-sm">Print Quantity</div>
+                                            <div style="display:flex;align-items:center;gap:12px;margin-top:6px;">
+                                                <input type="range" class="qty-slider" min="100" max="10000" step="100"
+                                                    value="2500" id="qtySlider"
+                                                    oninput="document.getElementById('qtyVal').textContent=parseInt(this.value).toLocaleString()">
+                                                <span id="qtyVal"
+                                                    style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:700;color:var(--navy);min-width:60px;">2,500</span>
+                                            </div>
+                                        </div>
+                                        <div class="dim-grid">
+                                            <div>
+                                                <div class="form-label-sm">Turnaround</div>
+                                                <select class="form-control-sm-pp">
+                                                    <option>3-5 Business Days (Standard)</option>
+                                                    <option>1-2 Business Days (Rush)</option>
+                                                    <option>Same Day (Priority)</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <div class="form-label-sm">Shipping Method</div>
+                                                <select class="form-control-sm-pp">
+                                                    <option>Ground (Free)</option>
+                                                    <option>Express 2-Day</option>
+                                                    <option>Overnight</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Summary Sidebar -->
+                            <div class="c-order-sidebar">
+                                <div class="summary-card">
+                                    <div class="summary-title">PRODUCT SUMMARY</div>
+                                    <div class="summary-sub">Summer Campaign 2024</div>
+                                    <div class="summary-row"><span>Product</span><span>Flyers</span></div>
+                                    <div class="summary-row"><span>Quantity</span><span>2,500</span></div>
+                                    <div class="summary-row"><span>Size</span><span>4" × 6"</span></div>
+                                    <div class="summary-row"><span>Stock</span><span>100lb Gloss</span></div>
+                                    <div class="summary-row"><span>Finishing</span><span>Matte UV</span></div>
+                                    <hr class="summary-divider">
+                                    <div class="delivery-box">
+                                        <div class="delivery-lbl">Estimated Production</div>
+                                        <div class="delivery-val">3–5 Business Days</div>
+                                    </div>
+                                    <div class="delivery-box" style="margin-top:8px;">
+                                        <div class="delivery-lbl">Estimated Arrival</div>
+                                        <div class="delivery-val" style="display:flex;align-items:center;gap:6px;">
+                                            <i class="bi bi-calendar3"
+                                                style="color:rgba(255,255,255,.45);font-size:.8rem;"></i>
+                                            July 18th – 22nd
+                                        </div>
+                                    </div>
+                                    <hr class="summary-divider">
+                                    <div class="summary-row"><span>Subtotal</span><span>$600.00</span></div>
+                                    <div class="summary-row"><span>Estimated Tax (8%)</span><span>$48.00</span></div>
+                                    <div class="summary-total">
+                                        <span class="summary-total-lbl">Total Estimate</span>
+                                        <span class="summary-total-val">$648.00</span>
+                                    </div>
+                                    <button class="btn-continue">Continue to Upload →</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- /create -->
+
+                    <!-- ══ TEMPLATES PAGE ══ -->
+                    <div class="c-page" id="c-templates">
+                        <div class="c-dash">
+                            <div
+                                style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                                <div>
+                                    <h4
+                                        style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:#1a2340;margin:0;">
+                                        Templates</h4>
+                                    <p style="font-size:.75rem;color:var(--muted);margin:0;">Browse and customize
+                                        ready-made print designs</p>
+                                </div>
+                                <div style="display:flex;gap:8px;">
+                                    <select class="form-control-sm-pp" style="width:auto;">
+                                        <option>All Categories</option>
+                                        <option>Flyers</option>
+                                        <option>Brochures</option>
+                                        <option>Cards</option>
+                                        <option>Banners</option>
+                                    </select>
+                                    <select class="form-control-sm-pp" style="width:auto;">
+                                        <option>All Plans</option>
+                                        <option>Free</option>
+                                        <option>Pro</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Filter pills -->
+                            <div style="display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;">
+                                <button class="pt-btn active"
+                                    style="flex-direction:row;padding:5px 14px;gap:5px;font-size:.75rem;">All</button>
+                                <button class="pt-btn"
+                                    style="flex-direction:row;padding:5px 14px;gap:5px;font-size:.75rem;"><i
+                                        class="bi bi-card-image" style="font-size:.9rem;"></i>Flyers</button>
+                                <button class="pt-btn"
+                                    style="flex-direction:row;padding:5px 14px;gap:5px;font-size:.75rem;"><i
+                                        class="bi bi-book-half" style="font-size:.9rem;"></i>Brochures</button>
+                                <button class="pt-btn"
+                                    style="flex-direction:row;padding:5px 14px;gap:5px;font-size:.75rem;"><i
+                                        class="bi bi-badge-cc" style="font-size:.9rem;"></i>Cards</button>
+                                <button class="pt-btn"
+                                    style="flex-direction:row;padding:5px 14px;gap:5px;font-size:.75rem;"><i
+                                        class="bi bi-card-text" style="font-size:.9rem;"></i>Posters</button>
+                                <button class="pt-btn"
+                                    style="flex-direction:row;padding:5px 14px;gap:5px;font-size:.75rem;"><i
+                                        class="bi bi-envelope-open" style="font-size:.9rem;"></i>Mailers</button>
+                            </div>
+
+                            <div class="tpl-grid">
+                                <div class="tpl-card">
+                                    <div class="tpl-preview blue-bg"><i class="bi bi-card-image"
+                                            style="color:var(--accent);font-size:2.2rem;"></i></div>
+                                    <div class="tpl-info">
+                                        <div class="tpl-name">Bold Summer Flyer</div>
+                                        <div class="tpl-meta">4"×6" · Flyer</div><span class="tpl-tag free">Free</span>
+                                    </div>
+                                </div>
+                                <div class="tpl-card">
+                                    <div class="tpl-preview teal-bg"><i class="bi bi-book-half"
+                                            style="color:var(--teal);font-size:2.2rem;"></i></div>
+                                    <div class="tpl-info">
+                                        <div class="tpl-name">Tri-Fold Corporate</div>
+                                        <div class="tpl-meta">8.5"×11" · Brochure</div><span
+                                            class="tpl-tag popular">Popular</span>
+                                    </div>
+                                </div>
+                                <div class="tpl-card">
+                                    <div class="tpl-preview green-bg"><i class="bi bi-badge-cc"
+                                            style="color:var(--success);font-size:2.2rem;"></i></div>
+                                    <div class="tpl-info">
+                                        <div class="tpl-name">Minimalist Business Card</div>
+                                        <div class="tpl-meta">3.5"×2" · Card</div><span class="tpl-tag free">Free</span>
+                                    </div>
+                                </div>
+                                <div class="tpl-card">
+                                    <div class="tpl-preview purple-bg"><i class="bi bi-card-text"
+                                            style="color:var(--purple);font-size:2.2rem;"></i></div>
+                                    <div class="tpl-info">
+                                        <div class="tpl-name">Event Poster — Vivid</div>
+                                        <div class="tpl-meta">11"×17" · Poster</div><span class="tpl-tag pro">Pro</span>
+                                    </div>
+                                </div>
+                                <div class="tpl-card">
+                                    <div class="tpl-preview orng-bg"><i class="bi bi-envelope-open"
+                                            style="color:var(--warning);font-size:2.2rem;"></i></div>
+                                    <div class="tpl-info">
+                                        <div class="tpl-name">Direct Mail EDDM</div>
+                                        <div class="tpl-meta">6.25"×9" · Mailer</div><span
+                                            class="tpl-tag pro">Pro</span>
+                                    </div>
+                                </div>
+                                <div class="tpl-card">
+                                    <div class="tpl-preview blue-bg"><i class="bi bi-journal-richtext"
+                                            style="color:var(--accent);font-size:2.2rem;"></i></div>
+                                    <div class="tpl-info">
+                                        <div class="tpl-name">Annual Report Booklet</div>
+                                        <div class="tpl-meta">8.5"×11" · Booklet</div><span
+                                            class="tpl-tag popular">Popular</span>
+                                    </div>
+                                </div>
+                                <div class="tpl-card">
+                                    <div class="tpl-preview teal-bg"><i class="bi bi-card-image"
+                                            style="color:var(--teal);font-size:2.2rem;"></i></div>
+                                    <div class="tpl-info">
+                                        <div class="tpl-name">Real Estate Flyer</div>
+                                        <div class="tpl-meta">5.5"×8.5" · Flyer</div><span
+                                            class="tpl-tag free">Free</span>
+                                    </div>
+                                </div>
+                                <div class="tpl-card">
+                                    <div class="tpl-preview purple-bg"><i class="bi bi-badge-cc"
+                                            style="color:var(--purple);font-size:2.2rem;"></i></div>
+                                    <div class="tpl-info">
+                                        <div class="tpl-name">Luxury Foil Card</div>
+                                        <div class="tpl-meta">3.5"×2" · Card</div><span class="tpl-tag pro">Pro</span>
+                                    </div>
+                                </div>
+                                <div class="tpl-card">
+                                    <div class="tpl-preview green-bg"><i class="bi bi-card-text"
+                                            style="color:var(--success);font-size:2.2rem;"></i></div>
+                                    <div class="tpl-info">
+                                        <div class="tpl-name">Sale Promo Poster</div>
+                                        <div class="tpl-meta">18"×24" · Poster</div><span
+                                            class="tpl-tag popular">Popular</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- /templates -->
+
+                    <!-- ══ FILES PAGE ══ -->
+                    <div class="c-page" id="c-files">
+                        <div style="display:flex;height:100%;">
+
+                            <!-- Files sub-sidebar -->
+                            <div class="files-sidebar">
+                                <div
+                                    style="padding:0 12px 8px;font-size:.68rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;">
+                                    Storage</div>
+                                <div class="files-sidebar-item active"><i class="bi bi-folder2-open"></i>All Files</div>
+                                <div class="files-sidebar-item"><i class="bi bi-clock-history"></i>Recent</div>
+                                <div class="files-sidebar-item"><i class="bi bi-star"></i>Starred</div>
+                                <div class="files-sidebar-item"><i class="bi bi-share"></i>Shared</div>
+                                <div class="files-sidebar-item"><i class="bi bi-trash3"></i>Trash</div>
+                                <div
+                                    style="padding:16px 12px 8px;font-size:.68rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;">
+                                    Folders</div>
+                                <div class="files-sidebar-item"><i class="bi bi-folder-fill"
+                                        style="color:var(--accent);"></i>Summer 2024</div>
+                                <div class="files-sidebar-item"><i class="bi bi-folder-fill"
+                                        style="color:var(--warning);"></i>Approved Art</div>
+                                <div class="files-sidebar-item"><i class="bi bi-folder-fill"
+                                        style="color:var(--success);"></i>Proofs</div>
+                                <div class="files-sidebar-item"><i class="bi bi-folder-fill"
+                                        style="color:var(--purple);"></i>Archive</div>
+                                <div style="padding:14px 12px 4px;">
+                                    <div style="font-size:.68rem;color:var(--muted);margin-bottom:6px;">Storage Used
+                                    </div>
+                                    <div style="height:6px;background:#e8ecf4;border-radius:10px;overflow:hidden;">
+                                        <div
+                                            style="width:62%;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:10px;">
+                                        </div>
+                                    </div>
+                                    <div style="font-size:.68rem;color:var(--muted);margin-top:4px;">6.2 GB of 10 GB
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Files main -->
+                            <div style="flex:1;padding:20px 24px;overflow-y:auto;">
+                                <div
+                                    style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+                                    <h4
+                                        style="font-family:'Sora',sans-serif;font-size:1rem;font-weight:800;color:#1a2340;margin:0;">
+                                        All Files</h4>
+                                    <div style="display:flex;gap:8px;">
+                                        <button
+                                            style="background:#fff;border:1px solid var(--border);border-radius:8px;padding:6px 14px;font-size:.78rem;font-weight:600;color:#344767;cursor:pointer;font-family:'DM Sans',sans-serif;"><i
+                                                class="bi bi-folder-plus"></i> New Folder</button>
+                                        <button
+                                            style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:6px 14px;font-size:.78rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;"><i
+                                                class="bi bi-upload"></i> Upload</button>
+                                    </div>
+                                </div>
+
+                                <div
+                                    style="display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--border);border-radius:8px;padding:6px 12px;margin-bottom:16px;font-size:.8rem;color:var(--muted);">
+                                    <i class="bi bi-search" style="font-size:.75rem;"></i> Search files...
+                                </div>
+
+                                <div
+                                    style="font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">
+                                    Recent Uploads</div>
+                                <div class="files-grid">
+                                    <div class="file-card"><span class="file-icon">🖼️</span>
+                                        <div class="file-name">summer_flyer_front_v3.pdf</div>
+                                        <div class="file-meta">2.4 MB · Today</div>
+                                    </div>
+                                    <div class="file-card"><span class="file-icon">📄</span>
+                                        <div class="file-name">annual_report_final.pdf</div>
+                                        <div class="file-meta">8.1 MB · Yesterday</div>
+                                    </div>
+                                    <div class="file-card"><span class="file-icon">🎨</span>
+                                        <div class="file-name">banner_artwork_hires.ai</div>
+                                        <div class="file-meta">34 MB · Oct 20</div>
+                                    </div>
+                                    <div class="file-card"><span class="file-icon">📦</span>
+                                        <div class="file-name">mailer_assets_pack.zip</div>
+                                        <div class="file-meta">12.6 MB · Oct 19</div>
+                                    </div>
+                                    <div class="file-card"><span class="file-icon">🖼️</span>
+                                        <div class="file-name">logo_transparent.png</div>
+                                        <div class="file-meta">440 KB · Oct 17</div>
+                                    </div>
+                                    <div class="file-card"><span class="file-icon">📄</span>
+                                        <div class="file-name">conference_booklet.pdf</div>
+                                        <div class="file-meta">5.9 MB · Oct 14</div>
+                                    </div>
+                                </div>
+
+                                <div
+                                    style="font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;margin-top:4px;">
+                                    All Files</div>
+                                <div class="orders-card">
+                                    <table class="orders-table" style="width:100%;">
+                                        <thead>
+                                            <tr>
+                                                <th>NAME</th>
+                                                <th>TYPE</th>
+                                                <th>SIZE</th>
+                                                <th>ORDER</th>
+                                                <th>MODIFIED</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><i class="bi bi-file-earmark-pdf"
+                                                        style="color:var(--danger);margin-right:6px;"></i>summer_flyer_front_v3.pdf
+                                                </td>
+                                                <td>PDF</td>
+                                                <td>2.4 MB</td>
+                                                <td>#PPR-48</td>
+                                                <td>Today</td>
+                                                <td><i class="bi bi-download"
+                                                        style="color:var(--accent);cursor:pointer;"></i></td>
+                                            </tr>
+                                            <tr>
+                                                <td><i class="bi bi-file-earmark-pdf"
+                                                        style="color:var(--danger);margin-right:6px;"></i>annual_report_final.pdf
+                                                </td>
+                                                <td>PDF</td>
+                                                <td>8.1 MB</td>
+                                                <td>#PPR-45</td>
+                                                <td>Oct 22</td>
+                                                <td><i class="bi bi-download"
+                                                        style="color:var(--accent);cursor:pointer;"></i></td>
+                                            </tr>
+                                            <tr>
+                                                <td><i class="bi bi-file-earmark-image"
+                                                        style="color:var(--purple);margin-right:6px;"></i>banner_artwork_hires.ai
+                                                </td>
+                                                <td>AI</td>
+                                                <td>34 MB</td>
+                                                <td>#PPR-43</td>
+                                                <td>Oct 20</td>
+                                                <td><i class="bi bi-download"
+                                                        style="color:var(--accent);cursor:pointer;"></i></td>
+                                            </tr>
+                                            <tr>
+                                                <td><i class="bi bi-file-zip"
+                                                        style="color:var(--warning);margin-right:6px;"></i>mailer_assets_pack.zip
+                                                </td>
+                                                <td>ZIP</td>
+                                                <td>12.6 MB</td>
+                                                <td>#PPR-41</td>
+                                                <td>Oct 19</td>
+                                                <td><i class="bi bi-download"
+                                                        style="color:var(--accent);cursor:pointer;"></i></td>
+                                            </tr>
+                                            <tr>
+                                                <td><i class="bi bi-file-earmark-image"
+                                                        style="color:var(--teal);margin-right:6px;"></i>logo_transparent.png
+                                                </td>
+                                                <td>PNG</td>
+                                                <td>440 KB</td>
+                                                <td>—</td>
+                                                <td>Oct 17</td>
+                                                <td><i class="bi bi-download"
+                                                        style="color:var(--accent);cursor:pointer;"></i></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- /files -->
+
+                    <!-- ══ TRACK PAGE ══ -->
+                    <div class="c-page" id="c-track">
+                        <div class="c-dash">
+                            <div
+                                style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                                <div>
+                                    <h4
+                                        style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:#1a2340;margin:0;">
+                                        Order Tracking</h4>
+                                    <p style="font-size:.75rem;color:var(--muted);margin:0;">Real-time status for all
+                                        active shipments</p>
+                                </div>
+                            </div>
+
+                            <!-- Search bar -->
+                            <div
+                                style="background:#fff;border-radius:12px;border:1px solid var(--border);padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;gap:12px;">
+                                <i class="bi bi-search" style="color:var(--muted);font-size:1rem;"></i>
+                                <input
+                                    style="flex:1;border:1px solid var(--border);border-radius:8px;padding:8px 14px;font-size:.85rem;font-family:'DM Sans',sans-serif;color:#344767;"
+                                    placeholder="Enter order ID or tracking number…" value="#PPR-48">
+                                <button
+                                    style="background:var(--accent);color:#fff;border:none;padding:8px 20px;border-radius:8px;font-size:.82rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">Track</button>
+                            </div>
+
+                            <!-- Order PPR-48 -->
+                            <div class="track-card">
+                                <div class="track-card-hdr">
+                                    <div>
+                                        <div class="track-order-id">#PPR-48 · 3D Marketing Brochure</div>
+                                        <div class="track-order-name">1,000 units · 100lb Gloss · Double Sided</div>
+                                    </div>
+                                    <span class="badge-status badge-active">In Production</span>
+                                </div>
+                                <div class="progress-track">
+                                    <div class="steps-row">
+                                        <div class="track-step">
+                                            <div class="step-circle done"><i class="bi bi-check-lg"></i></div>
+                                            <div class="step-label done">Order<br>Placed</div>
+                                        </div>
+                                        <div class="step-connector done"></div>
+                                        <div class="track-step">
+                                            <div class="step-circle done"><i class="bi bi-check-lg"></i></div>
+                                            <div class="step-label done">Artwork<br>Approved</div>
+                                        </div>
+                                        <div class="step-connector done"></div>
+                                        <div class="track-step">
+                                            <div class="step-circle current"><i class="bi bi-gear-fill"></i></div>
+                                            <div class="step-label current">In<br>Production</div>
+                                        </div>
+                                        <div class="step-connector pending"></div>
+                                        <div class="track-step">
+                                            <div class="step-circle pending"><i class="bi bi-box-seam"></i></div>
+                                            <div class="step-label">Quality<br>Check</div>
+                                        </div>
+                                        <div class="step-connector pending"></div>
+                                        <div class="track-step">
+                                            <div class="step-circle pending"><i class="bi bi-truck"></i></div>
+                                            <div class="step-label">Shipped</div>
+                                        </div>
+                                        <div class="step-connector pending"></div>
+                                        <div class="track-step">
+                                            <div class="step-circle pending"><i class="bi bi-house-check"></i></div>
+                                            <div class="step-label">Delivered</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="track-details">
+                                    <div class="track-detail">
+                                        <div class="track-detail-lbl">Order Date</div>
+                                        <div class="track-detail-val">Oct 18, 2024</div>
+                                    </div>
+                                    <div class="track-detail">
+                                        <div class="track-detail-lbl">Est. Completion</div>
+                                        <div class="track-detail-val">Oct 24, 2024</div>
+                                    </div>
+                                    <div class="track-detail">
+                                        <div class="track-detail-lbl">Carrier</div>
+                                        <div class="track-detail-val">FedEx Ground</div>
+                                    </div>
+                                    <div class="track-detail">
+                                        <div class="track-detail-lbl">Tracking #</div>
+                                        <div class="track-detail-val" style="color:var(--accent);">7489 2034 8812</div>
+                                    </div>
+                                </div>
+                                <div class="track-history">
+                                    <div
+                                        style="font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">
+                                        Activity Log</div>
+                                    <div class="history-item">
+                                        <div class="history-dot current"></div>
+                                        <div>
+                                            <div class="history-text">Press run started — Sheet 1 of 4 complete</div>
+                                            <div class="history-time">Oct 21 · 9:14 AM</div>
+                                        </div>
+                                    </div>
+                                    <div class="history-item">
+                                        <div class="history-dot done"></div>
+                                        <div>
+                                            <div class="history-text">Artwork approved by press team — no issues found
+                                            </div>
+                                            <div class="history-time">Oct 20 · 3:45 PM</div>
+                                        </div>
+                                    </div>
+                                    <div class="history-item">
+                                        <div class="history-dot done"></div>
+                                        <div>
+                                            <div class="history-text">Proof sent to client for review</div>
+                                            <div class="history-time">Oct 19 · 11:00 AM</div>
+                                        </div>
+                                    </div>
+                                    <div class="history-item">
+                                        <div class="history-dot done"></div>
+                                        <div>
+                                            <div class="history-text">Order received and queued for pre-press</div>
+                                            <div class="history-time">Oct 18 · 8:30 AM</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Order PPR-41 -->
+                            <div class="track-card">
+                                <div class="track-card-hdr">
+                                    <div>
+                                        <div class="track-order-id">#PPR-41 · Promotional Mailers</div>
+                                        <div class="track-order-name">5,000 units · 80lb Matte · Single Sided</div>
+                                    </div>
+                                    <span class="badge-status badge-done">Shipped</span>
+                                </div>
+                                <div class="progress-track">
+                                    <div class="steps-row">
+                                        <div class="track-step">
+                                            <div class="step-circle done"><i class="bi bi-check-lg"></i></div>
+                                            <div class="step-label done">Order<br>Placed</div>
+                                        </div>
+                                        <div class="step-connector done"></div>
+                                        <div class="track-step">
+                                            <div class="step-circle done"><i class="bi bi-check-lg"></i></div>
+                                            <div class="step-label done">Artwork<br>Approved</div>
+                                        </div>
+                                        <div class="step-connector done"></div>
+                                        <div class="track-step">
+                                            <div class="step-circle done"><i class="bi bi-check-lg"></i></div>
+                                            <div class="step-label done">In<br>Production</div>
+                                        </div>
+                                        <div class="step-connector done"></div>
+                                        <div class="track-step">
+                                            <div class="step-circle done"><i class="bi bi-check-lg"></i></div>
+                                            <div class="step-label done">Quality<br>Check</div>
+                                        </div>
+                                        <div class="step-connector done"></div>
+                                        <div class="track-step">
+                                            <div class="step-circle current"><i class="bi bi-truck"></i></div>
+                                            <div class="step-label current">Shipped</div>
+                                        </div>
+                                        <div class="step-connector pending"></div>
+                                        <div class="track-step">
+                                            <div class="step-circle pending"><i class="bi bi-house-check"></i></div>
+                                            <div class="step-label">Delivered</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="track-details">
+                                    <div class="track-detail">
+                                        <div class="track-detail-lbl">Order Date</div>
+                                        <div class="track-detail-val">Oct 12, 2024</div>
+                                    </div>
+                                    <div class="track-detail">
+                                        <div class="track-detail-lbl">Est. Delivery</div>
+                                        <div class="track-detail-val">Nov 2, 2024</div>
+                                    </div>
+                                    <div class="track-detail">
+                                        <div class="track-detail-lbl">Carrier</div>
+                                        <div class="track-detail-val">UPS Ground</div>
+                                    </div>
+                                    <div class="track-detail">
+                                        <div class="track-detail-lbl">Tracking #</div>
+                                        <div class="track-detail-val" style="color:var(--accent);">1Z 999 AA1 01 2345
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- /track -->
+
+                    <!-- ══ BILLING PAGE ══ -->
+                    <div class="c-page" id="c-billing">
+                        <div class="c-order">
+                            <div class="c-order-main">
+
+                                <div
+                                    style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+                                    <div>
+                                        <h4
+                                            style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:#1a2340;margin:0;">
+                                            Billing &amp; Invoices</h4>
+                                        <p style="font-size:.75rem;color:var(--muted);margin:0;">Manage payments and
+                                            download invoices</p>
+                                    </div>
+                                    <button
+                                        style="background:var(--accent);color:#fff;border:none;padding:7px 16px;border-radius:8px;font-size:.8rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">
+                                        <i class="bi bi-download"></i> Export All
+                                    </button>
+                                </div>
+
+                                <!-- Billing stats -->
+                                <div class="stat-grid">
+                                    <div class="stat-box blue">
+                                        <div>
+                                            <div class="stat-val">$14,250</div>
+                                            <div class="stat-lbl">Total Spend YTD</div>
+                                        </div>
+                                        <div class="stat-icon"><i class="bi bi-currency-dollar"></i></div>
+                                    </div>
+                                    <div class="stat-box teal">
+                                        <div>
+                                            <div class="stat-val">$3,500</div>
+                                            <div class="stat-lbl">Outstanding Balance</div>
+                                        </div>
+                                        <div class="stat-icon"><i class="bi bi-exclamation-circle"></i></div>
+                                    </div>
+                                    <div class="stat-box green">
+                                        <div>
+                                            <div class="stat-val">$10,750</div>
+                                            <div class="stat-lbl">Paid to Date</div>
+                                        </div>
+                                        <div class="stat-icon"><i class="bi bi-check-circle"></i></div>
+                                    </div>
+                                </div>
+
+                                <!-- Monthly spend chart -->
+                                <div class="wizard-card">
+                                    <div class="card-hdr">
+                                        <span class="card-hdr-title">Monthly Spend</span>
+                                        <span style="font-size:.72rem;color:var(--muted);">Last 6 months</span>
+                                    </div>
+                                    <div class="spend-chart">
+                                        <div class="spend-bar-row">
+                                            <div class="spend-bar-label">May</div>
+                                            <div class="spend-bar-wrap">
+                                                <div class="spend-bar-fill" style="width:30%;"></div>
+                                            </div>
+                                            <div class="spend-bar-val">$1,200</div>
+                                        </div>
+                                        <div class="spend-bar-row">
+                                            <div class="spend-bar-label">Jun</div>
+                                            <div class="spend-bar-wrap">
+                                                <div class="spend-bar-fill" style="width:45%;"></div>
+                                            </div>
+                                            <div class="spend-bar-val">$1,800</div>
+                                        </div>
+                                        <div class="spend-bar-row">
+                                            <div class="spend-bar-label">Jul</div>
+                                            <div class="spend-bar-wrap">
+                                                <div class="spend-bar-fill" style="width:60%;"></div>
+                                            </div>
+                                            <div class="spend-bar-val">$2,400</div>
+                                        </div>
+                                        <div class="spend-bar-row">
+                                            <div class="spend-bar-label">Aug</div>
+                                            <div class="spend-bar-wrap">
+                                                <div class="spend-bar-fill" style="width:40%;"></div>
+                                            </div>
+                                            <div class="spend-bar-val">$1,600</div>
+                                        </div>
+                                        <div class="spend-bar-row">
+                                            <div class="spend-bar-label">Sep</div>
+                                            <div class="spend-bar-wrap">
+                                                <div class="spend-bar-fill" style="width:75%;"></div>
+                                            </div>
+                                            <div class="spend-bar-val">$3,000</div>
+                                        </div>
+                                        <div class="spend-bar-row">
+                                            <div class="spend-bar-label">Oct</div>
+                                            <div class="spend-bar-wrap">
+                                                <div class="spend-bar-fill" style="width:100%;"></div>
+                                            </div>
+                                            <div class="spend-bar-val">$4,250</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Invoices table -->
+                                <div class="orders-card">
+                                    <div class="card-hdr">
+                                        <span class="card-hdr-title">Invoices</span>
+                                        <select
+                                            style="font-size:.75rem;border:1px solid var(--border);border-radius:6px;padding:4px 8px;color:var(--muted);">
+                                            <option>All</option>
+                                            <option>Paid</option>
+                                            <option>Outstanding</option>
+                                        </select>
+                                    </div>
+                                    <div style="padding:4px 0;">
+                                        <div class="invoice-row">
+                                            <div class="invoice-id">INV-2024-10</div>
+                                            <div class="invoice-name">3D Marketing Brochure — #PPR-48</div>
+                                            <span class="badge-status badge-active" style="flex-shrink:0;">Paid</span>
+                                            <div class="invoice-date">Oct 18</div>
+                                            <div class="invoice-amt">$2,340.00</div>
+                                            <div class="invoice-dl"><a href="#"><i class="bi bi-download"></i></a></div>
+                                        </div>
+                                        <div class="invoice-row">
+                                            <div class="invoice-id">INV-2024-09</div>
+                                            <div class="invoice-name">Corporate Annual Report — #PPR-45</div>
+                                            <span class="badge-status badge-pending" style="flex-shrink:0;">Due</span>
+                                            <div class="invoice-date">Oct 10</div>
+                                            <div class="invoice-amt">$3,500.00</div>
+                                            <div class="invoice-dl"><a href="#"><i class="bi bi-download"></i></a></div>
+                                        </div>
+                                        <div class="invoice-row">
+                                            <div class="invoice-id">INV-2024-08</div>
+                                            <div class="invoice-name">Conference Banner Set — #PPR-43</div>
+                                            <span class="badge-status badge-active" style="flex-shrink:0;">Paid</span>
+                                            <div class="invoice-date">Oct 1</div>
+                                            <div class="invoice-amt">$4,800.00</div>
+                                            <div class="invoice-dl"><a href="#"><i class="bi bi-download"></i></a></div>
+                                        </div>
+                                        <div class="invoice-row">
+                                            <div class="invoice-id">INV-2024-07</div>
+                                            <div class="invoice-name">Promotional Mailers — #PPR-41</div>
+                                            <span class="badge-status badge-active" style="flex-shrink:0;">Paid</span>
+                                            <div class="invoice-date">Sep 22</div>
+                                            <div class="invoice-amt">$4,260.00</div>
+                                            <div class="invoice-dl"><a href="#"><i class="bi bi-download"></i></a></div>
+                                        </div>
+                                        <div class="invoice-row">
+                                            <div class="invoice-id">INV-2024-06</div>
+                                            <div class="invoice-name">Holiday Flyer Pack — #PPR-47</div>
+                                            <span class="badge-status badge-done" style="flex-shrink:0;">Paid</span>
+                                            <div class="invoice-date">Sep 10</div>
+                                            <div class="invoice-amt">$890.00</div>
+                                            <div class="invoice-dl"><a href="#"><i class="bi bi-download"></i></a></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div><!-- /billing main -->
+
+                            <!-- Billing sidebar -->
+                            <div class="c-order-sidebar">
+
+                                <!-- Payment Methods -->
+                                <div class="orders-card" style="margin-bottom:14px;">
+                                    <div class="card-hdr">
+                                        <span class="card-hdr-title">Payment Methods</span>
+                                        <a href="#"
+                                            style="font-size:.75rem;color:var(--accent);text-decoration:none;"><i
+                                                class="bi bi-plus-lg"></i> Add</a>
+                                    </div>
+                                    <div class="pm-item">
+                                        <div class="pm-icon visa">VISA</div>
+                                        <div>
+                                            <div class="pm-label">Visa ending 4242</div>
+                                            <div class="pm-sub">Expires 09/26</div>
+                                        </div>
+                                        <span class="pm-default" style="margin-left:auto;">Default</span>
+                                    </div>
+                                    <div class="pm-item">
+                                        <div class="pm-icon mc">MC</div>
+                                        <div>
+                                            <div class="pm-label">Mastercard ending 8831</div>
+                                            <div class="pm-sub">Expires 03/25</div>
+                                        </div>
+                                    </div>
+                                    <div class="pm-item">
+                                        <div class="pm-icon ach">ACH</div>
+                                        <div>
+                                            <div class="pm-label">Bank Account ···1204</div>
+                                            <div class="pm-sub">Chase Business Checking</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Outstanding balance -->
+                                <div class="summary-card">
+                                    <div class="summary-title">OUTSTANDING BALANCE</div>
+                                    <div class="summary-sub">Due in 14 days</div>
+                                    <div class="summary-row"><span>INV-2024-09</span><span>$3,500.00</span></div>
+                                    <hr class="summary-divider">
+                                    <div class="summary-total">
+                                        <span class="summary-total-lbl">Total Due</span>
+                                        <span class="summary-total-val">$3,500</span>
+                                    </div>
+                                    <button class="btn-continue">Pay Now →</button>
+                                    <div
+                                        style="text-align:center;margin-top:10px;font-size:.7rem;color:rgba(255,255,255,.35);">
+                                        Secured by Stripe · 256-bit SSL</div>
+                                </div>
+
+                            </div><!-- /billing sidebar -->
+                        </div>
+                    </div><!-- /billing -->
+
+                </div><!-- /c-content -->
+            </div>
+        </div>
+    </div><!-- /client portal -->
+
+    <script>
+        function switchPortal(p) {
+            document.querySelectorAll('.portal').forEach(x => x.classList.remove('active'));
+            document.querySelectorAll('.portal-btn').forEach(x => x.classList.remove('active'));
+            document.getElementById('portal-' + p).classList.add('active');
+            event.target.closest('.portal-btn').classList.add('active');
+        }
+
+        function showClientPage(id, navEl) {
+            document.querySelectorAll('.c-page').forEach(x => x.classList.remove('active'));
+            var p = document.getElementById('c-' + id);
+            if (p) p.classList.add('active');
+            if (navEl) {
+                document.querySelectorAll('.c-nav-item').forEach(x => x.classList.remove('active'));
+                navEl.classList.add('active');
+            } else {
+                document.querySelectorAll('.c-nav-item').forEach(x => {
+                    if (x.getAttribute('onclick') && x.getAttribute('onclick').includes("'" + id + "'"))
+                        x.classList.add('active');
+                });
+            }
+        }
+
+        // Product type toggle (Create Order page)
+        document.querySelectorAll('.product-types .pt-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                this.closest('.product-types').querySelectorAll('.pt-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Template filter pills
+        document.querySelectorAll('#c-templates .pt-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                document.querySelectorAll('#c-templates .pt-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+
+</html>
