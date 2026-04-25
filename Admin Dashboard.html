@@ -92,8 +92,12 @@
             text-transform: uppercase;
             letter-spacing: 0.3px;
         }
+
         @media (max-width: 1200px) {
-            .a-brand-badge { font-size: .55rem; padding: 1px 7px; }
+            .a-brand-badge {
+                font-size: .55rem;
+                padding: 1px 7px;
+            }
         }
 
         .a-nav {
@@ -1228,31 +1232,37 @@
                 bottom: 0;
                 z-index: 1050;
                 transition: left .3s cubic-bezier(0.4, 0, 0.2, 1);
-                box-shadow: 15px 0 45px rgba(10,18,40,0.15);
+                box-shadow: 15px 0 45px rgba(10, 18, 40, 0.15);
                 width: 260px !important;
             }
+
             .a-sidebar.show {
                 left: 0;
             }
+
             .a-sidebar-overlay {
                 display: none;
                 position: fixed;
                 inset: 0;
-                background: rgba(10,18,40,0.5);
+                background: rgba(10, 18, 40, 0.5);
                 backdrop-filter: blur(5px);
                 -webkit-backdrop-filter: blur(5px);
                 z-index: 1040;
             }
+
             .a-sidebar-overlay.show {
                 display: block;
             }
+
             .a-topbar {
                 padding: 0 16px !important;
             }
+
             .a-app {
                 margin-top: 0;
                 height: 100vh;
             }
+
             .portal-switcher {
                 display: none;
             }
@@ -1262,9 +1272,11 @@
             .a-tabs {
                 display: none !important;
             }
+
             .a-topbar {
                 justify-content: space-between;
             }
+
             .a-mobile-logo {
                 display: block;
                 height: 24px;
@@ -1278,23 +1290,29 @@
             .a-content {
                 padding: 15px !important;
             }
+
             .kpi-grid {
                 grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)) !important;
                 gap: 15px !important;
             }
+
             .stat-grid {
                 grid-template-columns: 1fr !important;
                 gap: 15px !important;
             }
-            .charts-row, .bottom-row {
+
+            .charts-row,
+            .bottom-row {
                 grid-template-columns: 1fr !important;
                 gap: 15px !important;
             }
+
             .a-table-responsive {
                 width: 100%;
                 overflow-x: auto;
                 -webkit-overflow-scrolling: touch;
             }
+
             .recent-orders-table {
                 min-width: 650px;
             }
@@ -1307,22 +1325,26 @@
                 gap: 12px !important;
             }
         }
+
         .a-mobile-logo {
             display: none;
             height: 24px;
             width: auto;
             cursor: pointer;
         }
+
         @media (max-width: 1200px) {
             .a-mobile-logo {
                 display: block;
             }
         }
+
         .a-kpi-item {
             display: flex;
             align-items: center;
             gap: 16px;
         }
+
         .a-kpi-icon {
             width: 40px;
             height: 40px;
@@ -1331,6 +1353,28 @@
             place-items: center;
             font-size: 1.2rem;
             flex-shrink: 0;
+        }
+
+        .status-select {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: .65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            border: 1px solid var(--accent);
+            background: rgba(29, 140, 248, .08);
+            color: var(--accent);
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            outline: none;
+            appearance: none;
+            -webkit-appearance: none;
+            text-align: center;
+        }
+
+        .status-select:hover {
+            background: rgba(29, 140, 248, .15);
         }
     </style>
 </head>
@@ -1354,10 +1398,12 @@
         <!-- Sidebar -->
         <div class="a-sidebar">
             <div class="a-brand" style="justify-content: flex-start; overflow: hidden; white-space: nowrap; gap:8px;">
-                <button class="btn p-0 d-xl-none border-0 text-white me-1" onclick="toggleMobileSidebar()" style="font-size:1rem; line-height:1;">
+                <button class="btn p-0 d-xl-none border-0 text-white me-1" onclick="toggleMobileSidebar()"
+                    style="font-size:1rem; line-height:1;">
                     <i class="bi bi-chevron-left"></i>
                 </button>
-                <div onclick="showPage('dashboard', null)" style="display:flex; align-items:center; gap:6px; cursor:pointer; flex:1; overflow:hidden;">
+                <div onclick="showPage('dashboard', null)"
+                    style="display:flex; align-items:center; gap:6px; cursor:pointer; flex:1; overflow:hidden;">
                     <img src="assets/img/logo.png" alt="PrintPro"
                         style="height:22px;width:auto;object-fit:contain;max-width:90px;filter:brightness(0) invert(1); flex-shrink: 0;">
                     <span class="a-brand-badge" style="flex-shrink: 0;">Admin</span>
@@ -1372,6 +1418,9 @@
                 </div>
                 <div class="a-nav-item" onclick="showPage('users', this)" id="nav-users">
                     <i class="bi bi-people"></i> <span>Users</span>
+                </div>
+                <div class="a-nav-item" onclick="showPage('subscriptions', this)" id="nav-subscriptions">
+                    <i class="bi bi-card-checklist"></i> <span>Subscriptions</span>
                 </div>
                 <div class="a-nav-item" onclick="showPage('devices', this)" id="nav-devices">
                     <i class="bi bi-printer"></i> <span>Devices</span>
@@ -1393,7 +1442,8 @@
             <!-- Topbar -->
             <div class="a-topbar">
                 <div style="display:flex;align-items:center;gap:12px;">
-                    <button class="d-xl-none btn border-0 p-0" onclick="toggleMobileSidebar()" style="font-size:1.4rem;color:var(--navy);">
+                    <button class="d-xl-none btn border-0 p-0" onclick="toggleMobileSidebar()"
+                        style="font-size:1.4rem;color:var(--navy);">
                         <i class="bi bi-list"></i>
                     </button>
                     <div style="display:flex; align-items:center; gap:6px;" onclick="showPage('dashboard', null)">
@@ -1401,7 +1451,8 @@
                         <span class="a-brand-badge d-xl-none">Admin</span>
                     </div>
                     <div class="a-tabs" id="adminTabs">
-                        <div class="a-tab active" onclick="showPage('dashboard', null)" data-page="dashboard">Dashboard</div>
+                        <div class="a-tab active" onclick="showPage('dashboard', null)" data-page="dashboard">Dashboard
+                        </div>
                         <div class="a-tab" onclick="showPage('orders', null)" data-page="orders">Orders</div>
                         <div class="a-tab" onclick="showPage('devices', null)" data-page="devices">Devices</div>
                         <div class="a-tab" onclick="showPage('account', null)" data-page="account">Account</div>
@@ -1581,46 +1632,46 @@
                                                 <th>TOTAL</th>
                                             </tr>
                                         </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td style="font-weight:600;">#PPR-048</td>
-                                            <td>Gamma Agency</td>
-                                            <td>Brochure</td>
-                                            <td><span class="badge-status badge-active">Active</span></td>
-                                            <td style="font-weight:700;">₱4,250.00</td>
-                                        </tr>
-                                        <tr>
-                                            <td style="font-weight:600;">#PPR-045</td>
-                                            <td>Urban Core</td>
-                                            <td>Mailer</td>
-                                            <td><span class="badge-status badge-pending">Reprint</span></td>
-                                            <td style="font-weight:700;">₱12,800.00</td>
-                                        </tr>
-                                        <tr>
-                                            <td style="font-weight:600;">#PPR-043</td>
-                                            <td>TechStart Inc</td>
-                                            <td>Poster</td>
-                                            <td><span class="badge-status badge-done">Printing</span></td>
-                                            <td style="font-weight:700;">₱15,500.00</td>
-                                        </tr>
-                                        <tr>
-                                            <td style="font-weight:600;">#PPR-041</td>
-                                            <td>Ocean Santana</td>
-                                            <td>Flyer</td>
-                                            <td><span class="badge-status badge-active">Active</span></td>
-                                            <td style="font-weight:700;">—</td>
-                                        </tr>
-                                        <tr>
-                                            <td style="font-weight:600;">#PPR-038</td>
-                                            <td>Citybeats</td>
-                                            <td>Banner</td>
-                                            <td><span class="badge-status badge-done">Done</span></td>
-                                            <td style="font-weight:700;">₱2,450.00</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                        <tbody>
+                                            <tr>
+                                                <td style="font-weight:600;">#PPR-048</td>
+                                                <td>Gamma Agency</td>
+                                                <td>Brochure</td>
+                                                <td><span class="badge-status badge-active">Active</span></td>
+                                                <td style="font-weight:700;">₱4,250.00</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-weight:600;">#PPR-045</td>
+                                                <td>Urban Core</td>
+                                                <td>Mailer</td>
+                                                <td><span class="badge-status badge-pending">Reprint</span></td>
+                                                <td style="font-weight:700;">₱12,800.00</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-weight:600;">#PPR-043</td>
+                                                <td>TechStart Inc</td>
+                                                <td>Poster</td>
+                                                <td><span class="badge-status badge-done">Printing</span></td>
+                                                <td style="font-weight:700;">₱15,500.00</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-weight:600;">#PPR-041</td>
+                                                <td>Ocean Santana</td>
+                                                <td>Flyer</td>
+                                                <td><span class="badge-status badge-active">Active</span></td>
+                                                <td style="font-weight:700;">—</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-weight:600;">#PPR-038</td>
+                                                <td>Citybeats</td>
+                                                <td>Banner</td>
+                                                <td><span class="badge-status badge-done">Done</span></td>
+                                                <td style="font-weight:700;">₱2,450.00</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
-                        </div>
 
                             <div class="chart-card">
                                 <div class="card-hdr" style="padding:12px 0 10px 0;border:none;">
@@ -1757,7 +1808,16 @@
                                                     style="width:65%;background:var(--accent);"></div>
                                             </div>
                                         </td>
-                                        <td><span class="badge-status badge-active">Active</span></td>
+                                        <td>
+                                            <select class="status-select" data-order="PPR-48"
+                                                onchange="updateOrderStatus(this, 'PPR-48')">
+                                                <option value="Prepress">Prepress</option>
+                                                <option value="Printing">Printing</option>
+                                                <option value="Finishing">Finishing</option>
+                                                <option value="Shipping">Shipping</option>
+                                                <option value="Delivered">Delivered</option>
+                                            </select>
+                                        </td>
                                         <td>Oct 24, 2024</td>
                                         <td style="font-weight:700;">₱4,250</td>
                                         <td><button onclick="alert('Opening order #PPR-048…')"
@@ -1811,7 +1871,16 @@
                                                     style="width:45%;background:var(--accent);"></div>
                                             </div>
                                         </td>
-                                        <td><span class="badge-status badge-active">Active</span></td>
+                                        <td>
+                                            <select class="status-select" data-order="PPR-41"
+                                                onchange="updateOrderStatus(this, 'PPR-41')">
+                                                <option value="Prepress">Prepress</option>
+                                                <option value="Printing">Printing</option>
+                                                <option value="Finishing">Finishing</option>
+                                                <option value="Shipping" selected>Shipping</option>
+                                                <option value="Delivered">Delivered</option>
+                                            </select>
+                                        </td>
                                         <td>Nov 2, 2024</td>
                                         <td style="font-weight:700;">₱8,750</td>
                                         <td><button onclick="alert('Opening order #PPR-041…')"
@@ -2266,6 +2335,124 @@
                                     style="margin-top:12px;width:100%;padding:7px;border-radius:7px;border:1px solid var(--border);background:#fff;font-size:.75rem;font-weight:600;color:var(--navy);cursor:pointer;font-family:'DM Sans',sans-serif;">View
                                     Schedule</button>
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ════ SUBSCRIPTIONS ════ -->
+                <div class="a-page" id="page-subscriptions">
+                    <div style="padding: 20px 24px;">
+                        <div class="users-card">
+                            <div class="card-hdr" style="padding:14px 18px;">
+                                <div>
+                                    <div class="card-hdr-title">Client Subscriptions</div>
+                                    <div style="font-size:.72rem;color:var(--muted);">Manage client plans and billing
+                                        cycles. Changes automatically sync to the client portal.</div>
+                                </div>
+                            </div>
+                            <table class="users-table" id="subsTable">
+                                <thead>
+                                    <tr>
+                                        <th>CLIENT NAME</th>
+                                        <th>PLAN</th>
+                                        <th>APPLIED ON</th>
+                                        <th>RENEWS/ENDS ON</th>
+                                        <th>STATUS</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr data-client-id="client_1">
+                                        <td>
+                                            <div style="display:flex;align-items:center;gap:8px;">
+                                                <div class="feed-avatar"
+                                                    style="width:28px;height:28px;font-size:.7rem;background:linear-gradient(135deg,var(--accent),var(--teal));flex-shrink:0;">
+                                                    OS</div>
+                                                <div>
+                                                    <div style="font-weight:600;font-size:.8rem;color:var(--navy);">
+                                                        Ocean Santana</div>
+                                                    <div style="font-size:.68rem;color:var(--muted);">ocean@example.com
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <select class="form-input"
+                                                style="width:140px; padding:5px 8px; font-size:.75rem;"
+                                                data-field="plan" onchange="updateSub('client_1')">
+                                                <option value="Free Plan">Free Plan</option>
+                                                <option value="Basic Plan">Basic Plan</option>
+                                                <option value="Premium Plan" selected>Premium Plan</option>
+                                                <option value="Enterprise Plan">Enterprise Plan</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input type="date" class="form-input"
+                                                style="width:130px; padding:4px 8px; font-size:.75rem;"
+                                                data-field="applied" value="2023-11-12"
+                                                onchange="updateSub('client_1')">
+                                        </td>
+                                        <td>
+                                            <input type="date" class="form-input"
+                                                style="width:130px; padding:4px 8px; font-size:.75rem;"
+                                                data-field="ends" value="2024-11-12" onchange="updateSub('client_1')">
+                                        </td>
+                                        <td>
+                                            <select class="form-input"
+                                                style="width:110px; padding:5px 8px; font-size:.75rem; color:var(--success); font-weight:600;"
+                                                data-field="status" onchange="updateSub('client_1')">
+                                                <option value="Active" style="color:var(--success);">Active</option>
+                                                <option value="Canceled" style="color:var(--muted);">Canceled</option>
+                                                <option value="Past Due" style="color:var(--danger);">Past Due</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr data-client-id="client_2">
+                                        <td>
+                                            <div style="display:flex;align-items:center;gap:8px;">
+                                                <div class="feed-avatar"
+                                                    style="width:28px;height:28px;font-size:.7rem;background:linear-gradient(135deg,var(--purple),var(--accent));flex-shrink:0;">
+                                                    TS</div>
+                                                <div>
+                                                    <div style="font-weight:600;font-size:.8rem;color:var(--navy);">
+                                                        TechStart Inc</div>
+                                                    <div style="font-size:.68rem;color:var(--muted);">
+                                                        billing@techstart.com</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <select class="form-input"
+                                                style="width:140px; padding:5px 8px; font-size:.75rem;"
+                                                data-field="plan" onchange="updateSub('client_2')">
+                                                <option value="Free Plan">Free Plan</option>
+                                                <option value="Basic Plan" selected>Basic Plan</option>
+                                                <option value="Premium Plan">Premium Plan</option>
+                                                <option value="Enterprise Plan">Enterprise Plan</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input type="date" class="form-input"
+                                                style="width:130px; padding:4px 8px; font-size:.75rem;"
+                                                data-field="applied" value="2024-01-15"
+                                                onchange="updateSub('client_2')">
+                                        </td>
+                                        <td>
+                                            <input type="date" class="form-input"
+                                                style="width:130px; padding:4px 8px; font-size:.75rem;"
+                                                data-field="ends" value="2024-02-15" onchange="updateSub('client_2')">
+                                        </td>
+                                        <td>
+                                            <select class="form-input"
+                                                style="width:110px; padding:5px 8px; font-size:.75rem; color:var(--success); font-weight:600;"
+                                                data-field="status" onchange="updateSub('client_2')">
+                                                <option value="Active" style="color:var(--success);">Active</option>
+                                                <option value="Canceled" style="color:var(--muted);">Canceled</option>
+                                                <option value="Past Due" style="color:var(--danger);">Past Due</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -2785,6 +2972,122 @@
         document.querySelectorAll('.a-nav-item').forEach(item => {
             item.addEventListener('click', () => {
                 if (window.innerWidth < 1200) toggleMobileSidebar();
+            });
+        });
+    </script>
+    <script>
+        function updateOrderStatus(selectElem, orderId) {
+            const newStatus = selectElem.value;
+            const progressFill = selectElem.closest('tr').querySelector('.progress-bar-fill');
+
+            let progress = '0%';
+            let color = 'var(--accent)';
+            let selectColor = 'var(--accent)';
+            let selectBg = 'rgba(29, 140, 248, .08)';
+            let selectBorder = 'var(--accent)';
+
+            switch (newStatus) {
+                case 'Prepress':
+                    progress = '25%'; color = 'var(--accent)';
+                    selectColor = 'var(--accent)'; selectBg = 'rgba(29, 140, 248, .08)'; selectBorder = 'var(--accent)';
+                    break;
+                case 'Printing':
+                    progress = '50%'; color = 'var(--accent2)';
+                    selectColor = 'var(--accent2)'; selectBg = 'rgba(0, 198, 255, .08)'; selectBorder = 'var(--accent2)';
+                    break;
+                case 'Finishing':
+                    progress = '75%'; color = 'var(--purple)';
+                    selectColor = 'var(--purple)'; selectBg = 'rgba(124, 77, 255, .08)'; selectBorder = 'var(--purple)';
+                    break;
+                case 'Shipping':
+                    progress = '90%'; color = 'var(--warning)';
+                    selectColor = 'var(--warning)'; selectBg = 'rgba(251, 99, 64, .08)'; selectBorder = 'var(--warning)';
+                    break;
+                case 'Delivered':
+                    progress = '100%'; color = 'var(--success)';
+                    selectColor = 'var(--success)'; selectBg = 'rgba(45, 206, 137, .08)'; selectBorder = 'var(--success)';
+                    break;
+            }
+
+            if (progressFill) {
+                progressFill.style.width = progress;
+                progressFill.style.background = color;
+            }
+
+            selectElem.style.color = selectColor;
+            selectElem.style.background = selectBg;
+            selectElem.style.borderColor = selectBorder;
+
+            const key = 'pp_status_' + orderId;
+            localStorage.setItem(key, newStatus);
+
+            // Dispatch a custom event to update same window if needed
+            window.dispatchEvent(new Event('storage'));
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.status-select').forEach(sel => {
+                const orderId = sel.getAttribute('data-order');
+                const saved = localStorage.getItem('pp_status_' + orderId);
+                if (saved) {
+                    sel.value = saved;
+                }
+                updateOrderStatus(sel, orderId);
+            });
+        });
+
+        // Ensure real-time syncing if multiple tabs are open
+        window.addEventListener('storage', (e) => {
+            if (e.key && e.key.startsWith('pp_status_')) {
+                const orderId = e.key.replace('pp_status_', '');
+                const sel = document.querySelector(`.status-select[data-order="${orderId}"]`);
+                if (sel && sel.value !== e.newValue) {
+                    sel.value = e.newValue;
+                    updateOrderStatus(sel, orderId);
+                }
+            }
+        });
+
+        // Subscription Management logic
+        function updateSub(clientId) {
+            const row = document.querySelector(`tr[data-client-id="${clientId}"]`);
+            if (!row) return;
+
+            const plan = row.querySelector('[data-field="plan"]').value;
+            const applied = row.querySelector('[data-field="applied"]').value;
+            const ends = row.querySelector('[data-field="ends"]').value;
+            const status = row.querySelector('[data-field="status"]').value;
+
+            // Status color
+            const statusSelect = row.querySelector('[data-field="status"]');
+            if (status === 'Active') statusSelect.style.color = 'var(--success)';
+            else if (status === 'Canceled') statusSelect.style.color = 'var(--muted)';
+            else statusSelect.style.color = 'var(--danger)';
+
+            const subData = { plan, applied, ends, status };
+            localStorage.setItem('pp_sub_' + clientId, JSON.stringify(subData));
+            window.dispatchEvent(new Event('storage'));
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('#subsTable tr[data-client-id]').forEach(row => {
+                const cid = row.getAttribute('data-client-id');
+                const saved = localStorage.getItem('pp_sub_' + cid);
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    row.querySelector('[data-field="plan"]').value = data.plan;
+                    row.querySelector('[data-field="applied"]').value = data.applied;
+                    row.querySelector('[data-field="ends"]').value = data.ends;
+                    row.querySelector('[data-field="status"]').value = data.status;
+
+                    const statusSelect = row.querySelector('[data-field="status"]');
+                    if (data.status === 'Active') statusSelect.style.color = 'var(--success)';
+                    else if (data.status === 'Canceled') statusSelect.style.color = 'var(--muted)';
+                    else statusSelect.style.color = 'var(--danger)';
+                } else {
+                    // Initialize if nothing in local storage
+                    updateSub(cid);
+                }
             });
         });
     </script>

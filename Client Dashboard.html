@@ -2144,7 +2144,7 @@
                                                 <td>3D Marketing<br><span
                                                         style="color:var(--muted);font-size:.7rem;">Brochure</span></td>
                                                 <td>1,000</td>
-                                                <td><span class="badge-status badge-active">Active</span></td>
+                                                <td><span class="badge-status badge-active" data-status-label="PPR-48">Active</span></td>
                                                 <td>Oct 24</td>
                                                 <td style="font-weight:700;">₱4,250.00</td>
                                             </tr>
@@ -2172,7 +2172,7 @@
                                                 <td>Promotional<br><span
                                                         style="color:var(--muted);font-size:.7rem;">Mailers</span></td>
                                                 <td>5,000</td>
-                                                <td><span class="badge-status badge-active">Active</span></td>
+                                                <td><span class="badge-status badge-active" data-status-label="PPR-41">Active</span></td>
                                                 <td>Nov 2</td>
                                                 <td style="font-weight:700;">₱8,750.00</td>
                                             </tr>
@@ -2263,7 +2263,7 @@
                                             <td>3D Marketing Brochure</td>
                                             <td>Brochure</td>
                                             <td>1,000</td>
-                                            <td><span class="badge-status badge-active">Active</span></td>
+                                            <td><span class="badge-status badge-active" data-status-label="PPR-48">Active</span></td>
                                             <td>Oct 24</td>
                                             <td style="font-weight:700;">₱4,250</td>
                                         </tr>
@@ -2299,7 +2299,7 @@
                                             <td>Promotional Mailers</td>
                                             <td>Mailer</td>
                                             <td>5,000</td>
-                                            <td><span class="badge-status badge-active">Active</span></td>
+                                            <td><span class="badge-status badge-active" data-status-label="PPR-41">Active</span></td>
                                             <td>Nov 2</td>
                                             <td style="font-weight:700;">₱8,750</td>
                                         </tr>
@@ -2422,6 +2422,46 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <!-- Step 4: Artwork & Files -->
+                                <div class="wizard-card">
+                                    <div class="wizard-hdr">
+                                        <div class="step-num">4</div>
+                                        <div class="step-title">Artwork &amp; Files</div>
+                                    </div>
+                                    <div class="wizard-body">
+                                        <div style="display:flex; gap: 12px; margin-bottom: 16px;">
+                                            <button class="pt-btn" style="flex:1; padding: 10px;" onclick="document.getElementById('upload-area').style.display='block'; document.getElementById('account-files').style.display='none'; this.classList.add('active'); this.nextElementSibling.classList.remove('active');"><i class="bi bi-cloud-upload" style="font-size: 1.1rem;"></i>Upload New</button>
+                                            <button class="pt-btn active" style="flex:1; padding: 10px;" onclick="document.getElementById('upload-area').style.display='none'; document.getElementById('account-files').style.display='block'; this.classList.add('active'); this.previousElementSibling.classList.remove('active');"><i class="bi bi-folder2-open" style="font-size: 1.1rem;"></i>Select from Account</button>
+                                        </div>
+                                        
+                                        <!-- Upload Area -->
+                                        <div id="upload-area" style="display: none; border: 2px dashed var(--border); border-radius: 12px; padding: 30px; text-align: center; background: var(--off); cursor: pointer; transition: all .2s;" onmouseover="this.style.borderColor='var(--accent)';" onmouseout="this.style.borderColor='var(--border)';">
+                                            <i class="bi bi-cloud-arrow-up" style="font-size: 2.5rem; color: var(--accent); margin-bottom: 10px; display: block;"></i>
+                                            <h5 style="font-size: .9rem; font-family: 'Sora', sans-serif; font-weight: 700; color: var(--navy); margin-bottom: 4px;">Drag &amp; Drop or Browse</h5>
+                                            <p style="font-size: .75rem; color: var(--muted); margin: 0;">Supports PDF, AI, PSD, PNG, JPG (Max 500MB)</p>
+                                        </div>
+                                        
+                                        <!-- Account Files Area -->
+                                        <div id="account-files" style="display: block;">
+                                            <div style="font-size: .75rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 12px;">Your Uploaded Files</div>
+                                            <div class="files-grid" style="grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); margin-bottom: 0;">
+                                                <div class="file-card" style="padding: 12px; border-color: var(--accent); background: rgba(29, 140, 248, .04);" onclick="document.querySelectorAll('#account-files .file-card').forEach(c=> {c.style.borderColor='var(--border)'; c.style.background='#fff';}); this.style.borderColor='var(--accent)'; this.style.background='rgba(29, 140, 248, .04)';">
+                                                    <span class="file-icon" style="font-size: 1.8rem; margin-bottom: 6px;">🖼️</span>
+                                                    <div class="file-name" style="font-size: .75rem;">summer_flyer_front_v3.pdf</div>
+                                                </div>
+                                                <div class="file-card" style="padding: 12px;" onclick="document.querySelectorAll('#account-files .file-card').forEach(c=> {c.style.borderColor='var(--border)'; c.style.background='#fff';}); this.style.borderColor='var(--accent)'; this.style.background='rgba(29, 140, 248, .04)';">
+                                                    <span class="file-icon" style="font-size: 1.8rem; margin-bottom: 6px;">📄</span>
+                                                    <div class="file-name" style="font-size: .75rem;">annual_report_final.pdf</div>
+                                                </div>
+                                                <div class="file-card" style="padding: 12px;" onclick="document.querySelectorAll('#account-files .file-card').forEach(c=> {c.style.borderColor='var(--border)'; c.style.background='#fff';}); this.style.borderColor='var(--accent)'; this.style.background='rgba(29, 140, 248, .04)';">
+                                                    <span class="file-icon" style="font-size: 1.8rem; margin-bottom: 6px;">🎨</span>
+                                                    <div class="file-name" style="font-size: .75rem;">banner_artwork_hires.ai</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- Summary Sidebar -->
@@ -2454,7 +2494,7 @@
                                         <span class="summary-total-lbl">Total Estimate</span>
                                         <span class="summary-total-val">₱3,584.00</span>
                                     </div>
-                                    <button class="btn-continue">Continue to Upload →</button>
+                                    <button class="btn-continue" onclick="showClientPage('orders', null); alert('Order placed successfully!');">Place Order →</button>
                                 </div>
                             </div>
                         </div>
@@ -2705,8 +2745,10 @@
                                                 <td>2.4 MB</td>
                                                 <td>#PPR-48</td>
                                                 <td>Today</td>
-                                                <td><i class="bi bi-download"
-                                                        style="color:var(--accent);cursor:pointer;"></i></td>
+                                                <td style="text-align: right; white-space: nowrap;">
+                                                    <button style="background:var(--accent);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:.7rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;margin-right:8px;" onclick="showClientPage('create', null)">Print</button>
+                                                    <i class="bi bi-download" style="color:var(--muted);cursor:pointer;transition:color .2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'"></i>
+                                                </td>
                                             </tr>
                                             <tr>
                                                 <td><i class="bi bi-file-earmark-pdf"
@@ -2716,8 +2758,10 @@
                                                 <td>8.1 MB</td>
                                                 <td>#PPR-45</td>
                                                 <td>Oct 22</td>
-                                                <td><i class="bi bi-download"
-                                                        style="color:var(--accent);cursor:pointer;"></i></td>
+                                                <td style="text-align: right; white-space: nowrap;">
+                                                    <button style="background:var(--accent);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:.7rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;margin-right:8px;" onclick="showClientPage('create', null)">Print</button>
+                                                    <i class="bi bi-download" style="color:var(--muted);cursor:pointer;transition:color .2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'"></i>
+                                                </td>
                                             </tr>
                                             <tr>
                                                 <td><i class="bi bi-file-earmark-image"
@@ -2727,8 +2771,10 @@
                                                 <td>34 MB</td>
                                                 <td>#PPR-43</td>
                                                 <td>Oct 20</td>
-                                                <td><i class="bi bi-download"
-                                                        style="color:var(--accent);cursor:pointer;"></i></td>
+                                                <td style="text-align: right; white-space: nowrap;">
+                                                    <button style="background:var(--accent);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:.7rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;margin-right:8px;" onclick="showClientPage('create', null)">Print</button>
+                                                    <i class="bi bi-download" style="color:var(--muted);cursor:pointer;transition:color .2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'"></i>
+                                                </td>
                                             </tr>
                                             <tr>
                                                 <td><i class="bi bi-file-zip"
@@ -2738,8 +2784,10 @@
                                                 <td>12.6 MB</td>
                                                 <td>#PPR-41</td>
                                                 <td>Oct 19</td>
-                                                <td><i class="bi bi-download"
-                                                        style="color:var(--accent);cursor:pointer;"></i></td>
+                                                <td style="text-align: right; white-space: nowrap;">
+                                                    <button style="background:var(--accent);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:.7rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;margin-right:8px;" onclick="showClientPage('create', null)">Print</button>
+                                                    <i class="bi bi-download" style="color:var(--muted);cursor:pointer;transition:color .2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'"></i>
+                                                </td>
                                             </tr>
                                             <tr>
                                                 <td><i class="bi bi-file-earmark-image"
@@ -2749,8 +2797,10 @@
                                                 <td>440 KB</td>
                                                 <td>—</td>
                                                 <td>Oct 17</td>
-                                                <td><i class="bi bi-download"
-                                                        style="color:var(--accent);cursor:pointer;"></i></td>
+                                                <td style="text-align: right; white-space: nowrap;">
+                                                    <button style="background:var(--accent);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:.7rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;margin-right:8px;" onclick="showClientPage('create', null)">Print</button>
+                                                    <i class="bi bi-download" style="color:var(--muted);cursor:pointer;transition:color .2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'"></i>
+                                                </td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -2785,39 +2835,39 @@
                             </div>
 
                             <!-- Order PPR-48 -->
-                            <div class="track-card">
+                            <div class="track-card" data-order="PPR-48">
                                 <div class="track-card-hdr">
                                     <div>
                                         <div class="track-order-id">#PPR-48 · 3D Marketing Brochure</div>
                                         <div class="track-order-name">1,000 units · 100lb Gloss · Double Sided</div>
                                     </div>
-                                    <span class="badge-status badge-active">In Production</span>
+                                    <span class="badge-status badge-active" data-status-label="PPR-48">Prepress</span>
                                 </div>
                                 <div class="progress-track">
-                                    <div class="steps-row">
+                                    <div class="steps-row" data-progress="PPR-48">
                                         <div class="track-step">
                                             <div class="step-circle done"><i class="bi bi-check-lg"></i></div>
                                             <div class="step-label done">Order<br>Placed</div>
                                         </div>
                                         <div class="step-connector done"></div>
                                         <div class="track-step">
-                                            <div class="step-circle done"><i class="bi bi-check-lg"></i></div>
-                                            <div class="step-label done">Artwork<br>Approved</div>
-                                        </div>
-                                        <div class="step-connector done"></div>
-                                        <div class="track-step">
-                                            <div class="step-circle current"><i class="bi bi-gear-fill"></i></div>
-                                            <div class="step-label current">In<br>Production</div>
+                                            <div class="step-circle current"><i class="bi bi-gear"></i></div>
+                                            <div class="step-label current">Prepress</div>
                                         </div>
                                         <div class="step-connector pending"></div>
                                         <div class="track-step">
-                                            <div class="step-circle pending"><i class="bi bi-box-seam"></i></div>
-                                            <div class="step-label">Quality<br>Check</div>
+                                            <div class="step-circle pending"><i class="bi bi-printer"></i></div>
+                                            <div class="step-label">Printing</div>
+                                        </div>
+                                        <div class="step-connector pending"></div>
+                                        <div class="track-step">
+                                            <div class="step-circle pending"><i class="bi bi-scissors"></i></div>
+                                            <div class="step-label">Finishing</div>
                                         </div>
                                         <div class="step-connector pending"></div>
                                         <div class="track-step">
                                             <div class="step-circle pending"><i class="bi bi-truck"></i></div>
-                                            <div class="step-label">Shipped</div>
+                                            <div class="step-label">Shipping</div>
                                         </div>
                                         <div class="step-connector pending"></div>
                                         <div class="track-step">
@@ -2881,16 +2931,16 @@
                             </div>
 
                             <!-- Order PPR-41 -->
-                            <div class="track-card">
+                            <div class="track-card" data-order="PPR-41">
                                 <div class="track-card-hdr">
                                     <div>
                                         <div class="track-order-id">#PPR-41 · Promotional Mailers</div>
                                         <div class="track-order-name">5,000 units · 80lb Matte · Single Sided</div>
                                     </div>
-                                    <span class="badge-status badge-done">Shipped</span>
+                                    <span class="badge-status badge-done" data-status-label="PPR-41">Shipping</span>
                                 </div>
                                 <div class="progress-track">
-                                    <div class="steps-row">
+                                    <div class="steps-row" data-progress="PPR-41">
                                         <div class="track-step">
                                             <div class="step-circle done"><i class="bi bi-check-lg"></i></div>
                                             <div class="step-label done">Order<br>Placed</div>
@@ -2898,22 +2948,22 @@
                                         <div class="step-connector done"></div>
                                         <div class="track-step">
                                             <div class="step-circle done"><i class="bi bi-check-lg"></i></div>
-                                            <div class="step-label done">Artwork<br>Approved</div>
+                                            <div class="step-label done">Prepress</div>
                                         </div>
                                         <div class="step-connector done"></div>
                                         <div class="track-step">
                                             <div class="step-circle done"><i class="bi bi-check-lg"></i></div>
-                                            <div class="step-label done">In<br>Production</div>
+                                            <div class="step-label done">Printing</div>
                                         </div>
                                         <div class="step-connector done"></div>
                                         <div class="track-step">
                                             <div class="step-circle done"><i class="bi bi-check-lg"></i></div>
-                                            <div class="step-label done">Quality<br>Check</div>
+                                            <div class="step-label done">Finishing</div>
                                         </div>
                                         <div class="step-connector done"></div>
                                         <div class="track-step">
                                             <div class="step-circle current"><i class="bi bi-truck"></i></div>
-                                            <div class="step-label current">Shipped</div>
+                                            <div class="step-label current">Shipping</div>
                                         </div>
                                         <div class="step-connector pending"></div>
                                         <div class="track-step">
@@ -3104,11 +3154,11 @@
                                 <div class="orders-card" style="margin-bottom:14px; background: linear-gradient(135deg, #1a2340, #2a3558); color: #fff; border: none;">
                                     <div class="card-hdr" style="border-bottom: 1px solid rgba(255,255,255,.1);">
                                         <span class="card-hdr-title" style="color: #fff;">Active Subscription</span>
-                                        <span class="badge-status badge-active" style="background: rgba(45, 206, 137, .2); color: #2dce89; border: 1px solid rgba(45, 206, 137, .3);">Active</span>
+                                        <span class="badge-status badge-active client-sub-status" style="background: rgba(45, 206, 137, .2); color: #2dce89; border: 1px solid rgba(45, 206, 137, .3);">Active</span>
                                     </div>
                                     <div style="padding: 16px;">
                                         <div style="font-size: .75rem; color: rgba(255,255,255,.6); margin-bottom: 4px;">CURRENT PLAN</div>
-                                        <div style="font-family: 'Sora', sans-serif; font-size: 1.2rem; font-weight: 800; margin-bottom: 12px;">Premium Plan</div>
+                                        <div class="client-sub-plan" style="font-family: 'Sora', sans-serif; font-size: 1.2rem; font-weight: 800; margin-bottom: 12px;">Premium Plan</div>
                                         
                                         <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;">
                                             <div style="display: flex; justify-content: space-between; font-size: .8rem;">
@@ -3117,11 +3167,11 @@
                                             </div>
                                             <div style="display: flex; justify-content: space-between; font-size: .8rem;">
                                                 <span style="color: rgba(255,255,255,.6);">Renews On</span>
-                                                <span style="font-weight: 600;">Nov 12, 2024</span>
+                                                <span class="client-sub-renews" style="font-weight: 600;">Nov 12, 2024</span>
                                             </div>
                                             <div style="display: flex; justify-content: space-between; font-size: .8rem;">
                                                 <span style="color: rgba(255,255,255,.6);">Amount</span>
-                                                <span style="font-weight: 600;">₱1,899.00</span>
+                                                <span class="client-sub-amount" style="font-weight: 600;">₱1,899.00</span>
                                             </div>
                                         </div>
                                         
@@ -3246,19 +3296,19 @@
                                         <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
                                             <div>
                                                 <div style="font-size: .72rem; color: rgba(255,255,255,.6); margin-bottom: 4px; text-transform:uppercase;">Current Plan</div>
-                                                <div style="font-family: 'Sora', sans-serif; font-size: 1.4rem; font-weight: 800;">Premium Plan</div>
+                                                <div class="client-sub-plan" style="font-family: 'Sora', sans-serif; font-size: 1.4rem; font-weight: 800;">Premium Plan</div>
                                             </div>
-                                            <span class="badge-status badge-active" style="background: rgba(45, 206, 137, .2); color: #2dce89; border: 1px solid rgba(45, 206, 137, .3);">ACTIVE</span>
+                                            <span class="badge-status badge-active client-sub-status" style="background: rgba(45, 206, 137, .2); color: #2dce89; border: 1px solid rgba(45, 206, 137, .3);">ACTIVE</span>
                                         </div>
                                         
                                         <div style="background:rgba(255,255,255,.05); border-radius:10px; padding:14px; margin-bottom:16px;">
                                             <div style="display: flex; justify-content: space-between; font-size: .85rem; margin-bottom:8px;">
                                                 <span style="color: rgba(255,255,255,.6);">Renews On</span>
-                                                <span style="font-weight: 600;">Nov 12, 2024</span>
+                                                <span class="client-sub-renews" style="font-weight: 600;">Nov 12, 2024</span>
                                             </div>
                                             <div style="display: flex; justify-content: space-between; font-size: .85rem;">
                                                 <span style="color: rgba(255,255,255,.6);">Billing Amount</span>
-                                                <span style="font-weight: 600;">₱1,899.00</span>
+                                                <span class="client-sub-amount" style="font-weight: 600;">₱1,899.00</span>
                                             </div>
                                         </div>
 
@@ -3383,6 +3433,142 @@
             item.addEventListener('click', () => {
                 if (window.innerWidth < 1200) toggleClientSidebar();
             });
+        });
+    </script>
+    <script>
+        // Synchronize Order Status from Admin
+        function syncOrderStatus() {
+            const steps = ['Prepress', 'Printing', 'Finishing', 'Shipping', 'Delivered'];
+            
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && key.startsWith('pp_status_')) {
+                    const orderId = key.replace('pp_status_', '');
+                    const savedStatus = localStorage.getItem(key);
+                    
+                    // Update all badges for this order
+                    document.querySelectorAll(`[data-status-label="${orderId}"]`).forEach(badge => {
+                        badge.textContent = savedStatus;
+                        badge.className = 'badge-status'; // reset
+                        if (savedStatus === 'Delivered') badge.classList.add('badge-done');
+                        else if (savedStatus === 'Shipping') badge.classList.add('badge-pending');
+                        else badge.classList.add('badge-active');
+                    });
+                    
+                    // Update Progress Bars
+                    document.querySelectorAll(`[data-progress="${orderId}"]`).forEach(row => {
+                        const targetIdx = steps.indexOf(savedStatus) + 1; // +1 because index 0 is "Order Placed"
+                        
+                        const trackSteps = row.querySelectorAll('.track-step');
+                        const connectors = row.querySelectorAll('.step-connector');
+                        
+                        trackSteps.forEach((step, idx) => {
+                            const circle = step.querySelector('.step-circle');
+                            const label = step.querySelector('.step-label');
+                            const icon = circle.querySelector('i');
+                            
+                            // Restore icons just in case
+                            if (idx === 0) icon.className = 'bi bi-check-lg';
+                            else if (idx === 1) icon.className = 'bi bi-gear';
+                            else if (idx === 2) icon.className = 'bi bi-printer';
+                            else if (idx === 3) icon.className = 'bi bi-scissors';
+                            else if (idx === 4) icon.className = 'bi bi-truck';
+                            else if (idx === 5) icon.className = 'bi bi-house-check';
+                            
+                            circle.className = 'step-circle';
+                            label.className = 'step-label';
+                            
+                            if (idx < targetIdx) {
+                                circle.classList.add('done');
+                                label.classList.add('done');
+                                icon.className = 'bi bi-check-lg';
+                            } else if (idx === targetIdx) {
+                                circle.classList.add('current');
+                                label.classList.add('current');
+                            } else {
+                                circle.classList.add('pending');
+                            }
+                        });
+                        
+                        connectors.forEach((conn, idx) => {
+                            conn.className = 'step-connector';
+                            if (idx < targetIdx) {
+                                conn.classList.add('done');
+                            } else {
+                                conn.classList.add('pending');
+                            }
+                        });
+                    });
+                }
+            }
+        }
+
+        // Synchronize Subscription
+        function syncSubscription() {
+            const saved = localStorage.getItem('pp_sub_client_1');
+            if (saved) {
+                const data = JSON.parse(saved);
+                
+                // Format dates safely
+                const formatDate = (ds) => {
+                    if (!ds) return 'N/A';
+                    const parts = ds.split('-');
+                    if (parts.length === 3) {
+                        const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+                        return `${months[parseInt(parts[1])-1]} ${parseInt(parts[2])}, ${parts[0]}`;
+                    }
+                    return ds;
+                };
+
+                const amounts = {
+                    'Free Plan': '₱0.00',
+                    'Basic Plan': '₱899.00',
+                    'Premium Plan': '₱1,899.00',
+                    'Enterprise Plan': '₱4,500.00'
+                };
+                
+                document.querySelectorAll('.client-sub-plan').forEach(el => {
+                    el.textContent = data.plan;
+                });
+                document.querySelectorAll('.client-sub-renews').forEach(el => {
+                    el.textContent = formatDate(data.ends);
+                });
+                document.querySelectorAll('.client-sub-amount').forEach(el => {
+                    el.textContent = amounts[data.plan] || '₱0.00';
+                });
+                document.querySelectorAll('.client-sub-status').forEach(el => {
+                    el.textContent = data.status.toUpperCase();
+                    if (data.status === 'Active') {
+                        el.style.background = 'rgba(45, 206, 137, .2)';
+                        el.style.color = '#2dce89';
+                        el.style.borderColor = 'rgba(45, 206, 137, .3)';
+                    } else if (data.status === 'Canceled') {
+                        el.style.background = 'rgba(255, 255, 255, .1)';
+                        el.style.color = '#ccc';
+                        el.style.borderColor = 'rgba(255, 255, 255, .2)';
+                    } else {
+                        el.style.background = 'rgba(245, 54, 92, .2)';
+                        el.style.color = '#f5365c';
+                        el.style.borderColor = 'rgba(245, 54, 92, .3)';
+                    }
+                });
+            }
+        }
+
+        // Run on load
+        document.addEventListener('DOMContentLoaded', () => {
+            syncOrderStatus();
+            syncSubscription();
+        });
+
+        // Run when localstorage changes
+        window.addEventListener('storage', (e) => {
+            if (e.key && e.key.startsWith('pp_status_')) {
+                syncOrderStatus();
+            }
+            if (e.key === 'pp_sub_client_1') {
+                syncSubscription();
+            }
         });
     </script>
 </body>
