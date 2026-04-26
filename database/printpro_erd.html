@@ -1,0 +1,189 @@
+
+<style>
+#erd { width: 100%; }
+#erd svg { width: 100%; height: auto; }
+</style>
+<div id="erd"></div>
+<script type="module">
+import mermaid from 'https://esm.sh/mermaid@11/dist/mermaid.esm.min.mjs';
+const dark = matchMedia('(prefers-color-scheme: dark)').matches;
+await document.fonts.ready;
+mermaid.initialize({
+  startOnLoad: false,
+  theme: 'base',
+  fontFamily: '"Anthropic Sans", sans-serif',
+  themeVariables: {
+    darkMode: dark,
+    fontSize: '13px',
+    fontFamily: '"Anthropic Sans", sans-serif',
+    lineColor: dark ? '#9c9a92' : '#73726c',
+    textColor: dark ? '#c2c0b6' : '#3d3d3a',
+    primaryColor: dark ? '#2a3558' : '#e6f1fb',
+    primaryBorderColor: dark ? '#4a6fa5' : '#185fa5',
+    primaryTextColor: dark ? '#c2c0b6' : '#042c53',
+  },
+});
+const diagram = `erDiagram
+  USERS {
+    int id PK
+    string name
+    string email
+    string password_hash
+    enum role "admin|manager|operator|client"
+    enum status "active|suspended"
+    timestamp created_at
+    timestamp updated_at
+  }
+  CLIENTS {
+    int id PK
+    int user_id FK
+    string business_name
+    string industry
+    string phone
+    timestamp created_at
+  }
+  SUBSCRIPTIONS {
+    int id PK
+    int client_id FK
+    enum plan "Free|Basic|Premium|Enterprise"
+    enum status "Active|Canceled|Past Due"
+    date applied_on
+    date renews_on
+    decimal amount
+    timestamp updated_at
+  }
+  ORDERS {
+    int id PK
+    string order_number
+    int client_id FK
+    int assigned_operator_id FK
+    string product_type
+    int quantity
+    string paper_weight
+    string finish
+    string size_width
+    string size_height
+    string print_sides
+    enum turnaround "Standard|Rush|Priority"
+    enum shipping_method "Ground|Express|Overnight"
+    enum status "Prepress|Printing|Finishing|Shipping|Delivered|Reprint"
+    decimal total_amount
+    date due_date
+    timestamp created_at
+    timestamp updated_at
+  }
+  ORDER_STATUS_HISTORY {
+    int id PK
+    int order_id FK
+    int changed_by FK
+    enum status "Prepress|Printing|Finishing|Shipping|Delivered"
+    string note
+    timestamp changed_at
+  }
+  FILES {
+    int id PK
+    int client_id FK
+    int order_id FK
+    string filename
+    string file_path
+    string file_type
+    bigint file_size_bytes
+    string folder
+    bool starred
+    bool trashed
+    timestamp uploaded_at
+  }
+  DEVICES {
+    int id PK
+    string name
+    string model
+    string unit_number
+    enum status "online|idle|offline"
+    decimal ink_level
+    int job_queue_count
+    int sheets_per_hour
+    string last_maintenance
+    timestamp updated_at
+  }
+  DEVICE_JOBS {
+    int id PK
+    int device_id FK
+    int order_id FK
+    timestamp started_at
+    timestamp completed_at
+  }
+  TEMPLATES {
+    int id PK
+    string name
+    string category
+    string size
+    enum plan_required "free|pro"
+    bool is_popular
+    timestamp created_at
+  }
+  INVOICES {
+    int id PK
+    string invoice_number
+    int order_id FK
+    int client_id FK
+    decimal amount
+    enum status "Paid|Due|Void"
+    date issued_date
+    date due_date
+    timestamp created_at
+  }
+  PRINT_SPECS {
+    int id PK
+    string material_name
+    decimal base_price
+    string unit
+    enum status "Available|Unavailable"
+    timestamp updated_at
+  }
+  NOTIFICATIONS {
+    int id PK
+    int user_id FK
+    string type
+    string message
+    bool is_read
+    timestamp created_at
+  }
+
+  CLIENTS ||--|| USERS : "has account"
+  CLIENTS ||--o{ ORDERS : "places"
+  CLIENTS ||--o| SUBSCRIPTIONS : "has"
+  CLIENTS ||--o{ FILES : "owns"
+  CLIENTS ||--o{ INVOICES : "billed"
+  ORDERS ||--o{ FILES : "uses"
+  ORDERS ||--o{ ORDER_STATUS_HISTORY : "tracks"
+  ORDERS ||--o| INVOICES : "generates"
+  ORDERS ||--o{ DEVICE_JOBS : "assigned to"
+  DEVICES ||--o{ DEVICE_JOBS : "runs"
+  USERS ||--o{ ORDER_STATUS_HISTORY : "updates"
+  USERS ||--o{ NOTIFICATIONS : "receives"
+`;
+const { svg } = await mermaid.render('erd-svg', diagram);
+document.getElementById('erd').innerHTML = svg;
+document.querySelectorAll('#erd svg .node').forEach(node => {
+  const firstPath = node.querySelector('path[d]');
+  if (!firstPath) return;
+  const d = firstPath.getAttribute('d');
+  const nums = d.match(/-?[\d.]+/g)?.map(Number);
+  if (!nums || nums.length < 8) return;
+  const xs = [nums[0], nums[2], nums[4], nums[6]];
+  const ys = [nums[1], nums[3], nums[5], nums[7]];
+  const x = Math.min(...xs), y = Math.min(...ys);
+  const w = Math.max(...xs) - x, h = Math.max(...ys) - y;
+  const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+  rect.setAttribute('x', x); rect.setAttribute('y', y);
+  rect.setAttribute('width', w); rect.setAttribute('height', h);
+  rect.setAttribute('rx', '8');
+  for (const a of ['fill', 'stroke', 'stroke-width', 'class', 'style']) {
+    if (firstPath.hasAttribute(a)) rect.setAttribute(a, firstPath.getAttribute(a));
+  }
+  firstPath.replaceWith(rect);
+});
+document.querySelectorAll('#erd svg .row-rect-odd path, #erd svg .row-rect-even path').forEach(p => {
+  p.setAttribute('stroke', 'none');
+});
+</script>
