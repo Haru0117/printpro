@@ -94,8 +94,12 @@
             letter-spacing: 0.3px;
             flex-shrink: 0;
         }
+
         @media (max-width: 1200px) {
-            .c-brand-badge { font-size: .55rem; padding: 1px 7px; }
+            .c-brand-badge {
+                font-size: .55rem;
+                padding: 1px 7px;
+            }
         }
 
         .stat-icon {
@@ -117,9 +121,23 @@
             padding: 10px 0;
             border-bottom: 1px solid #f0f2f8;
         }
-        .settings-row:last-child { border-bottom: none; }
-        .settings-row-label { font-size: .82rem; font-weight: 600; color: var(--navy); }
-        .settings-row-sub { font-size: .72rem; color: var(--muted); margin-top: 1px; }
+
+        .settings-row:last-child {
+            border-bottom: none;
+        }
+
+        .settings-row-label {
+            font-size: .82rem;
+            font-weight: 600;
+            color: var(--navy);
+        }
+
+        .settings-row-sub {
+            font-size: .72rem;
+            color: var(--muted);
+            margin-top: 1px;
+        }
+
         .form-input {
             padding: 7px 12px;
             border: 1px solid var(--border);
@@ -128,15 +146,54 @@
             font-family: 'DM Sans', sans-serif;
             color: #344767;
         }
-        .toggle { position: relative; display: inline-block; width: 38px; height: 20px; }
-        .toggle input { opacity: 0; width: 0; height: 0; }
-        .toggle-slider { position: absolute; cursor: pointer; inset: 0; background: #ccc; border-radius: 20px; transition: .3s; }
-        .toggle-slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: .3s; }
-        input:checked+.toggle-slider { background: var(--accent); }
-        input:checked+.toggle-slider:before { transform: translateX(18px); }
+
+        .toggle {
+            position: relative;
+            display: inline-block;
+            width: 38px;
+            height: 20px;
+        }
+
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            inset: 0;
+            background: #ccc;
+            border-radius: 20px;
+            transition: .3s;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background: white;
+            border-radius: 50%;
+            transition: .3s;
+        }
+
+        input:checked+.toggle-slider {
+            background: var(--accent);
+        }
+
+        input:checked+.toggle-slider:before {
+            transform: translateX(18px);
+        }
 
         /* Account Page Styles */
-        .account-wrap { padding: 20px 24px; }
+        .account-wrap {
+            padding: 20px 24px;
+        }
+
         .account-header {
             background: linear-gradient(135deg, #0f2057, #0d1b3e);
             border-radius: 14px;
@@ -146,18 +203,54 @@
             align-items: center;
             gap: 20px;
         }
+
         .account-avatar-lg {
-            width: 64px; height: 64px; border-radius: 50%;
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
             background: linear-gradient(135deg, var(--accent), var(--teal));
-            display: grid; place-items: center; color: #fff;
-            font-size: 1.4rem; font-weight: 800; font-family: 'Sora', sans-serif;
-            border: 3px solid rgba(255,255,255,.15);
+            display: grid;
+            place-items: center;
+            color: #fff;
+            font-size: 1.4rem;
+            font-weight: 800;
+            font-family: 'Sora', sans-serif;
+            border: 3px solid rgba(255, 255, 255, .15);
         }
-        .account-name { font-family: 'Sora', sans-serif; font-size: 1.15rem; font-weight: 800; color: #fff; }
-        .account-email { font-size: .8rem; color: rgba(255,255,255,.5); margin-top: 2px; }
-        .account-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
-        .notif-card { background: #fff; border-radius: 12px; border: 1px solid var(--border); padding: 18px; }
-        .notif-card-title { font-family: 'Sora', sans-serif; font-size: .9rem; font-weight: 700; color: var(--navy); margin-bottom: 14px; }
+
+        .account-name {
+            font-family: 'Sora', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .account-email {
+            font-size: .8rem;
+            color: rgba(255, 255, 255, .5);
+            margin-top: 2px;
+        }
+
+        .account-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 16px;
+        }
+
+        .notif-card {
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 18px;
+        }
+
+        .notif-card-title {
+            font-family: 'Sora', sans-serif;
+            font-size: .9rem;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 14px;
+        }
 
 
         .c-brand-name {
@@ -216,6 +309,7 @@
             transition: all .2s;
             box-shadow: 0 4px 10px rgba(29, 140, 248, .2);
         }
+
         .btn-accent:hover {
             background: #1171ef !important;
             transform: translateY(-2px);
@@ -285,11 +379,17 @@
             gap: 16px;
             margin-bottom: 20px;
         }
+
         @media (max-width: 1200px) {
-            .stat-grid { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+            .stat-grid {
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            }
         }
+
         @media (max-width: 576px) {
-            .stat-grid { grid-template-columns: 1fr; }
+            .stat-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         .stat-box {
@@ -300,10 +400,14 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
             transition: transform .2s;
         }
-        .stat-box:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+
+        .stat-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
 
         .stat-val {
             font-family: 'Sora', sans-serif;
@@ -328,10 +432,26 @@
             font-size: 1.25rem;
             flex-shrink: 0;
         }
-        .stat-icon.blue { background: rgba(29, 140, 248, .1); color: var(--accent); }
-        .stat-icon.teal { background: rgba(17, 205, 239, .1); color: #1171ef; }
-        .stat-icon.green { background: rgba(45, 206, 137, .1); color: #2dce89; }
-        .stat-icon.purple { background: rgba(124, 77, 255, .1); color: var(--purple); }
+
+        .stat-icon.blue {
+            background: rgba(29, 140, 248, .1);
+            color: var(--accent);
+        }
+
+        .stat-icon.teal {
+            background: rgba(17, 205, 239, .1);
+            color: #1171ef;
+        }
+
+        .stat-icon.green {
+            background: rgba(45, 206, 137, .1);
+            color: #2dce89;
+        }
+
+        .stat-icon.purple {
+            background: rgba(124, 77, 255, .1);
+            color: var(--purple);
+        }
 
         .orders-card,
         .actions-card {
@@ -476,9 +596,16 @@
             gap: 20px;
             align-items: flex-start;
         }
+
         @media (max-width: 991px) {
-            .c-order { flex-direction: column; padding: 16px; }
-            .c-order-sidebar { width: 100%; }
+            .c-order {
+                flex-direction: column;
+                padding: 16px;
+            }
+
+            .c-order-sidebar {
+                width: 100%;
+            }
         }
 
         .c-order-main {
@@ -1147,9 +1274,22 @@
         }
 
         @media (max-width: 576px) {
-            .invoice-id, .invoice-date { display: none; }
-            .billing-header-row { flex-direction: column !important; align-items: flex-start !important; gap: 10px !important; }
-            .billing-header-row button { width: 100%; margin-top: 4px; }
+
+            .invoice-id,
+            .invoice-date {
+                display: none;
+            }
+
+            .billing-header-row {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: 10px !important;
+            }
+
+            .billing-header-row button {
+                width: 100%;
+                margin-top: 4px;
+            }
         }
 
         .invoice-dl a {
@@ -1824,34 +1964,41 @@
                 bottom: 0;
                 z-index: 1050;
                 transition: left .3s cubic-bezier(0.4, 0, 0.2, 1);
-                box-shadow: 15px 0 45px rgba(10,18,40,0.15);
+                box-shadow: 15px 0 45px rgba(10, 18, 40, 0.15);
                 width: 260px !important;
             }
+
             .c-sidebar.active {
                 left: 0;
             }
+
             .c-sidebar span {
                 display: inline !important;
             }
+
             .c-sidebar-overlay {
                 display: none;
                 position: fixed;
                 inset: 0;
-                background: rgba(10,18,40,0.5);
+                background: rgba(10, 18, 40, 0.5);
                 backdrop-filter: blur(5px);
                 -webkit-backdrop-filter: blur(5px);
                 z-index: 1040;
             }
+
             .c-sidebar-overlay.active {
                 display: block;
             }
+
             .c-topbar {
                 padding: 0 16px !important;
             }
+
             .c-search {
                 flex: 1;
                 max-width: 300px;
             }
+
             .c-app {
                 margin-top: 0;
                 height: 100vh;
@@ -1862,41 +2009,52 @@
             .c-content {
                 padding: 12px !important;
             }
+
             .kpi-grid {
                 grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
                 gap: 12px !important;
             }
+
             .c-search {
                 display: none !important;
             }
+
             .c-welcome-hero {
                 padding: 16px !important;
             }
+
             .c-welcome-hero h2 {
                 font-size: 1.25rem !important;
             }
+
             .c-welcome-hero p {
                 font-size: .8rem !important;
                 margin-bottom: 12px !important;
             }
+
             .c-quick-actions {
                 grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)) !important;
                 gap: 10px !important;
             }
+
             .c-action-card {
                 padding: 16px !important;
             }
+
             .c-dash-grid {
                 grid-template-columns: 1fr !important;
                 gap: 15px !important;
             }
+
             .c-table-responsive {
                 width: 100%;
                 overflow-x: auto;
                 -webkit-overflow-scrolling: touch;
             }
+
             .orders-table {
-                min-width: 600px; /* Ensure table doesn't squash */
+                min-width: 600px;
+                /* Ensure table doesn't squash */
             }
         }
 
@@ -1905,12 +2063,14 @@
                 font-size: 1rem !important;
             }
         }
+
         .c-mobile-logo {
             display: none;
             height: 24px;
             width: auto;
             object-fit: contain;
         }
+
         @media (max-width: 1199px) {
             .c-mobile-logo {
                 display: block;
@@ -1919,36 +2079,81 @@
 
         /* ══ FINAL CLIENT RESPONSIVE OVERHAUL ══ */
         @media (max-width: 991px) {
-            .c-dash { padding: 12px 14px !important; }
-            .stat-grid { grid-template-columns: 1fr !important; gap: 10px !important; }
-            .c-dash-grid, .track-details, .profile-stats, .dim-grid { 
-                grid-template-columns: 1fr !important; 
-                gap: 16px !important; 
+            .c-dash {
+                padding: 12px 14px !important;
             }
+
+            .stat-grid {
+                grid-template-columns: 1fr !important;
+                gap: 10px !important;
+            }
+
+            .c-dash-grid,
+            .track-details,
+            .profile-stats,
+            .dim-grid {
+                grid-template-columns: 1fr !important;
+                gap: 16px !important;
+            }
+
             .c-order {
                 flex-direction: column !important;
             }
-            .c-order-sidebar, .files-sidebar { 
-                width: 100% !important; 
-                flex-shrink: 0; 
-                border-right: none !important; 
+
+            .c-order-sidebar,
+            .files-sidebar {
+                width: 100% !important;
+                flex-shrink: 0;
+                border-right: none !important;
                 border-top: 1px solid var(--border);
                 padding: 15px !important;
             }
-            .c-welcome-hero { 
-                padding: 16px !important; 
+
+            .c-welcome-hero {
+                padding: 16px !important;
                 text-align: center;
                 flex-direction: column;
             }
-            .c-welcome-hero i { display: none; }
-            .c-quick-actions { grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)) !important; gap: 8px !important; }
-            .c-action-card { padding: 14px !important; }
-            .c-table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-            .orders-table, .users-table { min-width: 600px; }
-            .tpl-grid { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)) !important; }
-            .steps-row { overflow-x: auto; padding-bottom: 10px; }
-            .track-detail { border-right: none !important; border-bottom: 1px solid var(--border); }
+
+            .c-welcome-hero i {
+                display: none;
+            }
+
+            .c-quick-actions {
+                grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)) !important;
+                gap: 8px !important;
+            }
+
+            .c-action-card {
+                padding: 14px !important;
+            }
+
+            .c-table-responsive {
+                width: 100%;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .orders-table,
+            .users-table {
+                min-width: 600px;
+            }
+
+            .tpl-grid {
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)) !important;
+            }
+
+            .steps-row {
+                overflow-x: auto;
+                padding-bottom: 10px;
+            }
+
+            .track-detail {
+                border-right: none !important;
+                border-bottom: 1px solid var(--border);
+            }
         }
+
         @media (max-width: 1199px) {
             .c-sidebar {
                 position: fixed;
@@ -1957,9 +2162,12 @@
                 bottom: 0;
                 z-index: 1050;
                 transition: left .3s ease;
-                box-shadow: 10px 0 30px rgba(0,0,0,0.1);
+                box-shadow: 10px 0 30px rgba(0, 0, 0, 0.1);
             }
-            .c-sidebar.active { left: 0; }
+
+            .c-sidebar.active {
+                left: 0;
+            }
         }
     </style>
 </head>
@@ -1989,11 +2197,14 @@
 
             <!-- Sidebar -->
             <div class="c-sidebar">
-                <div class="c-brand" style="justify-content: flex-start; overflow: hidden; white-space: nowrap; gap:8px;">
-                    <button class="btn p-0 d-xl-none border-0 text-white me-1" onclick="toggleClientSidebar()" style="font-size:1rem; line-height:1;">
+                <div class="c-brand"
+                    style="justify-content: flex-start; overflow: hidden; white-space: nowrap; gap:8px;">
+                    <button class="btn p-0 d-xl-none border-0 text-white me-1" onclick="toggleClientSidebar()"
+                        style="font-size:1rem; line-height:1;">
                         <i class="bi bi-chevron-left"></i>
                     </button>
-                    <div onclick="showClientPage('dashboard', null)" style="display:flex; align-items:center; gap:6px; cursor:pointer; flex:1; overflow:hidden;">
+                    <div onclick="showClientPage('dashboard', null)"
+                        style="display:flex; align-items:center; gap:6px; cursor:pointer; flex:1; overflow:hidden;">
                         <img src="assets/img/logo.png" alt="PrintPro"
                             style="height:24px;width:auto;object-fit:contain;max-width:90px;filter:brightness(0) invert(1); flex-shrink: 0;">
                         <span class="c-brand-badge">Client</span>
@@ -2027,7 +2238,9 @@
                 </nav>
                 <!-- Logout -->
                 <div style="padding:12px 14px;border-top:1px solid rgba(255,255,255,.08);margin-top:auto;">
-                    <a href="#" onclick="ppLogout(event)" style="display:flex;align-items:center;gap:8px;font-size:.8rem;color:rgba(255,255,255,.45);text-decoration:none;transition:color .15s;" onmouseover="this.style.color='#f5365c'" onmouseout="this.style.color='rgba(255,255,255,.45)'">
+                    <a href="#" onclick="ppLogout(event)"
+                        style="display:flex;align-items:center;gap:8px;font-size:.8rem;color:rgba(255,255,255,.45);text-decoration:none;transition:color .15s;"
+                        onmouseover="this.style.color='#f5365c'" onmouseout="this.style.color='rgba(255,255,255,.45)'">
                         <i class="bi bi-box-arrow-left"></i> <span>Logout</span>
                     </a>
                 </div>
@@ -2039,10 +2252,12 @@
                 <!-- Topbar -->
                 <div class="c-topbar">
                     <div style="display:flex;align-items:center;gap:12px;">
-                        <button class="btn border-0 p-0 d-xl-none" onclick="toggleClientSidebar()" style="font-size:1.4rem;color:var(--navy);">
+                        <button class="btn border-0 p-0 d-xl-none" onclick="toggleClientSidebar()"
+                            style="font-size:1.4rem;color:var(--navy);">
                             <i class="bi bi-list"></i>
                         </button>
-                        <div style="display:flex; align-items:center; gap:6px;" onclick="showClientPage('dashboard', null)">
+                        <div style="display:flex; align-items:center; gap:6px;"
+                            onclick="showClientPage('dashboard', null)">
                             <img src="assets/img/logo.png" alt="PrintPro" class="c-mobile-logo">
                             <span class="c-brand-badge d-xl-none">Client</span>
                         </div>
@@ -2053,7 +2268,8 @@
                     </div>
                     <div style="display:flex;align-items:center;gap:12px;">
                         <i class="bi bi-bell" style="color:var(--muted);cursor:pointer;font-size:1.05rem;"></i>
-                        <div style="display:flex;align-items:center;gap:8px;cursor:pointer;" onclick="showClientPage('account', null)">
+                        <div style="display:flex;align-items:center;gap:8px;cursor:pointer;"
+                            onclick="showClientPage('account', null)">
                             <div class="c-avatar" id="clientAvatar" title="">J</div>
                         </div>
                     </div>
@@ -2071,49 +2287,83 @@
                                     <h4
                                         style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:#1a2340;margin:0;">
                                         Executive Dashboard</h4>
-                                    <p style="font-size:.75rem;color:var(--muted);margin:0;">Manage your printing operations</p>
+                                    <p style="font-size:.75rem;color:var(--muted);margin:0;">Manage your printing
+                                        operations</p>
                                 </div>
                             </div>
 
                             <!-- Welcome Hero -->
-                            <div class="c-welcome-hero" style="background: linear-gradient(135deg, var(--navy), #2a3558); border-radius: 16px; padding: 24px; color: #fff; margin-bottom: 24px; position: relative; overflow: hidden;">
+                            <div class="c-welcome-hero"
+                                style="background: linear-gradient(135deg, var(--navy), #2a3558); border-radius: 16px; padding: 24px; color: #fff; margin-bottom: 24px; position: relative; overflow: hidden;">
                                 <div style="position: relative; z-index: 2;">
-                                    <h2 id="clientGreeting" style="font-family:'Sora',sans-serif; font-weight: 800; margin-bottom: 8px;">Welcome back!</h2>
-                                    <p style="color: rgba(255,255,255,.7); font-size: .9rem; max-width: 400px; margin-bottom: 12px;">
-                                        Your projects are on track. You have 3 orders ready for review and 2 active shipments.
+                                    <h2 id="clientGreeting"
+                                        style="font-family:'Sora',sans-serif; font-weight: 800; margin-bottom: 8px;">
+                                        Welcome back!</h2>
+                                    <p
+                                        style="color: rgba(255,255,255,.7); font-size: .9rem; max-width: 400px; margin-bottom: 12px;">
+                                        Your projects are on track. You have 3 orders ready for review and 2 active
+                                        shipments.
                                     </p>
-                                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 24px; background: rgba(255,255,255,.1); width: fit-content; padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,.15);">
-                                        <div style="font-size: .75rem; color: rgba(255,255,255,.8);">Current Plan: <strong style="color: #fff;">Premium</strong></div>
+                                    <div
+                                        style="display: flex; align-items: center; gap: 10px; margin-bottom: 24px; background: rgba(255,255,255,.1); width: fit-content; padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,.15);">
+                                        <div style="font-size: .75rem; color: rgba(255,255,255,.8);">Current Plan:
+                                            <strong style="color: #fff;">Premium</strong>
+                                        </div>
                                         <div style="width: 1px; height: 12px; background: rgba(255,255,255,.2);"></div>
-                                        <div style="font-size: .75rem; color: rgba(255,255,255,.8);">Renews: <strong style="color: #fff;">Nov 12, 2024</strong></div>
+                                        <div style="font-size: .75rem; color: rgba(255,255,255,.8);">Renews: <strong
+                                                style="color: #fff;">Nov 12, 2024</strong></div>
                                     </div>
-                                    <button class="btn btn-accent rounded-pill px-4" onclick="showClientPage('create', null)">+ New Project</button>
+                                    <button class="btn btn-accent rounded-pill px-4"
+                                        onclick="showClientPage('create', null)">+ New Project</button>
                                 </div>
-                                <i class="bi bi-rocket-takeoff" style="position: absolute; right: 20px; bottom: -10px; font-size: 6rem; color: rgba(255,255,255,.05);"></i>
+                                <i class="bi bi-rocket-takeoff"
+                                    style="position: absolute; right: 20px; bottom: -10px; font-size: 6rem; color: rgba(255,255,255,.05);"></i>
                             </div>
 
                             <!-- Quick Actions -->
-                            <div class="c-quick-actions" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px;">
-                                <div class="c-action-card" style="background: #fff; border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; text-align: center; padding: 24px; border-radius: 14px; cursor: pointer; transition: transform .2s;" onclick="showClientPage('orders', null)" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
-                                    <div style="width: 40px; height: 40px; background: rgba(79, 126, 247, .1); color: var(--accent); border-radius: 10px; display: grid; place-items: center; font-size: 1.2rem; margin-bottom: 8px;">
+                            <div class="c-quick-actions"
+                                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px;">
+                                <div class="c-action-card"
+                                    style="background: #fff; border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; text-align: center; padding: 24px; border-radius: 14px; cursor: pointer; transition: transform .2s;"
+                                    onclick="showClientPage('orders', null)"
+                                    onmouseover="this.style.transform='translateY(-4px)'"
+                                    onmouseout="this.style.transform='translateY(0)'">
+                                    <div
+                                        style="width: 40px; height: 40px; background: rgba(79, 126, 247, .1); color: var(--accent); border-radius: 10px; display: grid; place-items: center; font-size: 1.2rem; margin-bottom: 8px;">
                                         <i class="bi bi-box-seam"></i>
                                     </div>
                                     <div style="font-size: 1.1rem; font-weight: 800; color: var(--navy);">12</div>
-                                    <div style="font-size: .7rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em;">Active Orders</div>
+                                    <div
+                                        style="font-size: .7rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em;">
+                                        Active Orders</div>
                                 </div>
-                                <div class="c-action-card" style="background: #fff; border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; text-align: center; padding: 24px; border-radius: 14px; cursor: pointer; transition: transform .2s;" onclick="showClientPage('files', null)" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
-                                    <div style="width: 40px; height: 40px; background: rgba(62, 198, 198, .1); color: var(--teal); border-radius: 10px; display: grid; place-items: center; font-size: 1.2rem; margin-bottom: 8px;">
+                                <div class="c-action-card"
+                                    style="background: #fff; border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; text-align: center; padding: 24px; border-radius: 14px; cursor: pointer; transition: transform .2s;"
+                                    onclick="showClientPage('files', null)"
+                                    onmouseover="this.style.transform='translateY(-4px)'"
+                                    onmouseout="this.style.transform='translateY(0)'">
+                                    <div
+                                        style="width: 40px; height: 40px; background: rgba(62, 198, 198, .1); color: var(--teal); border-radius: 10px; display: grid; place-items: center; font-size: 1.2rem; margin-bottom: 8px;">
                                         <i class="bi bi-folder2"></i>
                                     </div>
                                     <div style="font-size: 1.1rem; font-weight: 800; color: var(--navy);">48</div>
-                                    <div style="font-size: .7rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em;">Assets</div>
+                                    <div
+                                        style="font-size: .7rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em;">
+                                        Assets</div>
                                 </div>
-                                <div class="c-action-card" style="background: #fff; border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; text-align: center; padding: 24px; border-radius: 14px; cursor: pointer; transition: transform .2s;" onclick="showClientPage('billing', null)" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
-                                    <div style="width: 40px; height: 40px; background: rgba(45, 206, 137, .1); color: #2dce89; border-radius: 10px; display: grid; place-items: center; font-size: 1.2rem; margin-bottom: 8px;">
+                                <div class="c-action-card"
+                                    style="background: #fff; border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; text-align: center; padding: 24px; border-radius: 14px; cursor: pointer; transition: transform .2s;"
+                                    onclick="showClientPage('billing', null)"
+                                    onmouseover="this.style.transform='translateY(-4px)'"
+                                    onmouseout="this.style.transform='translateY(0)'">
+                                    <div
+                                        style="width: 40px; height: 40px; background: rgba(45, 206, 137, .1); color: #2dce89; border-radius: 10px; display: grid; place-items: center; font-size: 1.2rem; margin-bottom: 8px;">
                                         <i class="bi bi-credit-card"></i>
                                     </div>
                                     <div style="font-size: 1.1rem; font-weight: 800; color: var(--navy);">₱14k</div>
-                                    <div style="font-size: .7rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em;">Credits</div>
+                                    <div
+                                        style="font-size: .7rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em;">
+                                        Credits</div>
                                 </div>
                             </div>
 
@@ -2138,48 +2388,54 @@
                                                     <th>TOTAL</th>
                                                 </tr>
                                             </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td style="font-weight:600;">#PPR-48</td>
-                                                <td>3D Marketing<br><span
-                                                        style="color:var(--muted);font-size:.7rem;">Brochure</span></td>
-                                                <td>1,000</td>
-                                                <td><span class="badge-status badge-active" data-status-label="PPR-48">Active</span></td>
-                                                <td>Oct 24</td>
-                                                <td style="font-weight:700;">₱4,250.00</td>
-                                            </tr>
-                                            <tr>
-                                                <td style="font-weight:600;">#PPR-45</td>
-                                                <td>Corporate Annual<br><span
-                                                        style="color:var(--muted);font-size:.7rem;">Report</span></td>
-                                                <td>250</td>
-                                                <td><span class="badge-status badge-pending">Reprint</span></td>
-                                                <td>—</td>
-                                                <td style="font-weight:700;">₱12,800.00</td>
-                                            </tr>
-                                            <tr>
-                                                <td style="font-weight:600;">#PPR-43</td>
-                                                <td>Conference<br><span
-                                                        style="color:var(--muted);font-size:.7rem;">Banner Set</span>
-                                                </td>
-                                                <td>1,200</td>
-                                                <td><span class="badge-status badge-done">Delivery</span></td>
-                                                <td>Oct 21</td>
-                                                <td style="font-weight:700;">₱15,500.00</td>
-                                            </tr>
-                                            <tr>
-                                                <td style="font-weight:600;">#PPR-41</td>
-                                                <td>Promotional<br><span
-                                                        style="color:var(--muted);font-size:.7rem;">Mailers</span></td>
-                                                <td>5,000</td>
-                                                <td><span class="badge-status badge-active" data-status-label="PPR-41">Active</span></td>
-                                                <td>Nov 2</td>
-                                                <td style="font-weight:700;">₱8,750.00</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                            <tbody>
+                                                <tr>
+                                                    <td style="font-weight:600;">#PPR-48</td>
+                                                    <td>3D Marketing<br><span
+                                                            style="color:var(--muted);font-size:.7rem;">Brochure</span>
+                                                    </td>
+                                                    <td>1,000</td>
+                                                    <td><span class="badge-status badge-active"
+                                                            data-status-label="PPR-48">Active</span></td>
+                                                    <td>Oct 24</td>
+                                                    <td style="font-weight:700;">₱4,250.00</td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="font-weight:600;">#PPR-45</td>
+                                                    <td>Corporate Annual<br><span
+                                                            style="color:var(--muted);font-size:.7rem;">Report</span>
+                                                    </td>
+                                                    <td>250</td>
+                                                    <td><span class="badge-status badge-pending">Reprint</span></td>
+                                                    <td>—</td>
+                                                    <td style="font-weight:700;">₱12,800.00</td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="font-weight:600;">#PPR-43</td>
+                                                    <td>Conference<br><span
+                                                            style="color:var(--muted);font-size:.7rem;">Banner
+                                                            Set</span>
+                                                    </td>
+                                                    <td>1,200</td>
+                                                    <td><span class="badge-status badge-done">Delivery</span></td>
+                                                    <td>Oct 21</td>
+                                                    <td style="font-weight:700;">₱15,500.00</td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="font-weight:600;">#PPR-41</td>
+                                                    <td>Promotional<br><span
+                                                            style="color:var(--muted);font-size:.7rem;">Mailers</span>
+                                                    </td>
+                                                    <td>5,000</td>
+                                                    <td><span class="badge-status badge-active"
+                                                            data-status-label="PPR-41">Active</span></td>
+                                                    <td>Nov 2</td>
+                                                    <td style="font-weight:700;">₱8,750.00</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
-                            </div>
 
                                 <!-- Quick Actions -->
                                 <div class="actions-card">
@@ -2263,7 +2519,8 @@
                                             <td>3D Marketing Brochure</td>
                                             <td>Brochure</td>
                                             <td>1,000</td>
-                                            <td><span class="badge-status badge-active" data-status-label="PPR-48">Active</span></td>
+                                            <td><span class="badge-status badge-active"
+                                                    data-status-label="PPR-48">Active</span></td>
                                             <td>Oct 24</td>
                                             <td style="font-weight:700;">₱4,250</td>
                                         </tr>
@@ -2299,7 +2556,8 @@
                                             <td>Promotional Mailers</td>
                                             <td>Mailer</td>
                                             <td>5,000</td>
-                                            <td><span class="badge-status badge-active" data-status-label="PPR-41">Active</span></td>
+                                            <td><span class="badge-status badge-active"
+                                                    data-status-label="PPR-41">Active</span></td>
                                             <td>Nov 2</td>
                                             <td style="font-weight:700;">₱8,750</td>
                                         </tr>
@@ -2394,12 +2652,20 @@
                                     <div class="wizard-body">
                                         <div style="margin-bottom:12px;">
                                             <div class="form-label-sm">Print Quantity</div>
-                                            <div style="display:flex;align-items:center;gap:12px;margin-top:6px; flex-wrap: wrap;">
+                                            <div
+                                                style="display:flex;align-items:center;gap:12px;margin-top:6px; flex-wrap: wrap;">
                                                 <input type="range" class="qty-slider" min="100" max="10000" step="100"
                                                     value="2500" id="qtySlider"
-                                                    oninput="document.getElementById('qtyVal').textContent=parseInt(this.value).toLocaleString()" style="flex: 1; min-width: 200px;">
+                                                    oninput="document.getElementById('qtyVal').textContent=parseInt(this.value).toLocaleString()"
+                                                    style="flex: 1; min-width: 200px;">
                                                 <span id="qtyVal"
                                                     style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:700;color:var(--navy);min-width:60px;">2,500</span>
+                                                <div class="d-flex justify-content-between mt-2">
+                                                    <span class="fw-bold" id="qtyVal">100 units</span>
+                                                    <span class="badge" id="discountBadge"
+                                                        style="display:none; background: rgba(45, 206, 137, .15); color: #1aae6f; font-weight: 700; margin-left: 10px;"></span>
+                                                </div>
+
                                             </div>
                                         </div>
                                         <div class="dim-grid">
@@ -2431,32 +2697,58 @@
                                     </div>
                                     <div class="wizard-body">
                                         <div style="display:flex; gap: 12px; margin-bottom: 16px;">
-                                            <button class="pt-btn" style="flex:1; padding: 10px;" onclick="document.getElementById('upload-area').style.display='block'; document.getElementById('account-files').style.display='none'; this.classList.add('active'); this.nextElementSibling.classList.remove('active');"><i class="bi bi-cloud-upload" style="font-size: 1.1rem;"></i>Upload New</button>
-                                            <button class="pt-btn active" style="flex:1; padding: 10px;" onclick="document.getElementById('upload-area').style.display='none'; document.getElementById('account-files').style.display='block'; this.classList.add('active'); this.previousElementSibling.classList.remove('active');"><i class="bi bi-folder2-open" style="font-size: 1.1rem;"></i>Select from Account</button>
+                                            <button class="pt-btn" style="flex:1; padding: 10px;"
+                                                onclick="document.getElementById('upload-area').style.display='block'; document.getElementById('account-files').style.display='none'; this.classList.add('active'); this.nextElementSibling.classList.remove('active');"><i
+                                                    class="bi bi-cloud-upload" style="font-size: 1.1rem;"></i>Upload
+                                                New</button>
+                                            <button class="pt-btn active" style="flex:1; padding: 10px;"
+                                                onclick="document.getElementById('upload-area').style.display='none'; document.getElementById('account-files').style.display='block'; this.classList.add('active'); this.previousElementSibling.classList.remove('active');"><i
+                                                    class="bi bi-folder2-open" style="font-size: 1.1rem;"></i>Select
+                                                from Account</button>
                                         </div>
-                                        
+
                                         <!-- Upload Area -->
-                                        <div id="upload-area" style="display: none; border: 2px dashed var(--border); border-radius: 12px; padding: 30px; text-align: center; background: var(--off); cursor: pointer; transition: all .2s;" onmouseover="this.style.borderColor='var(--accent)';" onmouseout="this.style.borderColor='var(--border)';">
-                                            <i class="bi bi-cloud-arrow-up" style="font-size: 2.5rem; color: var(--accent); margin-bottom: 10px; display: block;"></i>
-                                            <h5 style="font-size: .9rem; font-family: 'Sora', sans-serif; font-weight: 700; color: var(--navy); margin-bottom: 4px;">Drag &amp; Drop or Browse</h5>
-                                            <p style="font-size: .75rem; color: var(--muted); margin: 0;">Supports PDF, AI, PSD, PNG, JPG (Max 500MB)</p>
+                                        <div id="upload-area"
+                                            style="display: none; border: 2px dashed var(--border); border-radius: 12px; padding: 30px; text-align: center; background: var(--off); cursor: pointer; transition: all .2s;"
+                                            onmouseover="this.style.borderColor='var(--accent)';"
+                                            onmouseout="this.style.borderColor='var(--border)';">
+                                            <i class="bi bi-cloud-arrow-up"
+                                                style="font-size: 2.5rem; color: var(--accent); margin-bottom: 10px; display: block;"></i>
+                                            <h5
+                                                style="font-size: .9rem; font-family: 'Sora', sans-serif; font-weight: 700; color: var(--navy); margin-bottom: 4px;">
+                                                Drag &amp; Drop or Browse</h5>
+                                            <p style="font-size: .75rem; color: var(--muted); margin: 0;">Supports PDF,
+                                                AI, PSD, PNG, JPG (Max 500MB)</p>
                                         </div>
-                                        
+
                                         <!-- Account Files Area -->
                                         <div id="account-files" style="display: block;">
-                                            <div style="font-size: .75rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 12px;">Your Uploaded Files</div>
-                                            <div class="files-grid" style="grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); margin-bottom: 0;">
-                                                <div class="file-card" style="padding: 12px; border-color: var(--accent); background: rgba(29, 140, 248, .04);" onclick="document.querySelectorAll('#account-files .file-card').forEach(c=> {c.style.borderColor='var(--border)'; c.style.background='#fff';}); this.style.borderColor='var(--accent)'; this.style.background='rgba(29, 140, 248, .04)';">
-                                                    <span class="file-icon" style="font-size: 1.8rem; margin-bottom: 6px;">🖼️</span>
-                                                    <div class="file-name" style="font-size: .75rem;">summer_flyer_front_v3.pdf</div>
+                                            <div
+                                                style="font-size: .75rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 12px;">
+                                                Your Uploaded Files</div>
+                                            <div class="files-grid"
+                                                style="grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); margin-bottom: 0;">
+                                                <div class="file-card"
+                                                    style="padding: 12px; border-color: var(--accent); background: rgba(29, 140, 248, .04);"
+                                                    onclick="document.querySelectorAll('#account-files .file-card').forEach(c=> {c.style.borderColor='var(--border)'; c.style.background='#fff';}); this.style.borderColor='var(--accent)'; this.style.background='rgba(29, 140, 248, .04)';">
+                                                    <span class="file-icon"
+                                                        style="font-size: 1.8rem; margin-bottom: 6px;">🖼️</span>
+                                                    <div class="file-name" style="font-size: .75rem;">
+                                                        summer_flyer_front_v3.pdf</div>
                                                 </div>
-                                                <div class="file-card" style="padding: 12px;" onclick="document.querySelectorAll('#account-files .file-card').forEach(c=> {c.style.borderColor='var(--border)'; c.style.background='#fff';}); this.style.borderColor='var(--accent)'; this.style.background='rgba(29, 140, 248, .04)';">
-                                                    <span class="file-icon" style="font-size: 1.8rem; margin-bottom: 6px;">📄</span>
-                                                    <div class="file-name" style="font-size: .75rem;">annual_report_final.pdf</div>
+                                                <div class="file-card" style="padding: 12px;"
+                                                    onclick="document.querySelectorAll('#account-files .file-card').forEach(c=> {c.style.borderColor='var(--border)'; c.style.background='#fff';}); this.style.borderColor='var(--accent)'; this.style.background='rgba(29, 140, 248, .04)';">
+                                                    <span class="file-icon"
+                                                        style="font-size: 1.8rem; margin-bottom: 6px;">📄</span>
+                                                    <div class="file-name" style="font-size: .75rem;">
+                                                        annual_report_final.pdf</div>
                                                 </div>
-                                                <div class="file-card" style="padding: 12px;" onclick="document.querySelectorAll('#account-files .file-card').forEach(c=> {c.style.borderColor='var(--border)'; c.style.background='#fff';}); this.style.borderColor='var(--accent)'; this.style.background='rgba(29, 140, 248, .04)';">
-                                                    <span class="file-icon" style="font-size: 1.8rem; margin-bottom: 6px;">🎨</span>
-                                                    <div class="file-name" style="font-size: .75rem;">banner_artwork_hires.ai</div>
+                                                <div class="file-card" style="padding: 12px;"
+                                                    onclick="document.querySelectorAll('#account-files .file-card').forEach(c=> {c.style.borderColor='var(--border)'; c.style.background='#fff';}); this.style.borderColor='var(--accent)'; this.style.background='rgba(29, 140, 248, .04)';">
+                                                    <span class="file-icon"
+                                                        style="font-size: 1.8rem; margin-bottom: 6px;">🎨</span>
+                                                    <div class="file-name" style="font-size: .75rem;">
+                                                        banner_artwork_hires.ai</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -2494,7 +2786,9 @@
                                         <span class="summary-total-lbl">Total Estimate</span>
                                         <span class="summary-total-val">₱3,584.00</span>
                                     </div>
-                                    <button class="btn-continue" onclick="showClientPage('orders', null); alert('Order placed successfully!');">Place Order →</button>
+                                    <button class="btn-continue"
+                                        onclick="showClientPage('orders', null); alert('Order placed successfully!');">Place
+                                        Order →</button>
                                 </div>
                             </div>
                         </div>
@@ -2746,8 +3040,13 @@
                                                 <td>#PPR-48</td>
                                                 <td>Today</td>
                                                 <td style="text-align: right; white-space: nowrap;">
-                                                    <button style="background:var(--accent);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:.7rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;margin-right:8px;" onclick="showClientPage('create', null)">Print</button>
-                                                    <i class="bi bi-download" style="color:var(--muted);cursor:pointer;transition:color .2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'"></i>
+                                                    <button
+                                                        style="background:var(--accent);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:.7rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;margin-right:8px;"
+                                                        onclick="showClientPage('create', null)">Print</button>
+                                                    <i class="bi bi-download"
+                                                        style="color:var(--muted);cursor:pointer;transition:color .2s;"
+                                                        onmouseover="this.style.color='var(--accent)'"
+                                                        onmouseout="this.style.color='var(--muted)'"></i>
                                                 </td>
                                             </tr>
                                             <tr>
@@ -2759,8 +3058,13 @@
                                                 <td>#PPR-45</td>
                                                 <td>Oct 22</td>
                                                 <td style="text-align: right; white-space: nowrap;">
-                                                    <button style="background:var(--accent);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:.7rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;margin-right:8px;" onclick="showClientPage('create', null)">Print</button>
-                                                    <i class="bi bi-download" style="color:var(--muted);cursor:pointer;transition:color .2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'"></i>
+                                                    <button
+                                                        style="background:var(--accent);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:.7rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;margin-right:8px;"
+                                                        onclick="showClientPage('create', null)">Print</button>
+                                                    <i class="bi bi-download"
+                                                        style="color:var(--muted);cursor:pointer;transition:color .2s;"
+                                                        onmouseover="this.style.color='var(--accent)'"
+                                                        onmouseout="this.style.color='var(--muted)'"></i>
                                                 </td>
                                             </tr>
                                             <tr>
@@ -2772,8 +3076,13 @@
                                                 <td>#PPR-43</td>
                                                 <td>Oct 20</td>
                                                 <td style="text-align: right; white-space: nowrap;">
-                                                    <button style="background:var(--accent);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:.7rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;margin-right:8px;" onclick="showClientPage('create', null)">Print</button>
-                                                    <i class="bi bi-download" style="color:var(--muted);cursor:pointer;transition:color .2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'"></i>
+                                                    <button
+                                                        style="background:var(--accent);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:.7rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;margin-right:8px;"
+                                                        onclick="showClientPage('create', null)">Print</button>
+                                                    <i class="bi bi-download"
+                                                        style="color:var(--muted);cursor:pointer;transition:color .2s;"
+                                                        onmouseover="this.style.color='var(--accent)'"
+                                                        onmouseout="this.style.color='var(--muted)'"></i>
                                                 </td>
                                             </tr>
                                             <tr>
@@ -2785,8 +3094,13 @@
                                                 <td>#PPR-41</td>
                                                 <td>Oct 19</td>
                                                 <td style="text-align: right; white-space: nowrap;">
-                                                    <button style="background:var(--accent);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:.7rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;margin-right:8px;" onclick="showClientPage('create', null)">Print</button>
-                                                    <i class="bi bi-download" style="color:var(--muted);cursor:pointer;transition:color .2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'"></i>
+                                                    <button
+                                                        style="background:var(--accent);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:.7rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;margin-right:8px;"
+                                                        onclick="showClientPage('create', null)">Print</button>
+                                                    <i class="bi bi-download"
+                                                        style="color:var(--muted);cursor:pointer;transition:color .2s;"
+                                                        onmouseover="this.style.color='var(--accent)'"
+                                                        onmouseout="this.style.color='var(--muted)'"></i>
                                                 </td>
                                             </tr>
                                             <tr>
@@ -2798,8 +3112,13 @@
                                                 <td>—</td>
                                                 <td>Oct 17</td>
                                                 <td style="text-align: right; white-space: nowrap;">
-                                                    <button style="background:var(--accent);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:.7rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;margin-right:8px;" onclick="showClientPage('create', null)">Print</button>
-                                                    <i class="bi bi-download" style="color:var(--muted);cursor:pointer;transition:color .2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'"></i>
+                                                    <button
+                                                        style="background:var(--accent);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:.7rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;margin-right:8px;"
+                                                        onclick="showClientPage('create', null)">Print</button>
+                                                    <i class="bi bi-download"
+                                                        style="color:var(--muted);cursor:pointer;transition:color .2s;"
+                                                        onmouseover="this.style.color='var(--accent)'"
+                                                        onmouseout="this.style.color='var(--muted)'"></i>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -3151,31 +3470,47 @@
                             <!-- Billing sidebar -->
                             <div class="c-order-sidebar">
                                 <!-- Active Subscription -->
-                                <div class="orders-card" style="margin-bottom:14px; background: linear-gradient(135deg, #1a2340, #2a3558); color: #fff; border: none;">
+                                <div class="orders-card"
+                                    style="margin-bottom:14px; background: linear-gradient(135deg, #1a2340, #2a3558); color: #fff; border: none;">
                                     <div class="card-hdr" style="border-bottom: 1px solid rgba(255,255,255,.1);">
                                         <span class="card-hdr-title" style="color: #fff;">Active Subscription</span>
-                                        <span class="badge-status badge-active client-sub-status" style="background: rgba(45, 206, 137, .2); color: #2dce89; border: 1px solid rgba(45, 206, 137, .3);">Active</span>
+                                        <span class="badge-status badge-active client-sub-status"
+                                            style="background: rgba(45, 206, 137, .2); color: #2dce89; border: 1px solid rgba(45, 206, 137, .3);">Active</span>
                                     </div>
                                     <div style="padding: 16px;">
-                                        <div style="font-size: .75rem; color: rgba(255,255,255,.6); margin-bottom: 4px;">CURRENT PLAN</div>
-                                        <div class="client-sub-plan" style="font-family: 'Sora', sans-serif; font-size: 1.2rem; font-weight: 800; margin-bottom: 12px;">Premium Plan</div>
-                                        
-                                        <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;">
-                                            <div style="display: flex; justify-content: space-between; font-size: .8rem;">
+                                        <div
+                                            style="font-size: .75rem; color: rgba(255,255,255,.6); margin-bottom: 4px;">
+                                            CURRENT PLAN</div>
+                                        <div class="client-sub-plan"
+                                            style="font-family: 'Sora', sans-serif; font-size: 1.2rem; font-weight: 800; margin-bottom: 12px;">
+                                            Premium Plan</div>
+
+                                        <div
+                                            style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;">
+                                            <div
+                                                style="display: flex; justify-content: space-between; font-size: .8rem;">
                                                 <span style="color: rgba(255,255,255,.6);">Billing Cycle</span>
                                                 <span style="font-weight: 600;">Monthly</span>
                                             </div>
-                                            <div style="display: flex; justify-content: space-between; font-size: .8rem;">
+                                            <div
+                                                style="display: flex; justify-content: space-between; font-size: .8rem;">
                                                 <span style="color: rgba(255,255,255,.6);">Renews On</span>
-                                                <span class="client-sub-renews" style="font-weight: 600;">Nov 12, 2024</span>
+                                                <span class="client-sub-renews" style="font-weight: 600;">Nov 12,
+                                                    2024</span>
                                             </div>
-                                            <div style="display: flex; justify-content: space-between; font-size: .8rem;">
+                                            <div
+                                                style="display: flex; justify-content: space-between; font-size: .8rem;">
                                                 <span style="color: rgba(255,255,255,.6);">Amount</span>
-                                                <span class="client-sub-amount" style="font-weight: 600;">₱1,899.00</span>
+                                                <span class="client-sub-amount"
+                                                    style="font-weight: 600;">₱1,899.00</span>
                                             </div>
                                         </div>
-                                        
-                                        <button style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid rgba(255,255,255,.2); background: rgba(255,255,255,.1); color: #fff; font-size: .8rem; font-weight: 600; cursor: pointer; transition: background .2s;" onmouseover="this.style.background='rgba(255,255,255,.2)'" onmouseout="this.style.background='rgba(255,255,255,.1)'">Upgrade Plan</button>
+
+                                        <button
+                                            style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid rgba(255,255,255,.2); background: rgba(255,255,255,.1); color: #fff; font-size: .8rem; font-weight: 600; cursor: pointer; transition: background .2s;"
+                                            onmouseover="this.style.background='rgba(255,255,255,.2)'"
+                                            onmouseout="this.style.background='rgba(255,255,255,.1)'">Upgrade
+                                            Plan</button>
                                     </div>
                                 </div>
 
@@ -3240,8 +3575,13 @@
                                     <div class="account-name" id="accountName">Juan Dela Cruz</div>
                                     <div class="account-email" id="accountEmail">juan@company.ph</div>
                                     <div style="display: flex; gap: 8px; margin-top: 10px;">
-                                        <button class="btn btn-sm btn-accent px-3" onclick="alert('Profile edit mode enabled.')"><i class="bi bi-pencil"></i> Edit Profile</button>
-                                        <button class="btn btn-sm btn-outline-light border-0" style="background:rgba(255,255,255,.1); font-size:.75rem;" onclick="ppLogout(event)"><i class="bi bi-box-arrow-left"></i> Logout</button>
+                                        <button class="btn btn-sm btn-accent px-3"
+                                            onclick="alert('Profile edit mode enabled.')"><i class="bi bi-pencil"></i>
+                                            Edit Profile</button>
+                                        <button class="btn btn-sm btn-outline-light border-0"
+                                            style="background:rgba(255,255,255,.1); font-size:.75rem;"
+                                            onclick="ppLogout(event)"><i class="bi bi-box-arrow-left"></i>
+                                            Logout</button>
                                     </div>
                                 </div>
                             </div>
@@ -3252,11 +3592,13 @@
                                         <div class="notif-card-title">Personal Details</div>
                                         <div class="settings-row">
                                             <div class="settings-row-label">Full Name</div>
-                                            <input type="text" class="form-input" value="Juan Dela Cruz" style="width:200px;">
+                                            <input type="text" class="form-input" value="Juan Dela Cruz"
+                                                style="width:200px;">
                                         </div>
                                         <div class="settings-row">
                                             <div class="settings-row-label">Business Name</div>
-                                            <input type="text" class="form-input" value="Manila Design Hub" style="width:200px;">
+                                            <input type="text" class="form-input" value="Manila Design Hub"
+                                                style="width:200px;">
                                         </div>
                                         <div class="settings-row">
                                             <div class="settings-row-label">Industry</div>
@@ -3267,7 +3609,8 @@
                                             </select>
                                         </div>
                                         <div style="margin-top:14px;">
-                                            <button class="btn-accent rounded-3 px-4 py-2" onclick="alert('Changes saved!')">Save Details</button>
+                                            <button class="btn-accent rounded-3 px-4 py-2"
+                                                onclick="alert('Changes saved!')">Save Details</button>
                                         </div>
                                     </div>
 
@@ -3278,46 +3621,67 @@
                                                 <div class="settings-row-label">Password</div>
                                                 <div class="settings-row-sub">Last changed 3 months ago</div>
                                             </div>
-                                            <button class="btn btn-sm border" onclick="alert('Password reset link sent.')">Change</button>
+                                            <button class="btn btn-sm border"
+                                                onclick="alert('Password reset link sent.')">Change</button>
                                         </div>
                                         <div class="settings-row">
                                             <div>
                                                 <div class="settings-row-label">Two-Factor Auth</div>
                                                 <div class="settings-row-sub">Add extra security to your login</div>
                                             </div>
-                                            <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                                            <label class="toggle"><input type="checkbox" checked><span
+                                                    class="toggle-slider"></span></label>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div>
                                     <!-- Subscription Management -->
-                                    <div class="orders-card" style="margin-bottom:16px; background: linear-gradient(135deg, var(--navy), #2a3558); color: #fff; border: none; padding:20px;">
-                                        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
+                                    <div class="orders-card"
+                                        style="margin-bottom:16px; background: linear-gradient(135deg, var(--navy), #2a3558); color: #fff; border: none; padding:20px;">
+                                        <div
+                                            style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
                                             <div>
-                                                <div style="font-size: .72rem; color: rgba(255,255,255,.6); margin-bottom: 4px; text-transform:uppercase;">Current Plan</div>
-                                                <div class="client-sub-plan" style="font-family: 'Sora', sans-serif; font-size: 1.4rem; font-weight: 800;">Premium Plan</div>
+                                                <div
+                                                    style="font-size: .72rem; color: rgba(255,255,255,.6); margin-bottom: 4px; text-transform:uppercase;">
+                                                    Current Plan</div>
+                                                <div class="client-sub-plan"
+                                                    style="font-family: 'Sora', sans-serif; font-size: 1.4rem; font-weight: 800;">
+                                                    Premium Plan</div>
                                             </div>
-                                            <span class="badge-status badge-active client-sub-status" style="background: rgba(45, 206, 137, .2); color: #2dce89; border: 1px solid rgba(45, 206, 137, .3);">ACTIVE</span>
+                                            <span class="badge-status badge-active client-sub-status"
+                                                style="background: rgba(45, 206, 137, .2); color: #2dce89; border: 1px solid rgba(45, 206, 137, .3);">ACTIVE</span>
                                         </div>
-                                        
-                                        <div style="background:rgba(255,255,255,.05); border-radius:10px; padding:14px; margin-bottom:16px;">
-                                            <div style="display: flex; justify-content: space-between; font-size: .85rem; margin-bottom:8px;">
+
+                                        <div
+                                            style="background:rgba(255,255,255,.05); border-radius:10px; padding:14px; margin-bottom:16px;">
+                                            <div
+                                                style="display: flex; justify-content: space-between; font-size: .85rem; margin-bottom:8px;">
                                                 <span style="color: rgba(255,255,255,.6);">Renews On</span>
-                                                <span class="client-sub-renews" style="font-weight: 600;">Nov 12, 2024</span>
+                                                <span class="client-sub-renews" style="font-weight: 600;">Nov 12,
+                                                    2024</span>
                                             </div>
-                                            <div style="display: flex; justify-content: space-between; font-size: .85rem;">
+                                            <div
+                                                style="display: flex; justify-content: space-between; font-size: .85rem;">
                                                 <span style="color: rgba(255,255,255,.6);">Billing Amount</span>
-                                                <span class="client-sub-amount" style="font-weight: 600;">₱1,899.00</span>
+                                                <span class="client-sub-amount"
+                                                    style="font-weight: 600;">₱1,899.00</span>
                                             </div>
                                         </div>
 
                                         <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                                            <button class="btn btn-light w-100" style="font-size:.8rem; font-weight:700;" onclick="showClientPage('billing', null)">Manage Billing</button>
-                                            <button class="btn btn-outline-light w-100" style="font-size:.8rem; font-weight:600; border-color:rgba(255,255,255,.2);" onclick="alert('Loading plans...')">Change Plan</button>
+                                            <button class="btn btn-light w-100"
+                                                style="font-size:.8rem; font-weight:700;"
+                                                onclick="showClientPage('billing', null)">Manage Billing</button>
+                                            <button class="btn btn-outline-light w-100"
+                                                style="font-size:.8rem; font-weight:600; border-color:rgba(255,255,255,.2);"
+                                                onclick="alert('Loading plans...')">Change Plan</button>
                                         </div>
                                         <div style="margin-top:16px; text-align:center;">
-                                            <a href="#" style="color:rgba(255,255,255,.4); font-size:.7rem; text-decoration:none;" onclick="confirm('Are you sure you want to cancel your subscription? All premium features will be lost at the end of the current cycle.')">Cancel Subscription</a>
+                                            <a href="#"
+                                                style="color:rgba(255,255,255,.4); font-size:.7rem; text-decoration:none;"
+                                                onclick="confirm('Are you sure you want to cancel your subscription? All premium features will be lost at the end of the current cycle.')">Cancel
+                                                Subscription</a>
                                         </div>
                                     </div>
 
@@ -3325,15 +3689,18 @@
                                         <div class="notif-card-title">Communication</div>
                                         <div class="settings-row">
                                             <span class="settings-row-label">Order Updates</span>
-                                            <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                                            <label class="toggle"><input type="checkbox" checked><span
+                                                    class="toggle-slider"></span></label>
                                         </div>
                                         <div class="settings-row">
                                             <span class="settings-row-label">Promotional Emails</span>
-                                            <label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label>
+                                            <label class="toggle"><input type="checkbox"><span
+                                                    class="toggle-slider"></span></label>
                                         </div>
                                         <div class="settings-row">
                                             <span class="settings-row-label">Monthly Reports</span>
-                                            <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                                            <label class="toggle"><input type="checkbox" checked><span
+                                                    class="toggle-slider"></span></label>
                                         </div>
                                     </div>
                                 </div>
@@ -3394,7 +3761,7 @@
             if (!session) return;
             const user = JSON.parse(session);
             const initial = (user.name || user.email || 'J')[0].toUpperCase();
-            
+
             // Update Topbar
             const avatarEl = document.getElementById('clientAvatar');
             if (avatarEl) {
@@ -3439,13 +3806,13 @@
         // Synchronize Order Status from Admin
         function syncOrderStatus() {
             const steps = ['Prepress', 'Printing', 'Finishing', 'Shipping', 'Delivered'];
-            
+
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
                 if (key && key.startsWith('pp_status_')) {
                     const orderId = key.replace('pp_status_', '');
                     const savedStatus = localStorage.getItem(key);
-                    
+
                     // Update all badges for this order
                     document.querySelectorAll(`[data-status-label="${orderId}"]`).forEach(badge => {
                         badge.textContent = savedStatus;
@@ -3454,19 +3821,19 @@
                         else if (savedStatus === 'Shipping') badge.classList.add('badge-pending');
                         else badge.classList.add('badge-active');
                     });
-                    
+
                     // Update Progress Bars
                     document.querySelectorAll(`[data-progress="${orderId}"]`).forEach(row => {
                         const targetIdx = steps.indexOf(savedStatus) + 1; // +1 because index 0 is "Order Placed"
-                        
+
                         const trackSteps = row.querySelectorAll('.track-step');
                         const connectors = row.querySelectorAll('.step-connector');
-                        
+
                         trackSteps.forEach((step, idx) => {
                             const circle = step.querySelector('.step-circle');
                             const label = step.querySelector('.step-label');
                             const icon = circle.querySelector('i');
-                            
+
                             // Restore icons just in case
                             if (idx === 0) icon.className = 'bi bi-check-lg';
                             else if (idx === 1) icon.className = 'bi bi-gear';
@@ -3474,10 +3841,10 @@
                             else if (idx === 3) icon.className = 'bi bi-scissors';
                             else if (idx === 4) icon.className = 'bi bi-truck';
                             else if (idx === 5) icon.className = 'bi bi-house-check';
-                            
+
                             circle.className = 'step-circle';
                             label.className = 'step-label';
-                            
+
                             if (idx < targetIdx) {
                                 circle.classList.add('done');
                                 label.classList.add('done');
@@ -3489,7 +3856,7 @@
                                 circle.classList.add('pending');
                             }
                         });
-                        
+
                         connectors.forEach((conn, idx) => {
                             conn.className = 'step-connector';
                             if (idx < targetIdx) {
@@ -3508,14 +3875,14 @@
             const saved = localStorage.getItem('pp_sub_client_1');
             if (saved) {
                 const data = JSON.parse(saved);
-                
+
                 // Format dates safely
                 const formatDate = (ds) => {
                     if (!ds) return 'N/A';
                     const parts = ds.split('-');
                     if (parts.length === 3) {
-                        const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-                        return `${months[parseInt(parts[1])-1]} ${parseInt(parts[2])}, ${parts[0]}`;
+                        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                        return `${months[parseInt(parts[1]) - 1]} ${parseInt(parts[2])}, ${parts[0]}`;
                     }
                     return ds;
                 };
@@ -3526,7 +3893,7 @@
                     'Premium Plan': '₱1,899.00',
                     'Enterprise Plan': '₱4,500.00'
                 };
-                
+
                 document.querySelectorAll('.client-sub-plan').forEach(el => {
                     el.textContent = data.plan;
                 });
@@ -3559,6 +3926,43 @@
         document.addEventListener('DOMContentLoaded', () => {
             syncOrderStatus();
             syncSubscription();
+
+            // --- NEW: Quantity Slider & Discount Logic ---
+            const qtySlider = document.querySelector('.qty-slider');
+            const qtyDisplay = document.getElementById('qtyVal');
+            const badge = document.getElementById('discountBadge');
+
+            if (qtySlider) {
+                qtySlider.addEventListener('input', (e) => {
+                    const qty = parseInt(e.target.value);
+
+                    // 1. Update the "100 units" text
+                    if (qtyDisplay) qtyDisplay.innerText = qty + ' units';
+
+                    // 2. Discount Calculation
+                    let discountRate = 0;
+                    if (qty >= 500) discountRate = 0.20;      // 20% off
+                    else if (qty >= 100) discountRate = 0.10; // 10% off
+
+                    // 3. Update the Green Badge
+                    if (badge) {
+                        if (discountRate > 0) {
+                            badge.style.display = 'inline-block';
+                            badge.innerText = (discountRate * 100) + '% BULK DISCOUNT';
+                        } else {
+                            badge.style.display = 'none';
+                        }
+                    }
+
+                    // 4. Update the Total in the Summary Card
+                    const basePrice = 12.00;
+                    const total = (qty * basePrice) * (1 - discountRate);
+                    const totalDisplay = document.querySelector('.summary-total-val');
+                    if (totalDisplay) {
+                        totalDisplay.innerText = '₱' + total.toLocaleString(undefined, { minimumFractionDigits: 2 });
+                    }
+                });
+            }
         });
 
         // Run when localstorage changes
@@ -3570,6 +3974,12 @@
                 syncSubscription();
             }
         });
+        // In Client Dashboard.html
+        function getPriceFromAdmin() {
+            const specs = JSON.parse(localStorage.getItem('printSpecs')) || [];
+            // If Admin set a new price for A4, use it; otherwise, use the default 12.00
+            return specs.length > 0 ? specs[0].price : 12.00;
+        }
     </script>
 </body>
 
