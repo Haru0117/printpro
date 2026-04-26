@@ -663,7 +663,7 @@
         }
 
         /* ── MAIN LOGIN HANDLER ── */
-        function handleLogin(e) {
+        async function handleLogin(e) {
             e.preventDefault();
             clearErrors();
 
@@ -689,66 +689,34 @@
             // Show loading
             btn.classList.add('loading');
 
-            // Simulate auth delay
-            setTimeout(() => {
+            const formData = new FormData();
+            formData.append('email', email);
+            formData.append('password', password);
+
+            try {
+                const response = await fetch('api/login.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
                 btn.classList.remove('loading');
 
-                if (currentTab === 'admin') {
-                    // Admin: must be in approved list
-                    if (!ADMIN_EMAILS.includes(email)) {
-                        document.getElementById('emailInput').classList.add('error');
-                        document.getElementById('emailErrorMsg').textContent = 'This email is not approved for admin access.';
-                        document.getElementById('emailError').classList.add('show');
-                        showAlert('Access denied. This email is not registered as an admin account.');
-                        return;
-                    }
-                    // Simulate password check (all approved admins use "admin123" in demo)
-                    if (password !== 'admin123') {
-                        document.getElementById('passInput').classList.add('error');
-                        showAlert('Incorrect password. Please try again.');
-                        return;
-                    }
-                    // Grant admin session
-                    sessionStorage.setItem('pp_user', JSON.stringify({
-                        email,
-                        role: 'admin',
-                        name: 'Admin',
-                        loginTime: Date.now()
-                    }));
-                    window.location.href = 'Admin Dashboard.html';
-
+                if (data.success) {
+                    window.location.href = data.redirect;
                 } else {
-                    // Client: must be a business email
-                    if (!isBusinessEmail(email)) {
-                        document.getElementById('emailInput').classList.add('error');
-                        document.getElementById('emailErrorMsg').textContent = 'Please use your business email address (not Gmail, Yahoo, etc.).';
-                        document.getElementById('emailError').classList.add('show');
-                        showAlert('A business email address is required for client access.');
-                        return;
-                    }
-                    // Simulate password check (demo: any password ≥6 chars works)
-                    // Grant client session
-                    const name = email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-                    sessionStorage.setItem('pp_user', JSON.stringify({
-                        email,
-                        role: 'client',
-                        name,
-                        loginTime: Date.now()
-                    }));
-                    window.location.href = 'Client Dashboard.html';
+                    document.getElementById('passInput').classList.add('error');
+                    showAlert(data.message || 'Login failed. Please try again.');
                 }
-            }, 900);
+            } catch (err) {
+                btn.classList.remove('loading');
+                showAlert('A network error occurred. Please try again later.');
+            }
         }
 
         /* ── CHECK IF ALREADY LOGGED IN ── */
-        (function() {
-            const session = sessionStorage.getItem('pp_user');
-            if (session) {
-                const user = JSON.parse(session);
-                if (user.role === 'admin') window.location.href = 'Admin Dashboard.html';
-                else window.location.href = 'Client Dashboard.html';
-            }
-        })();
+        // Removed: PHP handles session check.
     </script>
 </body>
 

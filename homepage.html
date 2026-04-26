@@ -1598,7 +1598,7 @@
         const isBusinessEmail = e => !FREE_DOMAINS.includes((e.split('@')[1] || '').toLowerCase());
 
         /* ── LOGIN HANDLER ── */
-        function mHandleLogin(e) {
+        async function mHandleLogin(e) {
             e.preventDefault();
             mClearErrors();
 
@@ -1621,51 +1621,40 @@
             document.getElementById('mBtnContent').style.display = 'none';
             document.getElementById('mSpinner').style.display = 'block';
 
-            setTimeout(() => {
+            const formData = new FormData();
+            formData.append('email', email);
+            formData.append('password', pass);
+
+            try {
+                const response = await fetch('api/login.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
                 btn.style.opacity = '1'; btn.style.pointerEvents = '';
                 document.getElementById('mBtnContent').style.display = 'flex';
                 document.getElementById('mSpinner').style.display = 'none';
 
-                if (mCurrentTab === 'admin') {
-                    if (!ADMIN_EMAILS.includes(email)) {
-                        document.getElementById('mEmailErrMsg').textContent = 'This email is not approved for admin access.';
-                        document.getElementById('mEmailErr').style.display = 'block';
-                        mShowAlert('Access denied. This email is not registered as an admin account.');
-                        return;
-                    }
-                    if (pass !== 'admin123') {
-                        mShowAlert('Incorrect password. Please try again.');
-                        return;
-                    }
-                    sessionStorage.setItem('pp_user', JSON.stringify({ email, role: 'admin', name: 'Admin', loginTime: Date.now() }));
-                    window.location.href = 'Admin Dashboard.html';
-
+                if (data.success) {
+                    window.location.href = data.redirect;
                 } else {
-                    if (!isBusinessEmail(email)) {
-                        document.getElementById('mEmailErrMsg').textContent = 'Please use your business email (not Gmail, Yahoo, etc.).';
-                        document.getElementById('mEmailErr').style.display = 'block';
-                        mShowAlert('A business email address is required for client access.');
-                        return;
-                    }
-                    const name = email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-                    sessionStorage.setItem('pp_user', JSON.stringify({ email, role: 'client', name, loginTime: Date.now() }));
-                    window.location.href = 'Client Dashboard.html';
+                    document.getElementById('mPassErr').style.display = 'block';
+                    document.getElementById('mPassErr').innerHTML = '<i class="bi bi-exclamation-circle"></i> ' + (data.message || 'Login failed.');
                 }
-            }, 900);
+            } catch (err) {
+                btn.style.opacity = '1'; btn.style.pointerEvents = '';
+                document.getElementById('mBtnContent').style.display = 'flex';
+                document.getElementById('mSpinner').style.display = 'none';
+                mShowAlert('A network error occurred. Please try again later.');
+            }
         }
 
         /* ── AUTO-OPEN IF REDIRECTED FROM DASHBOARD ── */
         if (window.location.hash === '#login') openLoginModal('client');
         function handleLogoClick(e) {
-            const session = sessionStorage.getItem('pp_user');
-            if (session) {
-                e.preventDefault();
-                const user = JSON.parse(session);
-                if (user.role === 'admin') window.location.href = 'Admin Dashboard.html';
-                else window.location.href = 'Client Dashboard.html';
-            } else {
-                // Let the default href="#" behavior scroll to top
-            }
+            // Let the default href="#" behavior scroll to top
         }
 
         /* ── QUOTATION HANDLER ── */
@@ -1718,7 +1707,7 @@
         }
 
         /* ── REGISTER HANDLER ── */
-        function rHandleRegister(e) {
+        async function rHandleRegister(e) {
             e.preventDefault();
 
             const form = document.getElementById('rRegisterForm');
@@ -1741,21 +1730,40 @@
             txt.style.display = 'none';
             spinner.style.display = 'block';
 
-            setTimeout(() => {
+            const formData = new FormData();
+            formData.append('name', document.getElementById('rName').value);
+            formData.append('business_name', document.getElementById('rBusiness').value);
+            formData.append('email', document.getElementById('rEmail').value);
+            formData.append('password', document.getElementById('rPass').value);
+            formData.append('plan', document.getElementById('rPlan').value);
+            formData.append('terms', '1');
+
+            try {
+                const response = await fetch('api/register.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
                 btn.style.opacity = '1'; btn.style.pointerEvents = '';
                 txt.style.display = 'flex';
                 spinner.style.display = 'none';
 
-                successMsg.style.display = 'block';
-
-                setTimeout(() => {
-                    successMsg.style.display = 'none';
-                    form.reset();
-                    closeRegisterModal();
-                    openLoginModal('client');
-                }, 1500);
-
-            }, 1000);
+                if (data.success) {
+                    successMsg.style.display = 'block';
+                    setTimeout(() => {
+                        window.location.href = data.redirect;
+                    }, 1500);
+                } else {
+                    alert(data.message || 'Registration failed.');
+                }
+            } catch (err) {
+                btn.style.opacity = '1'; btn.style.pointerEvents = '';
+                txt.style.display = 'flex';
+                spinner.style.display = 'none';
+                alert('A network error occurred. Please try again later.');
+            }
         }
 
         // Close Register Modal on Escape key

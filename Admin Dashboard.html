@@ -1779,40 +1779,14 @@
                     </div>
                 </div>
             </div>
-            <div class="a-page" id="page-specs" style="display: none;">
-                <div class="px-4">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h4 class="fw-bold mb-0">Print Specifications</h4>
-                        <button class="btn btn-primary btn-sm" onclick="openSpecModal()">
-                            <i class="bi bi-plus-lg me-1"></i> New Material
-                        </button>
-                    </div>
-
-                    <div class="card border-0 shadow-sm" style="border-radius: 12px;">
-                        <div class="table-responsive p-3">
-                            <table class="table align-middle">
-                                <thead class="small text-uppercase text-muted">
-                                    <tr>
-                                        <th>Material Name</th>
-                                        <th>Base Price</th>
-                                        <th>Unit</th>
-                                        <th class="text-end">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="specsList">
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                <div class="a-page" id="specsPage" style="display: none;">
+                <div class="a-page" id="page-specsPage" style="display: none;">
                     <div class="px-4">
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <div>
                                 <h4 class="fw-bold mb-0" style="color: var(--navy);">Print Specifications</h4>
                                 <p class="text-muted small">Manage materials, base pricing, and unit types.</p>
                             </div>
-                            <button class="btn btn-primary" onclick="addNewSpec()">
+                            <button class="btn btn-primary" onclick="openSpecModal()">
                                 <i class="bi bi-plus-lg me-2"></i> Add New Spec
                             </button>
                         </div>
@@ -1822,32 +1796,64 @@
                                 <table class="table align-middle">
                                     <thead class="text-muted small text-uppercase">
                                         <tr>
+                                            <th>Type</th>
                                             <th>Material Name</th>
                                             <th>Base Price</th>
-                                            <th>Unit</th>
                                             <th>Status</th>
                                             <th class="text-end">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody id="specsTableBody">
-                                        <tr>
-                                            <td><span class="fw-bold">A4 Glossy 200gsm</span></td>
-                                            <td>₱12.00</td>
-                                            <td>Sheet</td>
-                                            <td><span class="badge bg-success-subtle text-success">Available</span></td>
-                                            <td class="text-end">
-                                                <button class="btn btn-sm btn-light"><i
-                                                        class="bi bi-pencil"></i></button>
-                                                <button class="btn btn-sm btn-light text-danger"><i
-                                                        class="bi bi-trash"></i></button>
-                                            </td>
-                                        </tr>
+                                        <!-- Fetched from API -->
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Spec Modal -->
+                <div id="specModal" class="modal-backdrop" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1050; align-items:center; justify-content:center;">
+                    <div class="card border-0 shadow" style="width: 100%; max-width: 400px; border-radius: 16px;">
+                        <div class="card-header bg-white border-bottom-0 pt-4 pb-0 px-4 d-flex justify-content-between align-items-center">
+                            <h5 class="fw-bold mb-0" id="specModalTitle">Add New Spec</h5>
+                            <button type="button" class="btn-close" onclick="closeSpecModal()"></button>
+                        </div>
+                        <div class="card-body p-4">
+                            <form id="specForm" onsubmit="saveSpec(event)">
+                                <input type="hidden" id="specId">
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold">Type</label>
+                                    <select class="form-select" id="specType" required>
+                                        <option value="paper">Paper/Material</option>
+                                        <option value="finish">Finishing</option>
+                                        <option value="size">Size</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold">Name</label>
+                                    <input type="text" class="form-control" id="specName" required placeholder="e.g. A4 Glossy 200gsm">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold">Price Modifier (₱)</label>
+                                    <input type="number" step="0.01" class="form-control" id="specPrice" required placeholder="0.00">
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label small fw-bold">Status</label>
+                                    <select class="form-select" id="specActive">
+                                        <option value="1">Available</option>
+                                        <option value="0">Inactive</option>
+                                    </select>
+                                </div>
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-primary" id="specSubmitBtn">Save Specification</button>
+                                    <button type="button" class="btn btn-light" onclick="closeSpecModal()">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
             </div>
             <!-- ════ ORDERS ════ -->
             <div class="a-page" id="page-orders">
@@ -3274,13 +3280,246 @@
                 console.log("Looking for canvas... not found yet.");
             }
         });
-        // Example: Saving a new price list
-        function saveSpec(name, price) {
-            let specs = JSON.parse(localStorage.getItem('printSpecs')) || [];
-            specs.push({ name: name, price: price });
-            localStorage.setItem('printSpecs', JSON.stringify(specs));
-            renderSpecs(); // Refresh the table
+        // ── PRINT SPECIFICATIONS MANAGEMENT ──
+        async function loadSpecs() {
+            try {
+                const res = await fetch('api/specs.php');
+                const data = await res.json();
+                if(data.success) {
+                    const tbody = document.getElementById('specsTableBody');
+                    tbody.innerHTML = '';
+                    data.data.forEach(spec => {
+                        const tr = document.createElement('tr');
+                        const statusBadge = spec.is_active == 1 
+                            ? '<span class="badge bg-success-subtle text-success">Available</span>' 
+                            : '<span class="badge bg-secondary-subtle text-secondary">Inactive</span>';
+                        
+                        tr.innerHTML = `
+                            <td class="text-capitalize">${spec.spec_type}</td>
+                            <td><span class="fw-bold">${spec.name}</span></td>
+                            <td>₱${parseFloat(spec.price_modifier).toFixed(2)}</td>
+                            <td>${statusBadge}</td>
+                            <td class="text-end">
+                                <button class="btn btn-sm btn-light" onclick="openSpecModal(${spec.id}, '${spec.spec_type}', '${spec.name.replace(/'/g, "\\'")}', ${spec.price_modifier}, ${spec.is_active})"><i class="bi bi-pencil"></i></button>
+                                <button class="btn btn-sm btn-light text-danger" onclick="deleteSpec(${spec.id})"><i class="bi bi-trash"></i></button>
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                }
+            } catch(e) { console.error('Failed to load specs', e); }
         }
+
+        function openSpecModal(id = '', type = 'paper', name = '', price = '', isActive = 1) {
+            document.getElementById('specId').value = id;
+            document.getElementById('specType').value = type;
+            document.getElementById('specName').value = name;
+            document.getElementById('specPrice').value = price;
+            document.getElementById('specActive').value = isActive;
+            
+            document.getElementById('specModalTitle').textContent = id ? 'Edit Spec' : 'Add New Spec';
+            document.getElementById('specModal').style.display = 'flex';
+        }
+
+        function closeSpecModal() {
+            document.getElementById('specModal').style.display = 'none';
+        }
+
+        async function saveSpec(e) {
+            e.preventDefault();
+            const id = document.getElementById('specId').value;
+            const type = document.getElementById('specType').value;
+            const name = document.getElementById('specName').value;
+            const price = document.getElementById('specPrice').value;
+            const isActive = document.getElementById('specActive').value;
+
+            const btn = document.getElementById('specSubmitBtn');
+            btn.disabled = true;
+            btn.textContent = 'Saving...';
+
+            let method = 'POST';
+            let body = new URLSearchParams();
+            body.append('spec_type', type);
+            body.append('name', name);
+            body.append('price_modifier', price);
+            body.append('is_active', isActive);
+
+            if(id) {
+                method = 'PUT';
+                body.append('id', id);
+            }
+
+            try {
+                const res = await fetch('api/specs.php', {
+                    method: method,
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: body.toString()
+                });
+                const data = await res.json();
+                if(data.success) {
+                    closeSpecModal();
+                    loadSpecs();
+                } else {
+                    alert(data.message || 'Error saving spec');
+                }
+            } catch(err) {
+                alert('Network error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Save Specification';
+            }
+        }
+
+        async function deleteSpec(id) {
+            if(!confirm('Are you sure you want to delete this specification?')) return;
+            
+            try {
+                const res = await fetch('api/specs.php', {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: 'id=' + id
+                });
+                const data = await res.json();
+                if(data.success) {
+                    loadSpecs();
+                } else {
+                    alert(data.message || 'Error deleting spec');
+                }
+            } catch(err) {
+                alert('Network error');
+            }
+        }
+
+        // ── ORDER MANAGEMENT ──
+        async function loadAdminOrders() {
+            try {
+                const res = await fetch('api/get_orders.php');
+                const data = await res.json();
+                if (data.success) {
+                    const orders = data.data;
+                    const tbody = document.getElementById('ordersTbody');
+                    if (tbody) {
+                        tbody.innerHTML = '';
+                        orders.forEach(o => {
+                            const tr = `<tr>
+                                <td style="font-weight:700;">#ORD-${o.id}</td>
+                                <td>${o.client_name}</td>
+                                <td>Product</td>
+                                <td>${parseInt(o.quantity).toLocaleString()}</td>
+                                <td>
+                                    <div class="progress-bar-wrap">
+                                        <div class="progress-bar-fill" style="width:${getProgress(o.status)}%; background:var(--accent);"></div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <select class="status-select" onchange="updateOrderStatus(this, ${o.id})">
+                                        <option value="Prepress" ${o.status=='Prepress'?'selected':''}>Prepress</option>
+                                        <option value="Printing" ${o.status=='Printing'?'selected':''}>Printing</option>
+                                        <option value="Finishing" ${o.status=='Finishing'?'selected':''}>Finishing</option>
+                                        <option value="Shipping" ${o.status=='Shipping'?'selected':''}>Shipping</option>
+                                        <option value="Delivered" ${o.status=='Delivered'?'selected':''}>Delivered</option>
+                                    </select>
+                                </td>
+                                <td>${new Date(o.created_at).toLocaleDateString()}</td>
+                                <td style="font-weight:700;">₱${parseFloat(o.total_price).toLocaleString()}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-light" onclick="generateTicket(${o.id})"><i class="bi bi-ticket-perforated"></i></button>
+                                </td>
+                            </tr>`;
+                            tbody.innerHTML += tr;
+                        });
+                    }
+                }
+            } catch(e) { console.error(e); }
+        }
+
+        function getProgress(status) {
+            const steps = ['Prepress', 'Printing', 'Finishing', 'Shipping', 'Delivered'];
+            const idx = steps.indexOf(status);
+            return ((idx + 1) / steps.length) * 100;
+        }
+
+        async function updateOrderStatus(select, orderId) {
+            const status = select.value;
+            const formData = new FormData();
+            formData.append('order_id', orderId);
+            formData.append('status', status);
+
+            try {
+                const res = await fetch('api/update_order_status.php', { method: 'POST', body: formData });
+                const data = await res.json();
+                if (data.success) {
+                    loadAdminOrders();
+                } else {
+                    alert('Error updating status');
+                }
+            } catch(e) { console.error(e); }
+        }
+
+        function generateTicket(orderId) {
+            window.open('api/generate_ticket.php?order_id=' + orderId, '_blank');
+        }
+
+        // ── DASHBOARD STATISTICS & CHARTS ──
+        async function updateDashboardStats() {
+            try {
+                const res = await fetch('api/get_dashboard_stats.php');
+                const data = await res.json();
+                if (data.success) {
+                    const stats = data.data;
+
+                    // Update KPIs
+                    document.querySelectorAll('.kpi-val')[0].textContent = stats.total_orders;
+                    document.querySelectorAll('.kpi-val')[1].textContent = '₱' + parseFloat(stats.total_revenue).toLocaleString();
+                    
+                    // Update Status Counts on Orders Page
+                    const statusKpis = document.querySelectorAll('#page-orders .kpi-val');
+                    if(statusKpis.length >= 4) {
+                        statusKpis[0].textContent = stats.total_orders;
+                        statusKpis[1].textContent = stats.status_counts['Printing'] || 0;
+                        statusKpis[2].textContent = stats.status_counts['Prepress'] || 0;
+                        statusKpis[3].textContent = stats.status_counts['Delivered'] || 0;
+                    }
+
+                    // Update Main Revenue Chart
+                    if (window.revenueChart) {
+                        window.revenueChart.data.labels = stats.revenue_chart.map(r => r.month);
+                        window.revenueChart.data.datasets[0].data = stats.revenue_chart.map(r => r.revenue);
+                        window.revenueChart.update();
+                    }
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSpecs(); 
+            loadAdminOrders();
+            updateDashboardStats();
+            
+            // Initialize Chart.js (example)
+            const ctx = document.getElementById('mainChart');
+            if(ctx) {
+                window.revenueChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: [],
+                        datasets: [{
+                            label: 'Revenue',
+                            data: [],
+                            borderColor: '#1d8cf8',
+                            backgroundColor: 'rgba(29, 140, 248, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: { legend: { display: false } },
+                        scales: { y: { beginAtZero: true } }
+                    }
+                });
+            }
+        });
     </script>
 </body>
 
