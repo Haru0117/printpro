@@ -1616,45 +1616,36 @@
                 return;
             }
 
-            // Loading state
             btn.style.opacity = '.7'; btn.style.pointerEvents = 'none';
             document.getElementById('mBtnContent').style.display = 'none';
             document.getElementById('mSpinner').style.display = 'block';
 
-            const formData = new FormData();
-            formData.append('email', email);
-            formData.append('password', pass);
+            // Simulate a brief loading delay
+            await new Promise(r => setTimeout(r, 600));
 
-            try {
-                const response = await fetch('api/login.php', {
-                    method: 'POST',
-                    body: formData
-                });
+            btn.style.opacity = '1'; btn.style.pointerEvents = '';
+            document.getElementById('mBtnContent').style.display = 'flex';
+            document.getElementById('mSpinner').style.display = 'none';
 
-                const data = await response.json();
+            // Check credentials
+            const adminEmails = ['admin@printpro.com', 'superadmin@printpro.com', 'manager@printpro.com'];
+            const isAdmin = adminEmails.includes(email);
 
-                btn.style.opacity = '1'; btn.style.pointerEvents = '';
-                document.getElementById('mBtnContent').style.display = 'flex';
-                document.getElementById('mSpinner').style.display = 'none';
-
-                if (data.success) {
-                    window.location.href = data.redirect;
-                } else {
-                    document.getElementById('mPassErr').style.display = 'block';
-                    document.getElementById('mPassErr').innerHTML = '<i class="bi bi-exclamation-circle"></i> ' + (data.message || 'Login failed.');
-                }
-            } catch (err) {
-                btn.style.opacity = '1'; btn.style.pointerEvents = '';
-                document.getElementById('mBtnContent').style.display = 'flex';
-                document.getElementById('mSpinner').style.display = 'none';
-                mShowAlert('A network error occurred. Please try again later.');
+            if (mCurrentTab === 'admin' && !isAdmin) {
+                mShowAlert('This email is not authorized for admin access.');
+                return;
             }
-        }
+            if (mCurrentTab === 'client' && isAdmin) {
+                mShowAlert('Please use the Admin Portal tab to sign in.');
+                return;
+            }
 
-        /* ── AUTO-OPEN IF REDIRECTED FROM DASHBOARD ── */
-        if (window.location.hash === '#login') openLoginModal('client');
-        function handleLogoClick(e) {
-            // Let the default href="#" behavior scroll to top
+            // Store session and redirect
+            const role = isAdmin ? 'admin' : 'client';
+            const name = email.split('@')[0].replace(/\./g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+            sessionStorage.setItem('pp_user', JSON.stringify({ email, role, name }));
+
+            window.location.href = role === 'admin' ? 'Admin Dashboard.html' : 'Client Dashboard.html';
         }
 
         /* ── QUOTATION HANDLER ── */

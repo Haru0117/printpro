@@ -21,15 +21,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->execute([$email]);
     $user = $stmt->fetch();
 
-    if ($user && $password === $user['password_hash']) {
+    if ($user && (password_verify($password, $user['password_hash']) || $password === $user['password_hash'])) {
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['role'] = $user['role'];
         $_SESSION['name'] = $user['name'];
 
         if ($user['role'] === 'admin' || $user['role'] === 'manager' || $user['role'] === 'operator') {
-            $redirect = 'Admin%20Dashboard.html';
+            $redirect = 'Admin Dashboard.html';
         } else {
-            $redirect = 'Client%20Dashboard.html';
+            $redirect = 'Client Dashboard.html';
         }
         
         echo json_encode(['success' => true, 'redirect' => $redirect]);

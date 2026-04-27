@@ -7,7 +7,9 @@
     <title>PrintPro — Sign In</title>
     <meta name="description" content="Sign in to your PrintPro account to manage print jobs, orders, and more.">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
 
     <style>
         :root {
@@ -23,7 +25,11 @@
             --success: #2dce89;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
         body {
             font-family: 'DM Sans', sans-serif;
@@ -50,7 +56,7 @@
             width: 600px;
             height: 600px;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(29,140,248,.12) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(29, 140, 248, .12) 0%, transparent 70%);
         }
 
         .bg-deco::after {
@@ -61,7 +67,7 @@
             width: 700px;
             height: 700px;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(62,198,198,.10) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(62, 198, 198, .10) 0%, transparent 70%);
         }
 
         /* ── LAYOUT ── */
@@ -82,7 +88,7 @@
             min-height: 560px;
             border-radius: 24px;
             overflow: hidden;
-            box-shadow: 0 32px 80px rgba(26,35,64,.18), 0 4px 20px rgba(26,35,64,.08);
+            box-shadow: 0 32px 80px rgba(26, 35, 64, .18), 0 4px 20px rgba(26, 35, 64, .08);
         }
 
         /* ── LEFT PANEL ── */
@@ -105,7 +111,7 @@
             width: 300px;
             height: 300px;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(29,140,248,.15) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(29, 140, 248, .15) 0%, transparent 70%);
         }
 
         .left-panel::after {
@@ -116,7 +122,7 @@
             width: 250px;
             height: 250px;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(62,198,198,.12) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(62, 198, 198, .12) 0%, transparent 70%);
         }
 
         .left-brand {
@@ -151,7 +157,7 @@
 
         .left-desc {
             font-size: .9rem;
-            color: rgba(255,255,255,.55);
+            color: rgba(255, 255, 255, .55);
             line-height: 1.7;
             margin-bottom: 28px;
         }
@@ -173,14 +179,14 @@
 
         .left-feature span {
             font-size: .82rem;
-            color: rgba(255,255,255,.65);
+            color: rgba(255, 255, 255, .65);
         }
 
         .left-footer {
             position: relative;
             z-index: 1;
             font-size: .75rem;
-            color: rgba(255,255,255,.3);
+            color: rgba(255, 255, 255, .3);
         }
 
         /* ── RIGHT PANEL ── */
@@ -239,10 +245,12 @@
         .portal-tab.active {
             background: #fff;
             color: var(--navy);
-            box-shadow: 0 2px 8px rgba(26,35,64,.10);
+            box-shadow: 0 2px 8px rgba(26, 35, 64, .10);
         }
 
-        .portal-tab i { font-size: .9rem; }
+        .portal-tab i {
+            font-size: .9rem;
+        }
 
         /* ── FORM FIELDS ── */
         .field-group {
@@ -287,12 +295,12 @@
 
         .field-input:focus {
             border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(29,140,248,.12);
+            box-shadow: 0 0 0 3px rgba(29, 140, 248, .12);
         }
 
         .field-input.error {
             border-color: var(--danger);
-            box-shadow: 0 0 0 3px rgba(245,54,92,.10);
+            box-shadow: 0 0 0 3px rgba(245, 54, 92, .10);
         }
 
         .field-input.success {
@@ -313,7 +321,9 @@
             line-height: 1;
         }
 
-        .toggle-pass:hover { color: var(--navy); }
+        .toggle-pass:hover {
+            color: var(--navy);
+        }
 
         /* ── ERROR MESSAGE ── */
         .error-msg {
@@ -340,9 +350,21 @@
             gap: 8px;
         }
 
-        .alert-box.show { display: flex; }
-        .alert-box.danger { background: rgba(245,54,92,.08); color: var(--danger); border: 1px solid rgba(245,54,92,.2); }
-        .alert-box.success { background: rgba(45,206,137,.08); color: #1aae6f; border: 1px solid rgba(45,206,137,.2); }
+        .alert-box.show {
+            display: flex;
+        }
+
+        .alert-box.danger {
+            background: rgba(245, 54, 92, .08);
+            color: var(--danger);
+            border: 1px solid rgba(245, 54, 92, .2);
+        }
+
+        .alert-box.success {
+            background: rgba(45, 206, 137, .08);
+            color: #1aae6f;
+            border: 1px solid rgba(45, 206, 137, .2);
+        }
 
         /* ── SUBMIT BUTTON ── */
         .btn-login {
@@ -364,10 +386,19 @@
             margin-top: 6px;
         }
 
-        .btn-login:hover { opacity: .9; transform: translateY(-1px); }
-        .btn-login:active { transform: translateY(0); }
+        .btn-login:hover {
+            opacity: .9;
+            transform: translateY(-1px);
+        }
 
-        .btn-login.loading { opacity: .7; pointer-events: none; }
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .btn-login.loading {
+            opacity: .7;
+            pointer-events: none;
+        }
 
         /* ── DIVIDER ── */
         .divider {
@@ -379,7 +410,8 @@
             color: var(--muted);
         }
 
-        .divider::before, .divider::after {
+        .divider::before,
+        .divider::after {
             content: '';
             flex: 1;
             height: 1px;
@@ -400,12 +432,14 @@
             text-decoration: none;
         }
 
-        .form-footer a:hover { text-decoration: underline; }
+        .form-footer a:hover {
+            text-decoration: underline;
+        }
 
         /* ── ADMIN HINT ── */
         .admin-hint {
-            background: rgba(124,77,255,.07);
-            border: 1px solid rgba(124,77,255,.18);
+            background: rgba(124, 77, 255, .07);
+            border: 1px solid rgba(124, 77, 255, .18);
             border-radius: 10px;
             padding: 10px 13px;
             font-size: .77rem;
@@ -416,24 +450,39 @@
             margin-bottom: 18px;
         }
 
-        .admin-hint.show { display: flex; }
-        .admin-hint i { margin-top: 1px; flex-shrink: 0; }
+        .admin-hint.show {
+            display: flex;
+        }
+
+        .admin-hint i {
+            margin-top: 1px;
+            flex-shrink: 0;
+        }
 
         /* ── SPINNER ── */
         .spinner {
             width: 16px;
             height: 16px;
-            border: 2px solid rgba(255,255,255,.4);
+            border: 2px solid rgba(255, 255, 255, .4);
             border-top-color: #fff;
             border-radius: 50%;
             animation: spin .6s linear infinite;
             display: none;
         }
 
-        .btn-login.loading .spinner { display: block; }
-        .btn-login.loading .btn-text { display: none; }
+        .btn-login.loading .spinner {
+            display: block;
+        }
 
-        @keyframes spin { to { transform: rotate(360deg); } }
+        .btn-login.loading .btn-text {
+            display: none;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
 
         /* ── BACK LINK ── */
         .back-link {
@@ -451,12 +500,24 @@
             transition: color .2s;
         }
 
-        .back-link a:hover { color: var(--navy); }
+        .back-link a:hover {
+            color: var(--navy);
+        }
 
         @media (max-width: 700px) {
-            .login-container { flex-direction: column; max-width: 440px; }
-            .left-panel { display: none; }
-            .right-panel { width: 100%; padding: 40px 28px; }
+            .login-container {
+                flex-direction: column;
+                max-width: 440px;
+            }
+
+            .left-panel {
+                display: none;
+            }
+
+            .right-panel {
+                width: 100%;
+                padding: 40px 28px;
+            }
         }
     </style>
 </head>
@@ -479,7 +540,8 @@
                         Professional print<br>management for<br><span>modern businesses.</span>
                     </h1>
                     <p class="left-desc">
-                        Access your PrintPro portal to manage orders, track deliveries, and run your print operations seamlessly.
+                        Access your PrintPro portal to manage orders, track deliveries, and run your print operations
+                        seamlessly.
                     </p>
                     <div class="left-feature">
                         <div class="left-feature-dot"></div>
@@ -518,7 +580,8 @@
                 <!-- Admin hint -->
                 <div class="admin-hint" id="adminHint">
                     <i class="bi bi-info-circle-fill"></i>
-                    <span>Admin access requires an approved admin email address. Contact your system administrator if you need access.</span>
+                    <span>Admin access requires an approved admin email address. Contact your system administrator if
+                        you need access.</span>
                 </div>
 
                 <!-- Alert -->
@@ -537,8 +600,8 @@
                         </label>
                         <div class="field-wrap">
                             <i class="bi bi-envelope field-icon"></i>
-                            <input type="email" id="emailInput" class="field-input"
-                                placeholder="you@yourcompany.com" autocomplete="email" required>
+                            <input type="email" id="emailInput" class="field-input" placeholder="you@yourcompany.com"
+                                autocomplete="email" required>
                         </div>
                         <div class="error-msg" id="emailError">
                             <i class="bi bi-exclamation-circle"></i>
@@ -551,8 +614,8 @@
                         <label class="field-label" for="passInput">Password</label>
                         <div class="field-wrap">
                             <i class="bi bi-lock field-icon"></i>
-                            <input type="password" id="passInput" class="field-input"
-                                placeholder="Enter your password" autocomplete="current-password" required>
+                            <input type="password" id="passInput" class="field-input" placeholder="Enter your password"
+                                autocomplete="current-password" required>
                             <button type="button" class="toggle-pass" onclick="togglePassword()" id="toggleBtn">
                                 <i class="bi bi-eye" id="eyeIcon"></i>
                             </button>
@@ -565,11 +628,15 @@
 
                     <!-- Remember / Forgot -->
                     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-                        <label style="display:flex;align-items:center;gap:7px;font-size:.82rem;color:var(--muted);cursor:pointer;">
-                            <input type="checkbox" id="rememberMe" style="accent-color:var(--accent);width:14px;height:14px;">
+                        <label
+                            style="display:flex;align-items:center;gap:7px;font-size:.82rem;color:var(--muted);cursor:pointer;">
+                            <input type="checkbox" id="rememberMe"
+                                style="accent-color:var(--accent);width:14px;height:14px;">
                             Remember me
                         </label>
-                        <a href="#" style="font-size:.82rem;color:var(--accent);text-decoration:none;font-weight:600;">Forgot password?</a>
+                        <a href="#"
+                            style="font-size:.82rem;color:var(--accent);text-decoration:none;font-weight:600;">Forgot
+                            password?</a>
                     </div>
 
                     <button type="submit" class="btn-login" id="loginBtn">
@@ -671,50 +738,40 @@
             const password = document.getElementById('passInput').value;
             const btn = document.getElementById('loginBtn');
 
-            // Validate email
             if (!isValidEmail(email)) {
                 document.getElementById('emailInput').classList.add('error');
                 document.getElementById('emailErrorMsg').textContent = 'Please enter a valid email address.';
                 document.getElementById('emailError').classList.add('show');
                 return;
             }
-
-            // Validate password
             if (password.length < 6) {
                 document.getElementById('passInput').classList.add('error');
                 document.getElementById('passError').classList.add('show');
                 return;
             }
 
-            // Show loading
             btn.classList.add('loading');
+            await new Promise(r => setTimeout(r, 600));
+            btn.classList.remove('loading');
 
-            const formData = new FormData();
-            formData.append('email', email);
-            formData.append('password', password);
+            const adminEmails = ['admin@printpro.com', 'superadmin@printpro.com', 'manager@printpro.com'];
+            const isAdmin = adminEmails.includes(email);
 
-            try {
-                const response = await fetch('api/login.php', {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                const data = await response.json();
-                
-                btn.classList.remove('loading');
-
-                if (data.success) {
-                    window.location.href = data.redirect;
-                } else {
-                    document.getElementById('passInput').classList.add('error');
-                    showAlert(data.message || 'Login failed. Please try again.');
-                }
-            } catch (err) {
-                btn.classList.remove('loading');
-                showAlert('A network error occurred. Please try again later.');
+            if (currentTab === 'admin' && !isAdmin) {
+                showAlert('This email is not authorized for admin access.');
+                return;
             }
-        }
+            if (currentTab === 'client' && isAdmin) {
+                showAlert('Please use the Admin Portal tab to sign in.');
+                return;
+            }
 
+            const role = isAdmin ? 'admin' : 'client';
+            const name = email.split('@')[0].replace(/\./g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+            sessionStorage.setItem('pp_user', JSON.stringify({ email, role, name }));
+
+            window.location.href = role === 'admin' ? 'Admin Dashboard.html' : 'Client Dashboard.html';
+        }
         /* ── CHECK IF ALREADY LOGGED IN ── */
         // Removed: PHP handles session check.
     </script>
