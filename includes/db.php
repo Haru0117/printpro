@@ -1,6 +1,6 @@
 <?php
 $host = 'localhost';
-$db   = 'printpro_db';
+$db   = 'printpro';
 $user = 'root';
 $pass = ''; // Default XAMPP password is empty
 

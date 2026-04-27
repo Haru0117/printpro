@@ -1,8 +1,12 @@
 <?php
+ob_start();
+error_reporting(0);
+ini_set('display_errors', 0);
 session_start();
 require_once '../includes/db.php';
 
 header('Content-Type: application/json');
+ob_clean();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'] ?? '';
@@ -17,12 +21,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->execute([$email]);
     $user = $stmt->fetch();
 
-    if ($user && password_verify($password, $user['password'])) {
+    if ($user && $password === $user['password_hash']) {
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['role'] = $user['role'];
         $_SESSION['name'] = $user['name'];
 
-        $redirect = $user['role'] === 'admin' ? 'Admin Dashboard.html' : 'Client Dashboard.html';
+        if ($user['role'] === 'admin' || $user['role'] === 'manager' || $user['role'] === 'operator') {
+            $redirect = 'Admin%20Dashboard.html';
+        } else {
+            $redirect = 'Client%20Dashboard.html';
+        }
         
         echo json_encode(['success' => true, 'redirect' => $redirect]);
     } else {

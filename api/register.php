@@ -24,14 +24,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-    
-    // Default role is client
-    $stmt = $pdo->prepare("INSERT INTO users (name, email, password, company_name, role) VALUES (?, ?, ?, ?, 'client')");
+    // We are storing plain text passwords as requested
+    $stmt = $pdo->prepare("INSERT INTO users (name, email, password_hash, role) VALUES (?, ?, ?, 'client')");
     
     try {
-        $stmt->execute([$name, $email, $hashed_password, $company_name]);
+        $stmt->execute([$name, $email, $password]);
         $user_id = $pdo->lastInsertId();
+        
+        // Insert into clients table
+        $stmt_client = $pdo->prepare("INSERT INTO clients (user_id, business_name) VALUES (?, ?)");
+        $stmt_client->execute([$user_id, $company_name]);
         
         // Log them in immediately
         $_SESSION['user_id'] = $user_id;
@@ -40,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         echo json_encode(['success' => true, 'redirect' => 'Client Dashboard.html']);
     } catch (PDOException $e) {
-        echo json_encode(['success' => false, 'message' => 'Registration failed. Please try again later.']);
+        echo json_encode(['success' => false, 'message' => 'Registration failed: ' . $e->getMessage()]);
     }
 
 } else {

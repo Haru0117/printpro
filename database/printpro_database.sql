@@ -304,14 +304,14 @@ CREATE TABLE notifications (
 
 -- Admin user (password = admin123, bcrypt placeholder)
 INSERT INTO users (name, email, password_hash, role) VALUES
-  ('Alexander Wright', 'admin@printpro.com',  '$2y$12$placeholder_hash_admin',   'admin'),
-  ('James Holloway',   'james@printpro.com',  '$2y$12$placeholder_hash_manager', 'manager'),
-  ('Marcus Reid',      'marcus@printpro.com', '$2y$12$placeholder_hash_operator','operator'),
-  ('Natasha Brown',    'natasha@printpro.com','$2y$12$placeholder_hash_natasha', 'manager'),
-  ('Frank Castillo',   'frank@printpro.com',  '$2y$12$placeholder_hash_frank',   'operator'),
+  ('Alexander Wright', 'admin@printpro.com',  'admin123',   'admin'),
+  ('James Holloway',   'james@printpro.com',  'manager123', 'manager'),
+  ('Marcus Reid',      'marcus@printpro.com', 'operator123','operator'),
+  ('Natasha Brown',    'natasha@printpro.com','manager123', 'manager'),
+  ('Frank Castillo',   'frank@printpro.com',  'operator123',   'operator'),
   -- Client users
-  ('Ocean Santana',    'ocean@example.com',   '$2y$12$placeholder_hash_ocean',   'client'),
-  ('TechStart Inc',    'billing@techstart.com','$2y$12$placeholder_hash_tech',   'client');
+  ('Ocean Santana',    'ocean@example.com',   'client123',   'client'),
+  ('TechStart Inc',    'billing@techstart.com','client123',   'client');
 
 -- Client profiles
 INSERT INTO clients (user_id, business_name, industry) VALUES
