@@ -751,26 +751,36 @@
             }
 
             btn.classList.add('loading');
-            await new Promise(r => setTimeout(r, 600));
-            btn.classList.remove('loading');
 
-            const adminEmails = ['admin@printpro.com', 'superadmin@printpro.com', 'manager@printpro.com'];
-            const isAdmin = adminEmails.includes(email);
+            try {
+                const formData = new FormData();
+                formData.append('email', email);
+                formData.append('password', password);
 
-            if (currentTab === 'admin' && !isAdmin) {
-                showAlert('This email is not authorized for admin access.');
-                return;
+                const response = await fetch('api/login.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+                btn.classList.remove('loading');
+
+                if (result.success) {
+                    // Success alert (optional)
+                    document.getElementById('alertBox').className = 'alert-box success show';
+                    document.getElementById('alertMsg').textContent = 'Sign in successful! Redirecting...';
+
+                    setTimeout(() => {
+                        window.location.href = result.redirect;
+                    }, 800);
+                } else {
+                    showAlert(result.message || 'Invalid credentials.');
+                }
+            } catch (error) {
+                btn.classList.remove('loading');
+                showAlert('An error occurred. Please try again later.');
+                console.error('Login error:', error);
             }
-            if (currentTab === 'client' && isAdmin) {
-                showAlert('Please use the Admin Portal tab to sign in.');
-                return;
-            }
-
-            const role = isAdmin ? 'admin' : 'client';
-            const name = email.split('@')[0].replace(/\./g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-            sessionStorage.setItem('pp_user', JSON.stringify({ email, role, name }));
-
-            window.location.href = role === 'admin' ? 'Admin Dashboard.html' : 'Client Dashboard.html';
         }
         /* ── CHECK IF ALREADY LOGGED IN ── */
         // Removed: PHP handles session check.
