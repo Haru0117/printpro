@@ -326,6 +326,12 @@
             justify-content: space-between;
             padding: 0 20px;
             box-shadow: 0 1px 6px rgba(0, 0, 0, .06);
+            position: relative;
+            z-index: 100;
+        }
+
+        .c-sidebar-overlay {
+            display: none;
         }
 
         .c-search {
@@ -335,10 +341,38 @@
             background: var(--off);
             border: 1px solid var(--border);
             border-radius: 8px;
-            padding: 5px 12px;
+            padding: 0 12px;
             width: 220px;
+            height: 34px;
+            transition: all .2s;
+            position: relative;
+            z-index: 9999 !important;
+            cursor: text;
+            pointer-events: auto !important;
+        }
+
+        .c-search:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 10px rgba(29, 140, 248, .2);
+        }
+
+        .c-search:focus-within {
+            border-color: var(--accent);
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(29, 140, 248, .1);
+            width: 320px;
+        }
+
+        .c-search input {
+            border: none;
+            background: transparent;
             font-size: .8rem;
-            color: var(--muted);
+            color: var(--navy);
+            width: 100%;
+            height: 100%;
+            outline: none;
+            padding: 0;
+            pointer-events: auto !important;
         }
 
         .c-avatar {
@@ -2261,9 +2295,11 @@
                             <img src="assets/img/logo.png" alt="PrintPro" class="c-mobile-logo">
                             <span class="c-brand-badge d-xl-none">Client</span>
                         </div>
-                        <div class="c-search">
-                            <i class="bi bi-search" style="font-size:.75rem;"></i>
-                            Search orders, files…
+                        <div class="c-search" onclick="this.querySelector('input').focus()">
+                            <i class="bi bi-search"
+                                style="font-size:.75rem; color: var(--muted); pointer-events: none;"></i>
+                            <input type="text" placeholder="Search orders, files, templates..."
+                                oninput="handleDashboardSearch(this.value)">
                         </div>
                     </div>
                     <div style="display:flex;align-items:center;gap:12px;">
@@ -2372,9 +2408,14 @@
                                 <div class="orders-card">
                                     <div class="card-hdr">
                                         <span class="card-hdr-title">Recent Orders</span>
-                                        <a href="#"
-                                            style="font-size:.75rem;color:var(--accent);text-decoration:none;">View
-                                            all</a>
+                                        <div style="display:flex; gap:10px; align-items:center;">
+                                            <button onclick="showClientPage('create', null)"
+                                                style="background:var(--accent); color:#fff; border:none; padding:4px 10px; border-radius:6px; font-size:.7rem; font-weight:600; cursor:pointer;">+
+                                                New Order</button>
+                                            <a href="#" onclick="showClientPage('orders', null)"
+                                                style="font-size:.75rem;color:var(--accent);text-decoration:none;">View
+                                                all</a>
+                                        </div>
                                     </div>
                                     <div class="c-table-responsive">
                                         <table class="orders-table">
@@ -2475,7 +2516,7 @@
                         </div>
                     </div><!-- /dashboard -->
 
-                    <!-- ══ ORDERS PAGE ══ -->
+                    <!-- ════ CLIENT: MY ORDERS ════ -->
                     <div class="c-page" id="c-orders">
                         <div class="c-dash">
                             <div
@@ -2483,25 +2524,26 @@
                                 <h4
                                     style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:#1a2340;margin:0;">
                                     All Orders</h4>
-                                <button onclick="showClientPage('create',null)"
+                                <button onclick="showClientPage('create', null)"
                                     style="background:var(--accent);color:#fff;border:none;padding:7px 16px;border-radius:8px;font-size:.8rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">
                                     <i class="bi bi-plus-lg"></i> New Order
                                 </button>
                             </div>
-                            <div class="orders-card">
+                            <div class="card orders-card">
                                 <div class="card-hdr">
-                                    <span class="card-hdr-title">Order History</span>
+                                    <span class="card-title">Order History</span>
                                     <div style="display:flex;gap:8px;">
-                                        <select
-                                            style="font-size:.75rem;border:1px solid var(--border);border-radius:6px;padding:4px 8px;color:var(--muted);">
+                                        <select class="form-ctrl" style="font-size:.75rem;padding:4px 8px;width:auto;"
+                                            onchange="filterOrdersBySelect(this)">
                                             <option>All Status</option>
                                             <option>Active</option>
                                             <option>Pending</option>
+                                            <option>Done</option>
                                             <option>Delivered</option>
                                         </select>
                                     </div>
                                 </div>
-                                <table class="orders-table">
+                                <table class="tbl orders-table">
                                     <thead>
                                         <tr>
                                             <th>ID</th>
@@ -2514,50 +2556,48 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>#PPR-48</td>
+                                        <tr data-status="active">
+                                            <td style="font-weight:700;">#PPR-48</td>
                                             <td>3D Marketing Brochure</td>
                                             <td>Brochure</td>
                                             <td>1,000</td>
-                                            <td><span class="badge-status badge-active"
-                                                    data-status-label="PPR-48">Active</span></td>
+                                            <td><span class="badge b-active">Active</span></td>
                                             <td>Oct 24</td>
                                             <td style="font-weight:700;">₱4,250</td>
                                         </tr>
-                                        <tr>
-                                            <td>#PPR-47</td>
+                                        <tr data-status="done">
+                                            <td style="font-weight:700;">#PPR-47</td>
                                             <td>Holiday Flyer Pack</td>
                                             <td>Flyer</td>
                                             <td>5,000</td>
-                                            <td><span class="badge-status badge-done">Done</span></td>
+                                            <td><span class="badge b-done">Done</span></td>
                                             <td>Oct 18</td>
                                             <td style="font-weight:700;">₱2,450</td>
                                         </tr>
-                                        <tr>
-                                            <td>#PPR-45</td>
+                                        <tr data-status="pending">
+                                            <td style="font-weight:700;">#PPR-45</td>
                                             <td>Corporate Annual Report</td>
                                             <td>Booklet</td>
                                             <td>250</td>
-                                            <td><span class="badge-status badge-pending">Reprint</span></td>
+                                            <td><span class="badge b-pending">Reprint</span></td>
                                             <td>—</td>
                                             <td style="font-weight:700;">₱12,800</td>
                                         </tr>
-                                        <tr>
-                                            <td>#PPR-43</td>
+                                        <tr data-status="delivered">
+                                            <td style="font-weight:700;">#PPR-43</td>
                                             <td>Conference Banner Set</td>
                                             <td>Banner</td>
                                             <td>1,200</td>
-                                            <td><span class="badge-status badge-done">Delivered</span></td>
+                                            <td><span class="badge b-done">Delivered</span></td>
                                             <td>Oct 21</td>
                                             <td style="font-weight:700;">₱15,500</td>
                                         </tr>
-                                        <tr>
-                                            <td>#PPR-41</td>
+                                        <tr data-status="active">
+                                            <td style="font-weight:700;">#PPR-41</td>
                                             <td>Promotional Mailers</td>
                                             <td>Mailer</td>
                                             <td>5,000</td>
-                                            <td><span class="badge-status badge-active"
-                                                    data-status-label="PPR-41">Active</span></td>
+                                            <td><span class="badge b-active">Active</span></td>
                                             <td>Nov 2</td>
                                             <td style="font-weight:700;">₱8,750</td>
                                         </tr>
@@ -2565,7 +2605,7 @@
                                 </table>
                             </div>
                         </div>
-                    </div><!-- /orders -->
+                    </div>
 
                     <!-- ══ CREATE ORDER PAGE ══ -->
                     <div class="c-page" id="c-create">
@@ -2580,14 +2620,18 @@
                                     </div>
                                     <div class="wizard-body">
                                         <div class="product-types">
-                                            <button class="pt-btn active"><i
+                                            <button class="pt-btn active" onclick="selectProductType(this)"><i
                                                     class="bi bi-card-image"></i>Flyers</button>
-                                            <button class="pt-btn"><i class="bi bi-book-half"></i>Brochures</button>
-                                            <button class="pt-btn"><i
+                                            <button class="pt-btn" onclick="selectProductType(this)"><i
+                                                    class="bi bi-book-half"></i>Brochures</button>
+                                            <button class="pt-btn" onclick="selectProductType(this)"><i
                                                     class="bi bi-journal-richtext"></i>Booklets</button>
-                                            <button class="pt-btn"><i class="bi bi-card-text"></i>Posters</button>
-                                            <button class="pt-btn"><i class="bi bi-envelope-open"></i>Mailers</button>
-                                            <button class="pt-btn"><i class="bi bi-badge-cc"></i>Cards</button>
+                                            <button class="pt-btn" onclick="selectProductType(this)"><i
+                                                    class="bi bi-card-text"></i>Posters</button>
+                                            <button class="pt-btn" onclick="selectProductType(this)"><i
+                                                    class="bi bi-envelope-open"></i>Mailers</button>
+                                            <button class="pt-btn" onclick="selectProductType(this)"><i
+                                                    class="bi bi-badge-cc"></i>Cards</button>
                                         </div>
                                     </div>
                                 </div>
@@ -2602,35 +2646,39 @@
                                         <div class="dim-grid">
                                             <div>
                                                 <div class="form-label-sm">Standard Size</div>
-                                                <select class="form-control-sm-pp" id="sizeSelect" onchange="updatePricing()">
-                                                    <option value="">Select Size</option>
+                                                <select class="form-control-sm-pp" id="sizeSelect"
+                                                    onchange="handleSizeChange(this)">
                                                 </select>
                                             </div>
                                             <div>
                                                 <div class="form-label-sm">Paper Weight</div>
-                                                <select class="form-control-sm-pp" id="paperSelect" onchange="updatePricing()">
-                                                    <option value="">Select Paper</option>
+                                                <select class="form-control-sm-pp" id="paperSelect"
+                                                    onchange="updatePricing()">
                                                 </select>
                                             </div>
                                             <div>
                                                 <div class="form-label-sm">Custom Width (in)</div>
-                                                <input type="number" class="form-control-sm-pp" value="4" min="1">
+                                                <input type="number" class="form-control-sm-pp" id="customWidth"
+                                                    value="4" min="1" oninput="updatePricing()">
                                             </div>
                                             <div>
                                                 <div class="form-label-sm">Custom Height (in)</div>
-                                                <input type="number" class="form-control-sm-pp" value="6" min="1">
+                                                <input type="number" class="form-control-sm-pp" id="customHeight"
+                                                    value="6" min="1" oninput="updatePricing()">
                                             </div>
                                             <div>
                                                 <div class="form-label-sm">Finishing</div>
-                                                <select class="form-control-sm-pp" id="finishSelect" onchange="updatePricing()">
-                                                    <option value="">None / Standard</option>
+                                                <select class="form-control-sm-pp" id="finishSelect"
+                                                    onchange="updatePricing()">
                                                 </select>
                                             </div>
                                             <div>
                                                 <div class="form-label-sm">Bleed Option</div>
-                                                <select class="form-control-sm-pp">
+                                                <select class="form-control-sm-pp" id="bleedSelect"
+                                                    onchange="updatePricing()">
                                                     <option>With Bleed (0.125")</option>
-                                                    <option>No Bleed</option>
+                                                    <option>No Bleed (Exact Size)</option>
+                                                    <option>Custom Bleed (0.25")</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -2647,14 +2695,13 @@
                                             <div class="form-label-sm">Print Quantity</div>
                                             <div
                                                 style="display:flex;align-items:center;gap:12px;margin-top:6px; flex-wrap: wrap;">
-                                                <input type="range" class="qty-slider" min="100" max="10000" step="100"
-                                                    value="2500" id="qtySlider"
-                                                    oninput="document.getElementById('qtyVal').textContent=parseInt(this.value).toLocaleString()"
+                                                <input type="range" class="qty-slider" min="50" max="10000" step="50"
+                                                    value="500" id="qtySlider" oninput="updatePricing()"
                                                     style="flex: 1; min-width: 200px;">
                                                 <span id="qtyVal"
-                                                    style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:700;color:var(--navy);min-width:60px;">2,500</span>
+                                                    style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:700;color:var(--navy);min-width:60px;">500</span>
                                                 <div class="d-flex justify-content-between mt-2">
-                                                    <span class="fw-bold" id="qtyVal">100 units</span>
+                                                    <span class="fw-bold" id="qtyValDetailed">500 units</span>
                                                     <span class="badge" id="discountBadge"
                                                         style="display:none; background: rgba(45, 206, 137, .15); color: #1aae6f; font-weight: 700; margin-left: 10px;"></span>
                                                 </div>
@@ -2721,23 +2768,22 @@
                                                 Your Uploaded Files</div>
                                             <div class="files-grid"
                                                 style="grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); margin-bottom: 0;">
-                                                <div class="file-card"
-                                                    style="padding: 12px; border-color: var(--accent); background: rgba(29, 140, 248, .04);"
-                                                    onclick="document.querySelectorAll('#account-files .file-card').forEach(c=> {c.style.borderColor='var(--border)'; c.style.background='#fff';}); this.style.borderColor='var(--accent)'; this.style.background='rgba(29, 140, 248, .04)';">
+                                                <div class="file-card" style="padding: 12px;"
+                                                    onclick="selectArtwork(this, 'summer_flyer_front_v3.pdf')">
                                                     <span class="file-icon"
                                                         style="font-size: 1.8rem; margin-bottom: 6px;">🖼️</span>
                                                     <div class="file-name" style="font-size: .75rem;">
                                                         summer_flyer_front_v3.pdf</div>
                                                 </div>
                                                 <div class="file-card" style="padding: 12px;"
-                                                    onclick="document.querySelectorAll('#account-files .file-card').forEach(c=> {c.style.borderColor='var(--border)'; c.style.background='#fff';}); this.style.borderColor='var(--accent)'; this.style.background='rgba(29, 140, 248, .04)';">
+                                                    onclick="selectArtwork(this, 'annual_report_final.pdf')">
                                                     <span class="file-icon"
                                                         style="font-size: 1.8rem; margin-bottom: 6px;">📄</span>
                                                     <div class="file-name" style="font-size: .75rem;">
                                                         annual_report_final.pdf</div>
                                                 </div>
                                                 <div class="file-card" style="padding: 12px;"
-                                                    onclick="document.querySelectorAll('#account-files .file-card').forEach(c=> {c.style.borderColor='var(--border)'; c.style.background='#fff';}); this.style.borderColor='var(--accent)'; this.style.background='rgba(29, 140, 248, .04)';">
+                                                    onclick="selectArtwork(this, 'banner_artwork_hires.ai')">
                                                     <span class="file-icon"
                                                         style="font-size: 1.8rem; margin-bottom: 6px;">🎨</span>
                                                     <div class="file-name" style="font-size: .75rem;">
@@ -2754,11 +2800,15 @@
                                 <div class="summary-card">
                                     <div class="summary-title">PRODUCT SUMMARY</div>
                                     <div class="summary-sub">Personalized Printing Solution</div>
-                                    <div class="summary-row"><span>Product</span><span>Flyers</span></div>
-                                    <div class="summary-row"><span>Quantity</span><span>2,500</span></div>
-                                    <div class="summary-row"><span>Size</span><span>4" × 6"</span></div>
-                                    <div class="summary-row"><span>Stock</span><span>100lb Gloss</span></div>
-                                    <div class="summary-row"><span>Finishing</span><span>Matte UV</span></div>
+                                    <div class="summary-row"><span>Product</span><span id="sumProduct">Flyers</span>
+                                    </div>
+                                    <div class="summary-row"><span>Quantity</span><span id="sumQty">2,500</span></div>
+                                    <div class="summary-row"><span>Size</span><span id="sumSize">4" × 6"</span></div>
+                                    <div class="summary-row"><span>Stock</span><span id="sumStock">100lb Gloss</span>
+                                    </div>
+                                    <div class="summary-row"><span>Finishing</span><span id="sumFinish">Matte UV</span>
+                                    </div>
+                                    <div class="summary-row"><span>Artwork</span><span id="sumArtwork">None</span></div>
                                     <hr class="summary-divider">
                                     <div class="delivery-box">
                                         <div class="delivery-lbl">Estimated Production</div>
@@ -2773,14 +2823,15 @@
                                         </div>
                                     </div>
                                     <hr class="summary-divider">
-                                    <div class="summary-row"><span>Subtotal</span><span>₱3,200.00</span></div>
-                                    <div class="summary-row"><span>Estimated Tax (12%)</span><span>₱384.00</span></div>
+                                    <div class="summary-row"><span>Subtotal</span><span
+                                            id="sumSubtotal">₱3,200.00</span></div>
+                                    <div class="summary-row"><span>Estimated Tax (12%)</span><span
+                                            id="sumTax">₱384.00</span></div>
                                     <div class="summary-total">
                                         <span class="summary-total-lbl">Total Estimate</span>
-                                        <span class="summary-total-val">₱3,584.00</span>
+                                        <span class="summary-total-val" id="summaryTotal">₱3,584.00</span>
                                     </div>
-                                    <button class="btn-continue" id="placeOrderBtn"
-                                        onclick="placeOrder()">Place
+                                    <button class="btn-continue" id="placeOrderBtn" onclick="placeOrder()">Place
                                         Order →</button>
                                 </div>
                             </div>
@@ -3927,7 +3978,7 @@
                     updatePricing();
                 });
             }
-            
+
             loadOrderSpecs();
             loadOrders();
         });
@@ -3938,7 +3989,7 @@
                 const data = await res.json();
                 if (data.success) {
                     const orders = data.data;
-                    
+
                     // 1. Dashboard "Recent Orders"
                     const dashTbody = document.querySelector('#c-dashboard .orders-table tbody');
                     if (dashTbody) {
@@ -3949,8 +4000,8 @@
                                 <td>${o.job_name}</td>
                                 <td>${parseInt(o.quantity).toLocaleString()}</td>
                                 <td><span class="badge-status ${getStatusClass(o.status)}">${o.status}</span></td>
-                                <td>${new Date(o.created_at).toLocaleDateString(undefined, {month:'short', day:'numeric'})}</td>
-                                <td style="font-weight:700;">₱${parseFloat(o.total_price).toLocaleString(undefined, {minimumFractionDigits:2})}</td>
+                                <td>${new Date(o.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</td>
+                                <td style="font-weight:700;">₱${parseFloat(o.total_price).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
                             </tr>`;
                             dashTbody.innerHTML += tr;
                         });
@@ -3961,14 +4012,14 @@
                     if (ordersTbody) {
                         ordersTbody.innerHTML = '';
                         orders.forEach(o => {
-                            const tr = `<tr>
+                            const tr = `<tr data-status="${o.status.toLowerCase()}">
                                 <td>#ORD-${o.id}</td>
                                 <td>${o.job_name}</td>
                                 <td>Product</td>
                                 <td>${parseInt(o.quantity).toLocaleString()}</td>
                                 <td><span class="badge-status ${getStatusClass(o.status)}">${o.status}</span></td>
-                                <td>${new Date(o.created_at).toLocaleDateString(undefined, {month:'short', day:'numeric'})}</td>
-                                <td style="font-weight:700;">₱${parseFloat(o.total_price).toLocaleString(undefined, {minimumFractionDigits:2})}</td>
+                                <td>${new Date(o.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</td>
+                                <td style="font-weight:700;">₱${parseFloat(o.total_price).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
                             </tr>`;
                             ordersTbody.innerHTML += tr;
                         });
@@ -3985,23 +4036,55 @@
             return 'badge-active';
         }
 
+        const productSpecsConfig = {
+            'Flyers': {
+                sizes: ['4" × 6"', '5" × 7"', '5.5" × 8.5" (Half-Letter)', '8.5" × 11" (Letter)', 'A4 (8.27" × 11.69")'],
+                papers: ['80lb Text', '100lb Text (Standard)', '14pt Cardstock'],
+                finishes: ['Uncoated', 'Matte AQ', 'Gloss AQ', 'UV Coating']
+            },
+            'Mailers': {
+                sizes: ['4" × 6"', '5" × 7"', '5.5" × 8.5" (Half-Letter)', '8.5" × 11" (Letter)', 'A4 (8.27" × 11.69")'],
+                papers: ['80lb Text', '100lb Text (Standard)', '14pt Cardstock'],
+                finishes: ['Uncoated', 'Matte AQ', 'Gloss AQ', 'UV Coating']
+            },
+            'Brochures': {
+                sizes: ['8.5" × 11" (Standard Tri-fold)', '8.5" × 14" (Legal)', '11" × 17" (Tabloid / Bi-fold)'],
+                papers: ['80lb Text', '100lb Text', '100lb Cover'],
+                finishes: ['Matte AQ', 'Gloss AQ', 'Soft Touch (Aqueous)']
+            },
+            'Booklets': {
+                sizes: ['5.5" × 8.5"', '8.5" × 11"', '6" × 9"'],
+                papers: ['70lb Text', '80lb Text', '100lb Text', 'Self-Cover', '80lb Cover', '100lb Cover', '14pt Cardstock'],
+                finishes: ['Matte AQ', 'Gloss AQ', 'Spot UV (Cover only)']
+            },
+            'Posters': {
+                sizes: ['11" × 17"', '18" × 24"', '24" × 36" (Architectural/Standard)', '27" × 39" (Movie Poster)'],
+                papers: ['100lb Gloss Text', '10mil Premium Photo Paper', '15oz Vinyl'],
+                finishes: ['Gloss Lamination', 'Matte Lamination', 'None']
+            },
+            'Cards': {
+                sizes: ['2" × 3.5" (Standard US)', '2.12" × 3.37" (Euro/Credit Card)', '4" × 6"'],
+                papers: ['14pt Cardstock', '16pt Cardstock', '18pt Premium', '32pt Extra Thick'],
+                finishes: ['Matte', 'Gloss UV', 'Soft Touch', 'Foil Stamping']
+            }
+        };
+
+        let masterSpecs = [];
+
         async function loadOrderSpecs() {
             try {
                 const res = await fetch('api/specs.php');
                 const data = await res.json();
                 if (data.success) {
-                    const paper = document.getElementById('paperSelect');
-                    const size = document.getElementById('sizeSelect');
-                    const finish = document.getElementById('finishSelect');
-
-                    data.data.forEach(s => {
-                        const opt = `<option value="${s.id}">${s.name}</option>`;
-                        if (s.spec_type === 'paper') paper.innerHTML += opt;
-                        else if (s.spec_type === 'size') size.innerHTML += opt;
-                        else if (s.spec_type === 'finish') finish.innerHTML += opt;
-                    });
+                    masterSpecs = data.data;
                 }
-            } catch (e) { console.error(e); }
+            } catch (e) {
+                console.error("Specs API error:", e);
+            } finally {
+                // Always initialize the UI even if API fails (will use names as fallback IDs)
+                const flyerBtn = document.querySelector('.pt-btn.active');
+                if (flyerBtn) selectProductType(flyerBtn);
+            }
         }
 
         let currentPricingData = null;
@@ -4013,14 +4096,41 @@
             const finishId = document.getElementById('finishSelect').value;
 
             document.getElementById('qtyVal').textContent = parseInt(qty).toLocaleString();
-            
-            if (!paperId || !sizeId) return;
+            if (document.getElementById('qtyValDetailed')) {
+                document.getElementById('qtyValDetailed').textContent = parseInt(qty).toLocaleString() + ' units';
+            }
+            document.getElementById('sumQty').textContent = parseInt(qty).toLocaleString();
+
+            const paperSelect = document.getElementById('paperSelect');
+            const sizeSelect = document.getElementById('sizeSelect');
+            const finishSelect = document.getElementById('finishSelect');
+
+            if (paperSelect.selectedIndex >= 0) document.getElementById('sumStock').textContent = paperSelect.options[paperSelect.selectedIndex].text;
+            if (sizeSelect.selectedIndex >= 0) document.getElementById('sumSize').textContent = sizeSelect.options[sizeSelect.selectedIndex].text;
+            if (finishSelect.selectedIndex >= 0) document.getElementById('sumFinish').textContent = finishSelect.options[finishSelect.selectedIndex].text;
+
+            if (!paperId || !sizeId) {
+                document.getElementById('summaryTotal').textContent = '₱0.00';
+                document.getElementById('sumSubtotal').textContent = '₱0.00';
+                document.getElementById('sumTax').textContent = '₱0.00';
+                return;
+            }
 
             const formData = new FormData();
+            formData.append('product_name', document.getElementById('sumProduct').textContent.trim());
             formData.append('quantity', qty);
             formData.append('paper_id', paperId);
             formData.append('size_id', sizeId);
             formData.append('finish_id', finishId || 0);
+            formData.append('bleed_option', document.getElementById('bleedSelect').value);
+
+            // Show loading state
+            const summaryTotal = document.getElementById('summaryTotal');
+            const sumSubtotal = document.getElementById('sumSubtotal');
+            const sumTax = document.getElementById('sumTax');
+            summaryTotal.textContent = '...';
+            sumSubtotal.textContent = '...';
+            sumTax.textContent = '...';
 
             try {
                 const res = await fetch('api/calculate_price.php', { method: 'POST', body: formData });
@@ -4028,25 +4138,130 @@
                 if (result.success) {
                     currentPricingData = result.data;
                     const d = result.data;
-                    
+
                     // Update Summary
-                    document.querySelector('.summary-total-val').textContent = '₱' + d.grand_total.toLocaleString(undefined, { minimumFractionDigits: 2 });
-                    document.querySelectorAll('.summary-row')[1].querySelectorAll('span')[1].textContent = parseInt(qty).toLocaleString();
-                    
-                    const rows = document.querySelectorAll('.summary-row');
-                    rows[6].querySelectorAll('span')[1].textContent = '₱' + d.subtotal.toLocaleString(undefined, { minimumFractionDigits: 2 });
-                    rows[7].querySelectorAll('span')[1].textContent = '₱' + d.tax.toLocaleString(undefined, { minimumFractionDigits: 2 });
+                    summaryTotal.textContent = '₱' + d.grand_total.toLocaleString(undefined, { minimumFractionDigits: 2 });
+                    sumSubtotal.textContent = '₱' + d.subtotal.toLocaleString(undefined, { minimumFractionDigits: 2 });
+                    sumTax.textContent = '₱' + d.tax.toLocaleString(undefined, { minimumFractionDigits: 2 });
 
                     // Update Badge
                     const badge = document.getElementById('discountBadge');
-                    if (d.discount_rate > 0) {
-                        badge.style.display = 'inline-block';
-                        badge.innerText = d.discount_rate + '% BULK DISCOUNT';
-                    } else {
-                        badge.style.display = 'none';
+                    if (badge) {
+                        if (d.discount_rate > 0) {
+                            badge.style.display = 'inline-block';
+                            badge.innerText = d.discount_rate + '% BULK DISCOUNT';
+                        } else {
+                            badge.style.display = 'none';
+                        }
                     }
+                } else {
+                    summaryTotal.textContent = '₱0.00';
+                    console.error("Pricing Error:", result.message);
                 }
-            } catch (e) { console.error(e); }
+            } catch (e) {
+                summaryTotal.textContent = 'Error';
+                console.error(e);
+            }
+        }
+
+        function handleDashboardSearch(query) {
+            query = query.toLowerCase().trim();
+
+            // 1. Filter Orders
+            document.querySelectorAll('.orders-table tbody tr').forEach(row => {
+                const text = row.innerText.toLowerCase();
+                row.style.display = text.includes(query) ? '' : 'none';
+            });
+
+            // 2. Filter Files
+            document.querySelectorAll('.file-card').forEach(card => {
+                const text = card.innerText.toLowerCase();
+                card.style.display = text.includes(query) ? 'block' : 'none';
+            });
+
+            // 3. Filter Templates
+            document.querySelectorAll('.tpl-card').forEach(card => {
+                const text = card.innerText.toLowerCase();
+                card.style.display = text.includes(query) ? 'block' : 'none';
+            });
+        }
+
+        function selectProductType(btn) {
+            const product = btn.textContent.trim();
+            document.querySelectorAll('.product-types .pt-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('sumProduct').textContent = product;
+
+            const config = productSpecsConfig[product];
+            if (config) {
+                populateSelect('sizeSelect', 'size', config.sizes);
+                populateSelect('paperSelect', 'paper', config.papers);
+                populateSelect('finishSelect', 'finish', config.finishes);
+
+                // Apply Recommended Defaults for Flyers
+                if (product === 'Flyers') {
+                    setSelectByText('sizeSelect', '4" × 6"');
+                    setSelectByText('paperSelect', '100lb Text (Standard)');
+                    setSelectByText('finishSelect', 'UV Coating'); // Matching "Matte UV" roughly
+                    document.getElementById('bleedSelect').value = 'With Bleed (0.125")';
+
+                    // Trigger dimension update for 4x6
+                    handleSizeChange(document.getElementById('sizeSelect'));
+                } else {
+                    // For other products, trigger dimension update for the first available size
+                    handleSizeChange(document.getElementById('sizeSelect'));
+                }
+            }
+            updatePricing();
+        }
+
+        function populateSelect(id, type, names) {
+            const sel = document.getElementById(id);
+            if (!sel) return;
+            const currentVal = sel.value;
+            sel.innerHTML = '';
+
+            names.forEach(name => {
+                // Try to find matching ID from masterSpecs
+                const match = masterSpecs.find(s => s.spec_type === type && s.name.toLowerCase().includes(name.toLowerCase().split('(')[0].trim().toLowerCase()));
+                const val = match ? match.id : name; // Fallback to name if not in DB
+                sel.innerHTML += `<option value="${val}">${name}</option>`;
+            });
+
+            // Try to restore value if still exists
+            if (Array.from(sel.options).some(o => o.value == currentVal)) {
+                sel.value = currentVal;
+            }
+        }
+
+        function setSelectByText(id, text) {
+            const sel = document.getElementById(id);
+            for (let i = 0; i < sel.options.length; i++) {
+                if (sel.options[i].text.includes(text)) {
+                    sel.selectedIndex = i;
+                    break;
+                }
+            }
+        }
+
+        function handleSizeChange(sel) {
+            const val = sel.options[sel.selectedIndex].text;
+            const match = val.match(/(\d+(\.\d+)?)"\s*[×x]\s*(\d+(\.\d+)?)"/i);
+            if (match) {
+                document.getElementById('customWidth').value = match[1];
+                document.getElementById('customHeight').value = match[3];
+            }
+            updatePricing();
+        }
+
+        function selectArtwork(btn, filename) {
+            document.querySelectorAll('#account-files .file-card').forEach(c => {
+                c.style.borderColor = 'var(--border)';
+                c.style.background = '#fff';
+            });
+            btn.style.borderColor = 'var(--accent)';
+            btn.style.background = 'rgba(29, 140, 248, .04)';
+            document.getElementById('sumArtwork').textContent = filename;
         }
 
         async function placeOrder() {
@@ -4099,6 +4314,26 @@
             const specs = JSON.parse(localStorage.getItem('printSpecs')) || [];
             // If Admin set a new price for A4, use it; otherwise, use the default 12.00
             return specs.length > 0 ? specs[0].price : 12.00;
+        }
+
+        function filterOrdersBySelect(sel) {
+            const group = sel.value.toLowerCase().replace('all status', 'all');
+            const table = sel.closest('.card, .orders-card').querySelector('table');
+            const rows = table.querySelectorAll('tbody tr');
+
+            rows.forEach(row => {
+                const status = (row.dataset.status || row.querySelector('.badge, .badge-status, .badge-active, .badge-done, .badge-pending')?.textContent.trim() || '').toLowerCase();
+
+                let matches = (group === 'all');
+                if (!matches) {
+                    if (group === 'active') matches = ['active', 'prepress', 'printing'].includes(status);
+                    else if (group === 'pending') matches = ['pending', 'reprint', 'shipping'].includes(status);
+                    else if (group === 'done') matches = ['done', 'delivered'].includes(status);
+                    else matches = status.includes(group);
+                }
+
+                row.style.display = matches ? '' : 'none';
+            });
         }
     </script>
 </body>
