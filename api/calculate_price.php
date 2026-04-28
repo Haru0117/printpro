@@ -41,7 +41,6 @@ try {
     ");
     $stmt->execute([$product_name, $quantity]);
     $base_rate = $stmt->fetchColumn();
-
     // Fallback if no exact tier found (use lowest tier)
     if ($base_rate === false) {
         $stmt = $pdo->prepare("SELECT base_price FROM tbl_base_prices bp JOIN tbl_products p ON p.id = bp.product_id WHERE LOWER(p.name) = LOWER(?) ORDER BY min_qty ASC LIMIT 1");

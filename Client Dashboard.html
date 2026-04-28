@@ -2888,16 +2888,20 @@
                                         <div class="dim-grid">
                                             <div>
                                                 <div class="form-label-sm">Standard Size</div>
-                                                <select class="form-control-sm-pp" id="sizeSelect"
+                                                <select class="form-control-sm-pp" id="sizeSelect" <<<<<<< HEAD
+                                                    onchange="handleSizeChange(this)">
+                                                    =======
                                                     onchange="updatePricing()">
                                                     <option value="">Select Size</option>
+                                                    >>>>>>> b2d75d1481a1cb62ae85603e5347c1b0fdbfe1f8
                                                 </select>
                                             </div>
                                             <div>
                                                 <div class="form-label-sm">Paper Weight</div>
                                                 <select class="form-control-sm-pp" id="paperSelect"
                                                     onchange="updatePricing()">
-                                                    <option value="">Select Paper</option>
+                                                    <<<<<<< HEAD=======<option value="">Select Paper</option>
+                                                        >>>>>>> b2d75d1481a1cb62ae85603e5347c1b0fdbfe1f8
                                                 </select>
                                             </div>
                                             <div>
@@ -2914,7 +2918,8 @@
                                                 <div class="form-label-sm">Finishing</div>
                                                 <select class="form-control-sm-pp" id="finishSelect"
                                                     onchange="updatePricing()">
-                                                    <option value="">None / Standard</option>
+                                                    <<<<<<< HEAD=======<option value="">None / Standard</option>
+                                                        >>>>>>> b2d75d1481a1cb62ae85603e5347c1b0fdbfe1f8
                                                 </select>
                                             </div>
                                             <div>
@@ -4470,8 +4475,30 @@
             const finishId = document.getElementById('finishSelect').value;
 
             document.getElementById('qtyVal').textContent = parseInt(qty).toLocaleString();
+<<<<<<< HEAD
+            if (document.getElementById('qtyValDetailed')) {
+                document.getElementById('qtyValDetailed').textContent = parseInt(qty).toLocaleString() + ' units';
+            }
+            document.getElementById('sumQty').textContent = parseInt(qty).toLocaleString();
+
+            const paperSelect = document.getElementById('paperSelect');
+            const sizeSelect = document.getElementById('sizeSelect');
+            const finishSelect = document.getElementById('finishSelect');
+
+            if (paperSelect.selectedIndex >= 0) document.getElementById('sumStock').textContent = paperSelect.options[paperSelect.selectedIndex].text;
+            if (sizeSelect.selectedIndex >= 0) document.getElementById('sumSize').textContent = sizeSelect.options[sizeSelect.selectedIndex].text;
+            if (finishSelect.selectedIndex >= 0) document.getElementById('sumFinish').textContent = finishSelect.options[finishSelect.selectedIndex].text;
+
+            if (!paperId || !sizeId) {
+                document.getElementById('summaryTotal').textContent = '₱0.00';
+                document.getElementById('sumSubtotal').textContent = '₱0.00';
+                document.getElementById('sumTax').textContent = '₱0.00';
+                return;
+            }
+=======
 
             if (!paperId || !sizeId) return;
+>>>>>>> b2d75d1481a1cb62ae85603e5347c1b0fdbfe1f8
 
             const formData = new FormData();
             formData.append('product_name', document.getElementById('sumProduct').textContent.trim());
@@ -4497,12 +4524,18 @@
                     const d = result.data;
 
                     // Update Summary
+<<<<<<< HEAD
+                    summaryTotal.textContent = '₱' + d.grand_total.toLocaleString(undefined, { minimumFractionDigits: 2 });
+                    sumSubtotal.textContent = '₱' + d.subtotal.toLocaleString(undefined, { minimumFractionDigits: 2 });
+                    sumTax.textContent = '₱' + d.tax.toLocaleString(undefined, { minimumFractionDigits: 2 });
+=======
                     document.querySelector('.summary-total-val').textContent = '₱' + d.grand_total.toLocaleString(undefined, { minimumFractionDigits: 2 });
                     document.querySelectorAll('.summary-row')[1].querySelectorAll('span')[1].textContent = parseInt(qty).toLocaleString();
 
                     const rows = document.querySelectorAll('.summary-row');
                     rows[6].querySelectorAll('span')[1].textContent = '₱' + d.subtotal.toLocaleString(undefined, { minimumFractionDigits: 2 });
                     rows[7].querySelectorAll('span')[1].textContent = '₱' + d.tax.toLocaleString(undefined, { minimumFractionDigits: 2 });
+>>>>>>> b2d75d1481a1cb62ae85603e5347c1b0fdbfe1f8
 
                     // Update Badge
                     const badge = document.getElementById('discountBadge');
@@ -4675,6 +4708,113 @@
             // If Admin set a new price for A4, use it; otherwise, use the default 12.00
             return specs.length > 0 ? specs[0].price : 12.00;
         }
+
+        /* ── GENERIC TEMPLATE PREVIEW MODAL ── */
+        (function () {
+            const TAG_STYLES = {
+                free: 'background:rgba(45,206,137,.15);color:#1aae6f;',
+                pro: 'background:rgba(124,77,255,.15);color:#7c4dff;',
+                popular: 'background:rgba(29,140,248,.15);color:#1d8cf8;'
+            };
+
+            function buildModal(name, meta, tag, imgSrc, size) {
+                // Remove any existing modal first
+                const old = document.getElementById('flyerPreviewBackdrop');
+                if (old) old.remove();
+
+                const backdrop = document.createElement('div');
+                backdrop.id = 'flyerPreviewBackdrop';
+                backdrop.setAttribute('role', 'dialog');
+                backdrop.setAttribute('aria-modal', 'true');
+                backdrop.setAttribute('aria-label', name + ' Preview');
+
+                const tagStyle = TAG_STYLES[tag] || TAG_STYLES.free;
+                const tagLabel = tag.charAt(0).toUpperCase() + tag.slice(1);
+
+                backdrop.innerHTML = `
+                    <div class="flyer-modal" id="flyerModalBox">
+                        <div class="flyer-modal-header">
+                            <div>
+                                <div class="flyer-modal-title">${name}</div>
+                                <div class="flyer-modal-meta">
+                                    <span style="${tagStyle}padding:1px 7px;border-radius:8px;font-weight:700;">${tagLabel}</span>
+                                    <span>${meta}</span>
+                                </div>
+                            </div>
+                            <button class="flyer-modal-close" onclick="closeFlyerPreview()" aria-label="Close" title="Close">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </div>
+                        <div class="flyer-aspect-wrap">
+                            <div class="flyer-img-skeleton" id="flyerSkeleton">
+                                <i class="bi bi-image"></i>
+                                <span>Loading preview…</span>
+                            </div>
+                            <span class="flyer-size-badge">${size} &nbsp;|&nbsp; 300 DPI Print-Ready</span>
+                            <img id="flyerPreviewImg" src="${imgSrc}"
+                                alt="${name} preview" draggable="false"
+                                onload="this.classList.add('img-loaded'); var sk=document.getElementById('flyerSkeleton'); if(sk) sk.style.opacity='0';"
+                                onerror="var sk=document.getElementById('flyerSkeleton'); if(sk) sk.innerHTML='<i class=\'bi bi-exclamation-circle\' style=\'color:var(--warning);font-size:2rem;\'></i><span>Preview unavailable</span>';">
+                        </div>
+                        <div class="flyer-modal-footer">
+                            <button class="btn-preview-cancel" onclick="closeFlyerPreview()">
+                                <i class="bi bi-x me-1"></i>Close
+                            </button>
+                            <button class="btn-use-template" onclick="closeFlyerPreview(); showClientPage('create', null);">
+                                <i class="bi bi-lightning-charge-fill me-1"></i>Use Template
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                backdrop.addEventListener('click', function (e) {
+                    if (e.target === backdrop) closeFlyerPreview();
+                });
+
+                document.addEventListener('keydown', function escHandler(e) {
+                    if (e.key === 'Escape') {
+                        closeFlyerPreview();
+                        document.removeEventListener('keydown', escHandler);
+                    }
+                });
+
+                document.body.appendChild(backdrop);
+            }
+
+            window.openTemplatePreview = function (name, meta, tag, imgSrc, size) {
+                buildModal(name, meta, tag, imgSrc, size);
+                requestAnimationFrame(function () {
+                    requestAnimationFrame(function () {
+                        const bd = document.getElementById('flyerPreviewBackdrop');
+                        if (bd) { bd.classList.add('visible'); document.body.style.overflow = 'hidden'; }
+                    });
+                });
+            };
+
+            /* Alias kept for the Bold Summer Flyer card */
+            window.openFlyerPreview = function () {
+                window.openTemplatePreview(
+                    'Bold Summer Flyer',
+                    '4&quot; &times; 6&quot; &nbsp;&middot;&nbsp; Flyer',
+                    'free',
+                    'https://i.pinimg.com/1200x/de/82/95/de82953c41f315a84cf0c25ce3021d52.jpg',
+                    '4&quot; &times; 6&quot;'
+                );
+            };
+
+            window.closeFlyerPreview = function () {
+                const bd = document.getElementById('flyerPreviewBackdrop');
+                if (!bd) return;
+                bd.classList.remove('visible');
+                document.body.style.overflow = '';
+                bd.addEventListener('transitionend', function cleanup(e) {
+                    if (e.propertyName === 'opacity') {
+                        bd.removeEventListener('transitionend', cleanup);
+                        bd.remove();
+                    }
+                });
+            };
+        })();
     </script>
 </body>
 
