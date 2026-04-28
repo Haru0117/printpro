@@ -23,55 +23,34 @@ if ($quantity <= 0) {
     exit;
 }
 
-try {
-    // Check if tables exist
-    $check = $pdo->query("SHOW TABLES LIKE 'tbl_products'");
-    if ($check->rowCount() == 0) {
-        echo json_encode(['success' => false, 'message' => 'Database tables missing. Please run api/migrate_pricing.php']);
-        exit;
-    }
+// Fetch modifiers
+$ids = [$paper_id, $size_id, $finish_id];
+$placeholders = str_repeat('?,', count($ids) - 1) . '?';
+$stmt = $pdo->prepare("SELECT id, price_modifier FROM print_specs WHERE id IN ($placeholders) AND is_active = 1");
+$stmt->execute($ids);
+$specs = $stmt->fetchAll();
 
-    // 1. Get Base Rate for the product and quantity tier
-    $stmt = $pdo->prepare("
-        SELECT bp.base_price 
-        FROM tbl_base_prices bp
-        JOIN tbl_products p ON p.id = bp.product_id
-        WHERE LOWER(p.name) = LOWER(?) AND bp.min_qty <= ?
-        ORDER BY bp.min_qty DESC LIMIT 1
-    ");
-    $stmt->execute([$product_name, $quantity]);
-    $base_rate = $stmt->fetchColumn();
-    // Fallback if no exact tier found (use lowest tier)
-    if ($base_rate === false) {
-        $stmt = $pdo->prepare("SELECT base_price FROM tbl_base_prices bp JOIN tbl_products p ON p.id = bp.product_id WHERE LOWER(p.name) = LOWER(?) ORDER BY min_qty ASC LIMIT 1");
-        $stmt->execute([$product_name]);
-        $base_rate = $stmt->fetchColumn() ?: 0;
-    }
+$unit_price = 0;
+foreach ($specs as $spec) {
+    $unit_price += floatval($spec['price_modifier']);
+}
 
-    // 2. Get Material Multiplier
-    $stmt = $pdo->prepare("SELECT multiplier FROM tbl_materials WHERE id = ?");
-    $stmt->execute([$material_id]);
-    $mat_mult = $stmt->fetchColumn() ?: 1.0;
+$subtotal = $unit_price * $quantity;
 
-    // 3. Get Size Multiplier
-    $stmt = $pdo->prepare("SELECT multiplier FROM tbl_sizes WHERE id = ?");
-    $stmt->execute([$size_id]);
-    $size_mult = $stmt->fetchColumn() ?: 1.0;
+// Discount Logic (Tiered)
+$discount_rate = 0;
+if ($quantity >= 1000) {
+    $discount_rate = 0.15; // 15%
+} elseif ($quantity >= 500) {
+    $discount_rate = 0.10; // 10%
+} elseif ($quantity >= 100) {
+    $discount_rate = 0.05; // 5%
+}
 
-    // 4. Get Finishing Fees
-    $stmt = $pdo->prepare("SELECT setup_fee, per_unit_fee FROM tbl_finishes WHERE id = ?");
-    $stmt->execute([$finish_id]);
-    $finish = $stmt->fetch() ?: ['setup_fee' => 0, 'per_unit_fee' => 0];
-
-    // 5. Bleed Fee
-    $bleed_fee = (strpos($bleed_option, 'Custom') !== false) ? 250.00 : 0.00;
-
-    // --- FORMULA ---
-    // Subtotal = (Base Rate * Mat * Size) + Setup + (Unit * Qty) + Bleed
-    $subtotal = ($base_rate * $mat_mult * $size_mult) + $finish['setup_fee'] + ($finish['per_unit_fee'] * $quantity) + $bleed_fee;
-
-    $tax = $subtotal * 0.12;
-    $grand_total = $subtotal + $tax;
+$discount_amount = $subtotal * $discount_rate;
+$total = $subtotal - $discount_amount;
+$tax = $total * 0.12; // 12% VAT
+$grand_total = $total + $tax;
 
     echo json_encode([
         'success' => true,
