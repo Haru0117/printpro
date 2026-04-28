@@ -4524,18 +4524,9 @@
                     const d = result.data;
 
                     // Update Summary
-<<<<<<< HEAD
                     summaryTotal.textContent = '₱' + d.grand_total.toLocaleString(undefined, { minimumFractionDigits: 2 });
                     sumSubtotal.textContent = '₱' + d.subtotal.toLocaleString(undefined, { minimumFractionDigits: 2 });
                     sumTax.textContent = '₱' + d.tax.toLocaleString(undefined, { minimumFractionDigits: 2 });
-=======
-                    document.querySelector('.summary-total-val').textContent = '₱' + d.grand_total.toLocaleString(undefined, { minimumFractionDigits: 2 });
-                    document.querySelectorAll('.summary-row')[1].querySelectorAll('span')[1].textContent = parseInt(qty).toLocaleString();
-
-                    const rows = document.querySelectorAll('.summary-row');
-                    rows[6].querySelectorAll('span')[1].textContent = '₱' + d.subtotal.toLocaleString(undefined, { minimumFractionDigits: 2 });
-                    rows[7].querySelectorAll('span')[1].textContent = '₱' + d.tax.toLocaleString(undefined, { minimumFractionDigits: 2 });
->>>>>>> b2d75d1481a1cb62ae85603e5347c1b0fdbfe1f8
 
                     // Update Badge
                     const badge = document.getElementById('discountBadge');
