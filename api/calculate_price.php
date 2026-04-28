@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $product_name = trim($_POST['product_name'] ?? 'Flyers');
 $quantity = intval($_POST['quantity'] ?? 0);
-$material_id = intval($_POST['paper_id'] ?? 0);
+$paper_id = intval($_POST['paper_id'] ?? 0);
 $size_id = intval($_POST['size_id'] ?? 0);
 $finish_id = intval($_POST['finish_id'] ?? 0);
 $bleed_option = $_POST['bleed_option'] ?? 'No Bleed';
@@ -23,6 +23,7 @@ if ($quantity <= 0) {
     exit;
 }
 
+try {
 // Fetch modifiers
 $ids = [$paper_id, $size_id, $finish_id];
 $placeholders = str_repeat('?,', count($ids) - 1) . '?';
@@ -55,15 +56,16 @@ $grand_total = $total + $tax;
     echo json_encode([
         'success' => true,
         'data' => [
-            'base_rate' => floatval($base_rate),
+            'base_rate' => floatval($unit_price),
             'subtotal' => round($subtotal, 2),
             'tax' => round($tax, 2),
             'grand_total' => round($grand_total, 2),
             'discount_rate' => 0
         ]
     ]);
+}
 
-} catch (PDOException $e) {
+catch (PDOException $e) {
     echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
 } catch (Exception $e) {
     echo json_encode(['success' => false, 'message' => 'System error: ' . $e->getMessage()]);

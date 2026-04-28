@@ -4475,7 +4475,6 @@
             const finishId = document.getElementById('finishSelect').value;
 
             document.getElementById('qtyVal').textContent = parseInt(qty).toLocaleString();
-<<<<<<< HEAD
             if (document.getElementById('qtyValDetailed')) {
                 document.getElementById('qtyValDetailed').textContent = parseInt(qty).toLocaleString() + ' units';
             }
@@ -4495,10 +4494,6 @@
                 document.getElementById('sumTax').textContent = '₱0.00';
                 return;
             }
-=======
-
-            if (!paperId || !sizeId) return;
->>>>>>> b2d75d1481a1cb62ae85603e5347c1b0fdbfe1f8
 
             const formData = new FormData();
             formData.append('product_name', document.getElementById('sumProduct').textContent.trim());
