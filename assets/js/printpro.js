@@ -1,3 +1,14 @@
+// Global API Path Helper for Live Server (Port 5500)
+function getApiUrl(path) {
+    const isLiveServer = window.location.port === '5500';
+    // Clean up relative path markers for absolute URL construction
+    const cleanPath = path.replace(/^\.\.\//, '').replace(/^\.\//, '');
+    if (isLiveServer) {
+        return 'http://localhost/printpro/' + cleanPath;
+    }
+    return path;
+}
+
 // ══════════════════════════════════════════════════
 // STATE
 // ══════════════════════════════════════════════════
@@ -38,7 +49,7 @@ async function switchSpecTab(tab, el) {
 
 async function renderSpecs() {
   try {
-    const res = await fetch(`../api/specs.php?type=${currentSpecTab}`);
+    const res = await fetch(getApiUrl(`api/specs.php?type=${currentSpecTab}`));
     const data = await res.json();
     if (!data.success) return;
 
@@ -131,7 +142,7 @@ async function saveSpec() {
   }
 
   try {
-    const res = await fetch('../api/specs.php', { method: 'POST', body: formData });
+    const res = await fetch(getApiUrl('api/specs.php'), { method: 'POST', body: formData });
     const data = await res.json();
     if (data.success) {
       showToast('Specification saved successfully!');
@@ -151,7 +162,7 @@ async function deleteSpec(id) {
   formData.append('id', id);
 
   try {
-    const res = await fetch('../api/specs.php', { method: 'POST', body: formData });
+    const res = await fetch(getApiUrl('api/specs.php'), { method: 'POST', body: formData });
     const data = await res.json();
     if (data.success) {
       showToast('Deleted successfully');

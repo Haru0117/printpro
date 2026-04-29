@@ -12,6 +12,7 @@
         href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap"
         rel="stylesheet">
 
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
     <style>
         :root {
             --navy: #0d1b3e;
@@ -25,7 +26,92 @@
             --border: #dde3f0;
             --muted: #8898aa;
             --off: #f4f6fb;
+            --dark-bg: #0a1628;
             --dark-card: #111e40;
+            --dark-card2: #162048;
+            --glass: rgba(255, 255, 255, 0.05);
+        }
+
+        [data-theme="dark"] {
+            --navy: #e0e6ed;
+            --off: #0d1b3e;
+            --border: rgba(255, 255, 255, 0.1);
+            --dark-bg: #0a1628;
+            --dark-card: #111e40;
+        }
+
+        /* ── DARK MODE THEME ── */
+        html[data-theme="dark"] body {
+            background: #0a1628;
+            color: #e0e6ed;
+        }
+
+        html[data-theme="dark"] .a-sidebar,
+        html[data-theme="dark"] .a-topbar,
+        html[data-theme="dark"] .chart-card,
+        html[data-theme="dark"] .kpi-card,
+        html[data-theme="dark"] .card {
+            background: #111e40 !important;
+            border-color: rgba(255, 255, 255, 0.08) !important;
+            color: #e0e6ed;
+        }
+
+        html[data-theme="dark"] .a-content {
+            background: #0a1628 !important;
+        }
+
+        html[data-theme="dark"] .card-hdr-title,
+        html[data-theme="dark"] .kpi-val,
+        html[data-theme="dark"] .chart-title,
+        html[data-theme="dark"] .legend-item,
+        html[data-theme="dark"] .fw-bold,
+        html[data-theme="dark"] .a-nav-item:hover,
+        html[data-theme="dark"] .a-tab:hover:not(.active) {
+            color: #e0e6ed !important;
+        }
+
+        html[data-theme="dark"] .a-nav-item.active {
+            background: rgba(29, 140, 248, .15);
+            color: var(--accent);
+        }
+
+        html[data-theme="dark"] .a-nav-item:not(.active),
+        html[data-theme="dark"] .a-tab:not(.active),
+        html[data-theme="dark"] .text-muted,
+        html[data-theme="dark"] .kpi-lbl {
+            color: #8a96b0 !important;
+        }
+
+        html[data-theme="dark"] .bg-light-subtle {
+            background: rgba(255, 255, 255, 0.03) !important;
+        }
+
+        html[data-theme="dark"] .border-start {
+            border-color: rgba(255, 255, 255, 0.1) !important;
+        }
+
+        html[data-theme="dark"] .a-topbar {
+            background: #111e40;
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        html[data-theme="dark"] .a-tab:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        html[data-theme="dark"] .recent-orders-table th {
+            background: rgba(255, 255, 255, 0.02);
+            color: #8a96b0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        html[data-theme="dark"] .recent-orders-table td {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: #e0e6ed;
+        }
+
+        html[data-theme="dark"] .recent-orders-table tr:hover {
+            background: rgba(255, 255, 255, 0.03);
         }
 
         * {
@@ -159,8 +245,9 @@
             border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            padding: 0 20px;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 100;
         }
 
         .a-tabs {
@@ -203,16 +290,24 @@
         /* Content area */
         .a-content {
             flex: 1;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: stretch !important;
             overflow-y: auto;
             background: #f0f2f8;
         }
 
         .a-page {
             display: none;
+            width: 100%;
+            min-height: 100%;
+            padding-bottom: 40px;
         }
 
         .a-page.active {
-            display: block;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
         }
 
         /* Shared card styles */
@@ -1377,6 +1472,313 @@
         .status-select:hover {
             background: rgba(29, 140, 248, .15);
         }
+
+        /* ── THEME TRANSITIONS ── */
+        html {
+            transition: background-color 0.3s ease;
+        }
+
+        body,
+        .a-topbar,
+        .a-sidebar,
+        .a-content,
+        .kpi-card,
+        .chart-card,
+        .card,
+        .notif-card,
+        .account-header,
+        .form-control,
+        .form-select {
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* ── DARK MODE THEME ── */
+        html[data-theme="dark"] body {
+            background: #0a1628;
+            color: #e0e6ed;
+        }
+
+        html[data-theme="dark"] .a-topbar,
+        html[data-theme="dark"] .a-sidebar,
+        html[data-theme="dark"] .a-content {
+            background: #0a1628;
+        }
+
+        html[data-theme="dark"] .a-sidebar {
+            background: #111e40;
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        html[data-theme="dark"] .a-topbar {
+            background: #111e40;
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        html[data-theme="dark"] .kpi-card,
+        html[data-theme="dark"] .chart-card,
+        html[data-theme="dark"] .card,
+        html[data-theme="dark"] .notif-card,
+        html[data-theme="dark"] .account-header,
+        html[data-theme="dark"] .a-dash .card {
+            background: #111e40 !important;
+            border-color: rgba(255, 255, 255, 0.08) !important;
+        }
+
+        html[data-theme="dark"] .a-brand-name,
+        html[data-theme="dark"] .kpi-val,
+        html[data-theme="dark"] .chart-title,
+        html[data-theme="dark"] .card-hdr-title,
+        html[data-theme="dark"] .fw-bold,
+        html[data-theme="dark"] .text-primary,
+        html[data-theme="dark"] .feed-name,
+        html[data-theme="dark"] .account-name,
+        html[data-theme="dark"] .notif-card-title,
+        html[data-theme="dark"] .settings-row-label,
+        html[data-theme="dark"] .table th,
+        html[data-theme="dark"] .table td {
+            color: #e0e6ed !important;
+        }
+
+        html[data-theme="dark"] .kpi-lbl,
+        html[data-theme="dark"] .chart-sub,
+        html[data-theme="dark"] .feed-text,
+        html[data-theme="dark"] .text-muted,
+        html[data-theme="dark"] .notif-label,
+        html[data-theme="dark"] .settings-row-sub,
+        html[data-theme="dark"] .account-email {
+            color: #8a96b0 !important;
+        }
+
+        html[data-theme="dark"] .a-nav-item,
+        html[data-theme="dark"] .a-tab {
+            color: #8a96b0;
+        }
+
+        html[data-theme="dark"] .a-nav-item:hover,
+        html[data-theme="dark"] .a-tab:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.05);
+            color: #e0e6ed;
+        }
+
+        html[data-theme="dark"] .a-nav-item.active {
+            background: rgba(29, 140, 248, 0.15);
+        }
+
+        html[data-theme="dark"] .card-hdr,
+        html[data-theme="dark"] .recent-orders-table th,
+        html[data-theme="dark"] .recent-orders-table td,
+        html[data-theme="dark"] .a-brand,
+        html[data-theme="dark"] .a-logout,
+        html[data-theme="dark"] .notif-row,
+        html[data-theme="dark"] .table> :not(caption)>*>* {
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+
+        html[data-theme="dark"] .recent-orders-table th {
+            color: #8a96b0;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        html[data-theme="dark"] .recent-orders-table td {
+            color: #e0e6ed;
+        }
+
+        /* ── DARK MODE OVERRIDES ── */
+        [data-theme="dark"] body,
+        [data-theme="dark"] .a-content {
+            background: var(--dark-bg) !important;
+            color: #e0e6ed;
+        }
+
+        [data-theme="dark"] .a-sidebar,
+        [data-theme="dark"] .c-avatar {
+            border-color: var(--border) !important;
+        }
+
+        /* Nuclear Overrides for hardcoded inline styles */
+        [data-theme="dark"] [style*="background:#fff"],
+        [data-theme="dark"] [style*="background: #fff"],
+        [data-theme="dark"] [style*="background:white"],
+        [data-theme="dark"] [style*="background: white"],
+        [data-theme="dark"] [style*="background-color:#fff"],
+        [data-theme="dark"] [style*="background-color: #fff"],
+        [data-theme="dark"] [style*="background:#ffffff"],
+        [data-theme="dark"] [style*="background: #ffffff"] {
+            background-color: var(--dark-card) !important;
+        }
+
+        [data-theme="dark"] [style*="color:#1a2340"],
+        [data-theme="dark"] [style*="color: #1a2340"],
+        [data-theme="dark"] [style*="color:#344767"],
+        [data-theme="dark"] [style*="color: #344767"],
+        [data-theme="dark"] [style*="color:#0d1b3e"],
+        [data-theme="dark"] [style*="color: #0d1b3e"],
+        [data-theme="dark"] [style*="color:black"],
+        [data-theme="dark"] [style*="color: black"] {
+            color: #fff !important;
+        }
+
+        /* Ensure cards in grid layouts are caught */
+        [data-theme="dark"] .card, 
+        [data-theme="dark"] .a-kpi-item, 
+        [data-theme="dark"] .a-dash-item {
+            background-color: var(--dark-card) !important;
+            color: #fff !important;
+        }
+
+        [data-theme="dark"] .a-topbar {
+            background: var(--dark-card) !important;
+            border-color: var(--border) !important;
+        }
+
+        [data-theme="dark"] .a-brand {
+            background: #081021;
+        }
+
+        [data-theme="dark"] .a-nav-item:hover,
+        [data-theme="dark"] .a-tab:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+
+        [data-theme="dark"] .chart-card,
+        [data-theme="dark"] .kpi-card,
+        [data-theme="dark"] .users-card,
+        [data-theme="dark"] .profile-panel,
+        [data-theme="dark"] .profile-body,
+        [data-theme="dark"] .devices-card,
+        [data-theme="dark"] .device-card,
+        [data-theme="dark"] .settings-card {
+            background: var(--dark-card) !important;
+            border-color: var(--border) !important;
+            color: #e0e6ed;
+        }
+
+        [data-theme="dark"] .kpi-val,
+        [data-theme="dark"] .card-hdr-title,
+        [data-theme="dark"] .chart-title,
+        [data-theme="dark"] .feed-name,
+        [data-theme="dark"] .profile-name,
+        [data-theme="dark"] .pstat-val,
+        [data-theme="dark"] .ra-text,
+        [data-theme="dark"] .device-name,
+        [data-theme="dark"] .setting-title {
+            color: #fff !important;
+        }
+
+        [data-theme="dark"] .recent-orders-table th,
+        [data-theme="dark"] .orders-table th,
+        [data-theme="dark"] .users-table th {
+            background: rgba(255, 255, 255, 0.03) !important;
+            color: var(--muted) !important;
+            border-color: var(--border) !important;
+        }
+
+        [data-theme="dark"] .recent-orders-table td,
+        [data-theme="dark"] .orders-table td,
+        [data-theme="dark"] .users-table td {
+            color: #b8c2d3 !important;
+            border-color: var(--border) !important;
+            background: transparent !important;
+        }
+
+        [data-theme="dark"] .orders-table tr:hover td,
+        [data-theme="dark"] .users-table tr:hover td {
+            background: rgba(255, 255, 255, 0.02) !important;
+        }
+
+        [data-theme="dark"] .search-input,
+        [data-theme="dark"] .filter-btn,
+        [data-theme="dark"] .btn-edit {
+            background: rgba(255, 255, 255, 0.05) !important;
+            border-color: var(--border) !important;
+            color: #e0e6ed !important;
+        }
+
+        [data-theme="dark"] .search-input input {
+            color: #fff !important;
+        }
+
+        [data-theme="dark"] .form-control,
+        [data-theme="dark"] .form-select,
+        [data-theme="dark"] .status-select {
+            background-color: #0a1628 !important;
+            border-color: var(--border) !important;
+            color: #e0e6ed !important;
+        }
+
+        [data-theme="dark"] .pstat,
+        [data-theme="dark"] .profile-info-row,
+        [data-theme="dark"] .ra-item,
+        [data-theme="dark"] .progress-bar-wrap {
+            background: rgba(255, 255, 255, 0.03) !important;
+            border-color: var(--border) !important;
+        }
+
+        [data-theme="dark"] .a-logout a {
+            color: var(--muted);
+        }
+
+        [data-theme="dark"] .a-logout a:hover {
+            color: var(--danger);
+        }
+
+        [data-theme="dark"] .settings-nav,
+        [data-theme="dark"] .settings-card,
+        [data-theme="dark"] .notif-card {
+            background: var(--dark-card) !important;
+            border-color: var(--border) !important;
+        }
+
+        [data-theme="dark"] .settings-nav-item:hover {
+            background: rgba(255, 255, 255, 0.05) !important;
+            color: #fff !important;
+        }
+
+        [data-theme="dark"] .settings-nav-item.active {
+            background: rgba(29, 140, 248, 0.1) !important;
+            color: var(--accent) !important;
+        }
+
+        [data-theme="dark"] .settings-row-label,
+        [data-theme="dark"] .notif-card-title,
+        [data-theme="dark"] .settings-card-title,
+        [data-theme="dark"] .card-hdr-title {
+            color: #fff !important;
+        }
+
+        [data-theme="dark"] .settings-row {
+            border-color: var(--border) !important;
+        }
+
+        /* Integration icon backgrounds in dark mode */
+        [data-theme="dark"] [style*="background:#f5f0ff"],
+        [data-theme="dark"] [style*="background:#f0fff4"],
+        [data-theme="dark"] [style*="background:#fff5f0"] {
+            background: rgba(255, 255, 255, 0.05) !important;
+        }
+
+        /* Centering the content for better layout */
+        .a-dash, 
+        .orders-wrap, 
+        .a-users, 
+        .a-subs-wrap, 
+        .devices-wrap, 
+        .account-wrap, 
+        .settings-wrap,
+        .a-specs-wrap {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 20px 24px;
+        }
+
+        [data-theme="dark"] .form-input,
+        [data-theme="dark"] .api-key-box {
+            background: rgba(0, 0, 0, 0.2) !important;
+            border-color: var(--border) !important;
+            color: #fff !important;
+        }
     </style>
 </head>
 
@@ -1442,27 +1844,32 @@
         <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
             <!-- Topbar -->
             <div class="a-topbar">
-                <div style="display:flex;align-items:center;gap:12px;">
-                    <button class="d-xl-none btn border-0 p-0" onclick="toggleMobileSidebar()"
-                        style="font-size:1.4rem;color:var(--navy);">
-                        <i class="bi bi-list"></i>
-                    </button>
-                    <div style="display:flex; align-items:center; gap:6px;" onclick="showPage('dashboard', null)">
-                        <img src="assets/img/logo.png" alt="PrintPro" class="a-mobile-logo" style="height:22px;">
-                        <span class="a-brand-badge d-xl-none">Admin</span>
-                    </div>
-                    <div class="a-tabs" id="adminTabs">
-                        <div class="a-tab active" onclick="showPage('dashboard', null)" data-page="dashboard">Dashboard
+                <div style="max-width: 1200px; margin: 0 auto; width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 0 24px; height: 100%;">
+                    <div style="display:flex;align-items:center;gap:12px;">
+                        <button class="d-xl-none btn border-0 p-0" onclick="toggleMobileSidebar()"
+                            style="font-size:1.4rem;color:var(--navy);">
+                            <i class="bi bi-list"></i>
+                        </button>
+                        <div style="display:flex; align-items:center; gap:6px;" onclick="showPage('dashboard', null)">
+                            <img src="assets/img/logo.png" alt="PrintPro" class="a-mobile-logo" style="height:22px;">
+                            <span class="a-brand-badge d-xl-none">Admin</span>
                         </div>
-                        <div class="a-tab" onclick="showPage('orders', null)" data-page="orders">Orders</div>
-                        <div class="a-tab" onclick="showPage('devices', null)" data-page="devices">Devices</div>
-                        <div class="a-tab" onclick="showPage('account', null)" data-page="account">Account</div>
+                        <div class="a-search-container" style="margin-left: 20px; flex: 1; max-width: 400px;">
+                            <div class="a-search" style="background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; display: flex; align-items: center; gap: 10px; cursor: text;" onclick="this.querySelector('input').focus()">
+                                <i class="bi bi-search" style="color: var(--muted); font-size: 0.8rem;"></i>
+                                <input type="text" placeholder="Search orders, clients, devices..." style="background: none; border: none; color: inherit; font-size: 0.85rem; width: 100%; outline: none;" oninput="handleAdminSearch(this.value)">
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="a-topbar-right" style="display:flex;align-items:center;gap:12px;">
-                    <i class="bi bi-bell" style="color:var(--muted);font-size:1.05rem;cursor:pointer;"></i>
-                    <div style="cursor:pointer;" onclick="showPage('account', null)">
-                        <div class="c-avatar" id="adminAvatar" title="">A</div>
+                    <div class="a-topbar-right" style="display:flex;align-items:center;gap:12px;">
+                        <button id="themeToggleBtn" class="btn border-0 p-0"
+                            style="color:var(--muted); font-size:1.1rem; display:flex; align-items:center;">
+                            <i class="bi bi-moon-stars"></i>
+                        </button>
+                        <i class="bi bi-bell" style="color:var(--muted);font-size:1.05rem;cursor:pointer;"></i>
+                        <div style="cursor:pointer;" onclick="showPage('account', null)">
+                            <div class="c-avatar" id="adminAvatar" title="">A</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1780,7 +2187,7 @@
                 </div>
             </div>
             <div class="a-page" id="page-specsPage" style="display: none;">
-                <div class="px-4">
+                <div class="a-specs-wrap">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <div>
                             <h4 class="fw-bold mb-0" style="color: var(--navy);">Print Specifications</h4>
@@ -1858,8 +2265,6 @@
                     </div>
                 </div>
             </div>
-
-        </div>
         <!-- ════ ORDERS ════ -->
         <div class="a-page" id="page-orders">
             <div class="orders-wrap">
@@ -2469,7 +2874,7 @@
 
         <!-- ════ SUBSCRIPTIONS ════ -->
         <div class="a-page" id="page-subscriptions">
-            <div style="padding: 20px 24px;">
+            <div class="a-subs-wrap">
                 <div class="users-card">
                     <div class="card-hdr" style="padding:14px 18px;">
                         <div>
@@ -2988,6 +3393,7 @@
     </div><!-- /a-app -->
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
         const pageToNav = {
             dashboard: 'nav-dashboard',
@@ -3521,6 +3927,42 @@
                 });
             }
         });
+
+        // Theme Toggle Logic
+        (function () {
+            const toggleBtn = document.getElementById('themeToggleBtn');
+            const icon = toggleBtn ? toggleBtn.querySelector('i') : null;
+
+            function setTheme(theme) {
+                document.documentElement.setAttribute('data-theme', theme);
+                localStorage.setItem('printpro-theme', theme);
+                if (icon) {
+                    if (theme === 'dark') {
+                        icon.className = 'bi bi-sun';
+                        icon.style.color = '#fb6340';
+                    } else {
+                        icon.className = 'bi bi-moon-stars';
+                        icon.style.color = 'var(--muted)';
+                    }
+                }
+            }
+
+            const currentTheme = localStorage.getItem('printpro-theme') || 'light';
+            setTheme(currentTheme);
+
+            if (toggleBtn) {
+                toggleBtn.addEventListener('click', () => {
+                    const newTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+                    setTheme(newTheme);
+                });
+            }
+        })();
+
+        function handleAdminSearch(val) {
+            val = val.toLowerCase().trim();
+            if(!val) return;
+            console.log("Searching for:", val);
+        }
     </script>
 </body>
 

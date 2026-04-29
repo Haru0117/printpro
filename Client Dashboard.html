@@ -11,6 +11,7 @@
         href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap"
         rel="stylesheet">
 
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
     <style>
         :root {
             --navy: #0d1b3e;
@@ -28,6 +29,14 @@
             --dark-bg: #0a1628;
             --dark-card: #111e40;
             --dark-card2: #162048;
+        }
+
+        [data-theme="dark"] {
+            --navy: #e0e6ed;
+            --off: #0d1b3e;
+            --border: rgba(255, 255, 255, 0.1);
+            --dark-bg: #0a1628;
+            --dark-card: #111e40;
         }
 
         * {
@@ -328,6 +337,7 @@
             box-shadow: 0 1px 6px rgba(0, 0, 0, .06);
             position: relative;
             z-index: 100;
+            flex-shrink: 0;
         }
 
         .c-sidebar-overlay {
@@ -390,16 +400,21 @@
         /* Client Content */
         .c-content {
             flex: 1;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: stretch !important;
             overflow-y: auto;
             background: #f0f2f8;
         }
 
         .c-page {
             display: none;
+            width: 100%;
+            min-height: 100%;
         }
 
         .c-page.active {
-            display: block;
+            display: block !important;
         }
 
         /* ── CLIENT DASHBOARD ── */
@@ -435,12 +450,46 @@
             align-items: center;
             justify-content: space-between;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
-            transition: transform .2s;
+            transition: transform .2s, background-color 0.3s ease, border-color 0.3s ease;
         }
 
         .stat-box:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Quick Action Cards */
+        .c-action-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 24px;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: transform .2s, background-color 0.3s ease, border-color 0.3s ease, box-shadow .2s;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+        }
+
+        .c-action-card:hover {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        .c-action-stat {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--navy);
+            transition: color 0.3s ease;
+        }
+
+        .c-action-label {
+            font-size: .7rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            transition: color 0.3s ease;
         }
 
         .stat-val {
@@ -543,26 +592,59 @@
 
         .badge-status {
             display: inline-block;
-            padding: 2px 8px;
-            border-radius: 20px;
-            font-size: .68rem;
-            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: .65rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .02em;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
 
-        .badge-active {
-            background: rgba(45, 206, 137, .15);
-            color: #1aae6f;
+        /* Success - Green */
+        .badge-active, .badge-success {
+            background: #2dce89 !important;
+            color: #fff !important;
         }
 
-        .badge-pending {
-            background: rgba(251, 99, 64, .15);
-            color: var(--warning);
+        /* Warning - Orange/Yellow */
+        .badge-pending, .badge-warning {
+            background: #fb6340 !important;
+            color: #fff !important;
         }
 
-        .badge-done {
-            background: rgba(29, 140, 248, .15);
-            color: var(--accent);
+        /* Blue - Primary */
+        .badge-done, .badge-primary {
+            background: #1d8cf8 !important;
+            color: #fff !important;
         }
+
+        /* Danger - Red */
+        .badge-danger {
+            background: #f5365c !important;
+            color: #fff !important;
+        }
+
+        /* Info - Cyan/Teal */
+        .badge-info, .badge-cyan {
+            background: #11cdef !important;
+            color: #fff !important;
+        }
+
+        /* Orders Page Badges (b-* syntax) */
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: .65rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .02em;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        .badge.b-active { background: #2dce89 !important; color: #fff !important; }
+        .badge.b-done { background: #1d8cf8 !important; color: #fff !important; }
+        .badge.b-pending { background: #fb6340 !important; color: #fff !important; }
 
         .action-item {
             padding: 12px 18px;
@@ -2445,6 +2527,974 @@
                 border-radius: 14px;
             }
         }
+
+        /* ── THEME TRANSITIONS ── */
+        html {
+            transition: background-color 0.3s ease;
+        }
+
+        body,
+        .c-topbar,
+        .c-search,
+        .c-search input,
+        .stat-box,
+        .wizard-card,
+        .orders-card,
+        .file-card,
+        .track-card,
+        .card,
+        .notif-card,
+        .account-header,
+        .files-sidebar,
+        .delivery-box,
+        .pt-btn,
+        .form-control-sm-pp,
+        .form-input,
+        #upload-area,
+        .summary-card,
+        .c-content {
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* ── DARK MODE THEME ── */
+        html[data-theme="dark"] body {
+            background: #0a1628;
+            color: #e0e6ed;
+        }
+
+        html[data-theme="dark"] .c-topbar,
+        html[data-theme="dark"] .c-search:focus-within {
+            background: #111e40;
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        html[data-theme="dark"] .c-search {
+            background: #0a1628;
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        html[data-theme="dark"] .c-search input {
+            color: #e0e6ed;
+        }
+
+        html[data-theme="dark"] .c-content {
+            background: #0a1628;
+        }
+
+        html[data-theme="dark"] .stat-box,
+        html[data-theme="dark"] .orders-card,
+        html[data-theme="dark"] .actions-card,
+        html[data-theme="dark"] .wizard-card,
+        html[data-theme="dark"] .track-card,
+        html[data-theme="dark"] .file-card,
+        html[data-theme="dark"] .tpl-card,
+        html[data-theme="dark"] .notif-card,
+        html[data-theme="dark"] .account-header,
+        html[data-theme="dark"] .delivery-box {
+            background: #111e40;
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        html[data-theme="dark"] .stat-val,
+        html[data-theme="dark"] .card-hdr-title,
+        html[data-theme="dark"] .card-title,
+        html[data-theme="dark"] .page-title,
+        html[data-theme="dark"] .step-title,
+        html[data-theme="dark"] .track-order-id,
+        html[data-theme="dark"] .tpl-name,
+        html[data-theme="dark"] .action-title,
+        html[data-theme="dark"] .orders-table td,
+        html[data-theme="dark"] .history-text,
+        html[data-theme="dark"] .settings-row-label,
+        html[data-theme="dark"] .form-label-sm,
+        html[data-theme="dark"] .notif-card-title,
+        html[data-theme="dark"] .account-name {
+            color: #e0e6ed !important;
+        }
+
+        html[data-theme="dark"] .settings-row-sub,
+        html[data-theme="dark"] .account-email {
+            color: #8a96b0 !important;
+        }
+
+        html[data-theme="dark"] .card-hdr,
+        html[data-theme="dark"] .orders-table th,
+        html[data-theme="dark"] .orders-table td,
+        html[data-theme="dark"] .action-item,
+        html[data-theme="dark"] .wizard-hdr,
+        html[data-theme="dark"] .track-card-hdr,
+        html[data-theme="dark"] .track-details,
+        html[data-theme="dark"] .track-detail,
+        html[data-theme="dark"] .track-history,
+        html[data-theme="dark"] .invoice-row,
+        html[data-theme="dark"] .pm-item {
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+
+        html[data-theme="dark"] .orders-table th {
+            background: rgba(255, 255, 255, 0.02);
+            color: #8a96b0;
+        }
+
+        html[data-theme="dark"] .orders-table tr:hover td,
+        html[data-theme="dark"] .action-item:hover,
+        html[data-theme="dark"] .invoice-row:hover,
+        html[data-theme="dark"] .pm-item:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        html[data-theme="dark"] .pt-btn {
+            background: #0a1628;
+            border-color: rgba(255, 255, 255, 0.08);
+            color: #8a96b0;
+        }
+
+        html[data-theme="dark"] .pt-btn:hover:not(.active) {
+            border-color: rgba(255, 255, 255, 0.2);
+            color: #e0e6ed;
+        }
+
+        html[data-theme="dark"] .form-control-sm-pp,
+        html[data-theme="dark"] .form-input {
+            background: #0a1628;
+            border-color: rgba(255, 255, 255, 0.1);
+            color: #e0e6ed;
+        }
+
+        html[data-theme="dark"] .form-control-sm-pp:focus,
+        html[data-theme="dark"] .form-input:focus {
+            background: #111e40;
+        }
+
+        html[data-theme="dark"] #upload-area {
+            background: #0a1628 !important;
+            border-color: rgba(255, 255, 255, 0.15) !important;
+        }
+
+        html[data-theme="dark"] #upload-area h5 {
+            color: #e0e6ed !important;
+        }
+
+        html[data-theme="dark"] .c-order-sidebar .summary-card {
+            background: #111e40;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* ── INVOICE DARK MODE ── */
+        html[data-theme="dark"] .invoice-id,
+        html[data-theme="dark"] .invoice-amt {
+            color: #e0e6ed !important;
+        }
+
+        html[data-theme="dark"] .invoice-name {
+            color: #8a96b0 !important;
+        }
+
+        /* ── FILES MODULE DARK MODE ── */
+        html[data-theme="dark"] .files-sidebar {
+            background: #0a1628;
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        html[data-theme="dark"] .files-main {
+            background: #0a1628;
+        }
+
+        html[data-theme="dark"] .files-toolbar {
+            background: #111e40;
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        html[data-theme="dark"] .files-toolbar h4 {
+            color: #e0e6ed;
+        }
+
+        html[data-theme="dark"] .files-search-box {
+            background: #0a1628;
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        html[data-theme="dark"] .files-search-box input {
+            color: #e0e6ed;
+        }
+
+        html[data-theme="dark"] .files-nav-item {
+            color: #8a96b0;
+        }
+
+        html[data-theme="dark"] .files-nav-item:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.05);
+            color: #e0e6ed;
+        }
+
+        html[data-theme="dark"] .file-item {
+            background: #111e40;
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        html[data-theme="dark"] .file-item-name {
+            color: #e0e6ed;
+        }
+
+        html[data-theme="dark"] .file-item-list {
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+
+        html[data-theme="dark"] .file-item-list:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        html[data-theme="dark"] .files-context-menu {
+            background: #162048;
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        html[data-theme="dark"] .ctx-item {
+            color: #e0e6ed;
+        }
+
+        html[data-theme="dark"] .ctx-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        html[data-theme="dark"] .ctx-separator {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        html[data-theme="dark"] .fm-modal {
+            background: #111e40;
+            color: #e0e6ed;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        html[data-theme="dark"] .fm-modal h3 {
+            color: #fff;
+        }
+
+        html[data-theme="dark"] .fm-modal p {
+            color: #8a96b0;
+        }
+
+        html[data-theme="dark"] #fm-modal-input {
+            background: #0a1628;
+            border-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        html[data-theme="dark"] .fm-btn-cancel {
+            background: rgba(255, 255, 255, 0.05);
+            color: #e0e6ed;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        html[data-theme="dark"] .fm-folder-create-btn {
+            background: #111e40;
+            color: #e0e6ed;
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        html[data-theme="dark"] .fm-folder-create-btn:hover {
+            background: #162048;
+        }
+
+        html[data-theme="dark"] .c-nav-item:not(.active) {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        html[data-theme="dark"] .c-nav-item:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+
+        html[data-theme="dark"] .c-topbar {
+            background: #0a1628;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        html[data-theme="dark"] .c-topbar i,
+        html[data-theme="dark"] .c-topbar span {
+            color: #e0e6ed;
+        }
+
+        html[data-theme="dark"] .c-search {
+            background: #111e40;
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        html[data-theme="dark"] .c-search input {
+            color: #e0e6ed;
+        }
+
+        html[data-theme="dark"] .c-search input::placeholder {
+            color: #8a96b0;
+        }
+
+        html[data-theme="dark"] .c-nav-item i {
+            color: rgba(255, 255, 255, 0.45);
+        }
+
+        html[data-theme="dark"] .c-nav-item.active i {
+            color: #fff;
+        }
+
+        html[data-theme="dark"] .files-nav-item i {
+            color: #8a96b0;
+        }
+
+        html[data-theme="dark"] .files-nav-item.active i {
+            color: #fff;
+        }
+
+        /* ── NUCLEAR DARK MODE FIXES (Hardcoded Overrides) ── */
+        html[data-theme="dark"] [style*="background:#fff"],
+        html[data-theme="dark"] [style*="background: #fff"],
+        html[data-theme="dark"] [style*="background:white"],
+        html[data-theme="dark"] [style*="background: white"] {
+            background: #111e40 !important;
+        }
+
+        html[data-theme="dark"] [style*="color:#1a2340"],
+        html[data-theme="dark"] [style*="color: #1a2340"],
+        html[data-theme="dark"] [style*="color:black"],
+        html[data-theme="dark"] [style*="color: black"] {
+            color: #e0e6ed !important;
+        }
+
+        html[data-theme="dark"] .form-input,
+        html[data-theme="dark"] .form-control-sm-pp {
+            background: #0a1628 !important;
+            color: #e0e6ed !important;
+            border-color: rgba(255, 255, 255, 0.1) !important;
+        }
+
+        html[data-theme="dark"] .c-welcome-hero {
+            background: linear-gradient(135deg, #111e40, #1a2340) !important;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        html[data-theme="dark"] .files-toolbar-actions button.files-folder-create-btn {
+            background: #111e40;
+            color: #e0e6ed;
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        html[data-theme="dark"] .files-toolbar-actions button.files-folder-create-btn:hover {
+            background: #162048;
+        }
+
+        /* ── FILES MODULE – FULL STYLES ── */
+        .files-layout {
+            display: flex;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            flex: 1;
+        }
+
+        .files-sidebar {
+            width: 220px;
+            background: rgba(255, 255, 255, .4);
+            border-right: 1px solid var(--border);
+            padding: 16px 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .files-sidebar-section-label {
+            font-size: .65rem;
+            font-weight: 800;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            padding: 8px 12px;
+            margin-top: 12px;
+        }
+
+        .files-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 12px;
+            border-radius: 10px;
+            font-size: .82rem;
+            color: #344767;
+            cursor: pointer;
+            transition: all .2s ease;
+            font-weight: 500;
+            position: relative;
+        }
+
+        .files-nav-item i {
+            font-size: 1.05rem;
+            color: var(--muted);
+            transition: color .2s;
+        }
+
+        .files-nav-item:hover {
+            background: rgba(29, 140, 248, .08);
+            color: var(--accent);
+        }
+
+        .files-nav-item.active {
+            background: var(--accent);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(29, 140, 248, .25);
+        }
+
+        .files-nav-item.active i {
+            color: #fff;
+        }
+
+        .files-nav-badge {
+            margin-left: auto;
+            font-size: .65rem;
+            background: rgba(0, 0, 0, .1);
+            padding: 1px 6px;
+            border-radius: 6px;
+        }
+
+        .files-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #fff;
+            overflow: hidden;
+            min-height: 0;
+        }
+
+        .files-toolbar {
+            padding: 14px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: #fff;
+            z-index: 10;
+        }
+
+        .files-toolbar h4 {
+            font-family: 'Sora', sans-serif;
+            font-size: 1rem;
+            font-weight: 800;
+            color: #1a2340;
+            margin: 0;
+            min-width: 120px;
+        }
+
+        .files-search-box {
+            position: relative;
+            flex: 1;
+            max-width: 400px;
+        }
+
+        .files-search-box i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+            font-size: .85rem;
+        }
+
+        .files-search-box input {
+            width: 100%;
+            padding: 7px 12px 7px 34px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: .8rem;
+            font-family: 'DM Sans', sans-serif;
+            background: var(--off);
+            transition: all .2s;
+        }
+
+        .files-search-box input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(29, 140, 248, .1);
+        }
+
+        .files-toolbar-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .files-upload-btn,
+        .files-folder-create-btn {
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: .78rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all .2s;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .files-upload-btn {
+            background: var(--accent);
+            color: #fff;
+            border: none;
+        }
+
+        .files-upload-btn:hover {
+            filter: brightness(1.1);
+            transform: translateY(-1px);
+        }
+
+        .files-folder-create-btn {
+            background: #fff;
+            color: #344767;
+            border: 1px solid var(--border);
+        }
+
+        .files-folder-create-btn:hover {
+            background: var(--off);
+            border-color: var(--muted);
+        }
+
+        .files-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            grid-auto-rows: max-content;
+            gap: 20px;
+            align-content: start;
+            transition: opacity 0.2s ease;
+        }
+
+        .files-body.list-view {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            padding: 8px 16px;
+        }
+
+        /* File Card */
+        .file-item {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all .2s ease;
+            position: relative;
+            user-select: none;
+        }
+
+        .file-item:hover {
+            border-color: var(--accent);
+            background: rgba(29, 140, 248, .02);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, .05);
+        }
+
+        .file-item.selected {
+            background: rgba(29, 140, 248, .08);
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px var(--accent);
+        }
+
+        .file-icon-wrap {
+            width: 54px;
+            height: 54px;
+            margin: 0 auto 12px;
+            display: grid;
+            place-items: center;
+            font-size: 2rem;
+            position: relative;
+        }
+
+        .file-star-indicator {
+            position: absolute;
+            top: 0;
+            right: 0;
+            font-size: .8rem;
+            color: #ffb800;
+        }
+
+        .file-item-name {
+            font-size: .8rem;
+            font-weight: 600;
+            color: #1a2340;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 4px;
+        }
+
+        .file-item-meta {
+            font-size: .68rem;
+            color: var(--muted);
+        }
+
+        /* List View Styles */
+        .file-item-list {
+            display: flex;
+            align-items: center;
+            padding: 10px 16px;
+            border-bottom: 1px solid #f0f2f8;
+            cursor: pointer;
+            transition: background .2s;
+        }
+
+        .file-item-list:hover {
+            background: #f8faff;
+        }
+
+        .file-item-list.selected {
+            background: rgba(29, 140, 248, .08);
+        }
+
+        .file-item-list .file-icon-wrap {
+            width: 32px;
+            height: 32px;
+            margin: 0 16px 0 0;
+            font-size: 1.3rem;
+        }
+
+        .file-item-list .file-item-info {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* Context Menu */
+        .files-context-menu {
+            position: fixed;
+            z-index: 2000;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, .15);
+            padding: 6px;
+            min-width: 180px;
+            display: none;
+            animation: ctxFade .15s ease-out;
+        }
+
+        @keyframes ctxFade {
+            from {
+                opacity: 0;
+                transform: translateY(5px) scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .ctx-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            font-size: .82rem;
+            color: #344767;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+        .ctx-item i {
+            font-size: 1rem;
+            color: var(--muted);
+        }
+
+        .ctx-item:hover {
+            background: var(--off);
+            color: var(--accent);
+        }
+
+        .ctx-item:hover i {
+            color: var(--accent);
+        }
+
+        .ctx-item.danger:hover {
+            background: rgba(245, 54, 92, .08);
+            color: var(--danger);
+        }
+
+        .ctx-item.danger:hover i {
+            color: var(--danger);
+        }
+
+        .ctx-separator {
+            height: 1px;
+            background: #f0f2f8;
+            margin: 4px 0;
+        }
+
+        /* Modals */
+        .fm-modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 22, 40, .6);
+            backdrop-filter: blur(4px);
+            z-index: 3000;
+            display: none;
+            place-items: center;
+            opacity: 0;
+            transition: opacity .3s ease;
+        }
+
+        .fm-modal-backdrop.show {
+            display: grid;
+            opacity: 1;
+        }
+
+        .fm-modal {
+            background: #fff;
+            width: 100%;
+            max-width: 400px;
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, .2);
+            transform: scale(0.9) translateY(20px);
+            transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .fm-modal-backdrop.show .fm-modal {
+            transform: scale(1) translateY(0);
+        }
+
+        .fm-modal-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .fm-modal h3 {
+            font-family: 'Sora', sans-serif;
+            font-weight: 800;
+            font-size: 1.25rem;
+            color: #1a2340;
+            margin-bottom: 10px;
+        }
+
+        .fm-modal p {
+            font-size: .85rem;
+            color: var(--muted);
+            margin-bottom: 24px;
+        }
+
+        .fm-modal input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            margin-bottom: 24px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: .9rem;
+        }
+
+        .fm-modal input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(29, 140, 248, .1);
+        }
+
+        .fm-modal-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .fm-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: .85rem;
+            cursor: pointer;
+            transition: all .2s;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .fm-btn-cancel {
+            background: var(--off);
+            color: #344767;
+            border: 1px solid var(--border);
+        }
+
+        .fm-btn-primary {
+            background: var(--accent);
+            color: #fff;
+            border: none;
+        }
+
+        .fm-btn-danger {
+            background: var(--danger);
+            color: #fff;
+            border: none;
+        }
+
+        /* Drag & Drop Overly */
+        .fm-dropzone-overlay {
+            position: absolute;
+            inset: 8px;
+            border: 2px dashed var(--accent);
+            background: rgba(29, 140, 248, .05);
+            border-radius: 16px;
+            z-index: 50;
+            display: none;
+            place-items: center;
+            pointer-events: none;
+        }
+
+        .fm-dropzone-overlay i {
+            font-size: 3rem;
+            color: var(--accent);
+            animation: bounceIn .5s;
+        }
+
+        /* Toast */
+        .fm-toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #1a2340;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: .85rem;
+            font-weight: 600;
+            z-index: 4000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, .2);
+            transition: transform .4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .fm-toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* DARK MODE FOR FILES */
+        html[data-theme="dark"] .files-main,
+        html[data-theme="dark"] .files-toolbar,
+        html[data-theme="dark"] .file-item,
+        html[data-theme="dark"] .files-context-menu,
+        html[data-theme="dark"] .fm-modal {
+            background: #111e40;
+            border-color: rgba(255, 255, 255, 0.08);
+            color: #e0e6ed;
+        }
+
+        html[data-theme="dark"] .files-sidebar {
+            background: rgba(10, 22, 40, .4);
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        html[data-theme="dark"] .files-nav-item:not(.active) {
+            color: #8a96b0;
+        }
+
+        html[data-theme="dark"] .files-nav-item:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        html[data-theme="dark"] .files-toolbar h4,
+        html[data-theme="dark"] .file-item-name,
+        html[data-theme="dark"] .ctx-item,
+        html[data-theme="dark"] .fm-modal h3 {
+            color: #e0e6ed;
+        }
+
+        html[data-theme="dark"] .files-search-box input,
+        html[data-theme="dark"] .files-folder-create-btn,
+        html[data-theme="dark"] .fm-modal input {
+            background: #0a1628;
+            border-color: rgba(255, 255, 255, 0.1);
+            color: #e0e6ed;
+        }
+
+        html[data-theme="dark"] .ctx-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        html[data-theme="dark"] .fm-btn-cancel {
+            background: rgba(255, 255, 255, 0.05);
+            color: #e0e6ed;
+        }
+
+        /* ── Stat Boxes & Quick Action Cards ── */
+        html[data-theme="dark"] .stat-box,
+        html[data-theme="dark"] .c-action-card {
+            background: #111e40 !important;
+            border-color: rgba(255, 255, 255, 0.08) !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+        }
+
+        html[data-theme="dark"] .c-action-card:hover {
+            background: #162048 !important;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+        }
+
+        html[data-theme="dark"] .c-action-stat {
+            color: #e0e6ed !important;
+        }
+
+        html[data-theme="dark"] .c-action-label {
+            color: #8a96b0 !important;
+        }
+
+        /* Dashboard headings with inline color */
+        html[data-theme="dark"] h4[style*="color:#1a2340"],
+        html[data-theme="dark"] h4[style*="color: #1a2340"] {
+            color: #e0e6ed !important;
+        }
+
+        /* Nuclear Overrides for hardcoded inline styles */
+        html[data-theme="dark"] [style*="background:#fff"],
+        html[data-theme="dark"] [style*="background: #fff"],
+        html[data-theme="dark"] [style*="background:white"],
+        html[data-theme="dark"] [style*="background: white"],
+        html[data-theme="dark"] [style*="background-color:#fff"],
+        html[data-theme="dark"] [style*="background-color: #fff"],
+        html[data-theme="dark"] [style*="background:#ffffff"],
+        html[data-theme="dark"] [style*="background: #ffffff"] {
+            background-color: var(--dark-card) !important;
+        }
+
+        html[data-theme="dark"] [style*="color:#1a2340"],
+        html[data-theme="dark"] [style*="color: #1a2340"],
+        html[data-theme="dark"] [style*="color:#344767"],
+        html[data-theme="dark"] [style*="color: #344767"],
+        html[data-theme="dark"] [style*="color:#0d1b3e"],
+        html[data-theme="dark"] [style*="color: #0d1b3e"],
+        html[data-theme="dark"] [style*="color:black"],
+        html[data-theme="dark"] [style*="color: black"] {
+            color: #e0e6ed !important;
+        }
+
+        /* Centering the content for better layout */
+        .c-dash, 
+        .c-dash,
+        .c-order,
+        .account-wrap,
+        .c-billing-wrap,
+        .c-track-wrap,
+        .templates-wrap {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 20px 24px;
+        }
+
+        html[data-theme="dark"] .c-search:focus-within {
+            background: var(--dark-card) !important;
+        }
     </style>
 </head>
 
@@ -2527,28 +3577,34 @@
 
                 <!-- Topbar -->
                 <div class="c-topbar">
-                    <div style="display:flex;align-items:center;gap:12px;">
-                        <button class="btn border-0 p-0 d-xl-none" onclick="toggleClientSidebar()"
-                            style="font-size:1.4rem;color:var(--navy);">
-                            <i class="bi bi-list"></i>
-                        </button>
-                        <div style="display:flex; align-items:center; gap:6px;"
-                            onclick="showClientPage('dashboard', null)">
-                            <img src="assets/img/logo.png" alt="PrintPro" class="c-mobile-logo">
-                            <span class="c-brand-badge d-xl-none">Client</span>
+                    <div style="max-width: 1200px; margin: 0 auto; width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 0 24px; height: 100%;">
+                        <div style="display:flex;align-items:center;gap:12px;">
+                            <button class="btn border-0 p-0 d-xl-none" onclick="toggleClientSidebar()"
+                                style="font-size:1.4rem;color:var(--navy);">
+                                <i class="bi bi-list"></i>
+                            </button>
+                            <div style="display:flex; align-items:center; gap:6px;"
+                                onclick="showClientPage('dashboard', null)">
+                                <img src="assets/img/logo.png" alt="PrintPro" class="c-mobile-logo">
+                                <span class="c-brand-badge d-xl-none">Client</span>
+                            </div>
+                            <div class="c-search" onclick="this.querySelector('input').focus()">
+                                <i class="bi bi-search"
+                                    style="font-size:.75rem; color: var(--muted); pointer-events: none;"></i>
+                                <input type="text" placeholder="Search orders, files, templates..."
+                                    oninput="handleDashboardSearch(this.value)">
+                            </div>
                         </div>
-                        <div class="c-search" onclick="this.querySelector('input').focus()">
-                            <i class="bi bi-search"
-                                style="font-size:.75rem; color: var(--muted); pointer-events: none;"></i>
-                            <input type="text" placeholder="Search orders, files, templates..."
-                                oninput="handleDashboardSearch(this.value)">
-                        </div>
-                    </div>
-                    <div style="display:flex;align-items:center;gap:12px;">
-                        <i class="bi bi-bell" style="color:var(--muted);cursor:pointer;font-size:1.05rem;"></i>
-                        <div style="display:flex;align-items:center;gap:8px;cursor:pointer;"
-                            onclick="showClientPage('account', null)">
-                            <div class="c-avatar" id="clientAvatar" title="">J</div>
+                        <div style="display:flex;align-items:center;gap:12px;">
+                            <button id="themeToggleBtn" class="btn border-0 p-0"
+                                style="color:var(--muted); font-size:1.1rem; display:flex; align-items:center;">
+                                <i class="bi bi-moon-stars"></i>
+                            </button>
+                            <i class="bi bi-bell" style="color:var(--muted);cursor:pointer;font-size:1.05rem;"></i>
+                            <div style="display:flex;align-items:center;gap:8px;cursor:pointer;"
+                                onclick="showClientPage('account', null)">
+                                <div class="c-avatar" id="clientAvatar" title="">J</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -2562,7 +3618,7 @@
                             <div
                                 style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
                                 <div>
-                                    <h4
+                                    <h4 class="page-title"
                                         style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:#1a2340;margin:0;">
                                         Executive Dashboard</h4>
                                     <p style="font-size:.75rem;color:var(--muted);margin:0;">Manage your printing
@@ -2598,50 +3654,37 @@
                                     style="position: absolute; right: 20px; bottom: -10px; font-size: 6rem; color: rgba(255,255,255,.05);"></i>
                             </div>
 
-                            <!-- Quick Actions -->
                             <div class="c-quick-actions"
                                 style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px;">
-                                <div class="c-action-card"
-                                    style="background: #fff; border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; text-align: center; padding: 24px; border-radius: 14px; cursor: pointer; transition: transform .2s;"
-                                    onclick="showClientPage('orders', null)"
+                                <div class="c-action-card" onclick="showClientPage('orders', null)"
                                     onmouseover="this.style.transform='translateY(-4px)'"
                                     onmouseout="this.style.transform='translateY(0)'">
                                     <div
                                         style="width: 40px; height: 40px; background: rgba(79, 126, 247, .1); color: var(--accent); border-radius: 10px; display: grid; place-items: center; font-size: 1.2rem; margin-bottom: 8px;">
                                         <i class="bi bi-box-seam"></i>
                                     </div>
-                                    <div style="font-size: 1.1rem; font-weight: 800; color: var(--navy);">12</div>
-                                    <div
-                                        style="font-size: .7rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em;">
-                                        Active Orders</div>
+                                    <div class="c-action-stat">12</div>
+                                    <div class="c-action-label">Active Orders</div>
                                 </div>
-                                <div class="c-action-card"
-                                    style="background: #fff; border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; text-align: center; padding: 24px; border-radius: 14px; cursor: pointer; transition: transform .2s;"
-                                    onclick="showClientPage('files', null)"
+                                <div class="c-action-card" onclick="showClientPage('files', null)"
                                     onmouseover="this.style.transform='translateY(-4px)'"
                                     onmouseout="this.style.transform='translateY(0)'">
                                     <div
                                         style="width: 40px; height: 40px; background: rgba(62, 198, 198, .1); color: var(--teal); border-radius: 10px; display: grid; place-items: center; font-size: 1.2rem; margin-bottom: 8px;">
                                         <i class="bi bi-folder2"></i>
                                     </div>
-                                    <div style="font-size: 1.1rem; font-weight: 800; color: var(--navy);">48</div>
-                                    <div
-                                        style="font-size: .7rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em;">
-                                        Assets</div>
+                                    <div class="c-action-stat">48</div>
+                                    <div class="c-action-label">Assets</div>
                                 </div>
-                                <div class="c-action-card"
-                                    style="background: #fff; border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; text-align: center; padding: 24px; border-radius: 14px; cursor: pointer; transition: transform .2s;"
-                                    onclick="showClientPage('billing', null)"
+                                <div class="c-action-card" onclick="showClientPage('billing', null)"
                                     onmouseover="this.style.transform='translateY(-4px)'"
                                     onmouseout="this.style.transform='translateY(0)'">
                                     <div
                                         style="width: 40px; height: 40px; background: rgba(45, 206, 137, .1); color: #2dce89; border-radius: 10px; display: grid; place-items: center; font-size: 1.2rem; margin-bottom: 8px;">
                                         <i class="bi bi-credit-card"></i>
                                     </div>
-                                    <div style="font-size: 1.1rem; font-weight: 800; color: var(--navy);">₱14k</div>
-                                    <div
-                                        style="font-size: .7rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em;">
-                                        Credits</div>
+                                    <div class="c-action-stat">₱14k</div>
+                                    <div class="c-action-label">Credits</div>
                                 </div>
                             </div>
 
@@ -2678,7 +3721,7 @@
                                                             style="color:var(--muted);font-size:.7rem;">Brochure</span>
                                                     </td>
                                                     <td>1,000</td>
-                                                    <td><span class="badge-status badge-active"
+                                                    <td><span class="badge-status badge-success"
                                                             data-status-label="PPR-48">Active</span></td>
                                                     <td>Oct 24</td>
                                                     <td style="font-weight:700;">₱4,250.00</td>
@@ -2689,7 +3732,7 @@
                                                             style="color:var(--muted);font-size:.7rem;">Report</span>
                                                     </td>
                                                     <td>250</td>
-                                                    <td><span class="badge-status badge-pending">Reprint</span></td>
+                                                    <td><span class="badge-status badge-warning">Reprint</span></td>
                                                     <td>—</td>
                                                     <td style="font-weight:700;">₱12,800.00</td>
                                                 </tr>
@@ -2700,7 +3743,7 @@
                                                             Set</span>
                                                     </td>
                                                     <td>1,200</td>
-                                                    <td><span class="badge-status badge-done">Delivery</span></td>
+                                                    <td><span class="badge-status badge-primary">Delivery</span></td>
                                                     <td>Oct 21</td>
                                                     <td style="font-weight:700;">₱15,500.00</td>
                                                 </tr>
@@ -2710,7 +3753,7 @@
                                                             style="color:var(--muted);font-size:.7rem;">Mailers</span>
                                                     </td>
                                                     <td>5,000</td>
-                                                    <td><span class="badge-status badge-active"
+                                                    <td><span class="badge-status badge-success"
                                                             data-status-label="PPR-41">Active</span></td>
                                                     <td>Nov 2</td>
                                                     <td style="font-weight:700;">₱8,750.00</td>
@@ -2763,7 +3806,7 @@
                         <div class="c-dash">
                             <div
                                 style="margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;">
-                                <h4
+                                <h4 class="page-title"
                                     style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:#1a2340;margin:0;">
                                     All Orders</h4>
                                 <button onclick="showClientPage('create', null)"
@@ -2888,20 +3931,16 @@
                                         <div class="dim-grid">
                                             <div>
                                                 <div class="form-label-sm">Standard Size</div>
-                                                <select class="form-control-sm-pp" id="sizeSelect" <<<<<<< HEAD
+                                                <select class="form-control-sm-pp" id="sizeSelect"
                                                     onchange="handleSizeChange(this)">
-                                                    =======
-                                                    onchange="updatePricing()">
                                                     <option value="">Select Size</option>
-                                                    >>>>>>> b2d75d1481a1cb62ae85603e5347c1b0fdbfe1f8
                                                 </select>
                                             </div>
                                             <div>
                                                 <div class="form-label-sm">Paper Weight</div>
                                                 <select class="form-control-sm-pp" id="paperSelect"
                                                     onchange="updatePricing()">
-                                                    <<<<<<< HEAD=======<option value="">Select Paper</option>
-                                                        >>>>>>> b2d75d1481a1cb62ae85603e5347c1b0fdbfe1f8
+                                                    <option value="">Select Paper</option>
                                                 </select>
                                             </div>
                                             <div>
@@ -2918,8 +3957,7 @@
                                                 <div class="form-label-sm">Finishing</div>
                                                 <select class="form-control-sm-pp" id="finishSelect"
                                                     onchange="updatePricing()">
-                                                    <<<<<<< HEAD=======<option value="">None / Standard</option>
-                                                        >>>>>>> b2d75d1481a1cb62ae85603e5347c1b0fdbfe1f8
+                                                    <option value="">None / Standard</option>
                                                 </select>
                                             </div>
                                             <div>
@@ -2961,18 +3999,20 @@
                                         <div class="dim-grid">
                                             <div>
                                                 <div class="form-label-sm">Turnaround</div>
-                                                <select class="form-control-sm-pp">
-                                                    <option>3-5 Business Days (Standard)</option>
-                                                    <option>1-2 Business Days (Rush)</option>
-                                                    <option>Same Day (Priority)</option>
+                                                <select class="form-control-sm-pp" id="turnaroundSelect"
+                                                    onchange="updatePricing()">
+                                                    <option value="standard">3-5 Business Days (Standard)</option>
+                                                    <option value="rush">1-2 Business Days (Rush)</option>
+                                                    <option value="priority">Same Day (Priority)</option>
                                                 </select>
                                             </div>
                                             <div>
                                                 <div class="form-label-sm">Shipping Method</div>
-                                                <select class="form-control-sm-pp">
-                                                    <option>Ground (Free)</option>
-                                                    <option>Express 2-Day</option>
-                                                    <option>Overnight</option>
+                                                <select class="form-control-sm-pp" id="shippingSelect"
+                                                    onchange="updatePricing()">
+                                                    <option value="free">Ground (Free)</option>
+                                                    <option value="express">Express 2-Day</option>
+                                                    <option value="overnight">Overnight</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -3000,8 +4040,10 @@
                                         <!-- Upload Area -->
                                         <div id="upload-area"
                                             style="display: none; border: 2px dashed var(--border); border-radius: 12px; padding: 30px; text-align: center; background: var(--off); cursor: pointer; transition: all .2s;"
-                                            onmouseover="this.style.borderColor='var(--accent)';"
-                                            onmouseout="this.style.borderColor='var(--border)';">
+                                            onmouseover="if(!this.classList.contains('dragover')) this.style.borderColor='var(--accent)';"
+                                            onmouseout="if(!this.classList.contains('dragover')) this.style.borderColor='var(--border)';">
+                                            <input type="file" id="file-upload-input" multiple style="display: none;"
+                                                accept=".pdf,.ai,.psd,.png,.jpg,.jpeg">
                                             <i class="bi bi-cloud-arrow-up"
                                                 style="font-size: 2.5rem; color: var(--accent); margin-bottom: 10px; display: block;"></i>
                                             <h5
@@ -3009,6 +4051,16 @@
                                                 Drag &amp; Drop or Browse</h5>
                                             <p style="font-size: .75rem; color: var(--muted); margin: 0;">Supports PDF,
                                                 AI, PSD, PNG, JPG (Max 500MB)</p>
+                                        </div>
+
+                                        <!-- Upload Preview Area -->
+                                        <div id="upload-preview" style="display: none; margin-top: 16px;">
+                                            <div
+                                                style="font-size: .75rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 12px;">
+                                                Files to Upload</div>
+                                            <div id="upload-preview-list" class="files-grid"
+                                                style="grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); margin-bottom: 0;">
+                                            </div>
                                         </div>
 
                                         <!-- Account Files Area -->
@@ -3075,6 +4127,11 @@
                                     <hr class="summary-divider">
                                     <div class="summary-row"><span>Subtotal</span><span
                                             id="sumSubtotal">₱3,200.00</span></div>
+                                    <div class="summary-row" id="sumDiscountRow" style="display:none; color:#2dce89;">
+                                        <span>Discount</span><span id="sumDiscount">-₱0.00</span>
+                                    </div>
+                                    <div class="summary-row"><span>Shipping</span><span id="sumShipping">₱0.00</span>
+                                    </div>
                                     <div class="summary-row"><span>Estimated Tax (12%)</span><span
                                             id="sumTax">₱384.00</span></div>
                                     <div class="summary-total">
@@ -3094,7 +4151,7 @@
                             <div
                                 style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
                                 <div>
-                                    <h4
+                                    <h4 class="page-title"
                                         style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:#1a2340;margin:0;">
                                         Templates</h4>
                                     <p style="font-size:.75rem;color:var(--muted);margin:0;">Browse and customize
@@ -3350,206 +4407,108 @@
 
                     <!-- ══ FILES PAGE ══ -->
                     <div class="c-page" id="c-files">
-                        <div style="display:flex;height:100%;">
-
-                            <!-- Files sub-sidebar -->
+                        <div class="files-layout">
+                            <!-- Sidebar -->
                             <div class="files-sidebar">
-                                <div
-                                    style="padding:0 12px 8px;font-size:.68rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;">
-                                    Storage</div>
-                                <div class="files-sidebar-item active"><i class="bi bi-folder2-open"></i>All Files</div>
-                                <div class="files-sidebar-item"><i class="bi bi-clock-history"></i>Recent</div>
-                                <div class="files-sidebar-item"><i class="bi bi-star"></i>Starred</div>
-                                <div class="files-sidebar-item"><i class="bi bi-share"></i>Shared</div>
-                                <div class="files-sidebar-item"><i class="bi bi-trash3"></i>Trash</div>
-                                <div
-                                    style="padding:16px 12px 8px;font-size:.68rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;">
-                                    Folders</div>
-                                <div class="files-sidebar-item"><i class="bi bi-folder-fill"
-                                        style="color:var(--accent);"></i>Summer 2024</div>
-                                <div class="files-sidebar-item"><i class="bi bi-folder-fill"
-                                        style="color:var(--warning);"></i>Approved Art</div>
-                                <div class="files-sidebar-item"><i class="bi bi-folder-fill"
-                                        style="color:var(--success);"></i>Proofs</div>
-                                <div class="files-sidebar-item"><i class="bi bi-folder-fill"
-                                        style="color:var(--purple);"></i>Archive</div>
-                                <div style="padding:14px 12px 4px;">
-                                    <div style="font-size:.68rem;color:var(--muted);margin-bottom:6px;">Storage Used
-                                    </div>
-                                    <div style="height:6px;background:#e8ecf4;border-radius:10px;overflow:hidden;">
-                                        <div
-                                            style="width:62%;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:10px;">
-                                        </div>
-                                    </div>
-                                    <div style="font-size:.68rem;color:var(--muted);margin-top:4px;">6.2 GB of 10 GB
-                                    </div>
+                                <div class="files-sidebar-section-label">Storage</div>
+                                <div class="files-nav-item active" id="fnav-all" onclick="fmSwitchView('all', this)">
+                                    <i class="bi bi-folder2-open"></i> All Files
+                                </div>
+                                <div class="files-nav-item" id="fnav-recent" onclick="fmSwitchView('recent', this)">
+                                    <i class="bi bi-clock-history"></i> Recent
+                                </div>
+                                <div class="files-nav-item" id="fnav-starred" onclick="fmSwitchView('starred', this)">
+                                    <i class="bi bi-star"></i> Starred
+                                </div>
+                                <div class="files-nav-item" id="fnav-shared" onclick="fmSwitchView('shared', this)">
+                                    <i class="bi bi-share"></i> Shared
+                                </div>
+                                <div class="files-nav-item" id="fnav-trash" onclick="fmSwitchView('trash', this)">
+                                    <i class="bi bi-trash3"></i> Trash
+                                    <span class="files-nav-badge" id="fm-trash-count" style="display:none;">0</span>
                                 </div>
                             </div>
 
-                            <!-- Files main -->
-                            <div style="flex:1;padding:20px 24px;overflow-y:auto;">
-                                <div
-                                    style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-                                    <h4
-                                        style="font-family:'Sora',sans-serif;font-size:1rem;font-weight:800;color:#1a2340;margin:0;">
-                                        All Files</h4>
-                                    <div style="display:flex;gap:8px;">
-                                        <button
-                                            style="background:#fff;border:1px solid var(--border);border-radius:8px;padding:6px 14px;font-size:.78rem;font-weight:600;color:#344767;cursor:pointer;font-family:'DM Sans',sans-serif;"><i
+                            <!-- Main View -->
+                            <div class="files-main">
+                                <div class="files-toolbar">
+                                    <h4 id="fm-view-title">All Files</h4>
+                                    <div class="files-search-box">
+                                        <i class="bi bi-search"></i>
+                                        <input type="text" placeholder="Search files…" oninput="fmSearch(this.value)"
+                                            id="fm-search-input">
+                                    </div>
+                                    <div class="files-toolbar-actions">
+                                        <button class="files-folder-create-btn" onclick="fmOpenNewFolder()"><i
                                                 class="bi bi-folder-plus"></i> New Folder</button>
-                                        <button
-                                            style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:6px 14px;font-size:.78rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;"><i
+                                        <button class="files-upload-btn" onclick="fmTriggerUpload()"><i
                                                 class="bi bi-upload"></i> Upload</button>
+                                        <input type="file" id="fm-file-input" multiple style="display:none"
+                                            onchange="fmHandleUpload(this.files)">
                                     </div>
                                 </div>
 
-                                <div
-                                    style="display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--border);border-radius:8px;padding:6px 12px;margin-bottom:16px;font-size:.8rem;color:var(--muted);">
-                                    <i class="bi bi-search" style="font-size:.75rem;"></i> Search files...
+                                <div class="files-body" id="fm-body" oncontextmenu="fmBodyContext(event)">
+                                    <!-- Files and Folders injected here -->
                                 </div>
 
-                                <div
-                                    style="font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">
-                                    Recent Uploads</div>
-                                <div class="files-grid">
-                                    <div class="file-card"><span class="file-icon">🖼️</span>
-                                        <div class="file-name">summer_flyer_front_v3.pdf</div>
-                                        <div class="file-meta">2.4 MB · Today</div>
-                                    </div>
-                                    <div class="file-card"><span class="file-icon">📄</span>
-                                        <div class="file-name">annual_report_final.pdf</div>
-                                        <div class="file-meta">8.1 MB · Yesterday</div>
-                                    </div>
-                                    <div class="file-card"><span class="file-icon">🎨</span>
-                                        <div class="file-name">banner_artwork_hires.ai</div>
-                                        <div class="file-meta">34 MB · Oct 20</div>
-                                    </div>
-                                    <div class="file-card"><span class="file-icon">📦</span>
-                                        <div class="file-name">mailer_assets_pack.zip</div>
-                                        <div class="file-meta">12.6 MB · Oct 19</div>
-                                    </div>
-                                    <div class="file-card"><span class="file-icon">🖼️</span>
-                                        <div class="file-name">logo_transparent.png</div>
-                                        <div class="file-meta">440 KB · Oct 17</div>
-                                    </div>
-                                    <div class="file-card"><span class="file-icon">📄</span>
-                                        <div class="file-name">conference_booklet.pdf</div>
-                                        <div class="file-meta">5.9 MB · Oct 14</div>
-                                    </div>
-                                </div>
-
-                                <div
-                                    style="font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;margin-top:4px;">
-                                    All Files</div>
-                                <div class="orders-card">
-                                    <table class="orders-table" style="width:100%;">
-                                        <thead>
-                                            <tr>
-                                                <th>NAME</th>
-                                                <th>TYPE</th>
-                                                <th>SIZE</th>
-                                                <th>ORDER</th>
-                                                <th>MODIFIED</th>
-                                                <th></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td><i class="bi bi-file-earmark-pdf"
-                                                        style="color:var(--danger);margin-right:6px;"></i>summer_flyer_front_v3.pdf
-                                                </td>
-                                                <td>PDF</td>
-                                                <td>2.4 MB</td>
-                                                <td>#PPR-48</td>
-                                                <td>Today</td>
-                                                <td style="text-align: right; white-space: nowrap;">
-                                                    <button
-                                                        style="background:var(--accent);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:.7rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;margin-right:8px;"
-                                                        onclick="showClientPage('create', null)">Print</button>
-                                                    <i class="bi bi-download"
-                                                        style="color:var(--muted);cursor:pointer;transition:color .2s;"
-                                                        onmouseover="this.style.color='var(--accent)'"
-                                                        onmouseout="this.style.color='var(--muted)'"></i>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td><i class="bi bi-file-earmark-pdf"
-                                                        style="color:var(--danger);margin-right:6px;"></i>annual_report_final.pdf
-                                                </td>
-                                                <td>PDF</td>
-                                                <td>8.1 MB</td>
-                                                <td>#PPR-45</td>
-                                                <td>Oct 22</td>
-                                                <td style="text-align: right; white-space: nowrap;">
-                                                    <button
-                                                        style="background:var(--accent);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:.7rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;margin-right:8px;"
-                                                        onclick="showClientPage('create', null)">Print</button>
-                                                    <i class="bi bi-download"
-                                                        style="color:var(--muted);cursor:pointer;transition:color .2s;"
-                                                        onmouseover="this.style.color='var(--accent)'"
-                                                        onmouseout="this.style.color='var(--muted)'"></i>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td><i class="bi bi-file-earmark-image"
-                                                        style="color:var(--purple);margin-right:6px;"></i>banner_artwork_hires.ai
-                                                </td>
-                                                <td>AI</td>
-                                                <td>34 MB</td>
-                                                <td>#PPR-43</td>
-                                                <td>Oct 20</td>
-                                                <td style="text-align: right; white-space: nowrap;">
-                                                    <button
-                                                        style="background:var(--accent);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:.7rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;margin-right:8px;"
-                                                        onclick="showClientPage('create', null)">Print</button>
-                                                    <i class="bi bi-download"
-                                                        style="color:var(--muted);cursor:pointer;transition:color .2s;"
-                                                        onmouseover="this.style.color='var(--accent)'"
-                                                        onmouseout="this.style.color='var(--muted)'"></i>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td><i class="bi bi-file-zip"
-                                                        style="color:var(--warning);margin-right:6px;"></i>mailer_assets_pack.zip
-                                                </td>
-                                                <td>ZIP</td>
-                                                <td>12.6 MB</td>
-                                                <td>#PPR-41</td>
-                                                <td>Oct 19</td>
-                                                <td style="text-align: right; white-space: nowrap;">
-                                                    <button
-                                                        style="background:var(--accent);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:.7rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;margin-right:8px;"
-                                                        onclick="showClientPage('create', null)">Print</button>
-                                                    <i class="bi bi-download"
-                                                        style="color:var(--muted);cursor:pointer;transition:color .2s;"
-                                                        onmouseover="this.style.color='var(--accent)'"
-                                                        onmouseout="this.style.color='var(--muted)'"></i>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td><i class="bi bi-file-earmark-image"
-                                                        style="color:var(--teal);margin-right:6px;"></i>logo_transparent.png
-                                                </td>
-                                                <td>PNG</td>
-                                                <td>440 KB</td>
-                                                <td>—</td>
-                                                <td>Oct 17</td>
-                                                <td style="text-align: right; white-space: nowrap;">
-                                                    <button
-                                                        style="background:var(--accent);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:.7rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;margin-right:8px;"
-                                                        onclick="showClientPage('create', null)">Print</button>
-                                                    <i class="bi bi-download"
-                                                        style="color:var(--muted);cursor:pointer;transition:color .2s;"
-                                                        onmouseover="this.style.color='var(--accent)'"
-                                                        onmouseout="this.style.color='var(--muted)'"></i>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                <div class="fm-dropzone-overlay" id="fm-drop-overlay">
+                                    <i class="bi bi-cloud-arrow-up"></i>
                                 </div>
                             </div>
                         </div>
                     </div><!-- /files -->
+
+                    <!-- ── Context Menu ── -->
+                    <div class="files-context-menu" id="fm-ctx">
+                        <div class="ctx-item" id="ctx-open" onclick="fmCtxAction('open')"><i
+                                class="bi bi-box-arrow-up-right"></i> Open</div>
+                        <div class="ctx-item" id="ctx-rename" onclick="fmCtxAction('rename')"><i
+                                class="bi bi-pencil"></i> Rename</div>
+                        <div class="ctx-separator"></div>
+                        <div class="ctx-item" id="ctx-star" onclick="fmCtxAction('star')"><i class="bi bi-star"></i>
+                            <span id="ctx-star-label">Star</span></div>
+                        <div class="ctx-item" onclick="fmCtxAction('download')"><i class="bi bi-download"></i>
+                            Download</div>
+                        <div class="ctx-separator"></div>
+                        <div class="ctx-item danger" id="ctx-delete" onclick="fmCtxAction('delete')"><i
+                                class="bi bi-trash3"></i> <span id="ctx-delete-label">Delete</span></div>
+                        <div class="ctx-item" id="ctx-restore" onclick="fmCtxAction('restore')" style="display:none">
+                            <i class="bi bi-arrow-counterclockwise"></i> Restore</div>
+                        <div class="ctx-item danger" id="ctx-permanent-delete" onclick="fmCtxAction('permanent-delete')"
+                            style="display:none"><i class="bi bi-x-circle"></i> Delete Permanently</div>
+                    </div>
+
+                    <!-- ── Modals ── -->
+                    <div class="fm-modal-backdrop" id="fm-input-modal">
+                        <div class="fm-modal">
+                            <div class="fm-modal-icon" id="fm-modal-icon">📁</div>
+                            <h3 id="fm-modal-title">New Folder</h3>
+                            <p id="fm-modal-desc">Enter a name for the folder.</p>
+                            <input type="text" id="fm-modal-input" placeholder="Name…">
+                            <div class="fm-modal-actions">
+                                <button class="fm-btn fm-btn-cancel" onclick="fmCloseModal('input')">Cancel</button>
+                                <button class="fm-btn fm-btn-primary" id="fm-modal-confirm-btn"
+                                    onclick="fmConfirmInput()">Confirm</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="fm-modal-backdrop" id="fm-confirm-modal">
+                        <div class="fm-modal">
+                            <div class="fm-modal-icon" id="fm-confirm-icon">🗑️</div>
+                            <h3 id="fm-confirm-title">Delete File?</h3>
+                            <p id="fm-confirm-desc">This file will be moved to Trash.</p>
+                            <div class="fm-modal-actions">
+                                <button class="fm-btn fm-btn-cancel" onclick="fmCloseModal('confirm')">Cancel</button>
+                                <button class="fm-btn fm-btn-danger" id="fm-confirm-btn"
+                                    onclick="fmConfirmAction()">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="fm-toast" id="fm-toast"><i class="bi bi-check-circle-fill"></i><span
+                            id="fm-toast-text"></span></div>
 
                     <!-- ══ TRACK PAGE ══ -->
                     <div class="c-page" id="c-track">
@@ -3557,7 +4516,7 @@
                             <div
                                 style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
                                 <div>
-                                    <h4
+                                    <h4 class="page-title"
                                         style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:#1a2340;margin:0;">
                                         Order Tracking</h4>
                                     <p style="font-size:.75rem;color:var(--muted);margin:0;">Real-time status for all
@@ -3583,7 +4542,7 @@
                                         <div class="track-order-id">#PPR-48 · 3D Marketing Brochure</div>
                                         <div class="track-order-name">1,000 units · 100lb Gloss · Double Sided</div>
                                     </div>
-                                    <span class="badge-status badge-active" data-status-label="PPR-48">Prepress</span>
+                                    <span class="badge-status badge-info" data-status-label="PPR-48">Prepress</span>
                                 </div>
                                 <div class="progress-track">
                                     <div class="steps-row" data-progress="PPR-48">
@@ -3679,7 +4638,7 @@
                                         <div class="track-order-id">#PPR-41 · Promotional Mailers</div>
                                         <div class="track-order-name">5,000 units · 80lb Matte · Single Sided</div>
                                     </div>
-                                    <span class="badge-status badge-done" data-status-label="PPR-41">Shipping</span>
+                                    <span class="badge-status badge-primary" data-status-label="PPR-41">Shipping</span>
                                 </div>
                                 <div class="progress-track">
                                     <div class="steps-row" data-progress="PPR-41">
@@ -3745,7 +4704,7 @@
                                 <div class="billing-header-row"
                                     style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px;">
                                     <div style="flex: 1; min-width: 200px;">
-                                        <h4
+                                        <h4 class="page-title"
                                             style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:#1a2340;margin:0;">
                                             Billing &amp; Invoices</h4>
                                         <p style="font-size:.75rem;color:var(--muted);margin:0;">Manage payments and
@@ -3897,8 +4856,7 @@
                                     style="margin-bottom:14px; background: linear-gradient(135deg, #1a2340, #2a3558); color: #fff; border: none;">
                                     <div class="card-hdr" style="border-bottom: 1px solid rgba(255,255,255,.1);">
                                         <span class="card-hdr-title" style="color: #fff;">Active Subscription</span>
-                                        <span class="badge-status badge-active client-sub-status"
-                                            style="background: rgba(45, 206, 137, .2); color: #2dce89; border: 1px solid rgba(45, 206, 137, .3);">Active</span>
+                                        <span class="badge-status badge-active client-sub-status">Active</span>
                                     </div>
                                     <div style="padding: 16px;">
                                         <div
@@ -4072,8 +5030,7 @@
                                                     style="font-family: 'Sora', sans-serif; font-size: 1.4rem; font-weight: 800;">
                                                     Premium Plan</div>
                                             </div>
-                                            <span class="badge-status badge-active client-sub-status"
-                                                style="background: rgba(45, 206, 137, .2); color: #2dce89; border: 1px solid rgba(45, 206, 137, .3);">ACTIVE</span>
+                                            <span class="badge-status badge-active client-sub-status">ACTIVE</span>
                                         </div>
 
                                         <div
@@ -4137,6 +5094,7 @@
     </div><!-- /client portal -->
 
     <script>
+
         function switchPortal(p) {
             document.querySelectorAll('.portal').forEach(x => x.classList.remove('active'));
             document.querySelectorAll('.portal-btn').forEach(x => x.classList.remove('active'));
@@ -4157,6 +5115,7 @@
                         x.classList.add('active');
                 });
             }
+            if (id === 'files' && typeof fmRender === 'function') fmRender();
         }
 
         // Product type toggle (Create Order page)
@@ -4409,10 +5368,20 @@
 
         function getStatusClass(status) {
             status = status.toLowerCase();
-            if (status === 'delivered' || status === 'done') return 'badge-done';
-            if (status === 'prepress' || status === 'printing') return 'badge-active';
-            if (status === 'reprint' || status === 'shipping') return 'badge-pending';
-            return 'badge-active';
+            // GREEN - Success/Paid/Delivered
+            if (status === 'delivered' || status === 'done' || status === 'paid' || status === 'active') return 'badge-success';
+            // CYAN - Prepress/Printing
+            if (status === 'prepress' || status === 'printing') return 'badge-info';
+            // PURPLE - Finishing/Processing
+            if (status === 'finishing' || status === 'processing') return 'badge-purple';
+            // DEEP BLUE - Shipping
+            if (status === 'shipping' || status === 'shipped') return 'badge-primary';
+            // ORANGE - Pending/Due/Reprint
+            if (status === 'pending' || status === 'due' || status === 'reprint') return 'badge-warning';
+            // RED - Danger/Cancelled
+            if (status === 'cancelled' || status === 'rejected') return 'badge-danger';
+            
+            return 'badge-success';
         }
 
         const productSpecsConfig = {
@@ -4468,6 +5437,79 @@
 
         let currentPricingData = null;
 
+        // ── FRONTEND HARDCODED PRICING LOGIC ──
+        function calculatePriceFrontend(qty, paperText, sizeText, finishText, turnaround, shipping) {
+            // Base Prices per Product (assuming Flyers for now)
+            let unitBase = 2.50; // Base unit price
+
+            // Paper Multipliers
+            const paperMults = {
+                '80lb Text': 1.0,
+                '100lb Text (Standard)': 1.2,
+                '100lb Text': 1.2,
+                '14pt Cardstock': 1.5,
+                '16pt Cardstock': 1.8,
+                '100lb Gloss Text': 1.3
+            };
+            const matMult = paperMults[paperText] || 1.0;
+
+            // Size Multipliers
+            const sizeMults = {
+                '4" × 6"': 1.0,
+                '5" × 7"': 1.25,
+                '8.5" × 11" (Letter)': 2.0,
+                'A4 (8.27" × 11.69")': 1.9,
+                '11" × 17"': 3.5
+            };
+            const sizeMult = sizeMults[sizeText] || 1.0;
+
+            // Finishing Fees
+            const finishFees = {
+                'UV Coating': { setup: 350, unit: 0.15 },
+                'Gloss AQ': { setup: 200, unit: 0.10 },
+                'Matte AQ': { setup: 250, unit: 0.12 },
+                'Gloss UV': { setup: 400, unit: 0.20 }
+            };
+            const finish = finishFees[finishText] || { setup: 0, unit: 0 };
+
+            // 1. Calculate Base Subtotal
+            let subtotal = (unitBase * qty) * matMult * sizeMult;
+
+            // 2. Add Finishing
+            subtotal += finish.setup + (finish.unit * qty);
+
+            // 3. Turnaround
+            if (turnaround === 'rush') subtotal *= 1.25;
+            if (turnaround === 'priority') subtotal *= 1.5;
+
+            // 4. Volume Discounts
+            let discountRate = 0;
+            if (qty >= 5000) discountRate = 0.20;
+            else if (qty >= 1000) discountRate = 0.15;
+            else if (qty >= 500) discountRate = 0.10;
+
+            const discountAmt = subtotal * discountRate;
+            const afterDiscount = subtotal - discountAmt;
+
+            // 5. Shipping
+            let shippingCost = 0;
+            if (shipping === 'express') shippingCost = 250;
+            if (shipping === 'overnight') shippingCost = 600;
+
+            const finalTotal = afterDiscount + shippingCost;
+            const tax = finalTotal * 0.12;
+            const grandTotal = finalTotal + tax;
+
+            return {
+                subtotal: subtotal,
+                discount_rate: discountRate * 100,
+                discount_amount: discountAmt,
+                shipping: shippingCost,
+                tax: tax,
+                grand_total: grandTotal
+            };
+        }
+
         async function updatePricing() {
             const qty = document.getElementById('qtySlider').value;
             const paperId = document.getElementById('paperSelect').value;
@@ -4502,45 +5544,54 @@
             formData.append('size_id', sizeId);
             formData.append('finish_id', finishId || 0);
             formData.append('bleed_option', document.getElementById('bleedSelect').value);
+            formData.append('turnaround', document.getElementById('turnaroundSelect').value);
+            formData.append('shipping', document.getElementById('shippingSelect').value);
 
-            // Show loading state
-            const summaryTotal = document.getElementById('summaryTotal');
-            const sumSubtotal = document.getElementById('sumSubtotal');
-            const sumTax = document.getElementById('sumTax');
-            summaryTotal.textContent = '...';
-            sumSubtotal.textContent = '...';
-            sumTax.textContent = '...';
+            // --- Frontend Calculation (Hardcoded Fallback) ---
+            const d = calculatePriceFrontend(
+                qty,
+                paperSelect.options[paperSelect.selectedIndex]?.text || '',
+                sizeSelect.options[sizeSelect.selectedIndex]?.text || '',
+                finishSelect.options[finishSelect.selectedIndex]?.text || '',
+                document.getElementById('turnaroundSelect').value,
+                document.getElementById('shippingSelect').value
+            );
 
-            try {
-                const res = await fetch('api/calculate_price.php', { method: 'POST', body: formData });
-                const result = await res.json();
-                if (result.success) {
-                    currentPricingData = result.data;
-                    const d = result.data;
+            currentPricingData = d;
 
-                    // Update Summary
-                    summaryTotal.textContent = '₱' + d.grand_total.toLocaleString(undefined, { minimumFractionDigits: 2 });
-                    sumSubtotal.textContent = '₱' + d.subtotal.toLocaleString(undefined, { minimumFractionDigits: 2 });
-                    sumTax.textContent = '₱' + d.tax.toLocaleString(undefined, { minimumFractionDigits: 2 });
+            // Update Summary UI
+            summaryTotal.textContent = '₱' + d.grand_total.toLocaleString(undefined, { minimumFractionDigits: 2 });
+            sumSubtotal.textContent = '₱' + d.subtotal.toLocaleString(undefined, { minimumFractionDigits: 2 });
+            sumTax.textContent = '₱' + d.tax.toLocaleString(undefined, { minimumFractionDigits: 2 });
 
-                    // Update Badge
-                    const badge = document.getElementById('discountBadge');
-                    if (badge) {
-                        if (d.discount_rate > 0) {
-                            badge.style.display = 'inline-block';
-                            badge.innerText = d.discount_rate + '% BULK DISCOUNT';
-                        } else {
-                            badge.style.display = 'none';
-                        }
-                    }
+            const sumDiscount = document.getElementById('sumDiscount');
+            const sumDiscountRow = document.getElementById('sumDiscountRow');
+            if (sumDiscount && sumDiscountRow) {
+                if (d.discount_amount > 0) {
+                    sumDiscountRow.style.display = 'flex';
+                    sumDiscount.textContent = '-₱' + d.discount_amount.toLocaleString(undefined, { minimumFractionDigits: 2 });
                 } else {
-                    summaryTotal.textContent = '₱0.00';
-                    console.error("Pricing Error:", result.message);
+                    sumDiscountRow.style.display = 'none';
                 }
-            } catch (e) {
-                summaryTotal.textContent = 'Error';
-                console.error(e);
             }
+
+            const sumShipping = document.getElementById('sumShipping');
+            if (sumShipping) {
+                sumShipping.textContent = '₱' + (d.shipping || 0).toLocaleString(undefined, { minimumFractionDigits: 2 });
+            }
+
+            const badge = document.getElementById('discountBadge');
+            if (badge) {
+                if (d.discount_rate > 0) {
+                    badge.style.display = 'inline-block';
+                    badge.innerText = d.discount_rate + '% BULK DISCOUNT';
+                } else {
+                    badge.style.display = 'none';
+                }
+            }
+
+            // Note: We are now using frontend calculation to avoid the 405 API error.
+            // This does not affect the database as requested.
         }
 
         function handleDashboardSearch(query) {
@@ -4662,7 +5713,7 @@
             formData.append('total_price', currentPricingData.grand_total);
 
             try {
-                const res = await fetch('api/place_order.php', { method: 'POST', body: formData });
+                const res = await fetch(getApiUrl('api/place_order.php'), { method: 'POST', body: formData });
                 const data = await res.json();
                 if (data.success) {
                     alert('Order #' + data.order_id + ' placed successfully!');
@@ -4800,6 +5851,425 @@
                     }
                 });
             };
+
+            // Setup drag and drop for upload area
+            const uploadArea = document.getElementById('upload-area');
+            const fileInput = document.getElementById('file-upload-input');
+            const uploadPreview = document.getElementById('upload-preview');
+            const uploadPreviewList = document.getElementById('upload-preview-list');
+
+            if (uploadArea && fileInput) {
+                uploadArea.addEventListener('click', function () {
+                    fileInput.click();
+                });
+
+                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                    uploadArea.addEventListener(eventName, function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }, false);
+                });
+
+                ['dragenter', 'dragover'].forEach(eventName => {
+                    uploadArea.addEventListener(eventName, function () {
+                        uploadArea.classList.add('dragover');
+                        uploadArea.style.borderColor = 'var(--accent)';
+                        uploadArea.style.background = 'rgba(29, 140, 248, 0.05)';
+                    }, false);
+                });
+
+                ['dragleave', 'drop'].forEach(eventName => {
+                    uploadArea.addEventListener(eventName, function () {
+                        uploadArea.classList.remove('dragover');
+                        uploadArea.style.borderColor = 'var(--border)';
+                        uploadArea.style.background = 'var(--off)';
+                    }, false);
+                });
+
+                uploadArea.addEventListener('drop', function (e) {
+                    let dt = e.dataTransfer;
+                    let files = dt.files;
+                    handleFiles(files);
+                }, false);
+
+                fileInput.addEventListener('change', function () {
+                    handleFiles(this.files);
+                });
+
+                function handleFiles(files) {
+                    [...files].forEach(file => {
+                        renderFilePreview(file);
+                    });
+                }
+
+                function getFileIcon(filename) {
+                    const ext = filename.split('.').pop().toLowerCase();
+                    if (['jpg', 'jpeg', 'png', 'gif'].includes(ext)) return '🖼️';
+                    if (ext === 'pdf') return '📄';
+                    if (['ai', 'psd'].includes(ext)) return '🎨';
+                    return '📁';
+                }
+
+                function renderFilePreview(file) {
+                    uploadPreview.style.display = 'block';
+
+                    const card = document.createElement('div');
+                    card.className = 'file-card';
+                    card.style.padding = '12px';
+                    card.style.position = 'relative';
+
+                    const icon = getFileIcon(file.name);
+                    const sizeMB = (file.size / 1024 / 1024).toFixed(2);
+
+                    card.innerHTML = `
+                        <span class="file-icon" style="font-size: 1.8rem; margin-bottom: 6px;">${icon}</span>
+                        <div class="file-name" style="font-size: .75rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${file.name}">
+                            ${file.name}
+                        </div>
+                        <div class="file-meta">${sizeMB} MB</div>
+                        <button class="remove-btn" style="position: absolute; top: -8px; right: -8px; background: var(--danger); color: white; border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+                            <i class="bi bi-x"></i>
+                        </button>
+                    `;
+
+                    card.querySelector('.remove-btn').addEventListener('click', function (e) {
+                        e.stopPropagation();
+                        card.remove();
+                        if (uploadPreviewList.children.length === 0) {
+                            uploadPreview.style.display = 'none';
+                        }
+                    });
+
+                    uploadPreviewList.appendChild(card);
+                }
+            }
+        })();
+
+        /* ── FILE MANAGEMENT MODULE ── */
+        let fmFiles = [
+            { id: 1, name: 'Proofing_Guidelines.pdf', type: 'pdf', size: '1.2 MB', date: '2024-10-22', starred: true, shared: false, deleted: false, recent: true },
+            { id: 2, name: 'Brand_Assets', type: 'folder', size: '--', date: '2024-10-20', starred: false, shared: true, deleted: false, recent: false },
+            { id: 3, name: 'Summer_Flyer_Final.pdf', type: 'pdf', size: '2.4 MB', date: '2024-10-18', starred: false, shared: false, deleted: false, recent: true },
+            { id: 4, name: 'Old_Draft_V1.ai', type: 'ai', size: '15.6 MB', date: '2024-09-15', starred: false, shared: false, deleted: true, recent: false }
+        ];
+        let fmCurrentView = 'all';
+        let fmSelectedId = null;
+        let fmSearchQuery = '';
+
+        function fmInit() {
+            fmRender();
+            fmSetupDragAndDrop();
+            document.addEventListener('click', () => fmHideContext());
+            window.addEventListener('resize', () => fmHideContext());
+        }
+
+        function fmRender() {
+            const body = document.getElementById('fm-body');
+            const trashCount = document.getElementById('fm-trash-count');
+            if (!body) return;
+
+            let filtered = fmFiles.filter(f => {
+                if (fmSearchQuery && !f.name.toLowerCase().includes(fmSearchQuery.toLowerCase())) return false;
+                if (fmCurrentView === 'trash') return f.deleted;
+                if (f.deleted) return false;
+                if (fmCurrentView === 'recent') return f.recent;
+                if (fmCurrentView === 'starred') return f.starred;
+                if (fmCurrentView === 'shared') return f.shared;
+                return true;
+            });
+
+            const deletedCount = fmFiles.filter(f => f.deleted).length;
+            if (trashCount) {
+                trashCount.innerText = deletedCount;
+                trashCount.style.display = deletedCount > 0 ? 'inline-block' : 'none';
+            }
+
+            if (filtered.length === 0) {
+                body.innerHTML = `<div style="grid-column: 1/-1; padding: 60px; text-align: center; color: var(--muted);">
+                    <i class="bi bi-folder2-open" style="font-size: 3rem; display: block; margin-bottom: 15px; opacity: .3;"></i>
+                    <p style="font-size: .9rem;">No files found in this section</p>
+                </div>`;
+            } else {
+                body.innerHTML = filtered.map(f => `
+                    <div class="file-item ${fmSelectedId === f.id ? 'selected' : ''}" 
+                         onclick="fmSelectItem(${f.id}, event)" 
+                         ondblclick="fmOpenItem(${f.id})"
+                         oncontextmenu="fmItemContext(${f.id}, event)">
+                        <div class="file-icon-wrap">
+                            ${fmGetIcon(f.type)}
+                            ${f.starred ? '<i class="bi bi-star-fill file-star-indicator"></i>' : ''}
+                        </div>
+                        <div class="file-item-name" title="${f.name}">${f.name}</div>
+                        <div class="file-item-meta">${f.size} • ${f.date}</div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function fmGetIcon(type) {
+            switch (type) {
+                case 'folder': return '<i class="bi bi-folder-fill" style="color: #ffb02e;"></i>';
+                case 'pdf': return '<i class="bi bi-file-earmark-pdf-fill" style="color: #f5365c;"></i>';
+                case 'ai': return '<i class="bi bi-file-earmark-image-fill" style="color: #ff9d0a;"></i>';
+                case 'png':
+                case 'jpg': return '<i class="bi bi-file-earmark-image-fill" style="color: #3ec6c6;"></i>';
+                default: return '<i class="bi bi-file-earmark-fill" style="color: #8898aa;"></i>';
+            }
+        }
+
+        function fmSwitchView(view, el) {
+            const body = document.getElementById('fm-body');
+            body.style.opacity = '0';
+            setTimeout(() => {
+                fmCurrentView = view;
+                document.querySelectorAll('.files-nav-item').forEach(i => i.classList.remove('active'));
+                if (el) el.classList.add('active');
+                document.getElementById('fm-view-title').innerText = el ? el.innerText.trim() : 'All Files';
+                fmSelectedId = null;
+                fmRender();
+                body.style.opacity = '1';
+            }, 200);
+        }
+
+        function fmSelectItem(id, e) {
+            e.stopPropagation();
+            fmSelectedId = id;
+            fmRender();
+        }
+
+        function fmOpenItem(id) {
+            const f = fmFiles.find(file => file.id === id);
+            if (f && f.type === 'folder') {
+                fmToast(`Opening folder: ${f.name}`);
+            } else if (f) {
+                fmToast(`Previewing: ${f.name}`);
+            }
+        }
+
+        function fmSearch(query) {
+            fmSearchQuery = query;
+            fmRender();
+        }
+
+        /* ── Actions ── */
+        let fmPendingAction = null;
+
+        function fmOpenNewFolder() {
+            fmPendingAction = 'new_folder';
+            document.getElementById('fm-modal-icon').innerText = '📁';
+            document.getElementById('fm-modal-title').innerText = 'New Folder';
+            document.getElementById('fm-modal-desc').innerText = 'Enter a name for your new folder.';
+            document.getElementById('fm-modal-input').value = 'Untitled Folder';
+            fmOpenModal('input');
+        }
+
+        function fmTriggerUpload() {
+            document.getElementById('fm-file-input').click();
+        }
+
+        function fmHandleUpload(files) {
+            if (!files.length) return;
+            fmToast(`Uploading ${files.length} file(s)...`);
+            setTimeout(() => {
+                [...files].forEach(file => {
+                    fmFiles.unshift({
+                        id: Date.now() + Math.random(),
+                        name: file.name,
+                        type: file.name.split('.').pop().toLowerCase(),
+                        size: (file.size / 1024 / 1024).toFixed(1) + ' MB',
+                        date: new Date().toISOString().split('T')[0],
+                        starred: false, shared: false, deleted: false, recent: true
+                    });
+                });
+                fmRender();
+                fmToast('Upload complete!');
+            }, 1000);
+        }
+
+        function fmCtxAction(action) {
+            const f = fmFiles.find(file => file.id === fmSelectedId);
+            if (!f) return;
+
+            switch (action) {
+                case 'open': fmOpenItem(f.id); break;
+                case 'rename':
+                    fmPendingAction = 'rename';
+                    document.getElementById('fm-modal-icon').innerText = '✏️';
+                    document.getElementById('fm-modal-title').innerText = 'Rename Item';
+                    document.getElementById('fm-modal-desc').innerText = `Enter a new name for "${f.name}".`;
+                    document.getElementById('fm-modal-input').value = f.name;
+                    fmOpenModal('input');
+                    break;
+                case 'star':
+                    f.starred = !f.starred;
+                    fmToast(f.starred ? 'Added to Starred' : 'Removed from Starred');
+                    fmRender();
+                    break;
+                case 'delete':
+                    if (f.deleted) {
+                        fmCtxAction('permanent-delete');
+                    } else {
+                        f.deleted = true;
+                        fmToast('Moved to Trash');
+                        fmRender();
+                    }
+                    break;
+                case 'restore':
+                    f.deleted = false;
+                    fmToast('Restored from Trash');
+                    fmRender();
+                    break;
+                case 'permanent-delete':
+                    fmPendingAction = 'permanent-delete';
+                    document.getElementById('fm-confirm-icon').innerText = '⚠️';
+                    document.getElementById('fm-confirm-title').innerText = 'Delete Permanently?';
+                    document.getElementById('fm-confirm-desc').innerText = 'This action cannot be undone.';
+                    document.getElementById('fm-confirm-btn').innerText = 'Delete Permanently';
+                    fmOpenModal('confirm');
+                    break;
+                case 'download':
+                    fmToast(`Downloading ${f.name}...`);
+                    break;
+            }
+            fmHideContext();
+        }
+
+        function fmConfirmInput() {
+            const val = document.getElementById('fm-modal-input').value.trim();
+            if (!val) return;
+
+            if (fmPendingAction === 'new_folder') {
+                fmFiles.unshift({
+                    id: Date.now(), name: val, type: 'folder', size: '--', date: new Date().toISOString().split('T')[0],
+                    starred: false, shared: false, deleted: false, recent: true
+                });
+                fmToast('Folder created');
+            } else if (fmPendingAction === 'rename') {
+                const f = fmFiles.find(file => file.id === fmSelectedId);
+                if (f) {
+                    f.name = val;
+                    fmToast('Renamed successfully');
+                }
+            }
+            fmCloseModal('input');
+            fmRender();
+        }
+
+        function fmConfirmAction() {
+            if (fmPendingAction === 'permanent-delete') {
+                fmFiles = fmFiles.filter(f => f.id !== fmSelectedId);
+                fmToast('Deleted permanently');
+            }
+            fmCloseModal('confirm');
+            fmRender();
+        }
+
+        /* ── UI Helpers ── */
+        function fmOpenModal(id) {
+            document.getElementById(`fm-${id}-modal`).classList.add('show');
+            if (id === 'input') setTimeout(() => document.getElementById('fm-modal-input').focus(), 100);
+        }
+
+        function fmCloseModal(id) {
+            document.getElementById(`fm-${id}-modal`).classList.remove('show');
+        }
+
+        function fmToast(text) {
+            const t = document.getElementById('fm-toast');
+            document.getElementById('fm-toast-text').innerText = text;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
+        function fmItemContext(id, e) {
+            e.preventDefault();
+            e.stopPropagation();
+            fmSelectedId = id;
+            fmRender();
+
+            const ctx = document.getElementById('fm-ctx');
+            const f = fmFiles.find(file => file.id === id);
+
+            // Toggle trash items
+            document.getElementById('ctx-restore').style.display = f.deleted ? 'flex' : 'none';
+            document.getElementById('ctx-permanent-delete').style.display = f.deleted ? 'flex' : 'none';
+            document.getElementById('ctx-delete-label').innerText = f.deleted ? 'Delete Permanently' : 'Move to Trash';
+            document.getElementById('ctx-star').style.display = f.deleted ? 'none' : 'flex';
+            document.getElementById('ctx-rename').style.display = f.deleted ? 'none' : 'flex';
+            document.getElementById('ctx-star-label').innerText = f.starred ? 'Unstar' : 'Star';
+
+            ctx.style.display = 'block';
+            ctx.style.left = e.clientX + 'px';
+            ctx.style.top = e.clientY + 'px';
+
+            const box = ctx.getBoundingClientRect();
+            if (box.right > window.innerWidth) ctx.style.left = (e.clientX - box.width) + 'px';
+            if (box.bottom > window.innerHeight) ctx.style.top = (e.clientY - box.height) + 'px';
+        }
+
+        function fmBodyContext(e) {
+            if (e.target.closest('.file-item')) return;
+            e.preventDefault();
+            // Optional: Body context menu (New Folder, Upload, etc.)
+        }
+
+        function fmHideContext() {
+            document.getElementById('fm-ctx').style.display = 'none';
+        }
+
+        function fmSetupDragAndDrop() {
+            const main = document.querySelector('.files-main');
+            const overlay = document.getElementById('fm-drop-overlay');
+
+            main.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                overlay.style.display = 'grid';
+            });
+
+            main.addEventListener('dragleave', (e) => {
+                if (!e.relatedTarget || !main.contains(e.relatedTarget)) {
+                    overlay.style.display = 'none';
+                }
+            });
+
+            main.addEventListener('drop', (e) => {
+                e.preventDefault();
+                overlay.style.display = 'none';
+                fmHandleUpload(e.dataTransfer.files);
+            });
+        }
+
+        // Initialize on page load
+        fmInit();
+
+        // Theme Toggle Logic
+        (function () {
+            const toggleBtn = document.getElementById('themeToggleBtn');
+            const icon = toggleBtn ? toggleBtn.querySelector('i') : null;
+
+            function setTheme(theme) {
+                document.documentElement.setAttribute('data-theme', theme);
+                localStorage.setItem('printpro-theme', theme);
+                if (icon) {
+                    if (theme === 'dark') {
+                        icon.className = 'bi bi-sun';
+                        icon.style.color = '#fb6340';
+                    } else {
+                        icon.className = 'bi bi-moon-stars';
+                        icon.style.color = 'var(--muted)';
+                    }
+                }
+            }
+
+            const currentTheme = localStorage.getItem('printpro-theme') || 'light';
+            setTheme(currentTheme);
+
+            if (toggleBtn) {
+                toggleBtn.addEventListener('click', () => {
+                    const newTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+                    setTheme(newTheme);
+                });
+            }
         })();
     </script>
 </body>
