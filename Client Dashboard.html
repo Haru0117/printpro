@@ -34,9 +34,71 @@
         [data-theme="dark"] {
             --navy: #e0e6ed;
             --off: #0d1b3e;
-            --border: rgba(255, 255, 255, 0.1);
+            --border: rgba(255, 255, 255, 0.08);
             --dark-bg: #0a1628;
             --dark-card: #111e40;
+            --dark-card2: #162048;
+            --muted: #8898aa;
+            --accent: #fb6340;
+        }
+
+        /* ── GLOBAL DARK MODE OVERRIDES ── */
+        html[data-theme="dark"] body {
+            background: var(--dark-bg) !important;
+            color: var(--navy) !important;
+        }
+
+        html[data-theme="dark"] .a-sidebar,
+        html[data-theme="dark"] .c-sidebar,
+        html[data-theme="dark"] .a-topbar,
+        html[data-theme="dark"] .c-topbar,
+        html[data-theme="dark"] .card,
+        html[data-theme="dark"] .kpi-card,
+        html[data-theme="dark"] .chart-card,
+        html[data-theme="dark"] .orders-card,
+        html[data-theme="dark"] .notif-card,
+        html[data-theme="dark"] .actions-card,
+        html[data-theme="dark"] .users-card {
+            background: var(--dark-card) !important;
+            border-color: var(--border) !important;
+            color: var(--navy) !important;
+        }
+
+        html[data-theme="dark"] .a-content,
+        html[data-theme="dark"] .c-content {
+            background: var(--dark-bg) !important;
+        }
+
+        html[data-theme="dark"] .a-nav-item:hover,
+        html[data-theme="dark"] .c-nav-item:hover,
+        html[data-theme="dark"] .a-tab:hover {
+            background: rgba(255, 255, 255, 0.03) !important;
+            color: #fff !important;
+        }
+
+        html[data-theme="dark"] table th {
+            background: rgba(255, 255, 255, 0.02) !important;
+            color: var(--muted) !important;
+            border-bottom: 1px solid var(--border) !important;
+        }
+
+        html[data-theme="dark"] table td {
+            border-bottom: 1px solid var(--border) !important;
+            color: var(--navy) !important;
+        }
+
+        html[data-theme="dark"] .btn-light {
+            background: var(--dark-card2) !important;
+            border: 1px solid var(--border) !important;
+            color: #fff !important;
+        }
+
+        html[data-theme="dark"] input, 
+        html[data-theme="dark"] select, 
+        html[data-theme="dark"] textarea {
+            background: var(--dark-card2) !important;
+            border-color: var(--border) !important;
+            color: #fff !important;
         }
 
         * {
@@ -1319,7 +1381,7 @@
         .spend-bar-wrap {
             flex: 1;
             height: 10px;
-            background: #f0f2f8;
+            background: var(--off);
             border-radius: 10px;
             overflow: hidden;
         }
@@ -1343,7 +1405,7 @@
             display: flex;
             align-items: center;
             padding: 11px 16px;
-            border-bottom: 1px solid #f0f2f8;
+            border-bottom: 1px solid var(--border);
             font-size: .78rem;
             gap: 10px;
         }
@@ -1353,19 +1415,19 @@
         }
 
         .invoice-row:hover {
-            background: #f8f9ff;
+            background: var(--off);
         }
 
         .invoice-id {
             font-weight: 700;
-            color: #1a2340;
+            color: var(--navy);
             width: 90px;
             flex-shrink: 0;
         }
 
         .invoice-name {
             flex: 1;
-            color: #344767;
+            color: var(--navy);
         }
 
         .invoice-date {
@@ -1377,7 +1439,7 @@
 
         .invoice-amt {
             font-weight: 700;
-            color: #1a2340;
+            color: var(--navy);
             width: 80px;
             text-align: right;
             flex-shrink: 0;
@@ -3619,7 +3681,7 @@
                                 style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
                                 <div>
                                     <h4 class="page-title"
-                                        style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:#1a2340;margin:0;">
+                                        style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:var(--navy);margin:0;">
                                         Executive Dashboard</h4>
                                     <p style="font-size:.75rem;color:var(--muted);margin:0;">Manage your printing
                                         operations</p>
@@ -3807,7 +3869,7 @@
                             <div
                                 style="margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;">
                                 <h4 class="page-title"
-                                    style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:#1a2340;margin:0;">
+                                    style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:var(--navy);margin:0;">
                                     All Orders</h4>
                                 <button onclick="showClientPage('create', null)"
                                     style="background:var(--accent);color:#fff;border:none;padding:7px 16px;border-radius:8px;font-size:.8rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">
@@ -4152,7 +4214,7 @@
                                 style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
                                 <div>
                                     <h4 class="page-title"
-                                        style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:#1a2340;margin:0;">
+                                        style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:var(--navy);margin:0;">
                                         Templates</h4>
                                     <p style="font-size:.75rem;color:var(--muted);margin:0;">Browse and customize
                                         ready-made print designs</p>
@@ -4517,7 +4579,7 @@
                                 style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
                                 <div>
                                     <h4 class="page-title"
-                                        style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:#1a2340;margin:0;">
+                                        style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:var(--navy);margin:0;">
                                         Order Tracking</h4>
                                     <p style="font-size:.75rem;color:var(--muted);margin:0;">Real-time status for all
                                         active shipments</p>
@@ -4526,10 +4588,10 @@
 
                             <!-- Search bar -->
                             <div
-                                style="background:#fff;border-radius:12px;border:1px solid var(--border);padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;gap:12px;">
+                                style="background:var(--off);border-radius:12px;border:1px solid var(--border);padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;gap:12px;">
                                 <i class="bi bi-search" style="color:var(--muted);font-size:1rem;"></i>
                                 <input
-                                    style="flex:1;border:1px solid var(--border);border-radius:8px;padding:8px 14px;font-size:.85rem;font-family:'DM Sans',sans-serif;color:#344767;"
+                                    style="flex:1;border:1px solid var(--border);border-radius:8px;padding:8px 14px;font-size:.85rem;font-family:'DM Sans',sans-serif;color:var(--navy);"
                                     placeholder="Enter order ID or tracking number…" value="#PPR-48">
                                 <button
                                     style="background:var(--accent);color:#fff;border:none;padding:8px 20px;border-radius:8px;font-size:.82rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">Track</button>
@@ -4705,7 +4767,7 @@
                                     style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px;">
                                     <div style="flex: 1; min-width: 200px;">
                                         <h4 class="page-title"
-                                            style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:#1a2340;margin:0;">
+                                            style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:var(--navy);margin:0;">
                                             Billing &amp; Invoices</h4>
                                         <p style="font-size:.75rem;color:var(--muted);margin:0;">Manage payments and
                                             download invoices</p>
@@ -5019,7 +5081,7 @@
                                 <div>
                                     <!-- Subscription Management -->
                                     <div class="orders-card"
-                                        style="margin-bottom:16px; background: linear-gradient(135deg, var(--navy), #2a3558); color: #fff; border: none; padding:20px;">
+                                        style="margin-bottom:16px; background: linear-gradient(135deg, #0f2057, #2a3558); color: #fff; border: none; padding:20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
                                         <div
                                             style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
                                             <div>
@@ -5050,8 +5112,8 @@
                                         </div>
 
                                         <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                                            <button class="btn btn-light w-100"
-                                                style="font-size:.8rem; font-weight:700;"
+                                            <button class="btn btn-primary w-100"
+                                                style="font-size:.8rem; font-weight:700; background: var(--accent); border: none;"
                                                 onclick="showClientPage('billing', null)">Manage Billing</button>
                                             <button class="btn btn-outline-light w-100"
                                                 style="font-size:.8rem; font-weight:600; border-color:rgba(255,255,255,.2);"

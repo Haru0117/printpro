@@ -35,29 +35,71 @@
         [data-theme="dark"] {
             --navy: #e0e6ed;
             --off: #0d1b3e;
-            --border: rgba(255, 255, 255, 0.1);
+            --border: rgba(255, 255, 255, 0.08);
             --dark-bg: #0a1628;
             --dark-card: #111e40;
+            --dark-card2: #162048;
+            --muted: #8898aa;
+            --accent: #fb6340;
         }
 
-        /* ── DARK MODE THEME ── */
+        /* ── GLOBAL DARK MODE OVERRIDES ── */
         html[data-theme="dark"] body {
-            background: #0a1628;
-            color: #e0e6ed;
+            background: var(--dark-bg) !important;
+            color: var(--navy) !important;
         }
 
         html[data-theme="dark"] .a-sidebar,
+        html[data-theme="dark"] .c-sidebar,
         html[data-theme="dark"] .a-topbar,
-        html[data-theme="dark"] .chart-card,
+        html[data-theme="dark"] .c-topbar,
+        html[data-theme="dark"] .card,
         html[data-theme="dark"] .kpi-card,
-        html[data-theme="dark"] .card {
-            background: #111e40 !important;
-            border-color: rgba(255, 255, 255, 0.08) !important;
-            color: #e0e6ed;
+        html[data-theme="dark"] .chart-card,
+        html[data-theme="dark"] .orders-card,
+        html[data-theme="dark"] .notif-card,
+        html[data-theme="dark"] .actions-card,
+        html[data-theme="dark"] .users-card {
+            background: var(--dark-card) !important;
+            border-color: var(--border) !important;
+            color: var(--navy) !important;
         }
 
-        html[data-theme="dark"] .a-content {
-            background: #0a1628 !important;
+        html[data-theme="dark"] .a-content,
+        html[data-theme="dark"] .c-content {
+            background: var(--dark-bg) !important;
+        }
+
+        html[data-theme="dark"] .a-nav-item:hover,
+        html[data-theme="dark"] .c-nav-item:hover,
+        html[data-theme="dark"] .a-tab:hover {
+            background: rgba(255, 255, 255, 0.03) !important;
+            color: #fff !important;
+        }
+
+        html[data-theme="dark"] table th {
+            background: rgba(255, 255, 255, 0.02) !important;
+            color: var(--muted) !important;
+            border-bottom: 1px solid var(--border) !important;
+        }
+
+        html[data-theme="dark"] table td {
+            border-bottom: 1px solid var(--border) !important;
+            color: var(--navy) !important;
+        }
+
+        html[data-theme="dark"] .btn-light {
+            background: var(--dark-card2) !important;
+            border: 1px solid var(--border) !important;
+            color: #fff !important;
+        }
+
+        html[data-theme="dark"] input, 
+        html[data-theme="dark"] select, 
+        html[data-theme="dark"] textarea {
+            background: var(--dark-card2) !important;
+            border-color: var(--border) !important;
+            color: #fff !important;
         }
 
         html[data-theme="dark"] .card-hdr-title,
@@ -1882,7 +1924,7 @@
                     <div class="a-dash">
                         <div style="margin-bottom:16px;">
                             <h4
-                                style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:#1a2340;margin:0;">
+                                style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:var(--navy);margin:0;">
                                 Dashboard</h4>
                             <p style="font-size:.75rem;color:var(--muted);margin:0;">Here's what's happening today</p>
                         </div>
@@ -2271,7 +2313,7 @@
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
                     <div>
                         <h4
-                            style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:#1a2340;margin:0;">
+                            style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:var(--navy);margin:0;">
                             All Orders</h4>
                         <p style="font-size:.75rem;color:var(--muted);margin:0;">Manage and track all print jobs
                         </p>
@@ -2486,14 +2528,14 @@
                         <span>Showing 1–7 of 238 orders</span>
                         <div style="display:flex;gap:4px;">
                             <button
-                                style="padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:#fff;font-size:.75rem;cursor:pointer;">←
+                                style="padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--off);color:var(--navy);font-size:.75rem;cursor:pointer;">←
                                 Prev</button>
                             <button
                                 style="padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--accent);color:#fff;font-size:.75rem;cursor:pointer;">1</button>
                             <button
-                                style="padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:#fff;font-size:.75rem;cursor:pointer;">2</button>
+                                style="padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--off);color:var(--navy);font-size:.75rem;cursor:pointer;">2</button>
                             <button
-                                style="padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:#fff;font-size:.75rem;cursor:pointer;">Next
+                                style="padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--off);color:var(--navy);font-size:.75rem;cursor:pointer;">Next
                                 →</button>
                         </div>
                     </div>
@@ -2518,10 +2560,10 @@
                         </div>
                         <div style="padding:12px 18px;border-bottom:1px solid var(--border);">
                             <div
-                                style="display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--border);border-radius:8px;padding:5px 12px;width:fit-content;">
+                                style="display:flex;align-items:center;gap:8px;background:var(--off);border:1px solid var(--border);border-radius:8px;padding:5px 12px;width:fit-content;">
                                 <i class="bi bi-search" style="font-size:.75rem;color:var(--muted);"></i>
                                 <input type="text" placeholder="Search name, email or role…"
-                                    style="border:none;outline:none;font-size:.8rem;font-family:'DM Sans',sans-serif;color:#344767;width:220px;">
+                                    style="background:none;border:none;outline:none;font-size:.8rem;font-family:'DM Sans',sans-serif;color:var(--navy);width:220px;">
                             </div>
                         </div>
                         <table class="users-table">
@@ -2702,7 +2744,7 @@
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
                     <div>
                         <h4
-                            style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:#1a2340;margin:0;">
+                            style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:var(--navy);margin:0;">
                             Devices</h4>
                         <p style="font-size:.75rem;color:var(--muted);margin:0;">Monitor and manage all
                             connected print machines</p>
@@ -3268,7 +3310,7 @@
                                             class="toggle-slider"></span></label>
                                 </div>
                                 <div style="margin-top:16px;border-top:1px solid var(--border);padding-top:16px;">
-                                    <div style="font-size:.82rem;font-weight:600;color:#344767;margin-bottom:6px;">
+                                    <div style="font-size:.82rem;font-weight:600;color:var(--navy);margin-bottom:6px;">
                                         API Key</div>
                                     <div class="api-key-box">
                                         <span>pp_live_sk_••••••••••••••••••2a8f</span>
