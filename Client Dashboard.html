@@ -93,8 +93,8 @@
             color: #fff !important;
         }
 
-        html[data-theme="dark"] input, 
-        html[data-theme="dark"] select, 
+        html[data-theme="dark"] input,
+        html[data-theme="dark"] select,
         html[data-theme="dark"] textarea {
             background: var(--dark-card2) !important;
             border-color: var(--border) !important;
@@ -664,19 +664,22 @@
         }
 
         /* Success - Green */
-        .badge-active, .badge-success {
+        .badge-active,
+        .badge-success {
             background: #2dce89 !important;
             color: #fff !important;
         }
 
         /* Warning - Orange/Yellow */
-        .badge-pending, .badge-warning {
+        .badge-pending,
+        .badge-warning {
             background: #fb6340 !important;
             color: #fff !important;
         }
 
         /* Blue - Primary */
-        .badge-done, .badge-primary {
+        .badge-done,
+        .badge-primary {
             background: #1d8cf8 !important;
             color: #fff !important;
         }
@@ -688,7 +691,8 @@
         }
 
         /* Info - Cyan/Teal */
-        .badge-info, .badge-cyan {
+        .badge-info,
+        .badge-cyan {
             background: #11cdef !important;
             color: #fff !important;
         }
@@ -704,9 +708,21 @@
             letter-spacing: .02em;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
-        .badge.b-active { background: #2dce89 !important; color: #fff !important; }
-        .badge.b-done { background: #1d8cf8 !important; color: #fff !important; }
-        .badge.b-pending { background: #fb6340 !important; color: #fff !important; }
+
+        .badge.b-active {
+            background: #2dce89 !important;
+            color: #fff !important;
+        }
+
+        .badge.b-done {
+            background: #1d8cf8 !important;
+            color: #fff !important;
+        }
+
+        .badge.b-pending {
+            background: #fb6340 !important;
+            color: #fff !important;
+        }
 
         .action-item {
             padding: 12px 18px;
@@ -3541,7 +3557,7 @@
         }
 
         /* Centering the content for better layout */
-        .c-dash, 
+        .c-dash,
         .c-dash,
         .c-order,
         .account-wrap,
@@ -3639,7 +3655,8 @@
 
                 <!-- Topbar -->
                 <div class="c-topbar">
-                    <div style="max-width: 1200px; margin: 0 auto; width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 0 24px; height: 100%;">
+                    <div
+                        style="max-width: 1200px; margin: 0 auto; width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 0 24px; height: 100%;">
                         <div style="display:flex;align-items:center;gap:12px;">
                             <button class="btn border-0 p-0 d-xl-none" onclick="toggleClientSidebar()"
                                 style="font-size:1.4rem;color:var(--navy);">
@@ -4008,12 +4025,17 @@
                                             <div>
                                                 <div class="form-label-sm">Custom Width (in)</div>
                                                 <input type="number" class="form-control-sm-pp" id="customWidth"
-                                                    value="4" min="1" oninput="updatePricing()">
+                                                    value="4" min="1">
                                             </div>
                                             <div>
                                                 <div class="form-label-sm">Custom Height (in)</div>
-                                                <input type="number" class="form-control-sm-pp" id="customHeight"
-                                                    value="6" min="1" oninput="updatePricing()">
+                                                <div style="display:flex; gap:8px; align-items:center;">
+                                                    <input type="number" class="form-control-sm-pp" id="customHeight"
+                                                        value="6" min="1">
+                                                    <button type="button" class="btn-accent"
+                                                        style="padding: 6px 12px; border-radius: 8px; font-size: 0.75rem;"
+                                                        onclick="updatePricing()">Apply</button>
+                                                </div>
                                             </div>
                                             <div>
                                                 <div class="form-label-sm">Finishing</div>
@@ -4529,14 +4551,16 @@
                                 class="bi bi-pencil"></i> Rename</div>
                         <div class="ctx-separator"></div>
                         <div class="ctx-item" id="ctx-star" onclick="fmCtxAction('star')"><i class="bi bi-star"></i>
-                            <span id="ctx-star-label">Star</span></div>
+                            <span id="ctx-star-label">Star</span>
+                        </div>
                         <div class="ctx-item" onclick="fmCtxAction('download')"><i class="bi bi-download"></i>
                             Download</div>
                         <div class="ctx-separator"></div>
                         <div class="ctx-item danger" id="ctx-delete" onclick="fmCtxAction('delete')"><i
                                 class="bi bi-trash3"></i> <span id="ctx-delete-label">Delete</span></div>
                         <div class="ctx-item" id="ctx-restore" onclick="fmCtxAction('restore')" style="display:none">
-                            <i class="bi bi-arrow-counterclockwise"></i> Restore</div>
+                            <i class="bi bi-arrow-counterclockwise"></i> Restore
+                        </div>
                         <div class="ctx-item danger" id="ctx-permanent-delete" onclick="fmCtxAction('permanent-delete')"
                             style="display:none"><i class="bi bi-x-circle"></i> Delete Permanently</div>
                     </div>
@@ -5442,7 +5466,7 @@
             if (status === 'pending' || status === 'due' || status === 'reprint') return 'badge-warning';
             // RED - Danger/Cancelled
             if (status === 'cancelled' || status === 'rejected') return 'badge-danger';
-            
+
             return 'badge-success';
         }
 
@@ -5589,71 +5613,90 @@
             const finishSelect = document.getElementById('finishSelect');
 
             if (paperSelect.selectedIndex >= 0) document.getElementById('sumStock').textContent = paperSelect.options[paperSelect.selectedIndex].text;
-            if (sizeSelect.selectedIndex >= 0) document.getElementById('sumSize').textContent = sizeSelect.options[sizeSelect.selectedIndex].text;
             if (finishSelect.selectedIndex >= 0) document.getElementById('sumFinish').textContent = finishSelect.options[finishSelect.selectedIndex].text;
 
-            if (!paperId || !sizeId) {
+            if (!paperId) {
                 document.getElementById('summaryTotal').textContent = '₱0.00';
                 document.getElementById('sumSubtotal').textContent = '₱0.00';
                 document.getElementById('sumTax').textContent = '₱0.00';
                 return;
             }
 
-            const formData = new FormData();
-            formData.append('product_name', document.getElementById('sumProduct').textContent.trim());
+            const sizeText = sizeSelect.options[sizeSelect.selectedIndex]?.text || '';
+            const paperText = paperSelect.options[paperSelect.selectedIndex]?.text || '';
+            const finishText = finishSelect.options[finishSelect.selectedIndex]?.text || '';
+
+            // Read directly from custom inputs
+            let custom_width = parseFloat(document.getElementById('customWidth').value) || 4;
+            let custom_height = parseFloat(document.getElementById('customHeight').value) || 6;
+
+            // Update sumSize in the product summary to reflect the current inputs
+            document.getElementById('sumSize').textContent = custom_width + '" × ' + custom_height + '"';
+
+            const bleedText = document.getElementById('bleedSelect') ? document.getElementById('bleedSelect').value : '';
+            let bleed = 0;
+            if (bleedText.includes('0.125')) bleed = 0.125;
+            else if (bleedText.includes('0.25')) bleed = 0.25;
+
+            // Resolve product_id from active product button
+            const productIdMap = { 'Flyers': 1, 'Brochures': 2, 'Booklets': 3, 'Cards': 4, 'Posters': 5, 'Mailers': 6 };
+            const activeProductBtn = document.querySelector('.product-types .pt-btn.active');
+            const activeProductName = activeProductBtn ? activeProductBtn.textContent.trim() : 'Flyers';
+            const resolvedProductId = productIdMap[activeProductName] || 1;
+
+            const turnaround = document.getElementById('turnaroundSelect').value;
+            const shipping = document.getElementById('shippingSelect').value;
+
+            const formData = new URLSearchParams();
+            formData.append('product_id', resolvedProductId);
             formData.append('quantity', qty);
-            formData.append('paper_id', paperId);
-            formData.append('size_id', sizeId);
-            formData.append('finish_id', finishId || 0);
-            formData.append('bleed_option', document.getElementById('bleedSelect').value);
-            formData.append('turnaround', document.getElementById('turnaroundSelect').value);
-            formData.append('shipping', document.getElementById('shippingSelect').value);
+            formData.append('custom_width', custom_width);
+            formData.append('custom_height', custom_height);
+            formData.append('bleed', bleed);
+            formData.append('material', paperText);
+            formData.append('finish', finishText);
+            formData.append('turnaround', turnaround);
+            formData.append('shipping', shipping);
 
-            // --- Frontend Calculation (Hardcoded Fallback) ---
-            const d = calculatePriceFrontend(
-                qty,
-                paperSelect.options[paperSelect.selectedIndex]?.text || '',
-                sizeSelect.options[sizeSelect.selectedIndex]?.text || '',
-                finishSelect.options[finishSelect.selectedIndex]?.text || '',
-                document.getElementById('turnaroundSelect').value,
-                document.getElementById('shippingSelect').value
-            );
+            try {
+                const response = await fetch('api/calculate_quote.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: formData.toString()
+                });
 
-            currentPricingData = d;
+                const result = await response.json();
 
-            // Update Summary UI
-            summaryTotal.textContent = '₱' + d.grand_total.toLocaleString(undefined, { minimumFractionDigits: 2 });
-            sumSubtotal.textContent = '₱' + d.subtotal.toLocaleString(undefined, { minimumFractionDigits: 2 });
-            sumTax.textContent = '₱' + d.tax.toLocaleString(undefined, { minimumFractionDigits: 2 });
+                if (result.success) {
+                    const d = result.breakdown;
+                    currentPricingData = d;
 
-            const sumDiscount = document.getElementById('sumDiscount');
-            const sumDiscountRow = document.getElementById('sumDiscountRow');
-            if (sumDiscount && sumDiscountRow) {
-                if (d.discount_amount > 0) {
-                    sumDiscountRow.style.display = 'flex';
-                    sumDiscount.textContent = '-₱' + d.discount_amount.toLocaleString(undefined, { minimumFractionDigits: 2 });
-                } else {
-                    sumDiscountRow.style.display = 'none';
+                    // Update Summary UI
+                    const summaryTotal = document.getElementById('summaryTotal');
+                    const sumSubtotal = document.getElementById('sumSubtotal');
+                    const sumTax = document.getElementById('sumTax');
+
+                    if (summaryTotal) summaryTotal.textContent = '₱' + d.grand_total.toLocaleString(undefined, { minimumFractionDigits: 2 });
+                    if (sumSubtotal) sumSubtotal.textContent = '₱' + d.subtotal_final.toLocaleString(undefined, { minimumFractionDigits: 2 });
+                    if (sumTax) sumTax.textContent = '₱' + d.vat_tax.toLocaleString(undefined, { minimumFractionDigits: 2 });
+                    
+                    const sumShipping = document.getElementById('sumShipping');
+                    if (sumShipping) sumShipping.textContent = '₱' + d.shipping_cost.toLocaleString(undefined, { minimumFractionDigits: 2 });
+
+                    const sumDiscount = document.getElementById('sumDiscount');
+                    const sumDiscountRow = document.getElementById('sumDiscountRow');
+                    if (sumDiscount && sumDiscountRow) {
+                        sumDiscountRow.style.display = 'none'; // Bulk handled dynamically in API
+                    }
+
+                    const badge = document.getElementById('discountBadge');
+                    if (badge) {
+                        badge.style.display = 'none';
+                    }
                 }
+            } catch (err) {
+                console.error("Pricing Error:", err);
             }
-
-            const sumShipping = document.getElementById('sumShipping');
-            if (sumShipping) {
-                sumShipping.textContent = '₱' + (d.shipping || 0).toLocaleString(undefined, { minimumFractionDigits: 2 });
-            }
-
-            const badge = document.getElementById('discountBadge');
-            if (badge) {
-                if (d.discount_rate > 0) {
-                    badge.style.display = 'inline-block';
-                    badge.innerText = d.discount_rate + '% BULK DISCOUNT';
-                } else {
-                    badge.style.display = 'none';
-                }
-            }
-
-            // Note: We are now using frontend calculation to avoid the 405 API error.
-            // This does not affect the database as requested.
         }
 
         function handleDashboardSearch(query) {
