@@ -3574,6 +3574,7 @@
             background: var(--dark-card) !important;
         }
     </style>
+    <script src="assets/js/printpro.js"></script>
 </head>
 
 <body>
@@ -3919,7 +3920,7 @@
                                             <th>TOTAL</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody id="ordersTbody">
                                         <tr data-status="active">
                                             <td style="font-weight:700;">#PPR-48</td>
                                             <td>3D Marketing Brochure</td>
@@ -5156,10 +5157,7 @@
                                         <div class="settings-row">
                                             <span class="settings-row-label">Order Updates</span>
                                             <label class="toggle"><input type="checkbox" checked><span
-                                                    class="toggle-slider"></span></label>
-                                        </div>
-                                        <div class="settings-row">
-                                            <span class="settings-row-label">Promotional Emails</span>
+                                                <span class="settings-row-label">Promotional Emails</span>
                                             <label class="toggle"><input type="checkbox"><span
                                                     class="toggle-slider"></span></label>
                                         </div>
@@ -5179,102 +5177,67 @@
         </div>
     </div><!-- /client portal -->
 
+    <!-- ── SCRIPTS ── -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-
-        function switchPortal(p) {
-            document.querySelectorAll('.portal').forEach(x => x.classList.remove('active'));
-            document.querySelectorAll('.portal-btn').forEach(x => x.classList.remove('active'));
-            document.getElementById('portal-' + p).classList.add('active');
-            event.target.closest('.portal-btn').classList.add('active');
-        }
+        // 1. Navigation Mapping
+        const clientNavMap = {
+            dashboard: 'nav-client-dashboard',
+            orders: 'nav-client-orders',
+            create: 'nav-client-create',
+            track: 'nav-client-track',
+            templates: 'nav-client-templates',
+            billing: 'nav-client-billing',
+            files: 'nav-client-files',
+            account: 'nav-client-account'
+        };
 
         function showClientPage(id, navEl) {
             document.querySelectorAll('.c-page').forEach(x => x.classList.remove('active'));
-            var p = document.getElementById('c-' + id);
+            const p = document.getElementById('c-' + id);
             if (p) p.classList.add('active');
+
+            document.querySelectorAll('.c-nav-item').forEach(x => x.classList.remove('active'));
             if (navEl) {
-                document.querySelectorAll('.c-nav-item').forEach(x => x.classList.remove('active'));
                 navEl.classList.add('active');
             } else {
-                document.querySelectorAll('.c-nav-item').forEach(x => {
-                    if (x.getAttribute('onclick') && x.getAttribute('onclick').includes("'" + id + "'"))
-                        x.classList.add('active');
-                });
+                const navId = clientNavMap[id];
+                if (navId) {
+                    const el = document.getElementById(navId);
+                    if (el) el.classList.add('active');
+                }
             }
+
             if (id === 'files' && typeof fmRender === 'function') fmRender();
         }
 
-        // Product type toggle (Create Order page)
-        document.querySelectorAll('.product-types .pt-btn').forEach(btn => {
-            btn.addEventListener('click', function () {
-                this.closest('.product-types').querySelectorAll('.pt-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
 
-        // Template filter pills
-        document.querySelectorAll('#c-templates .pt-btn').forEach(btn => {
-            btn.addEventListener('click', function () {
-                document.querySelectorAll('#c-templates .pt-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
-    </script>
 
-    <!-- ── AUTH INIT & LOGOUT ── -->
-    <script>
-        // Populate client info from session
-        (function () {
-            const session = sessionStorage.getItem('pp_user');
-            if (!session) return;
-            const user = JSON.parse(session);
-            const initial = (user.name || user.email || 'J')[0].toUpperCase();
-
-            // Update Topbar
-            const avatarEl = document.getElementById('clientAvatar');
-            if (avatarEl) {
-                avatarEl.textContent = initial;
-                avatarEl.title = user.email;
-            }
-
-            // Update Account Page
-            const bigAvatar = document.getElementById('accountAvatarBig');
-            const accName = document.getElementById('accountName');
-            const accEmail = document.getElementById('accountEmail');
-            if (bigAvatar) bigAvatar.textContent = initial;
-            if (accName && user.name) accName.textContent = user.name;
-            if (accEmail) accEmail.textContent = user.email;
-
-            // Update dashboard greeting
-            const greetEl = document.getElementById('clientGreeting');
-            if (greetEl && user.name) greetEl.textContent = 'Welcome back, ' + user.name + '!';
-        })();
-
-        function ppLogout(e) {
-            e.preventDefault();
-            sessionStorage.removeItem('pp_user');
-            window.location.href = 'homepage.html#login';
+        async function updatePricing() {
+            // Pricing logic using printpro.js multipliers (placeholders for now)
+            const qty = parseInt(document.getElementById('qtySlider').value);
+            const valEl = document.getElementById('qtyVal');
+            if (valEl) valEl.textContent = qty.toLocaleString();
+            const sumQty = document.getElementById('sumQty');
+            if (sumQty) sumQty.textContent = qty.toLocaleString();
         }
 
         function toggleClientSidebar() {
             const sidebar = document.querySelector('.c-sidebar');
             const overlay = document.getElementById('clientSidebarOverlay');
-            sidebar.classList.toggle('active');
-            overlay.classList.toggle('active');
+            if (sidebar) sidebar.classList.toggle('active');
+            if (overlay) overlay.classList.toggle('active');
         }
 
-        // Close sidebar when clicking a nav item on mobile
-        document.querySelectorAll('.c-nav-item').forEach(item => {
-            item.addEventListener('click', () => {
-                if (window.innerWidth < 1200) toggleClientSidebar();
-            });
-        });
-    </script>
-    <script>
+        function ppLogout(e) {
+            if (e) e.preventDefault();
+            sessionStorage.removeItem('pp_user');
+            window.location.href = 'homepage.html#login';
+        }
+
         // Synchronize Order Status from Admin
         function syncOrderStatus() {
             const steps = ['Prepress', 'Printing', 'Finishing', 'Shipping', 'Delivered'];
-
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
                 if (key && key.startsWith('pp_status_')) {
@@ -5284,7 +5247,7 @@
                     // Update all badges for this order
                     document.querySelectorAll(`[data-status-label="${orderId}"]`).forEach(badge => {
                         badge.textContent = savedStatus;
-                        badge.className = 'badge-status'; // reset
+                        badge.className = 'badge-status'; 
                         if (savedStatus === 'Delivered') badge.classList.add('badge-done');
                         else if (savedStatus === 'Shipping') badge.classList.add('badge-pending');
                         else badge.classList.add('badge-active');
@@ -5292,8 +5255,7 @@
 
                     // Update Progress Bars
                     document.querySelectorAll(`[data-progress="${orderId}"]`).forEach(row => {
-                        const targetIdx = steps.indexOf(savedStatus) + 1; // +1 because index 0 is "Order Placed"
-
+                        const targetIdx = steps.indexOf(savedStatus) + 1;
                         const trackSteps = row.querySelectorAll('.track-step');
                         const connectors = row.querySelectorAll('.step-connector');
 
@@ -5302,21 +5264,13 @@
                             const label = step.querySelector('.step-label');
                             const icon = circle.querySelector('i');
 
-                            // Restore icons just in case
-                            if (idx === 0) icon.className = 'bi bi-check-lg';
-                            else if (idx === 1) icon.className = 'bi bi-gear';
-                            else if (idx === 2) icon.className = 'bi bi-printer';
-                            else if (idx === 3) icon.className = 'bi bi-scissors';
-                            else if (idx === 4) icon.className = 'bi bi-truck';
-                            else if (idx === 5) icon.className = 'bi bi-house-check';
-
                             circle.className = 'step-circle';
                             label.className = 'step-label';
 
                             if (idx < targetIdx) {
                                 circle.classList.add('done');
                                 label.classList.add('done');
-                                icon.className = 'bi bi-check-lg';
+                                if (icon) icon.className = 'bi bi-check-lg';
                             } else if (idx === targetIdx) {
                                 circle.classList.add('current');
                                 label.classList.add('current');
@@ -5327,11 +5281,8 @@
 
                         connectors.forEach((conn, idx) => {
                             conn.className = 'step-connector';
-                            if (idx < targetIdx) {
-                                conn.classList.add('done');
-                            } else {
-                                conn.classList.add('pending');
-                            }
+                            if (idx < targetIdx) conn.classList.add('done');
+                            else conn.classList.add('pending');
                         });
                     });
                 }
@@ -5340,54 +5291,59 @@
 
         // Synchronize Subscription
         function syncSubscription() {
-            const saved = localStorage.getItem('pp_sub_client_1');
-            if (saved) {
-                const data = JSON.parse(saved);
+            let saved = localStorage.getItem('pp_sub_client_1');
+            if (!saved) return;
 
-                // Format dates safely
-                const formatDate = (ds) => {
-                    if (!ds) return 'N/A';
-                    const parts = ds.split('-');
-                    if (parts.length === 3) {
-                        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-                        return `${months[parseInt(parts[1]) - 1]} ${parseInt(parts[2])}, ${parts[0]}`;
-                    }
-                    return ds;
-                };
+            let data;
+            try { data = JSON.parse(saved); } catch (e) { return; }
 
-                const amounts = {
-                    'Free Plan': '₱0.00',
-                    'Basic Plan': '₱899.00',
-                    'Premium Plan': '₱1,899.00',
-                    'Enterprise Plan': '₱4,500.00'
-                };
+            const formatDate = (ds) => {
+                if (!ds) return 'N/A';
+                const parts = ds.split('-');
+                if (parts.length === 3) {
+                    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                    return `${months[parseInt(parts[1]) - 1]} ${parseInt(parts[2])}, ${parts[0]}`;
+                }
+                return ds;
+            };
 
-                document.querySelectorAll('.client-sub-plan').forEach(el => {
-                    el.textContent = data.plan;
-                });
-                document.querySelectorAll('.client-sub-renews').forEach(el => {
-                    el.textContent = formatDate(data.ends);
-                });
-                document.querySelectorAll('.client-sub-amount').forEach(el => {
-                    el.textContent = amounts[data.plan] || '₱0.00';
-                });
-                document.querySelectorAll('.client-sub-status').forEach(el => {
-                    el.textContent = data.status.toUpperCase();
-                    if (data.status === 'Active') {
-                        el.style.background = 'rgba(45, 206, 137, .2)';
-                        el.style.color = '#2dce89';
-                        el.style.borderColor = 'rgba(45, 206, 137, .3)';
-                    } else if (data.status === 'Canceled') {
-                        el.style.background = 'rgba(255, 255, 255, .1)';
-                        el.style.color = '#ccc';
-                        el.style.borderColor = 'rgba(255, 255, 255, .2)';
-                    } else {
-                        el.style.background = 'rgba(245, 54, 92, .2)';
-                        el.style.color = '#f5365c';
-                        el.style.borderColor = 'rgba(245, 54, 92, .3)';
-                    }
-                });
-            }
+            const amounts = {
+                'Free Plan': '₱0.00', 'Basic Plan': '₱899.00', 'Premium Plan': '₱1,899.00', 'Enterprise Plan': '₱4,500.00'
+            };
+
+            document.querySelectorAll('.client-sub-plan').forEach(el => el.textContent = data.plan || el.textContent);
+            document.querySelectorAll('.client-sub-renews').forEach(el => el.textContent = formatDate(data.ends));
+            document.querySelectorAll('.client-sub-amount').forEach(el => el.textContent = amounts[data.plan] || '₱0.00');
+            document.querySelectorAll('.client-sub-status').forEach(el => {
+                const s = (data.status || '').trim();
+                el.textContent = s.toUpperCase();
+                if (s === 'Active') {
+                    el.style.background = 'rgba(45, 206, 137, .2)';
+                    el.style.color = '#2dce89';
+                    el.style.borderColor = 'rgba(45, 206, 137, .3)';
+                } else if (s === 'Canceled') {
+                    el.style.background = 'rgba(255, 255, 255, .1)';
+                    el.style.color = '#ccc';
+                    el.style.borderColor = 'rgba(255, 255, 255, .2)';
+                } else {
+                    el.style.background = 'rgba(245, 54, 92, .2)';
+                    el.style.color = '#f5365c';
+                    el.style.borderColor = 'rgba(245, 54, 92, .3)';
+                }
+            });
+        }
+
+        // Bug #9 Fix: Define filterOrdersBySelect() which is wired to the Orders page status filter <select>
+        function filterOrdersBySelect(sel) {
+            const val = sel.value.toLowerCase();
+            document.querySelectorAll('#c-orders .orders-table tbody tr').forEach(row => {
+                if (val === 'all status' || val === 'all') {
+                    row.style.display = '';
+                } else {
+                    const status = (row.getAttribute('data-status') || '').toLowerCase();
+                    row.style.display = status === val ? '' : 'none';
+                }
+            });
         }
 
         // Run on load
@@ -5515,8 +5471,9 @@
             } catch (e) {
                 console.error("Specs API error:", e);
             } finally {
-                // Always initialize the UI even if API fails (will use names as fallback IDs)
-                const flyerBtn = document.querySelector('.pt-btn.active');
+                // Bug #8 Fix: scope to .product-types to avoid matching unrelated .pt-btn.active elements
+                // (e.g., template filter pills or order filter buttons that also carry the active class)
+                const flyerBtn = document.querySelector('.product-types .pt-btn.active');
                 if (flyerBtn) selectProductType(flyerBtn);
             }
         }
@@ -5675,6 +5632,24 @@
                     const summaryTotal = document.getElementById('summaryTotal');
                     const sumSubtotal = document.getElementById('sumSubtotal');
                     const sumTax = document.getElementById('sumTax');
+                    const sumDiscount = document.getElementById('sumDiscount');
+                    const sumDiscountRow = document.getElementById('sumDiscountRow');
+                    const badge = document.getElementById('discountBadge');
+
+                    if (d.discount_amount > 0) {
+                        if (sumDiscount) sumDiscount.textContent = '-₱' + d.discount_amount.toLocaleString(undefined, { minimumFractionDigits: 2 });
+                        if (sumDiscountRow) sumDiscountRow.style.display = 'flex';
+                        
+                        if (badge) {
+                            badge.textContent = d.discount_rate + '% BULK DISCOUNT';
+                            badge.style.display = 'inline-block';
+                            badge.style.background = 'rgba(45, 206, 137, .15)';
+                            badge.style.color = '#1aae6f';
+                        }
+                    } else {
+                        if (sumDiscountRow) sumDiscountRow.style.display = 'none';
+                        if (badge) badge.style.display = 'none';
+                    }
 
                     if (summaryTotal) summaryTotal.textContent = '₱' + d.grand_total.toLocaleString(undefined, { minimumFractionDigits: 2 });
                     if (sumSubtotal) sumSubtotal.textContent = '₱' + d.subtotal_final.toLocaleString(undefined, { minimumFractionDigits: 2 });
@@ -5682,17 +5657,6 @@
                     
                     const sumShipping = document.getElementById('sumShipping');
                     if (sumShipping) sumShipping.textContent = '₱' + d.shipping_cost.toLocaleString(undefined, { minimumFractionDigits: 2 });
-
-                    const sumDiscount = document.getElementById('sumDiscount');
-                    const sumDiscountRow = document.getElementById('sumDiscountRow');
-                    if (sumDiscount && sumDiscountRow) {
-                        sumDiscountRow.style.display = 'none'; // Bulk handled dynamically in API
-                    }
-
-                    const badge = document.getElementById('discountBadge');
-                    if (badge) {
-                        badge.style.display = 'none';
-                    }
                 }
             } catch (err) {
                 console.error("Pricing Error:", err);
@@ -5758,9 +5722,16 @@
 
             names.forEach(name => {
                 // Try to find matching ID from masterSpecs
-                const match = masterSpecs.find(s => s.spec_type === type && s.name.toLowerCase().includes(name.toLowerCase().split('(')[0].trim().toLowerCase()));
+                // Check if name is already an ID or a string
+                let match = null;
+                if (typeof masterSpecs !== 'undefined') {
+                    match = masterSpecs.find(s => s.spec_type === type && s.name.toLowerCase().includes(name.toLowerCase().split('(')[0].trim().toLowerCase()));
+                }
                 const val = match ? match.id : name; // Fallback to name if not in DB
-                sel.innerHTML += `<option value="${val}">${name}</option>`;
+                const option = document.createElement('option');
+                option.value = val;
+                option.textContent = name;
+                sel.appendChild(option);
             });
 
             // Try to restore value if still exists
@@ -5797,6 +5768,87 @@
             btn.style.borderColor = 'var(--accent)';
             btn.style.background = 'rgba(29, 140, 248, .04)';
             document.getElementById('sumArtwork').textContent = filename;
+            uploadedFiles = []; // Clear manual uploads if choosing from account
+            document.getElementById('upload-preview').style.display = 'none';
+            document.getElementById('upload-preview-list').innerHTML = '';
+        }
+
+        // Step 4: File Upload Handling
+        let uploadedFiles = [];
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const uploadArea = document.getElementById('upload-area');
+            const fileInput = document.getElementById('file-upload-input');
+            const previewArea = document.getElementById('upload-preview');
+            const previewList = document.getElementById('upload-preview-list');
+
+            if (uploadArea && fileInput) {
+                uploadArea.addEventListener('click', () => fileInput.click());
+
+                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(evt => {
+                    uploadArea.addEventListener(evt, e => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    });
+                });
+
+                uploadArea.addEventListener('dragover', () => {
+                    uploadArea.style.borderColor = 'var(--accent)';
+                    uploadArea.style.background = 'rgba(29, 140, 248, 0.05)';
+                });
+
+                ['dragleave', 'drop'].forEach(evt => {
+                    uploadArea.addEventListener(evt, () => {
+                        uploadArea.style.borderColor = 'var(--border)';
+                        uploadArea.style.background = 'var(--off)';
+                    });
+                });
+
+                uploadArea.addEventListener('drop', e => {
+                    handleFiles(e.dataTransfer.files);
+                });
+
+                fileInput.addEventListener('change', e => {
+                    handleFiles(e.target.files);
+                });
+
+                function handleFiles(files) {
+                    if (files.length > 0) {
+                        previewArea.style.display = 'block';
+                        Array.from(files).forEach(file => {
+                            uploadedFiles.push(file);
+                            const card = document.createElement('div');
+                            card.className = 'file-card';
+                            card.style.padding = '12px';
+                            card.style.position = 'relative';
+                            card.innerHTML = `
+                                <span class="file-icon" style="font-size: 1.8rem; margin-bottom: 6px;">📄</span>
+                                <div class="file-name" style="font-size: .75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%;">${file.name}</div>
+                                <button type="button" class="btn-close" style="position: absolute; top: 5px; right: 5px; width: 10px; height: 10px; padding: 0;" onclick="event.stopPropagation(); removeFile(this, '${file.name}')"></button>
+                            `;
+                            previewList.appendChild(card);
+                        });
+                        document.getElementById('sumArtwork').textContent = uploadedFiles.length + ' file(s) selected';
+                        
+                        // Clear selection from account
+                        document.querySelectorAll('#account-files .file-card').forEach(c => {
+                            c.style.borderColor = 'var(--border)';
+                            c.style.background = '#fff';
+                        });
+                    }
+                }
+            }
+        });
+
+        function removeFile(btn, name) {
+            uploadedFiles = uploadedFiles.filter(f => f.name !== name);
+            btn.parentElement.remove();
+            if (uploadedFiles.length === 0) {
+                document.getElementById('upload-preview').style.display = 'none';
+                document.getElementById('sumArtwork').textContent = 'None';
+            } else {
+                document.getElementById('sumArtwork').textContent = uploadedFiles.length + ' file(s) selected';
+            }
         }
 
         async function placeOrder() {

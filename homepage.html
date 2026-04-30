@@ -1750,7 +1750,7 @@
             e.preventDefault();
             mClearErrors();
 
-            const email = document.getElementById('mEmail').value.trim().toLowerCase();
+            const email = document.getElementById('mEmail').value.trim();
             const pass = document.getElementById('mPass').value;
             const btn = document.getElementById('mLoginBtn');
 
@@ -1768,32 +1768,47 @@
             document.getElementById('mBtnContent').style.display = 'none';
             document.getElementById('mSpinner').style.display = 'block';
 
-            // Simulate a brief loading delay
-            await new Promise(r => setTimeout(r, 600));
+            const formData = new FormData();
+            formData.append('email', email);
+            formData.append('password', pass);
 
-            btn.style.opacity = '1'; btn.style.pointerEvents = '';
-            document.getElementById('mBtnContent').style.display = 'flex';
-            document.getElementById('mSpinner').style.display = 'none';
+            try {
+                const response = await fetch(getApiUrl('api/login.php'), {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                btn.style.opacity = '1'; btn.style.pointerEvents = '';
+                document.getElementById('mBtnContent').style.display = 'flex';
+                document.getElementById('mSpinner').style.display = 'none';
 
-            // Check credentials
-            const adminEmails = ['admin@printpro.com', 'superadmin@printpro.com', 'manager@printpro.com'];
-            const isAdmin = adminEmails.includes(email);
+                if (data.success) {
+                    const role = data.role;
+                    const portal = data.portal;
+                    if (mCurrentTab === 'admin' && portal !== 'admin') {
+                        mShowAlert('This email is not authorized for admin access.');
+                        return;
+                    }
+                    if (mCurrentTab === 'client' && portal !== 'client') {
+                        mShowAlert('Please use the Admin Portal tab to sign in.');
+                        return;
+                    }
 
-            if (mCurrentTab === 'admin' && !isAdmin) {
-                mShowAlert('This email is not authorized for admin access.');
-                return;
+                    const name = email.split('@')[0].replace(/\./g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+                    sessionStorage.setItem('pp_user', JSON.stringify({ email, role, name }));
+
+                    window.location.href = data.redirect;
+                } else {
+                    mShowAlert(data.message || 'Invalid email or password.');
+                }
+            } catch (err) {
+                btn.style.opacity = '1'; btn.style.pointerEvents = '';
+                document.getElementById('mBtnContent').style.display = 'flex';
+                document.getElementById('mSpinner').style.display = 'none';
+                mShowAlert('A network error occurred. Please try again later.');
             }
-            if (mCurrentTab === 'client' && isAdmin) {
-                mShowAlert('Please use the Admin Portal tab to sign in.');
-                return;
-            }
-
-            // Store session and redirect
-            const role = isAdmin ? 'admin' : 'client';
-            const name = email.split('@')[0].replace(/\./g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-            sessionStorage.setItem('pp_user', JSON.stringify({ email, role, name }));
-
-            window.location.href = role === 'admin' ? 'Admin Dashboard.html' : 'Client Dashboard.html';
         }
 
         /* ── QUOTATION HANDLER ── */

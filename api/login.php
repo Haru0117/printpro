@@ -27,12 +27,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['name'] = $user['name'];
 
         if ($user['role'] === 'admin' || $user['role'] === 'manager' || $user['role'] === 'operator') {
-            $redirect = 'admin/index.php';
+            $redirect = 'Admin Dashboard.html';
+            $portal = 'admin';
         } else {
-            $redirect = 'client/index.php';
+            $redirect = 'Client Dashboard.html';
+            $portal = 'client';
         }
 
-        echo json_encode(['success' => true, 'redirect' => $redirect]);
+        echo json_encode(['success' => true, 'redirect' => $redirect, 'role' => $user['role'], 'portal' => $portal]);
     } else {
         echo json_encode(['success' => false, 'message' => 'Invalid email or password.']);
     }

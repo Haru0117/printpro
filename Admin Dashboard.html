@@ -435,6 +435,18 @@
             margin-bottom: 20px;
         }
 
+        @media (max-width: 991px) {
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 576px) {
+            .kpi-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
         .kpi-card {
             background: #fff;
             border-radius: 12px;
@@ -1876,6 +1888,9 @@
                 <div class="a-nav-item" onclick="showPage('settings', this)" id="nav-settings">
                     <i class="bi bi-gear"></i> <span>Settings</span>
                 </div>
+                <div class="a-nav-item" onclick="showPage('specsPage', this)" id="nav-specsPage">
+                    <i class="bi bi-sliders"></i> <span>Specifications</span>
+                </div>
             </nav>
             <div class="a-logout">
                 <a href="#" onclick="ppLogout(event)"><i class="bi bi-box-arrow-left"></i> <span>Logout</span></a>
@@ -2034,41 +2049,8 @@
                             <div class="chart-card">
                                 <div class="chart-title">Revenue Trends</div>
                                 <div class="chart-sub">Annualized cumulative growth targets</div>
-                                <div class="mini-chart">
-                                    <svg viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg">
-                                        <defs>
-                                            <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1">
-                                                <stop offset="0%" stop-color="#1d8cf8" stop-opacity="0.3" />
-                                                <stop offset="100%" stop-color="#1d8cf8" stop-opacity="0" />
-                                            </linearGradient>
-                                            <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1">
-                                                <stop offset="0%" stop-color="#7c4dff" stop-opacity="0.3" />
-                                                <stop offset="100%" stop-color="#7c4dff" stop-opacity="0" />
-                                            </linearGradient>
-                                        </defs>
-                                        <line x1="0" y1="100" x2="400" y2="100" stroke="#eee" stroke-width="1" />
-                                        <line x1="0" y1="75" x2="400" y2="75" stroke="#eee" stroke-width="1" />
-                                        <line x1="0" y1="50" x2="400" y2="50" stroke="#eee" stroke-width="1" />
-                                        <line x1="0" y1="25" x2="400" y2="25" stroke="#eee" stroke-width="1" />
-                                        <path
-                                            d="M0,90 C40,85 80,70 120,60 C160,50 200,45 240,35 C280,25 320,20 400,15 L400,100 L0,100 Z"
-                                            fill="url(#g1)" />
-                                        <path d="M0,90 C40,85 80,70 120,60 C160,50 200,45 240,35 C280,25 320,20 400,15"
-                                            fill="none" stroke="#1d8cf8" stroke-width="2.5" stroke-linecap="round" />
-                                        <path
-                                            d="M0,95 C40,88 80,80 120,72 C160,64 200,56 240,48 C280,40 320,32 400,25 L400,100 L0,100 Z"
-                                            fill="url(#g2)" />
-                                        <path d="M0,95 C40,88 80,80 120,72 C160,64 200,56 240,48 C280,40 320,32 400,25"
-                                            fill="none" stroke="#7c4dff" stroke-width="2" stroke-dasharray="5,4"
-                                            stroke-linecap="round" />
-                                        <text x="0" y="118" fill="#aaa" font-size="9">Jan</text>
-                                        <text x="55" y="118" fill="#aaa" font-size="9">Mar</text>
-                                        <text x="115" y="118" fill="#aaa" font-size="9">May</text>
-                                        <text x="175" y="118" fill="#aaa" font-size="9">Jul</text>
-                                        <text x="235" y="118" fill="#aaa" font-size="9">Sep</text>
-                                        <text x="295" y="118" fill="#aaa" font-size="9">Nov</text>
-                                        <text x="365" y="118" fill="#aaa" font-size="9">Dec</text>
-                                    </svg>
+                                <div class="mini-chart" style="height: 120px;">
+                                    <canvas id="revenueTrendsChart"></canvas>
                                 </div>
                                 <div style="display:flex;gap:16px;margin-top:6px;">
                                     <div
@@ -2097,28 +2079,12 @@
                                         <span class="badge bg-primary-subtle text-primary rounded-pill">Live</span>
                                     </div>
 
-                                    <div class="production-list" style="max-height: 250px; overflow-y: auto;">
-                                        <div
-                                            class="d-flex align-items-center mb-3 p-2 border-start border-primary border-3 bg-light-subtle">
-                                            <div class="ms-2">
-                                                <div class="small fw-bold">Order #PPR-048</div>
-                                                <div class="text-muted" style="font-size: 0.7rem;">Moved to <span
-                                                        class="text-primary fw-bold">Printing</span> • 2m ago</div>
-                                            </div>
-                                        </div>
-                                        <div
-                                            class="d-flex align-items-center mb-3 p-2 border-start border-success border-3 bg-light-subtle">
-                                            <div class="ms-2">
-                                                <div class="small fw-bold">Order #PPR-035</div>
-                                                <div class="text-muted" style="font-size: 0.7rem;">Marked as <span
-                                                        class="text-success fw-bold">Done</span> • 15m ago</div>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
                         </div>
                     </div>
+
 
                     <div class="bottom-row">
                         <div class="chart-card" style="padding:0;overflow:hidden;">
@@ -2140,7 +2106,42 @@
                                         </tr>
                                     </thead>
                                     <tbody id="recentOrdersTbody">
-                                        <!-- Fetched dynamically -->
+                                        <!-- Static fallback rows shown if API is unavailable -->
+                                        <tr>
+                                            <td style="font-weight:600;">#PPR-048</td>
+                                            <td>Gamma Agency</td>
+                                            <td>Brochure</td>
+                                            <td><span class="badge-status badge-active">Active</span></td>
+                                            <td style="font-weight:700;">₱4,250</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight:600;">#PPR-045</td>
+                                            <td>Urban Core</td>
+                                            <td>Mailer</td>
+                                            <td><span class="badge-status badge-pending">Reprint</span></td>
+                                            <td style="font-weight:700;">₱12,800</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight:600;">#PPR-043</td>
+                                            <td>TechStart Inc</td>
+                                            <td>Poster</td>
+                                            <td><span class="badge-status badge-done">Printing</span></td>
+                                            <td style="font-weight:700;">₱15,500</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight:600;">#PPR-041</td>
+                                            <td>Ocean Santana</td>
+                                            <td>Flyer</td>
+                                            <td><span class="badge-status badge-pending">Shipping</span></td>
+                                            <td style="font-weight:700;">₱8,750</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight:600;">#PPR-038</td>
+                                            <td>Citybeats</td>
+                                            <td>Banner</td>
+                                            <td><span class="badge-status badge-done">Done</span></td>
+                                            <td style="font-weight:700;">₱2,450</td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -2196,10 +2197,11 @@
                                 style="width:100%;margin-top:10px;padding:8px;border-radius:8px;border:1px solid var(--border);background:#fff;font-size:.78rem;font-weight:600;color:var(--navy);cursor:pointer;font-family:'DM Sans',sans-serif;">Load
                                 More Activity</button>
                         </div>
-                    </div>
-                </div>
-            </div>
-            <div class="a-page" id="page-specsPage" style="display: none;">
+                    </div><!-- /bottom-row -->
+                </div><!-- /a-dash -->
+            </div><!-- /page-dashboard -->
+
+            <div class="a-page" id="page-specsPage">
                 <div class="a-specs-wrap">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <div>
@@ -2246,7 +2248,7 @@
                             <input type="hidden" id="specId">
                             <div class="mb-3">
                                 <label class="form-label small fw-bold">Type</label>
-                                <select class="form-select" id="specType" required>
+                                <select class="form-select" id="specType" required onchange="toggleFinishFields()">
                                     <option value="paper">Paper/Material</option>
                                     <option value="finish">Finishing</option>
                                     <option value="size">Size</option>
@@ -2258,8 +2260,13 @@
                                     placeholder="e.g. A4 Glossy 200gsm">
                             </div>
                             <div class="mb-3">
-                                <label class="form-label small fw-bold">Price Modifier (₱)</label>
+                                <label class="form-label small fw-bold" id="specPriceLabel">Price Modifier / Setup Fee (₱)</label>
                                 <input type="number" step="0.01" class="form-control" id="specPrice" required
+                                    placeholder="0.00">
+                            </div>
+                            <div class="mb-3" id="finishFields" style="display: none;">
+                                <label class="form-label small fw-bold">Per Unit Fee (₱)</label>
+                                <input type="number" step="0.01" class="form-control" id="specUnitFee"
                                     placeholder="0.00">
                             </div>
                             <div class="mb-4">
@@ -3392,17 +3399,11 @@
                                             class="toggle-slider"></span></label></div>
                                 <div class="notif-row"><span class="notif-label">Device alerts</span><label
                                         class="toggle"><input type="checkbox" checked><span
-                                            class="toggle-slider"></span></label></div>
+                                                class="toggle-slider"></span></label></div>
                                 <div class="notif-row"><span class="notif-label">Team activity</span><label
                                         class="toggle"><input type="checkbox"><span
                                             class="toggle-slider"></span></label>
                                 </div>
-                                <div class="notif-row"><span class="notif-label">Weekly reports</span><label
-                                        class="toggle"><input type="checkbox" checked><span
-                                            class="toggle-slider"></span></label></div>
-                                <div class="notif-row"><span class="notif-label">Billing notices</span><label
-                                        class="toggle"><input type="checkbox" checked><span
-                                            class="toggle-slider"></span></label></div>
                             </div>
                         </div>
                     </div>
@@ -3414,67 +3415,190 @@
     </div><!-- /a-app -->
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/printpro.js"></script>
 
     <script>
+        // 1. Navigation Mapping
         const pageToNav = {
             dashboard: 'nav-dashboard',
             orders: 'nav-orders',
             users: 'nav-users',
             devices: 'nav-devices',
+            subscriptions: 'nav-subscriptions',
             settings: 'nav-settings',
+            specsPage: 'nav-specsPage',
             account: null
         };
 
-        const pageToTab = {
-            dashboard: 0,
-            orders: 1,
-            devices: 2,
-            account: 3
-        };
-
         function showPage(pageName, el) {
-            // 1. Hide all pages by removing the 'active' class
             document.querySelectorAll('.a-page').forEach(p => p.classList.remove('active'));
-
-            // 2. Try to find the page (Check for 'page-name' OR just 'name')
             let target = document.getElementById('page-' + pageName) || document.getElementById(pageName);
+            if (target) target.classList.add('active');
 
-            if (target) {
-                target.classList.add('active');
-            } else {
-                console.error("Could not find page ID: " + pageName);
-            }
-
-            // 3. Update Sidebar Navigation highlight
             document.querySelectorAll('.a-nav-item').forEach(n => n.classList.remove('active'));
             if (el) {
                 el.classList.add('active');
+            } else {
+                const navId = pageToNav[pageName];
+                if (navId) {
+                    const navEl = document.getElementById(navId);
+                    if (navEl) navEl.classList.add('active');
+                }
             }
         }
 
         function showSettingsSection(section, el) {
             document.querySelectorAll('.settings-section').forEach(s => s.classList.remove('active'));
-            document.getElementById('settings-' + section).classList.add('active');
+            const target = document.getElementById('settings-' + section);
+            if (target) target.classList.add('active');
             document.querySelectorAll('.settings-nav-item').forEach(i => i.classList.remove('active'));
             if (el) el.classList.add('active');
         }
 
+        // 2. Orders & Search
         function filterOrders(btn, status) {
             document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            const rows = document.querySelectorAll('#ordersTbody tr');
-            rows.forEach(row => {
+            document.querySelectorAll('#ordersTbody tr').forEach(row => {
                 row.style.display = (status === 'all' || row.dataset.status === status) ? '' : 'none';
             });
         }
 
         function searchOrders(query) {
-            const q = query.toLowerCase();
+            const q = query.toLowerCase().trim();
             document.querySelectorAll('#ordersTbody tr').forEach(row => {
                 row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
             });
         }
 
+        function handleAdminSearch(val) {
+            const q = val.toLowerCase().trim();
+            if (!q) return;
+            // Basic global search logic
+            console.log("Global search for:", q);
+        }
+
+        function getStatusBadgeClass(status) {
+            switch (status) {
+                case 'Prepress': return 'badge-active';
+                case 'Printing': return 'badge-active';
+                case 'Finishing': return 'badge-active';
+                case 'Shipping': return 'badge-pending';
+                case 'Delivered': return 'badge-done';
+                default: return 'badge-pending';
+            }
+        }
+
+        function updateOrderStatusUI(selectElem, status) {
+            const progressFill = selectElem.closest('tr').querySelector('.progress-bar-fill');
+            const steps = ['Prepress', 'Printing', 'Finishing', 'Shipping', 'Delivered'];
+            const idx = steps.indexOf(status);
+            const progress = ((idx + 1) / steps.length) * 100;
+
+            let color = 'var(--accent)';
+            let selectBg = 'rgba(29, 140, 248, .08)';
+            if (status === 'Delivered') { color = 'var(--success)'; selectBg = 'rgba(45, 206, 137, .08)'; }
+            else if (status === 'Shipping') { color = 'var(--warning)'; selectBg = 'rgba(251, 99, 64, .08)'; }
+
+            if (progressFill) {
+                progressFill.style.width = progress + '%';
+                progressFill.style.background = color;
+            }
+            selectElem.style.color = color;
+            selectElem.style.background = selectBg;
+            selectElem.style.borderColor = color;
+        }
+
+        async function updateOrderStatus(select, orderId) {
+            const status = select.value;
+            updateOrderStatusUI(select, status);
+
+            const formData = new FormData();
+            formData.append('order_id', orderId);
+            formData.append('status', status);
+
+            try {
+                const res = await fetch(getApiUrl('api/update_order_status.php'), { method: 'POST', body: formData });
+                const data = await res.json();
+                if (data.success) {
+                    localStorage.setItem('pp_status_' + orderId, status);
+                    window.dispatchEvent(new Event('storage'));
+                    loadAdminOrders();
+                }
+            } catch (e) { console.error('Status update failed', e); }
+        }
+
+        async function loadAdminOrders() {
+            try {
+                const res = await fetch(getApiUrl('api/get_orders.php'));
+                const data = await res.json();
+                if (data.success) {
+                    const orders = data.data;
+                    const tbody = document.getElementById('ordersTbody');
+                    const recentTbody = document.getElementById('recentOrdersTbody');
+
+                    if (tbody) tbody.innerHTML = '';
+                    if (recentTbody && orders.length > 0) recentTbody.innerHTML = '';
+
+                    const feed = document.getElementById('productionFeedList');
+                    if (feed && orders.length > 0) {
+                        feed.innerHTML = orders.slice(0, 3).map(o => {
+                            const border = o.status === 'Delivered' ? 'border-success' : (o.status === 'Printing' ? 'border-primary' : 'border-warning');
+                            const text = o.status === 'Delivered' ? 'text-success' : (o.status === 'Printing' ? 'text-primary' : 'text-warning');
+                            return `
+                                <div class="d-flex align-items-center mb-3 p-2 border-start ${border} border-3 bg-light-subtle">
+                                    <div class="ms-2">
+                                        <div class="small fw-bold">Order #ORD-${o.id}</div>
+                                        <div class="text-muted" style="font-size: 0.7rem;">Currently in <span class="${text} fw-bold">${o.status}</span> • Updated recently</div>
+                                    </div>
+                                </div>`;
+                        }).join('');
+                    }
+
+                    orders.forEach((o, index) => {
+                        const sClass = getStatusBadgeClass(o.status);
+                        if (tbody) {
+                            const steps = ['Prepress', 'Printing', 'Finishing', 'Shipping', 'Delivered'];
+                            const prog = ((steps.indexOf(o.status) + 1) / steps.length) * 100;
+                            tbody.innerHTML += `
+                                <tr data-status="${(o.status || '').toLowerCase()}">
+                                    <td style="font-weight:700;">#ORD-${o.id}</td>
+                                    <td>${o.client_name || 'Walk-in'}</td>
+                                    <td>${o.job_name || 'Print Job'}</td>
+                                    <td>${parseInt(o.quantity).toLocaleString()}</td>
+                                    <td>
+                                        <div class="progress-bar-wrap">
+                                            <div class="progress-bar-fill" style="width:${prog}%;"></div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <select class="status-select" onchange="updateOrderStatus(this, ${o.id})">
+                                            ${steps.map(s => `<option value="${s}" ${o.status == s ? 'selected' : ''}>${s}</option>`).join('')}
+                                        </select>
+                                    </td>
+                                    <td>${new Date(o.created_at).toLocaleDateString()}</td>
+                                    <td style="font-weight:700;">₱${parseFloat(o.total_price).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                    <td><button class="btn btn-sm btn-light" onclick="window.open('api/generate_ticket.php?order_id=${o.id}', '_blank')"><i class="bi bi-ticket-perforated"></i></button></td>
+                                </tr>`;
+                        }
+                        if (recentTbody && index < 5) {
+                            recentTbody.innerHTML += `
+                                <tr>
+                                    <td style="font-weight:600;">#ORD-${o.id}</td>
+                                    <td>${o.client_name || 'Walk-in'}</td>
+                                    <td>${o.job_name || 'Print Job'}</td>
+                                    <td><span class="badge-status ${sClass}">${o.status}</span></td>
+                                    <td style="font-weight:700;">₱${parseFloat(o.total_price).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                </tr>`;
+                        }
+                    });
+
+                    document.querySelectorAll('.status-select').forEach(sel => updateOrderStatusUI(sel, sel.value));
+                }
+            } catch (e) { console.error('Load orders failed', e); }
+        }
+
+        // 3. User Management
         function selectUser(row, name, role, scope, email, joined) {
             document.querySelectorAll('.users-table tbody tr').forEach(r => r.classList.remove('user-row-active'));
             row.classList.add('user-row-active');
@@ -3483,527 +3607,249 @@
             document.getElementById('profileName').textContent = name;
             document.getElementById('profileRole').textContent = scope + ' Role · ' + role;
             document.getElementById('profileInfoRows').innerHTML = `
-      <div class="profile-info-row"><span>Joined</span><span>${joined}</span></div>
-      <div class="profile-info-row"><span>Email</span><span>${email}</span></div>
-      <div class="profile-info-row"><span>Status</span><span style="color:var(--success);">Active</span></div>
-      <div class="profile-info-row"><span>Role</span><span>${role}</span></div>
-    `;
-        }
-    </script>
-
-    <!-- ── AUTH INIT & LOGOUT ── -->
-    <script>
-        // Populate admin info from session
-        (function () {
-            const session = sessionStorage.getItem('pp_user');
-            if (!session) return;
-            const user = JSON.parse(session);
-            const initial = (user.email || 'A')[0].toUpperCase();
-            const avatarEl = document.getElementById('adminAvatar');
-            if (avatarEl) {
-                avatarEl.textContent = initial;
-                avatarEl.title = user.email;
-            }
-        })();
-
-        function ppLogout(e) {
-            e.preventDefault();
-            sessionStorage.removeItem('pp_user');
-            window.location.href = 'homepage.html#login';
+                <div class="profile-info-row"><span>Joined</span><span>${joined}</span></div>
+                <div class="profile-info-row"><span>Email</span><span>${email}</span></div>
+                <div class="profile-info-row"><span>Status</span><span style="color:var(--success);">Active</span></div>
+                <div class="profile-info-row"><span>Role</span><span>${role}</span></div>
+            `;
         }
 
-        function toggleMobileSidebar() {
-            const sidebar = document.querySelector('.a-sidebar');
-            const overlay = document.getElementById('sidebarOverlay');
-            sidebar.classList.toggle('show');
-            overlay.classList.toggle('show');
-        }
-
-        // Close sidebar when clicking a nav item on mobile
-        document.querySelectorAll('.a-nav-item').forEach(item => {
-            item.addEventListener('click', () => {
-                if (window.innerWidth < 1200) toggleMobileSidebar();
-            });
-        });
-    </script>
-    <script>
-        function updateOrderStatus(selectElem, orderId) {
-            const newStatus = selectElem.value;
-            const progressFill = selectElem.closest('tr').querySelector('.progress-bar-fill');
-
-            let progress = '0%';
-            let color = 'var(--accent)';
-            let selectColor = 'var(--accent)';
-            let selectBg = 'rgba(29, 140, 248, .08)';
-            let selectBorder = 'var(--accent)';
-
-            switch (newStatus) {
-                case 'Prepress':
-                    progress = '25%'; color = 'var(--accent)';
-                    selectColor = 'var(--accent)'; selectBg = 'rgba(29, 140, 248, .08)'; selectBorder = 'var(--accent)';
-                    break;
-                case 'Printing':
-                    progress = '50%'; color = 'var(--accent2)';
-                    selectColor = 'var(--accent2)'; selectBg = 'rgba(0, 198, 255, .08)'; selectBorder = 'var(--accent2)';
-                    break;
-                case 'Finishing':
-                    progress = '75%'; color = 'var(--purple)';
-                    selectColor = 'var(--purple)'; selectBg = 'rgba(124, 77, 255, .08)'; selectBorder = 'var(--purple)';
-                    break;
-                case 'Shipping':
-                    progress = '90%'; color = 'var(--warning)';
-                    selectColor = 'var(--warning)'; selectBg = 'rgba(251, 99, 64, .08)'; selectBorder = 'var(--warning)';
-                    break;
-                case 'Delivered':
-                    progress = '100%'; color = 'var(--success)';
-                    selectColor = 'var(--success)'; selectBg = 'rgba(45, 206, 137, .08)'; selectBorder = 'var(--success)';
-                    break;
-            }
-
-            if (progressFill) {
-                progressFill.style.width = progress;
-                progressFill.style.background = color;
-            }
-
-            selectElem.style.color = selectColor;
-            selectElem.style.background = selectBg;
-            selectElem.style.borderColor = selectBorder;
-
-            const key = 'pp_status_' + orderId;
-            localStorage.setItem(key, newStatus);
-
-            // Dispatch a custom event to update same window if needed
-            window.dispatchEvent(new Event('storage'));
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('.status-select').forEach(sel => {
-                const orderId = sel.getAttribute('data-order');
-                const saved = localStorage.getItem('pp_status_' + orderId);
-                if (saved) {
-                    sel.value = saved;
-                }
-                updateOrderStatus(sel, orderId);
-            });
-        });
-
-        // Ensure real-time syncing if multiple tabs are open
-        window.addEventListener('storage', (e) => {
-            if (e.key && e.key.startsWith('pp_status_')) {
-                const orderId = e.key.replace('pp_status_', '');
-                const sel = document.querySelector(`.status-select[data-order="${orderId}"]`);
-                if (sel && sel.value !== e.newValue) {
-                    sel.value = e.newValue;
-                    updateOrderStatus(sel, orderId);
-                }
-            }
-        });
-
-        // Subscription Management logic
+        // 4. Subscription Management
         function updateSub(clientId) {
             const row = document.querySelector(`tr[data-client-id="${clientId}"]`);
             if (!row) return;
-
             const plan = row.querySelector('[data-field="plan"]').value;
             const applied = row.querySelector('[data-field="applied"]').value;
             const ends = row.querySelector('[data-field="ends"]').value;
             const status = row.querySelector('[data-field="status"]').value;
-
-            // Status color
             const statusSelect = row.querySelector('[data-field="status"]');
-            if (status === 'Active') statusSelect.style.color = 'var(--success)';
-            else if (status === 'Canceled') statusSelect.style.color = 'var(--muted)';
-            else statusSelect.style.color = 'var(--danger)';
-
-            const subData = { plan, applied, ends, status };
-            localStorage.setItem('pp_sub_' + clientId, JSON.stringify(subData));
+            if (statusSelect) {
+                statusSelect.style.color = (status === 'Active') ? 'var(--success)' : (status === 'Canceled' ? 'var(--muted)' : 'var(--danger)');
+            }
+            localStorage.setItem('pp_sub_' + clientId, JSON.stringify({ plan, applied, ends, status }));
             window.dispatchEvent(new Event('storage'));
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
+        function syncSubscription() {
             document.querySelectorAll('#subsTable tr[data-client-id]').forEach(row => {
                 const cid = row.getAttribute('data-client-id');
                 const saved = localStorage.getItem('pp_sub_' + cid);
                 if (saved) {
                     const data = JSON.parse(saved);
-                    row.querySelector('[data-field="plan"]').value = data.plan;
-                    row.querySelector('[data-field="applied"]').value = data.applied;
-                    row.querySelector('[data-field="ends"]').value = data.ends;
-                    row.querySelector('[data-field="status"]').value = data.status;
-
-                    const statusSelect = row.querySelector('[data-field="status"]');
-                    if (data.status === 'Active') statusSelect.style.color = 'var(--success)';
-                    else if (data.status === 'Canceled') statusSelect.style.color = 'var(--muted)';
-                    else statusSelect.style.color = 'var(--danger)';
-                } else {
-                    // Initialize if nothing in local storage
-                    updateSub(cid);
+                    ['plan', 'applied', 'ends', 'status'].forEach(field => {
+                        const el = row.querySelector(`[data-field="${field}"]`);
+                        if (el) el.value = data[field];
+                    });
+                    const ss = row.querySelector('[data-field="status"]');
+                    if (ss) ss.style.color = (data.status === 'Active') ? 'var(--success)' : (data.status === 'Canceled' ? 'var(--muted)' : 'var(--danger)');
                 }
             });
-        });
-        document.addEventListener('DOMContentLoaded', () => {
-            // 1. Initialize the Pie Chart
-            const canvas = document.getElementById('statusDistributionChart');
+        }
 
-            if (canvas) {
-                const ctx = canvas.getContext('2d');
-                // Ensure the chart is initialized correctly inside the if-block
-                new Chart(ctx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['Pending', 'Printing', 'Completed', 'Canceled'],
-                        datasets: [{
-                            data: [15, 8, 42, 5],
-                            backgroundColor: ['#fb6340', '#1171ef', '#2dce89', '#8898aa'],
-                            borderWidth: 0,
-                            hoverOffset: 10
-                        }]
-                    },
-                    options: {
-                        maintainAspectRatio: false,
-                        cutout: '75%',
-                        plugins: {
-                            legend: {
-                                position: 'bottom',
-                                labels: {
-                                    padding: 20,
-                                    usePointStyle: true,
-                                    font: { family: 'DM Sans', size: 12 }
-                                }
-                            }
-                        }
-                    }
-                });
-            } else {
-                console.error("Canvas with ID 'statusDistributionChart' not found!");
-            }
-        });
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const canvas = document.getElementById('statusDistributionChart');
-
-            if (canvas) {
-                const ctx = canvas.getContext('2d');
-                // This is the specific syntax Chart.js requires
-                new Chart(ctx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['Pending', 'Printing', 'Completed', 'Canceled'],
-                        datasets: [{
-                            label: 'Orders',
-                            data: [15, 8, 42, 5], // Even dummy data will show now
-                            backgroundColor: ['#fb6340', '#1171ef', '#2dce89', '#8898aa'],
-                            borderWidth: 0
-                        }]
-                    },
-                    options: {
-                        maintainAspectRatio: false,
-                        cutout: '75%',
-                        plugins: {
-                            legend: { position: 'bottom' }
-                        }
-                    }
-                });
-            } else {
-                console.log("Looking for canvas... not found yet.");
-            }
-        });
-        // ── PRINT SPECIFICATIONS MANAGEMENT ──
+        // 5. Specification Management
         async function loadSpecs() {
             try {
-                const res = await fetch('api/specs.php');
+                const res = await fetch(getApiUrl('api/specs.php'));
                 const data = await res.json();
                 if (data.success) {
                     const tbody = document.getElementById('specsTableBody');
-                    tbody.innerHTML = '';
-                    data.data.forEach(spec => {
-                        const tr = document.createElement('tr');
-                        const statusBadge = spec.is_active == 1
-                            ? '<span class="badge bg-success-subtle text-success">Available</span>'
-                            : '<span class="badge bg-secondary-subtle text-secondary">Inactive</span>';
-
-                        tr.innerHTML = `
-                            <td class="text-capitalize">${spec.spec_type}</td>
-                            <td><span class="fw-bold">${spec.name}</span></td>
-                            <td>₱${parseFloat(spec.price_modifier).toFixed(2)}</td>
-                            <td>${statusBadge}</td>
-                            <td class="text-end">
-                                <button class="btn btn-sm btn-light" onclick="openSpecModal(${spec.id}, '${spec.spec_type}', '${spec.name.replace(/'/g, "\\'")}', ${spec.price_modifier}, ${spec.is_active})"><i class="bi bi-pencil"></i></button>
-                                <button class="btn btn-sm btn-light text-danger" onclick="deleteSpec(${spec.id}, '${spec.spec_type}')"><i class="bi bi-trash"></i></button>
-                            </td>
-                        `;
-                        tbody.appendChild(tr);
-                    });
+                    if (tbody) {
+                        tbody.innerHTML = '';
+                        data.data.forEach(spec => {
+                            const statusBadge = spec.is_active == 1
+                                ? '<span class="badge bg-success-subtle text-success">Available</span>'
+                                : '<span class="badge bg-secondary-subtle text-secondary">Inactive</span>';
+                            tbody.innerHTML += `
+                                <tr>
+                                    <td class="text-capitalize">${spec.spec_type}</td>
+                                    <td><span class="fw-bold">${spec.name}</span></td>
+                                    <td>₱${parseFloat(spec.price_modifier).toFixed(2)}</td>
+                                    <td>${statusBadge}</td>
+                                    <td class="text-end">
+                                        <button class="btn btn-sm btn-light" onclick="openSpecModal(${spec.id}, '${spec.spec_type}', '${spec.name.replace(/'/g, "\\'")}', ${spec.price_modifier}, ${spec.is_active}, ${spec.per_unit_fee || 0})"><i class="bi bi-pencil"></i></button>
+                                        <button class="btn btn-sm btn-light text-danger" onclick="deleteSpec(${spec.id}, '${spec.spec_type}')"><i class="bi bi-trash"></i></button>
+                                    </td>
+                                </tr>`;
+                        });
+                    }
                 }
             } catch (e) { console.error('Failed to load specs', e); }
         }
 
-        function openSpecModal(id = '', type = 'paper', name = '', price = '', isActive = 1) {
+        function toggleFinishFields() {
+            const type = document.getElementById('specType').value;
+            const finishFields = document.getElementById('finishFields');
+            const priceLabel = document.getElementById('specPriceLabel');
+            if (type === 'finish') {
+                if (finishFields) finishFields.style.display = 'block';
+                if (priceLabel) priceLabel.textContent = 'Setup Fee (₱)';
+            } else {
+                if (finishFields) finishFields.style.display = 'none';
+                if (priceLabel) priceLabel.textContent = 'Price Modifier (₱/x)';
+            }
+        }
+
+        function openSpecModal(id = '', type = 'paper', name = '', price = '', isActive = 1, unitFee = 0) {
+            // Handle object input from loadSpecs
+            if (typeof id === 'object' && id !== null) {
+                const s = id;
+                id = s.id;
+                type = s.spec_type;
+                name = s.name;
+                price = s.price_modifier || s.setup_fee;
+                isActive = s.is_active;
+                unitFee = s.per_unit_fee || 0;
+            }
             document.getElementById('specId').value = id;
             document.getElementById('specType').value = type;
             document.getElementById('specName').value = name;
             document.getElementById('specPrice').value = price;
             document.getElementById('specActive').value = isActive;
-
+            document.getElementById('specUnitFee').value = unitFee;
+            toggleFinishFields();
             document.getElementById('specModalTitle').textContent = id ? 'Edit Spec' : 'Add New Spec';
             document.getElementById('specModal').style.display = 'flex';
         }
 
-        function closeSpecModal() {
-            document.getElementById('specModal').style.display = 'none';
-        }
+        function closeSpecModal() { document.getElementById('specModal').style.display = 'none'; }
 
         async function saveSpec(e) {
             e.preventDefault();
+            const btn = document.getElementById('specSubmitBtn');
+            btn.disabled = true; btn.textContent = 'Saving...';
+
             const id = document.getElementById('specId').value;
             const type = document.getElementById('specType').value;
-            const name = document.getElementById('specName').value;
-            const price = document.getElementById('specPrice').value;
-            const isActive = document.getElementById('specActive').value;
-
-            const btn = document.getElementById('specSubmitBtn');
-            btn.disabled = true;
-            btn.textContent = 'Saving...';
-
-            let method = 'POST';
+            let method = id ? 'PUT' : 'POST';
             let body = new URLSearchParams();
             body.append('spec_type', type);
-            body.append('name', name);
-            body.append('price_modifier', price);
-            body.append('is_active', isActive);
-
-            if (id) {
-                method = 'PUT';
-                body.append('id', id);
-            }
+            body.append('name', document.getElementById('specName').value);
+            body.append('price_modifier', document.getElementById('specPrice').value);
+            body.append('is_active', document.getElementById('specActive').value);
+            if (type === 'finish') body.append('per_unit_fee', document.getElementById('specUnitFee').value || 0);
+            if (id) body.append('id', id);
 
             try {
-                const res = await fetch('api/specs.php', {
-                    method: method,
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: body.toString()
-                });
+                const res = await fetch(getApiUrl('api/specs.php'), { method: method, headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: body.toString() });
                 const data = await res.json();
-                if (data.success) {
-                    closeSpecModal();
-                    loadSpecs();
-                } else {
-                    alert(data.message || 'Error saving spec');
-                }
-            } catch (err) {
-                alert('Network error');
-            } finally {
-                btn.disabled = false;
-                btn.textContent = 'Save Specification';
-            }
+                if (data.success) { closeSpecModal(); loadSpecs(); }
+                else alert(data.message || 'Error saving spec');
+            } catch (err) { alert('Network error'); }
+            finally { btn.disabled = false; btn.textContent = 'Save Specification'; }
         }
 
         async function deleteSpec(id, type) {
             if (!confirm('Are you sure you want to delete this specification?')) return;
-
             try {
-                const res = await fetch('api/specs.php', {
-                    method: 'DELETE',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: 'id=' + id + '&spec_type=' + encodeURIComponent(type)
-                });
+                const res = await fetch(getApiUrl('api/specs.php'), { method: 'DELETE', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: 'id=' + id + '&spec_type=' + encodeURIComponent(type) });
                 const data = await res.json();
-                if (data.success) {
-                    loadSpecs();
-                } else {
-                    alert(data.message || 'Error deleting spec');
-                }
-            } catch (err) {
-                alert('Network error');
-            }
+                if (data.success) loadSpecs();
+                else alert(data.message || 'Error deleting spec');
+            } catch (err) { alert('Network error'); }
         }
 
-        // ── ORDER MANAGEMENT ──
-        async function loadAdminOrders() {
-            try {
-                const res = await fetch('api/get_orders.php');
-                const data = await res.json();
-                if (data.success) {
-                    const orders = data.data;
-                    const tbody = document.getElementById('ordersTbody');
-                    const recentTbody = document.getElementById('recentOrdersTbody');
-
-                    if (tbody) tbody.innerHTML = '';
-                    if (recentTbody) recentTbody.innerHTML = '';
-
-                    orders.forEach((o, index) => {
-                        const statusBadgeClass = o.status === 'Prepress' ? 'badge-active' :
-                            (o.status === 'Delivered' ? 'badge-done' : 'badge-pending');
-
-                        // For Main Orders Table
-                        if (tbody) {
-                            const tr = `<tr>
-                                <td style="font-weight:700;">#ORD-${o.id}</td>
-                                <td>${o.client_name || 'Walk-in'}</td>
-                                <td>${o.job_name || 'Print Job'}</td>
-                                <td>${parseInt(o.quantity).toLocaleString()}</td>
-                                <td>
-                                    <div class="progress-bar-wrap">
-                                        <div class="progress-bar-fill" style="width:${getProgress(o.status)}%; background:var(--accent);"></div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <select class="status-select" onchange="updateOrderStatus(this, ${o.id})">
-                                        <option value="Prepress" ${o.status == 'Prepress' ? 'selected' : ''}>Prepress</option>
-                                        <option value="Printing" ${o.status == 'Printing' ? 'selected' : ''}>Printing</option>
-                                        <option value="Finishing" ${o.status == 'Finishing' ? 'selected' : ''}>Finishing</option>
-                                        <option value="Shipping" ${o.status == 'Shipping' ? 'selected' : ''}>Shipping</option>
-                                        <option value="Delivered" ${o.status == 'Delivered' ? 'selected' : ''}>Delivered</option>
-                                    </select>
-                                </td>
-                                <td>${new Date(o.created_at).toLocaleDateString()}</td>
-                                <td style="font-weight:700;">₱${parseFloat(o.total_price).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-                                <td>
-                                    <button class="btn btn-sm btn-light" onclick="generateTicket(${o.id})"><i class="bi bi-ticket-perforated"></i></button>
-                                </td>
-                            </tr>`;
-                            tbody.innerHTML += tr;
-                        }
-
-                        // For Recent Orders Table (Max 5)
-                        if (recentTbody && index < 5) {
-                            const tr2 = `<tr>
-                                <td style="font-weight:600;">#ORD-${o.id}</td>
-                                <td>${o.client_name || 'Walk-in'}</td>
-                                <td>${o.job_name || 'Print Job'}</td>
-                                <td><span class="badge-status ${statusBadgeClass}">${o.status}</span></td>
-                                <td style="font-weight:700;">₱${parseFloat(o.total_price).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-                            </tr>`;
-                            recentTbody.innerHTML += tr2;
-                        }
-                    });
-                }
-            } catch (e) { console.error(e); }
-        }
-
-        function getProgress(status) {
-            const steps = ['Prepress', 'Printing', 'Finishing', 'Shipping', 'Delivered'];
-            const idx = steps.indexOf(status);
-            return ((idx + 1) / steps.length) * 100;
-        }
-
-        async function updateOrderStatus(select, orderId) {
-            const status = select.value;
-            const formData = new FormData();
-            formData.append('order_id', orderId);
-            formData.append('status', status);
-
-            try {
-                const res = await fetch('api/update_order_status.php', { method: 'POST', body: formData });
-                const data = await res.json();
-                if (data.success) {
-                    loadAdminOrders();
-                } else {
-                    alert('Error updating status');
-                }
-            } catch (e) { console.error(e); }
-        }
-
-        function generateTicket(orderId) {
-            window.open('api/generate_ticket.php?order_id=' + orderId, '_blank');
-        }
-
-        // ── DASHBOARD STATISTICS & CHARTS ──
+        // 6. Dashboard Stats & Charts
         async function updateDashboardStats() {
             try {
-                const res = await fetch('api/get_dashboard_stats.php');
+                const res = await fetch(getApiUrl('api/get_dashboard_stats.php'));
                 const data = await res.json();
                 if (data.success) {
                     const stats = data.data;
-
-                    // Update KPIs
-                    document.querySelectorAll('.kpi-val')[0].textContent = stats.total_orders;
-                    document.querySelectorAll('.kpi-val')[1].textContent = '₱' + parseFloat(stats.total_revenue).toLocaleString();
-
-                    // Update Status Counts on Orders Page
-                    const statusKpis = document.querySelectorAll('#page-orders .kpi-val');
-                    if (statusKpis.length >= 4) {
-                        statusKpis[0].textContent = stats.total_orders;
-                        statusKpis[1].textContent = stats.status_counts['Printing'] || 0;
-                        statusKpis[2].textContent = stats.status_counts['Prepress'] || 0;
-                        statusKpis[3].textContent = stats.status_counts['Delivered'] || 0;
+                    const dKpis = document.querySelectorAll('#page-dashboard .kpi-val');
+                    if (dKpis.length >= 4) {
+                        dKpis[0].textContent = '₱' + parseFloat(stats.total_revenue || 0).toLocaleString();
+                        dKpis[1].textContent = stats.status_counts['Delivered'] || 0;
+                        dKpis[2].textContent = (stats.status_counts['Prepress'] || 0) + (stats.status_counts['Printing'] || 0);
+                        dKpis[3].textContent = stats.total_orders;
                     }
-
-                    // Update Main Revenue Chart
+                    const oKpis = document.querySelectorAll('#page-orders .kpi-val');
+                    if (oKpis.length >= 4) {
+                        oKpis[0].textContent = stats.total_orders;
+                        oKpis[1].textContent = stats.status_counts['Printing'] || 0;
+                        oKpis[2].textContent = stats.status_counts['Prepress'] || 0;
+                        oKpis[3].textContent = stats.status_counts['Delivered'] || 0;
+                    }
+                    if (window.statusChart) {
+                        window.statusChart.data.datasets[0].data = [stats.status_counts['Prepress'] || 0, stats.status_counts['Printing'] || 0, stats.status_counts['Delivered'] || 0, 0];
+                        window.statusChart.update();
+                    }
                     if (window.revenueChart) {
                         window.revenueChart.data.labels = stats.revenue_chart.map(r => r.month);
                         window.revenueChart.data.datasets[0].data = stats.revenue_chart.map(r => r.revenue);
                         window.revenueChart.update();
                     }
                 }
-            } catch (e) { console.error(e); }
+            } catch (e) { console.error('Stats update failed', e); }
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            loadSpecs();
-            loadAdminOrders();
-            updateDashboardStats();
+        // 7. Theme & Logout
+        function ppLogout(e) { e.preventDefault(); sessionStorage.removeItem('pp_user'); window.location.href = 'homepage.html#login'; }
+        function toggleMobileSidebar() {
+            const sidebar = document.querySelector('.a-sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            if (sidebar) sidebar.classList.toggle('show');
+            if (overlay) overlay.classList.toggle('show');
+        }
 
-            // Initialize Chart.js (example)
-            const ctx = document.getElementById('mainChart');
-            if (ctx) {
-                window.revenueChart = new Chart(ctx, {
-                    type: 'line',
+        // 8. Global Initialization
+        document.addEventListener('DOMContentLoaded', () => {
+            // Restore Session
+            const session = sessionStorage.getItem('pp_user');
+            if (session) {
+                const user = JSON.parse(session);
+                const avatar = document.getElementById('adminAvatar');
+                if (avatar) avatar.textContent = (user.name || user.email || 'A')[0].toUpperCase();
+            }
+
+            // Theme Toggle
+            const themeBtn = document.getElementById('themeToggleBtn');
+            if (themeBtn) {
+                const currentTheme = localStorage.getItem('printpro-theme') || 'light';
+                document.documentElement.setAttribute('data-theme', currentTheme);
+                themeBtn.addEventListener('click', () => {
+                    const newTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+                    document.documentElement.setAttribute('data-theme', newTheme);
+                    localStorage.setItem('printpro-theme', newTheme);
+                });
+            }
+
+            // Sidebar setup
+            document.querySelectorAll('.a-nav-item').forEach(item => {
+                item.addEventListener('click', () => { if (window.innerWidth < 1200) toggleMobileSidebar(); });
+            });
+
+            // Initialize Charts
+            const donutCtx = document.getElementById('statusDistributionChart');
+            if (donutCtx && !window.statusChart) {
+                window.statusChart = new Chart(donutCtx, {
+                    type: 'doughnut',
                     data: {
-                        labels: [],
+                        labels: ['Prepress', 'Printing', 'Delivered', 'Other'],
                         datasets: [{
-                            label: 'Revenue',
-                            data: [],
-                            borderColor: '#1d8cf8',
-                            backgroundColor: 'rgba(29, 140, 248, 0.1)',
-                            fill: true,
-                            tension: 0.4
+                            data: [0, 0, 0, 0],
+                            backgroundColor: ['#fb6340', '#1171ef', '#2dce89', '#8898aa'],
+                            borderWidth: 0, hoverOffset: 10
                         }]
                     },
-                    options: {
-                        responsive: true,
-                        plugins: { legend: { display: false } },
-                        scales: { y: { beginAtZero: true } }
-                    }
+                    options: { maintainAspectRatio: false, cutout: '75%', plugins: { legend: { position: 'bottom', labels: { padding: 20, usePointStyle: true, font: { family: 'DM Sans', size: 11 } } } } }
                 });
             }
+
+            const lineCtx = document.getElementById('revenueTrendsChart');
+            if (lineCtx && !window.revenueChart) {
+                window.revenueChart = new Chart(lineCtx, {
+                    type: 'line',
+                    data: { labels: [], datasets: [{ label: 'Revenue', data: [], borderColor: '#1d8cf8', backgroundColor: 'rgba(29, 140, 248, 0.1)', fill: true, tension: 0.4 }] },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } }, x: { grid: { display: false } } } }
+                });
+            }
+
+            // Initial Data Load
+            loadAdminOrders();
+            loadSpecs();
+            updateDashboardStats();
+            syncSubscription();
         });
-
-        // Theme Toggle Logic
-        (function () {
-            const toggleBtn = document.getElementById('themeToggleBtn');
-            const icon = toggleBtn ? toggleBtn.querySelector('i') : null;
-
-            function setTheme(theme) {
-                document.documentElement.setAttribute('data-theme', theme);
-                localStorage.setItem('printpro-theme', theme);
-                if (icon) {
-                    if (theme === 'dark') {
-                        icon.className = 'bi bi-sun';
-                        icon.style.color = '#fb6340';
-                    } else {
-                        icon.className = 'bi bi-moon-stars';
-                        icon.style.color = 'var(--muted)';
-                    }
-                }
-            }
-
-            const currentTheme = localStorage.getItem('printpro-theme') || 'light';
-            setTheme(currentTheme);
-
-            if (toggleBtn) {
-                toggleBtn.addEventListener('click', () => {
-                    const newTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-                    setTheme(newTheme);
-                });
-            }
-        })();
-
-        function handleAdminSearch(val) {
-            val = val.toLowerCase().trim();
-            if (!val) return;
-            console.log("Searching for:", val);
-        }
     </script>
 </body>
 

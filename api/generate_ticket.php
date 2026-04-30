@@ -15,9 +15,9 @@ try {
                                  p.name as paper_name, s.name as size_name, f.name as finish_name
                           FROM orders o
                           JOIN users u ON o.user_id = u.id
-                          LEFT JOIN print_specs p ON o.paper_id = p.id
-                          LEFT JOIN print_specs s ON o.size_id = s.id
-                          LEFT JOIN print_specs f ON o.finish_id = f.id
+                          LEFT JOIN tbl_materials p ON o.paper_id = p.id
+                          LEFT JOIN tbl_sizes s ON o.size_id = s.id
+                          LEFT JOIN tbl_finishes f ON o.finish_id = f.id
                           WHERE o.id = ?");
     $stmt->execute([$order_id]);
     $order = $stmt->fetch();
