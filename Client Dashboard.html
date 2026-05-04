@@ -5376,7 +5376,7 @@
                         dashTbody.innerHTML = '';
                         orders.slice(0, 5).forEach(o => {
                             const tr = `<tr>
-                                <td style="font-weight:600;">#ORD-${o.id}</td>
+                                <td style="font-weight:600;">${o.order_number || '#ORD-' + o.id}</td>
                                 <td>${o.job_name}</td>
                                 <td>${parseInt(o.quantity).toLocaleString()}</td>
                                 <td><span class="badge-status ${getStatusClass(o.status)}">${o.status}</span></td>
@@ -5393,7 +5393,7 @@
                         ordersTbody.innerHTML = '';
                         orders.forEach(o => {
                             const tr = `<tr data-status="${o.status.toLowerCase()}">
-                                <td>#ORD-${o.id}</td>
+                                <td>${o.order_number || '#ORD-' + o.id}</td>
                                 <td>${o.job_name}</td>
                                 <td>Product</td>
                                 <td>${parseInt(o.quantity).toLocaleString()}</td>
@@ -5459,7 +5459,7 @@
             }
         };
 
-        let masterSpecs = [];
+        masterSpecs = [];
 
         async function loadOrderSpecs() {
             try {
@@ -5861,26 +5861,55 @@
             btn.disabled = true;
             btn.textContent = 'Processing...';
 
+            // Get selected product type
+            const activeProductBtn = document.querySelector('.product-types .pt-btn.active');
+            const productType = activeProductBtn ? activeProductBtn.textContent.trim() : 'Flyers';
+
+            // Get size dimensions from custom fields or parse from select
+            const sizeWidth  = parseFloat(document.getElementById('customWidth').value)  || 4.0;
+            const sizeHeight = parseFloat(document.getElementById('customHeight').value) || 6.0;
+
+            // Get paper weight text (option label, not value ID)
+            const paperSel   = document.getElementById('paperSelect');
+            const paperWeight = paperSel.options[paperSel.selectedIndex]?.text || '';
+
+            // Get finish text
+            const finishSel  = document.getElementById('finishSelect');
+            const finish     = finishSel.options[finishSel.selectedIndex]?.text || 'None';
+
+            // Get bleed option text
+            const bleedSel   = document.getElementById('bleedSelect');
+            const bleed      = bleedSel.options[bleedSel.selectedIndex]?.text || 'With Bleed';
+
+            // Get turnaround value
+            const turnaround = document.getElementById('turnaroundSelect').value || 'standard';
+
+            // Get shipping value
+            const shipping   = document.getElementById('shippingSelect').value || 'free';
+
             const formData = new FormData();
-            formData.append('job_name', document.querySelector('.product-types .pt-btn.active').textContent.trim());
-            formData.append('paper_id', document.getElementById('paperSelect').value);
-            formData.append('size_id', document.getElementById('sizeSelect').value);
-            formData.append('finish_id', document.getElementById('finishSelect').value || 0);
-            formData.append('quantity', document.getElementById('qtySlider').value);
-            formData.append('total_price', currentPricingData.grand_total);
+            formData.append('product_type',  productType);
+            formData.append('paper_weight',  paperWeight);
+            formData.append('finish',        finish);
+            formData.append('bleed',         bleed);
+            formData.append('size_width',    sizeWidth);
+            formData.append('size_height',   sizeHeight);
+            formData.append('quantity',      document.getElementById('qtySlider').value);
+            formData.append('turnaround',    turnaround);
+            formData.append('shipping',      shipping);
+            formData.append('total_price',   currentPricingData.grand_total ?? currentPricingData.breakdown?.grand_total ?? 0);
 
             try {
                 const res = await fetch(getApiUrl('api/place_order.php'), { method: 'POST', body: formData });
                 const data = await res.json();
                 if (data.success) {
-                    alert('Order #' + data.order_id + ' placed successfully!');
-                    loadOrders(); // Reload history
+                    alert('✅ Order ' + data.order_number + ' placed successfully!\nEstimated due: ' + data.due_date);
                     showClientPage('orders', null);
                 } else {
-                    alert(data.message || 'Error placing order');
+                    alert('❌ ' + (data.message || 'Error placing order. Please try again.'));
                 }
             } catch (e) {
-                alert('Network error');
+                alert('Network error. Make sure you are connected to XAMPP and try again.');
             } finally {
                 btn.disabled = false;
                 btn.textContent = 'Place Order →';
