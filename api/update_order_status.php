@@ -27,7 +27,7 @@ if (!$order_id || !$status) {
 try {
     $stmt = $pdo->prepare("UPDATE orders SET status = ? WHERE id = ?");
     $stmt->execute([$status, $order_id]);
-    
+
     echo json_encode(['success' => true]);
 } catch (PDOException $e) {
     echo json_encode(['success' => false, 'message' => 'Database error']);

@@ -1,7 +1,8 @@
 <?php
 session_start();
 
-function check_auth($required_role = null) {
+function check_auth($required_role = null)
+{
     if (!isset($_SESSION['user_id'])) {
         header("Location: /login.html");
         exit();

@@ -8,7 +8,8 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $order_id = $_GET['order_id'] ?? 0;
-if (!$order_id) die('Order ID required');
+if (!$order_id)
+    die('Order ID required');
 
 try {
     $stmt = $pdo->prepare("SELECT o.*, u.name as client_name, u.business_name,
@@ -22,7 +23,8 @@ try {
     $stmt->execute([$order_id]);
     $order = $stmt->fetch();
 
-    if (!$order) die('Order not found');
+    if (!$order)
+        die('Order not found');
 
 } catch (PDOException $e) {
     die('Database error');
@@ -30,22 +32,74 @@ try {
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Job Ticket #<?php echo $order['id']; ?></title>
     <style>
-        body { font-family: 'Inter', sans-serif; padding: 40px; color: #333; }
-        .ticket { border: 2px solid #000; padding: 20px; max-width: 800px; margin: auto; }
-        .header { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; }
-        .job-id { font-size: 2rem; font-weight: bold; }
-        .section { margin-bottom: 20px; }
-        .section-title { font-weight: bold; text-transform: uppercase; border-bottom: 1px solid #ccc; margin-bottom: 10px; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .barcode { text-align: center; margin-top: 40px; }
-        .footer { margin-top: 40px; font-size: 0.8rem; text-align: center; color: #666; }
-        @media print { .no-print { display: none; } }
+        body {
+            font-family: 'Inter', sans-serif;
+            padding: 40px;
+            color: #333;
+        }
+
+        .ticket {
+            border: 2px solid #000;
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 2px solid #000;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .job-id {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .section {
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-weight: bold;
+            text-transform: uppercase;
+            border-bottom: 1px solid #ccc;
+            margin-bottom: 10px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .barcode {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .footer {
+            margin-top: 40px;
+            font-size: 0.8rem;
+            text-align: center;
+            color: #666;
+        }
+
+        @media print {
+            .no-print {
+                display: none;
+            }
+        }
     </style>
 </head>
+
 <body>
     <div class="no-print" style="text-align: center; margin-bottom: 20px;">
         <button onclick="window.print()">Print Ticket</button>
@@ -87,7 +141,8 @@ try {
         </div>
 
         <div class="barcode">
-            <div style="font-family: 'Libre Barcode 39', cursive; font-size: 4rem;">*ORD-<?php echo $order['id']; ?>*</div>
+            <div style="font-family: 'Libre Barcode 39', cursive; font-size: 4rem;">*ORD-<?php echo $order['id']; ?>*
+            </div>
             <div style="font-size: 0.8rem;">SCAN TO UPDATE PRODUCTION STATUS</div>
         </div>
 
@@ -96,4 +151,5 @@ try {
         </div>
     </div>
 </body>
+
 </html>

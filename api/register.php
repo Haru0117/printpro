@@ -2,7 +2,10 @@
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { http_response_code(200); exit(); }
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
 session_start();
 require_once '../includes/db.php';
 
@@ -30,15 +33,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // We are storing plain text passwords as requested
     $stmt = $pdo->prepare("INSERT INTO users (name, email, password_hash, role) VALUES (?, ?, ?, 'client')");
-    
+
     try {
         $stmt->execute([$name, $email, $password]);
         $user_id = $pdo->lastInsertId();
-        
+
         // Insert into clients table
         $stmt_client = $pdo->prepare("INSERT INTO clients (user_id, business_name) VALUES (?, ?)");
         $stmt_client->execute([$user_id, $company_name]);
-        
+
         // Log them in immediately
         $_SESSION['user_id'] = $user_id;
         $_SESSION['role'] = 'client';

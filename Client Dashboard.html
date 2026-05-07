@@ -5156,10 +5156,10 @@
                                         <div class="notif-card-title">Communication</div>
                                         <div class="settings-row">
                                             <span class="settings-row-label">Order Updates</span>
-                                            <label class="toggle"><input type="checkbox" checked><span
-                                                <span class="settings-row-label">Promotional Emails</span>
-                                            <label class="toggle"><input type="checkbox"><span
-                                                    class="toggle-slider"></span></label>
+                                            <label class="toggle"><input type="checkbox" checked><span <span
+                                                    class="settings-row-label">Promotional Emails</span>
+                                                <label class="toggle"><input type="checkbox"><span
+                                                        class="toggle-slider"></span></label>
                                         </div>
                                         <div class="settings-row">
                                             <span class="settings-row-label">Monthly Reports</span>
@@ -5247,7 +5247,7 @@
                     // Update all badges for this order
                     document.querySelectorAll(`[data-status-label="${orderId}"]`).forEach(badge => {
                         badge.textContent = savedStatus;
-                        badge.className = 'badge-status'; 
+                        badge.className = 'badge-status';
                         if (savedStatus === 'Delivered') badge.classList.add('badge-done');
                         else if (savedStatus === 'Shipping') badge.classList.add('badge-pending');
                         else badge.classList.add('badge-active');
@@ -5639,7 +5639,7 @@
                     if (d.discount_amount > 0) {
                         if (sumDiscount) sumDiscount.textContent = '-₱' + d.discount_amount.toLocaleString(undefined, { minimumFractionDigits: 2 });
                         if (sumDiscountRow) sumDiscountRow.style.display = 'flex';
-                        
+
                         if (badge) {
                             badge.textContent = d.discount_rate + '% BULK DISCOUNT';
                             badge.style.display = 'inline-block';
@@ -5654,7 +5654,7 @@
                     if (summaryTotal) summaryTotal.textContent = '₱' + d.grand_total.toLocaleString(undefined, { minimumFractionDigits: 2 });
                     if (sumSubtotal) sumSubtotal.textContent = '₱' + d.subtotal_final.toLocaleString(undefined, { minimumFractionDigits: 2 });
                     if (sumTax) sumTax.textContent = '₱' + d.vat_tax.toLocaleString(undefined, { minimumFractionDigits: 2 });
-                    
+
                     const sumShipping = document.getElementById('sumShipping');
                     if (sumShipping) sumShipping.textContent = '₱' + d.shipping_cost.toLocaleString(undefined, { minimumFractionDigits: 2 });
                 }
@@ -5775,7 +5775,7 @@
 
         // Step 4: File Upload Handling
         let uploadedFiles = [];
-        
+
         document.addEventListener('DOMContentLoaded', () => {
             const uploadArea = document.getElementById('upload-area');
             const fileInput = document.getElementById('file-upload-input');
@@ -5829,7 +5829,7 @@
                             previewList.appendChild(card);
                         });
                         document.getElementById('sumArtwork').textContent = uploadedFiles.length + ' file(s) selected';
-                        
+
                         // Clear selection from account
                         document.querySelectorAll('#account-files .file-card').forEach(c => {
                             c.style.borderColor = 'var(--border)';
@@ -5866,38 +5866,38 @@
             const productType = activeProductBtn ? activeProductBtn.textContent.trim() : 'Flyers';
 
             // Get size dimensions from custom fields or parse from select
-            const sizeWidth  = parseFloat(document.getElementById('customWidth').value)  || 4.0;
+            const sizeWidth = parseFloat(document.getElementById('customWidth').value) || 4.0;
             const sizeHeight = parseFloat(document.getElementById('customHeight').value) || 6.0;
 
             // Get paper weight text (option label, not value ID)
-            const paperSel   = document.getElementById('paperSelect');
+            const paperSel = document.getElementById('paperSelect');
             const paperWeight = paperSel.options[paperSel.selectedIndex]?.text || '';
 
             // Get finish text
-            const finishSel  = document.getElementById('finishSelect');
-            const finish     = finishSel.options[finishSel.selectedIndex]?.text || 'None';
+            const finishSel = document.getElementById('finishSelect');
+            const finish = finishSel.options[finishSel.selectedIndex]?.text || 'None';
 
             // Get bleed option text
-            const bleedSel   = document.getElementById('bleedSelect');
-            const bleed      = bleedSel.options[bleedSel.selectedIndex]?.text || 'With Bleed';
+            const bleedSel = document.getElementById('bleedSelect');
+            const bleed = bleedSel.options[bleedSel.selectedIndex]?.text || 'With Bleed';
 
             // Get turnaround value
             const turnaround = document.getElementById('turnaroundSelect').value || 'standard';
 
             // Get shipping value
-            const shipping   = document.getElementById('shippingSelect').value || 'free';
+            const shipping = document.getElementById('shippingSelect').value || 'free';
 
             const formData = new FormData();
-            formData.append('product_type',  productType);
-            formData.append('paper_weight',  paperWeight);
-            formData.append('finish',        finish);
-            formData.append('bleed',         bleed);
-            formData.append('size_width',    sizeWidth);
-            formData.append('size_height',   sizeHeight);
-            formData.append('quantity',      document.getElementById('qtySlider').value);
-            formData.append('turnaround',    turnaround);
-            formData.append('shipping',      shipping);
-            formData.append('total_price',   currentPricingData.grand_total ?? currentPricingData.breakdown?.grand_total ?? 0);
+            formData.append('product_type', productType);
+            formData.append('paper_weight', paperWeight);
+            formData.append('finish', finish);
+            formData.append('bleed', bleed);
+            formData.append('size_width', sizeWidth);
+            formData.append('size_height', sizeHeight);
+            formData.append('quantity', document.getElementById('qtySlider').value);
+            formData.append('turnaround', turnaround);
+            formData.append('shipping', shipping);
+            formData.append('total_price', currentPricingData.grand_total ?? currentPricingData.breakdown?.grand_total ?? 0);
 
             try {
                 const res = await fetch(getApiUrl('api/place_order.php'), { method: 'POST', body: formData });

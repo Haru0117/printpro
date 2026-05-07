@@ -105,20 +105,24 @@ function calculateOrderTotal($pdo, $params)
     // ── Step 6: Turnaround Multiplier ───────────────────────────────────────
     $turnaround = $params['turnaround'] ?? 'standard';
     $turnaround_multiplier = 1.0;
-    if ($turnaround === 'rush') $turnaround_multiplier = 1.25;
-    if ($turnaround === 'priority') $turnaround_multiplier = 1.50;
+    if ($turnaround === 'rush')
+        $turnaround_multiplier = 1.25;
+    if ($turnaround === 'priority')
+        $turnaround_multiplier = 1.50;
 
     // ── Step 7: 10% Safety Markup ────────────────────────────────────────────
     $subtotal_final = ($subtotal_with_addons * $turnaround_multiplier) * 1.10;
 
     // ── Step 8: 12% VAT ──────────────────────────────────────────────────────
     $vat_tax = $subtotal_final * 0.12;
-    
+
     // ── Step 9: Shipping Fee ─────────────────────────────────────────────────
     $shipping_method = $params['shipping'] ?? 'free';
     $shipping_cost = 0.0;
-    if ($shipping_method === 'express') $shipping_cost = 250.0;
-    if ($shipping_method === 'overnight') $shipping_cost = 600.0;
+    if ($shipping_method === 'express')
+        $shipping_cost = 250.0;
+    if ($shipping_method === 'overnight')
+        $shipping_cost = 600.0;
 
     $grand_total = $subtotal_final + $vat_tax + $shipping_cost;
 

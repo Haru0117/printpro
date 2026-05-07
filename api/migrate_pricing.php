@@ -7,7 +7,7 @@ $pass = '';
 try {
     $pdo = new PDO("mysql:host=$host", $user, $pass);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    
+
     $pdo->exec("CREATE DATABASE IF NOT EXISTS printpro CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
     $pdo->exec("USE printpro");
 
@@ -20,24 +20,25 @@ try {
 
     // Clear and Seed Products
     $pdo->exec("SET FOREIGN_KEY_CHECKS = 0; TRUNCATE tbl_products; SET FOREIGN_KEY_CHECKS = 1;");
-    $products = [['Flyers','flyers'],['Brochures','brochures'],['Booklets','booklets'],['Cards','cards'],['Posters','posters'],['Mailers','mailers']];
+    $products = [['Flyers', 'flyers'], ['Brochures', 'brochures'], ['Booklets', 'booklets'], ['Cards', 'cards'], ['Posters', 'posters'], ['Mailers', 'mailers']];
     $stmt = $pdo->prepare("INSERT INTO tbl_products (name, slug) VALUES (?, ?)");
-    foreach ($products as $p) $stmt->execute($p);
+    foreach ($products as $p)
+        $stmt->execute($p);
 
     // Seed Base Prices (Tiered)
     $pdo->exec("TRUNCATE tbl_base_prices");
     $tiers = [50, 250, 1000, 5000, 10000];
     $priceMap = [
-        'flyers'    => [1200, 2500, 4500, 12500, 20000],
+        'flyers' => [1200, 2500, 4500, 12500, 20000],
         'brochures' => [2500, 4000, 8500, 22000, 35000],
-        'booklets'  => [4500, 12000, 35000, 110000, 180000],
-        'cards'     => [800, 1500, 2800, 8000, 14000],
-        'posters'   => [8500, 35000, 110000, 450000, 800000],
-        'mailers'   => [1500, 3000, 6500, 18000, 30000]
+        'booklets' => [4500, 12000, 35000, 110000, 180000],
+        'cards' => [800, 1500, 2800, 8000, 14000],
+        'posters' => [8500, 35000, 110000, 450000, 800000],
+        'mailers' => [1500, 3000, 6500, 18000, 30000]
     ];
-    foreach($priceMap as $slug => $prices) {
+    foreach ($priceMap as $slug => $prices) {
         $pid = $pdo->query("SELECT id FROM tbl_products WHERE slug='$slug'")->fetchColumn();
-        for($i=0; $i<count($tiers); $i++) {
+        for ($i = 0; $i < count($tiers); $i++) {
             $pdo->prepare("INSERT INTO tbl_base_prices (product_id, min_qty, base_price) VALUES (?, ?, ?)")->execute([$pid, $tiers[$i], $prices[$i]]);
         }
     }
@@ -60,7 +61,8 @@ try {
         ['10mil Premium Photo Paper', 4.00],
         ['15oz Vinyl', 5.00]
     ];
-    foreach($mats as $m) $pdo->prepare("INSERT INTO tbl_materials (name, multiplier) VALUES (?, ?)")->execute($m);
+    foreach ($mats as $m)
+        $pdo->prepare("INSERT INTO tbl_materials (name, multiplier) VALUES (?, ?)")->execute($m);
 
     // Seed Sizes (MATCHING UI EXACTLY)
     $pdo->exec("TRUNCATE tbl_sizes");
@@ -83,7 +85,8 @@ try {
         ['2" × 3.5" (Standard US)', 1.00],
         ['2.12" × 3.37" (Euro/Credit Card)', 1.10]
     ];
-    foreach($sizes as $s) $pdo->prepare("INSERT INTO tbl_sizes (name, multiplier) VALUES (?, ?)")->execute($s);
+    foreach ($sizes as $s)
+        $pdo->prepare("INSERT INTO tbl_sizes (name, multiplier) VALUES (?, ?)")->execute($s);
 
     // Seed Finishes (MATCHING UI EXACTLY)
     $pdo->exec("TRUNCATE tbl_finishes");
@@ -102,7 +105,8 @@ try {
         ['Soft Touch', 1800, 0.12],
         ['Foil Stamping', 5000, 0.50]
     ];
-    foreach($finishes as $f) $pdo->prepare("INSERT INTO tbl_finishes (name, setup_fee, per_unit_fee) VALUES (?, ?, ?)")->execute($f);
+    foreach ($finishes as $f)
+        $pdo->prepare("INSERT INTO tbl_finishes (name, setup_fee, per_unit_fee) VALUES (?, ?, ?)")->execute($f);
 
     echo "<h2 style='color:green'>Success! Pricing Data Synchronized.</h2>";
     echo "<p>All products, sizes, and materials now match your UI exactly.</p>";

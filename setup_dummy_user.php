@@ -4,7 +4,7 @@ require_once __DIR__ . '/includes/db.php';
 try {
     // The password we want to use
     $plainPassword = 'password123';
-    
+
     // Generate a real bcrypt hash!
     $hashedPassword = password_hash($plainPassword, PASSWORD_BCRYPT, ['cost' => 12]);
 
@@ -20,7 +20,7 @@ try {
     // Insert into `users` table
     $stmt = $pdo->prepare("INSERT INTO users (name, email, password_hash, role) VALUES (?, ?, ?, 'client')");
     $stmt->execute(['Test Client', 'client@example.com', $hashedPassword]);
-    
+
     // Get the new user ID
     $userId = $pdo->lastInsertId();
 

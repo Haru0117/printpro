@@ -1,477 +1,502 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="description" content="PrintPro project team Gantt chart — 6-week schedule with milestones and role assignments."/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="PrintPro project team Gantt chart — 6-week schedule with milestones and role assignments." />
   <title>PrintPro · Project Gantt Chart</title>
   <link rel="stylesheet" href="printpro_gantt.css" />
 </head>
+
 <body>
-<div class="page">
+  <div class="page">
 
-  <!-- ════ HEADER ════════════════════════════════════ -->
-  <header class="header">
-    <div>
-      <div class="header-eyebrow">
-        <div class="logo-mark">
-          <!-- printer icon -->
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="6 9 6 2 18 2 18 9"/>
-            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
-            <rect x="6" y="14" width="12" height="8"/>
-          </svg>
+    <!-- ════ HEADER ════════════════════════════════════ -->
+    <header class="header">
+      <div>
+        <div class="header-eyebrow">
+          <div class="logo-mark">
+            <!-- printer icon -->
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.8"
+              stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 6 2 18 2 18 9" />
+              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+              <rect x="6" y="14" width="12" height="8" />
+            </svg>
+          </div>
+          <span class="header-label">PrintPro &mdash; Project Schedule</span>
         </div>
-        <span class="header-label">PrintPro &mdash; Project Schedule</span>
+
+        <h1>Team <span>Gantt</span> Chart</h1>
+        <p class="header-sub">
+          6-week interactive schedule with milestones, deliverables, and per-member task assignments across all roles.
+        </p>
       </div>
 
-      <h1>Team <span>Gantt</span> Chart</h1>
-      <p class="header-sub">
-        6-week interactive schedule with milestones, deliverables, and per-member task assignments across all roles.
-      </p>
-    </div>
-
-    <div class="stats">
-      <div class="stat-pill">
-        <div class="stat-icon">📅</div>
-        <div class="stat-text">
-          <div class="stat-label">Timeline</div>
-          <div class="stat-value">42 days</div>
+      <div class="stats">
+        <div class="stat-pill">
+          <div class="stat-icon">📅</div>
+          <div class="stat-text">
+            <div class="stat-label">Timeline</div>
+            <div class="stat-value">42 days</div>
+          </div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-icon">👥</div>
+          <div class="stat-text">
+            <div class="stat-label">Members</div>
+            <div class="stat-value">6</div>
+          </div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-icon">✅</div>
+          <div class="stat-text">
+            <div class="stat-label">Tasks</div>
+            <div class="stat-value">14</div>
+          </div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-icon">🗓</div>
+          <div class="stat-text">
+            <div class="stat-label">Weeks</div>
+            <div class="stat-value">6</div>
+          </div>
         </div>
       </div>
-      <div class="stat-pill">
-        <div class="stat-icon">👥</div>
-        <div class="stat-text">
-          <div class="stat-label">Members</div>
-          <div class="stat-value">6</div>
+    </header>
+
+    <!-- ════ TEAM MEMBERS ══════════════════════════════ -->
+    <section class="team-section">
+      <span class="section-label">Team Members</span>
+      <div class="members-grid">
+
+        <div class="member-card">
+          <div class="avatar" style="background:linear-gradient(135deg,#44392a,#6b5433);">AL</div>
+          <div>
+            <div class="member-name">Alcaeus Lucero</div>
+            <div class="member-role" style="color:var(--pm);">Project Manager</div>
+          </div>
         </div>
-      </div>
-      <div class="stat-pill">
-        <div class="stat-icon">✅</div>
-        <div class="stat-text">
-          <div class="stat-label">Tasks</div>
-          <div class="stat-value">14</div>
+
+        <div class="member-card">
+          <div class="avatar" style="background:linear-gradient(135deg,#1d3044,#2c4d6b);">AB</div>
+          <div>
+            <div class="member-name">Anthony Baes</div>
+            <div class="member-role" style="color:var(--fe);">Frontend Developer</div>
+          </div>
         </div>
-      </div>
-      <div class="stat-pill">
-        <div class="stat-icon">🗓</div>
-        <div class="stat-text">
-          <div class="stat-label">Weeks</div>
-          <div class="stat-value">6</div>
+
+        <div class="member-card">
+          <div class="avatar" style="background:linear-gradient(135deg,#1d3044,#2c4d6b);">EG</div>
+          <div>
+            <div class="member-name">Ezio Jannus Gabriel</div>
+            <div class="member-role" style="color:var(--fe);">Frontend Developer</div>
+          </div>
         </div>
-      </div>
-    </div>
-  </header>
 
-  <!-- ════ TEAM MEMBERS ══════════════════════════════ -->
-  <section class="team-section">
-    <span class="section-label">Team Members</span>
-    <div class="members-grid">
-
-      <div class="member-card">
-        <div class="avatar" style="background:linear-gradient(135deg,#44392a,#6b5433);">AL</div>
-        <div>
-          <div class="member-name">Alcaeus Lucero</div>
-          <div class="member-role" style="color:var(--pm);">Project Manager</div>
+        <div class="member-card">
+          <div class="avatar" style="background:linear-gradient(135deg,#1a3830,#266349);">FC</div>
+          <div>
+            <div class="member-name">Franz Cruz</div>
+            <div class="member-role" style="color:var(--be);">API &amp; Backend</div>
+          </div>
         </div>
-      </div>
 
-      <div class="member-card">
-        <div class="avatar" style="background:linear-gradient(135deg,#1d3044,#2c4d6b);">AB</div>
-        <div>
-          <div class="member-name">Anthony Baes</div>
-          <div class="member-role" style="color:var(--fe);">Frontend Developer</div>
+        <div class="member-card">
+          <div class="avatar" style="background:linear-gradient(135deg,#1a3830,#266349);">NG</div>
+          <div>
+            <div class="member-name">Neo Gregore</div>
+            <div class="member-role" style="color:var(--be);">API &amp; Backend</div>
+          </div>
         </div>
-      </div>
 
-      <div class="member-card">
-        <div class="avatar" style="background:linear-gradient(135deg,#1d3044,#2c4d6b);">EG</div>
-        <div>
-          <div class="member-name">Ezio Jannus Gabriel</div>
-          <div class="member-role" style="color:var(--fe);">Frontend Developer</div>
+        <div class="member-card">
+          <div class="avatar" style="background:linear-gradient(135deg,#3a1e2e,#622f4e);">HM</div>
+          <div>
+            <div class="member-name">Howard Matibag</div>
+            <div class="member-role" style="color:var(--dba);">Database Administrator</div>
+          </div>
         </div>
+
       </div>
+    </section>
 
-      <div class="member-card">
-        <div class="avatar" style="background:linear-gradient(135deg,#1a3830,#266349);">FC</div>
-        <div>
-          <div class="member-name">Franz Cruz</div>
-          <div class="member-role" style="color:var(--be);">API &amp; Backend</div>
-        </div>
-      </div>
+    <!-- ════ TOOLBAR ═══════════════════════════════════ -->
+    <div class="toolbar">
+      <span class="toolbar-label">Filter</span>
+      <button class="filter-btn active" onclick="filterRole(this,'all')">All Roles</button>
+      <button class="filter-btn" onclick="filterRole(this,'pm')">PM</button>
+      <button class="filter-btn" onclick="filterRole(this,'fe')">Frontend</button>
+      <button class="filter-btn" onclick="filterRole(this,'be')">Backend</button>
+      <button class="filter-btn" onclick="filterRole(this,'dba')">DBA</button>
+      <button class="filter-btn" onclick="filterRole(this,'all-team')">Full Team</button>
 
-      <div class="member-card">
-        <div class="avatar" style="background:linear-gradient(135deg,#1a3830,#266349);">NG</div>
-        <div>
-          <div class="member-name">Neo Gregore</div>
-          <div class="member-role" style="color:var(--be);">API &amp; Backend</div>
-        </div>
-      </div>
+      <span class="spacer"></span>
 
-      <div class="member-card">
-        <div class="avatar" style="background:linear-gradient(135deg,#3a1e2e,#622f4e);">HM</div>
-        <div>
-          <div class="member-name">Howard Matibag</div>
-          <div class="member-role" style="color:var(--dba);">Database Administrator</div>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- ════ TOOLBAR ═══════════════════════════════════ -->
-  <div class="toolbar">
-    <span class="toolbar-label">Filter</span>
-    <button class="filter-btn active" onclick="filterRole(this,'all')">All Roles</button>
-    <button class="filter-btn" onclick="filterRole(this,'pm')">PM</button>
-    <button class="filter-btn" onclick="filterRole(this,'fe')">Frontend</button>
-    <button class="filter-btn" onclick="filterRole(this,'be')">Backend</button>
-    <button class="filter-btn" onclick="filterRole(this,'dba')">DBA</button>
-    <button class="filter-btn" onclick="filterRole(this,'all-team')">Full Team</button>
-
-    <span class="spacer"></span>
-
-    <div class="legend-inline">
-      <div class="legend-item"><div class="legend-pip" style="background:var(--pm);"></div>PM</div>
-      <div class="legend-item"><div class="legend-pip" style="background:var(--fe);"></div>Frontend</div>
-      <div class="legend-item"><div class="legend-pip" style="background:var(--be);"></div>Backend</div>
-      <div class="legend-item"><div class="legend-pip" style="background:var(--dba);"></div>DBA</div>
-      <div class="legend-item"><div class="legend-pip" style="background:var(--all);"></div>Full Team</div>
-    </div>
-  </div>
-
-  <!-- ════ GANTT CHART ════════════════════════════════ -->
-  <div class="gantt-container">
-    <div class="gantt-scroll">
-      <table class="gantt-table" id="ganttTable">
-        <thead>
-          <!-- Week spans -->
-          <tr class="week-row">
-            <th colspan="4"></th>
-            <th colspan="7"><span class="wk-label">Week 1</span><span class="wk-days">D1 – D7</span></th>
-            <th colspan="7"><span class="wk-label">Week 2</span><span class="wk-days">D8 – D14</span></th>
-            <th colspan="7"><span class="wk-label">Week 3</span><span class="wk-days">D15 – D21</span></th>
-            <th colspan="7"><span class="wk-label">Week 4</span><span class="wk-days">D22 – D28</span></th>
-            <th colspan="7"><span class="wk-label">Week 5</span><span class="wk-days">D29 – D35</span></th>
-            <th colspan="7"><span class="wk-label">Week 6</span><span class="wk-days">D36 – D42</span></th>
-          </tr>
-          <!-- Column labels -->
-          <tr class="col-headers">
-            <th class="th-task">Task</th>
-            <th class="th-owner">Assigned To</th>
-            <th class="th-phase">Phase</th>
-            <th class="th-deliverable">Milestone / Deliverable</th>
-            <!-- 42 day columns generated by JS -->
-          </tr>
-        </thead>
-        <tbody id="ganttBody"></tbody>
-      </table>
-    </div>
-
-    <div class="gantt-footer">
       <div class="legend-inline">
-        <div class="legend-item"><div class="legend-pip" style="background:var(--pm);"></div>Project Manager</div>
-        <div class="legend-item"><div class="legend-pip" style="background:var(--fe);"></div>Frontend</div>
-        <div class="legend-item"><div class="legend-pip" style="background:var(--be);"></div>API &amp; Backend</div>
-        <div class="legend-item"><div class="legend-pip" style="background:var(--dba);"></div>DBA</div>
-        <div class="legend-item"><div class="legend-pip" style="background:var(--all);"></div>Full Team</div>
+        <div class="legend-item">
+          <div class="legend-pip" style="background:var(--pm);"></div>PM
+        </div>
+        <div class="legend-item">
+          <div class="legend-pip" style="background:var(--fe);"></div>Frontend
+        </div>
+        <div class="legend-item">
+          <div class="legend-pip" style="background:var(--be);"></div>Backend
+        </div>
+        <div class="legend-item">
+          <div class="legend-pip" style="background:var(--dba);"></div>DBA
+        </div>
+        <div class="legend-item">
+          <div class="legend-pip" style="background:var(--all);"></div>Full Team
+        </div>
       </div>
-      <span class="footer-note">◆ = delivery milestone &nbsp;|&nbsp; Hover rows to highlight</span>
     </div>
-  </div>
 
-</div><!-- /page -->
+    <!-- ════ GANTT CHART ════════════════════════════════ -->
+    <div class="gantt-container">
+      <div class="gantt-scroll">
+        <table class="gantt-table" id="ganttTable">
+          <thead>
+            <!-- Week spans -->
+            <tr class="week-row">
+              <th colspan="4"></th>
+              <th colspan="7"><span class="wk-label">Week 1</span><span class="wk-days">D1 – D7</span></th>
+              <th colspan="7"><span class="wk-label">Week 2</span><span class="wk-days">D8 – D14</span></th>
+              <th colspan="7"><span class="wk-label">Week 3</span><span class="wk-days">D15 – D21</span></th>
+              <th colspan="7"><span class="wk-label">Week 4</span><span class="wk-days">D22 – D28</span></th>
+              <th colspan="7"><span class="wk-label">Week 5</span><span class="wk-days">D29 – D35</span></th>
+              <th colspan="7"><span class="wk-label">Week 6</span><span class="wk-days">D36 – D42</span></th>
+            </tr>
+            <!-- Column labels -->
+            <tr class="col-headers">
+              <th class="th-task">Task</th>
+              <th class="th-owner">Assigned To</th>
+              <th class="th-phase">Phase</th>
+              <th class="th-deliverable">Milestone / Deliverable</th>
+              <!-- 42 day columns generated by JS -->
+            </tr>
+          </thead>
+          <tbody id="ganttBody"></tbody>
+        </table>
+      </div>
 
-<script>
-/* ════════════════════════════════════════════════════
-   DATA
-   roles: pm | fe | be | dba | all-team
-   ════════════════════════════════════════════════════ */
-const TASKS = [
-  {
-    label:        'ERD Design & Planning',
-    owners:       [['Alcaeus Lucero','pm'], ['Howard Matibag','dba']],
-    phase:        'Planning',
-    start: 1, end: 3,
-    primaryRole:  'dba',
-    roles:        ['pm','dba'],
-    deliverable:  'ERD & Schema Document',
-    milestoneLabel: null,
-  },
-  {
-    label:        'Database Creation',
-    owners:       [['Howard Matibag','dba']],
-    phase:        'Database',
-    start: 4, end: 6,
-    primaryRole:  'dba',
-    roles:        ['dba'],
-    deliverable:  'DB Tables Created',
-    milestoneLabel: null,
-  },
-  {
-    label:        'Insert Dummy Data',
-    owners:       [['Howard Matibag','dba']],
-    phase:        'Database',
-    start: 5, end: 7,
-    primaryRole:  'dba',
-    roles:        ['dba'],
-    deliverable:  'Seeded Database',
-    milestoneLabel: 'DB Complete',
-  },
-  {
-    label:        'Wireframes',
-    owners:       [['Anthony Baes','fe'], ['Ezio Jannus Gabriel','fe']],
-    phase:        'UI / UX',
-    start: 8, end: 10,
-    primaryRole:  'fe',
-    roles:        ['fe'],
-    deliverable:  'Low-Fidelity Wireframes',
-    milestoneLabel: null,
-  },
-  {
-    label:        'High-Fidelity Design',
-    owners:       [['Anthony Baes','fe'], ['Ezio Jannus Gabriel','fe']],
-    phase:        'UI / UX',
-    start: 11, end: 14,
-    primaryRole:  'fe',
-    roles:        ['fe'],
-    deliverable:  'Hi-Fi UI Mockups',
-    milestoneLabel: 'Design Approved',
-  },
-  {
-    label:        'Frontend UI Pages',
-    owners:       [['Anthony Baes','fe'], ['Ezio Jannus Gabriel','fe']],
-    phase:        'Development',
-    start: 15, end: 21,
-    primaryRole:  'fe',
-    roles:        ['fe'],
-    deliverable:  'All UI Pages Built',
-    milestoneLabel: null,
-  },
-  {
-    label:        'Backend APIs',
-    owners:       [['Franz Cruz','be'], ['Neo Gregore','be']],
-    phase:        'Development',
-    start: 15, end: 25,
-    primaryRole:  'be',
-    roles:        ['be'],
-    deliverable:  'Working API Endpoints',
-    milestoneLabel: 'First Successful API',
-  },
-  {
-    label:        'Integration',
-    owners:       [['All Members','all-team']],
-    phase:        'Development',
-    start: 26, end: 29,
-    primaryRole:  'all-team',
-    roles:        ['all-team'],
-    deliverable:  'Frontend–Backend Linked',
-    milestoneLabel: 'Integration Complete',
-  },
-  {
-    label:        'Admin Dashboard',
-    owners:       [['Franz Cruz','be'], ['Anthony Baes','fe']],
-    phase:        'Development',
-    start: 28, end: 31,
-    primaryRole:  'be',
-    roles:        ['be','fe'],
-    deliverable:  'Admin Panel Live',
-    milestoneLabel: null,
-  },
-  {
-    label:        'Order Updates',
-    owners:       [['Franz Cruz','be'], ['Neo Gregore','be']],
-    phase:        'Development',
-    start: 30, end: 34,
-    primaryRole:  'be',
-    roles:        ['be'],
-    deliverable:  'Order Management Module',
-    milestoneLabel: null,
-  },
-  {
-    label:        'Debugging',
-    owners:       [['All Members','all-team']],
-    phase:        'QA',
-    start: 33, end: 36,
-    primaryRole:  'all-team',
-    roles:        ['all-team'],
-    deliverable:  'Bug-Free Build',
-    milestoneLabel: null,
-  },
-  {
-    label:        'Testing',
-    owners:       [['All Members','all-team']],
-    phase:        'QA',
-    start: 35, end: 39,
-    primaryRole:  'all-team',
-    roles:        ['all-team'],
-    deliverable:  'Test Report',
-    milestoneLabel: 'Testing Passed',
-  },
-  {
-    label:        'Final Fixes',
-    owners:       [['All Members','all-team']],
-    phase:        'QA',
-    start: 38, end: 41,
-    primaryRole:  'all-team',
-    roles:        ['all-team'],
-    deliverable:  'Polished Build',
-    milestoneLabel: null,
-  },
-  {
-    label:        'Submission',
-    owners:       [['Alcaeus Lucero','pm']],
-    phase:        'Delivery',
-    start: 42, end: 42,
-    primaryRole:  'pm',
-    roles:        ['pm'],
-    deliverable:  'Final Project Package',
-    milestoneLabel: 'Final Submission',
-    milestone:    true,
-  },
-];
+      <div class="gantt-footer">
+        <div class="legend-inline">
+          <div class="legend-item">
+            <div class="legend-pip" style="background:var(--pm);"></div>Project Manager
+          </div>
+          <div class="legend-item">
+            <div class="legend-pip" style="background:var(--fe);"></div>Frontend
+          </div>
+          <div class="legend-item">
+            <div class="legend-pip" style="background:var(--be);"></div>API &amp; Backend
+          </div>
+          <div class="legend-item">
+            <div class="legend-pip" style="background:var(--dba);"></div>DBA
+          </div>
+          <div class="legend-item">
+            <div class="legend-pip" style="background:var(--all);"></div>Full Team
+          </div>
+        </div>
+        <span class="footer-note">◆ = delivery milestone &nbsp;|&nbsp; Hover rows to highlight</span>
+      </div>
+    </div>
 
-const PHASE_STYLE = {
-  'Planning':    { bg: 'rgba(201,169,110,.08)', color: '#c9a96e', border: 'rgba(201,169,110,.2)' },
-  'Database':    { bg: 'rgba(201,126,160,.08)', color: '#c97ea0', border: 'rgba(201,126,160,.2)' },
-  'UI / UX':     { bg: 'rgba(110,159,201,.08)', color: '#6e9fc9', border: 'rgba(110,159,201,.2)' },
-  'Development': { bg: 'rgba(108,191,154,.08)', color: '#6cbf9a', border: 'rgba(108,191,154,.2)' },
-  'QA':          { bg: 'rgba(155,142,196,.08)', color: '#9b8ec4', border: 'rgba(155,142,196,.2)' },
-  'Delivery':    { bg: 'rgba(124,143,168,.12)', color: '#7c8fa8', border: 'rgba(124,143,168,.3)' },
-};
+  </div><!-- /page -->
 
-const ROLE_BAR = {
-  pm:       'bar-pm',
-  fe:       'bar-fe',
-  be:       'bar-be',
-  dba:      'bar-dba',
-  'all-team':'bar-all',
-};
+  <script>
+    /* ════════════════════════════════════════════════════
+       DATA
+       roles: pm | fe | be | dba | all-team
+       ════════════════════════════════════════════════════ */
+    const TASKS = [
+      {
+        label: 'ERD Design & Planning',
+        owners: [['Alcaeus Lucero', 'pm'], ['Howard Matibag', 'dba']],
+        phase: 'Planning',
+        start: 1, end: 3,
+        primaryRole: 'dba',
+        roles: ['pm', 'dba'],
+        deliverable: 'ERD & Schema Document',
+        milestoneLabel: null,
+      },
+      {
+        label: 'Database Creation',
+        owners: [['Howard Matibag', 'dba']],
+        phase: 'Database',
+        start: 4, end: 6,
+        primaryRole: 'dba',
+        roles: ['dba'],
+        deliverable: 'DB Tables Created',
+        milestoneLabel: null,
+      },
+      {
+        label: 'Insert Dummy Data',
+        owners: [['Howard Matibag', 'dba']],
+        phase: 'Database',
+        start: 5, end: 7,
+        primaryRole: 'dba',
+        roles: ['dba'],
+        deliverable: 'Seeded Database',
+        milestoneLabel: 'DB Complete',
+      },
+      {
+        label: 'Wireframes',
+        owners: [['Anthony Baes', 'fe'], ['Ezio Jannus Gabriel', 'fe']],
+        phase: 'UI / UX',
+        start: 8, end: 10,
+        primaryRole: 'fe',
+        roles: ['fe'],
+        deliverable: 'Low-Fidelity Wireframes',
+        milestoneLabel: null,
+      },
+      {
+        label: 'High-Fidelity Design',
+        owners: [['Anthony Baes', 'fe'], ['Ezio Jannus Gabriel', 'fe']],
+        phase: 'UI / UX',
+        start: 11, end: 14,
+        primaryRole: 'fe',
+        roles: ['fe'],
+        deliverable: 'Hi-Fi UI Mockups',
+        milestoneLabel: 'Design Approved',
+      },
+      {
+        label: 'Frontend UI Pages',
+        owners: [['Anthony Baes', 'fe'], ['Ezio Jannus Gabriel', 'fe']],
+        phase: 'Development',
+        start: 15, end: 21,
+        primaryRole: 'fe',
+        roles: ['fe'],
+        deliverable: 'All UI Pages Built',
+        milestoneLabel: null,
+      },
+      {
+        label: 'Backend APIs',
+        owners: [['Franz Cruz', 'be'], ['Neo Gregore', 'be']],
+        phase: 'Development',
+        start: 15, end: 25,
+        primaryRole: 'be',
+        roles: ['be'],
+        deliverable: 'Working API Endpoints',
+        milestoneLabel: 'First Successful API',
+      },
+      {
+        label: 'Integration',
+        owners: [['All Members', 'all-team']],
+        phase: 'Development',
+        start: 26, end: 29,
+        primaryRole: 'all-team',
+        roles: ['all-team'],
+        deliverable: 'Frontend–Backend Linked',
+        milestoneLabel: 'Integration Complete',
+      },
+      {
+        label: 'Admin Dashboard',
+        owners: [['Franz Cruz', 'be'], ['Anthony Baes', 'fe']],
+        phase: 'Development',
+        start: 28, end: 31,
+        primaryRole: 'be',
+        roles: ['be', 'fe'],
+        deliverable: 'Admin Panel Live',
+        milestoneLabel: null,
+      },
+      {
+        label: 'Order Updates',
+        owners: [['Franz Cruz', 'be'], ['Neo Gregore', 'be']],
+        phase: 'Development',
+        start: 30, end: 34,
+        primaryRole: 'be',
+        roles: ['be'],
+        deliverable: 'Order Management Module',
+        milestoneLabel: null,
+      },
+      {
+        label: 'Debugging',
+        owners: [['All Members', 'all-team']],
+        phase: 'QA',
+        start: 33, end: 36,
+        primaryRole: 'all-team',
+        roles: ['all-team'],
+        deliverable: 'Bug-Free Build',
+        milestoneLabel: null,
+      },
+      {
+        label: 'Testing',
+        owners: [['All Members', 'all-team']],
+        phase: 'QA',
+        start: 35, end: 39,
+        primaryRole: 'all-team',
+        roles: ['all-team'],
+        deliverable: 'Test Report',
+        milestoneLabel: 'Testing Passed',
+      },
+      {
+        label: 'Final Fixes',
+        owners: [['All Members', 'all-team']],
+        phase: 'QA',
+        start: 38, end: 41,
+        primaryRole: 'all-team',
+        roles: ['all-team'],
+        deliverable: 'Polished Build',
+        milestoneLabel: null,
+      },
+      {
+        label: 'Submission',
+        owners: [['Alcaeus Lucero', 'pm']],
+        phase: 'Delivery',
+        start: 42, end: 42,
+        primaryRole: 'pm',
+        roles: ['pm'],
+        deliverable: 'Final Project Package',
+        milestoneLabel: 'Final Submission',
+        milestone: true,
+      },
+    ];
 
-const ROLE_TAG = {
-  pm:        'tag-pm',
-  fe:        'tag-fe',
-  be:        'tag-be',
-  dba:       'tag-dba',
-  'all-team':'tag-all',
-};
+    const PHASE_STYLE = {
+      'Planning': { bg: 'rgba(201,169,110,.08)', color: '#c9a96e', border: 'rgba(201,169,110,.2)' },
+      'Database': { bg: 'rgba(201,126,160,.08)', color: '#c97ea0', border: 'rgba(201,126,160,.2)' },
+      'UI / UX': { bg: 'rgba(110,159,201,.08)', color: '#6e9fc9', border: 'rgba(110,159,201,.2)' },
+      'Development': { bg: 'rgba(108,191,154,.08)', color: '#6cbf9a', border: 'rgba(108,191,154,.2)' },
+      'QA': { bg: 'rgba(155,142,196,.08)', color: '#9b8ec4', border: 'rgba(155,142,196,.2)' },
+      'Delivery': { bg: 'rgba(124,143,168,.12)', color: '#7c8fa8', border: 'rgba(124,143,168,.3)' },
+    };
 
-const DOT_COLOR = {
-  pm:        'var(--pm)',
-  fe:        'var(--fe)',
-  be:        'var(--be)',
-  dba:       'var(--dba)',
-  'all-team':'var(--all)',
-};
+    const ROLE_BAR = {
+      pm: 'bar-pm',
+      fe: 'bar-fe',
+      be: 'bar-be',
+      dba: 'bar-dba',
+      'all-team': 'bar-all',
+    };
 
-/* ─── Build day-header cells ─────────────────────── */
-function buildDayHeaders() {
-  const colRow = document.querySelector('.col-headers');
-  for (let d = 1; d <= 42; d++) {
-    const th = document.createElement('th');
-    th.style.cssText = 'font-family:"JetBrains Mono",monospace;font-size:.52rem;padding:.6rem .1rem;text-align:center;min-width:22px;max-width:22px;';
-    const week = Math.ceil(d / 7);
-    th.style.color = (week % 2 === 0) ? 'var(--caption)' : 'var(--muted)';
-    th.textContent = d;
-    colRow.appendChild(th);
-  }
-}
+    const ROLE_TAG = {
+      pm: 'tag-pm',
+      fe: 'tag-fe',
+      be: 'tag-be',
+      dba: 'tag-dba',
+      'all-team': 'tag-all',
+    };
 
-/* ─── Build body rows ────────────────────────────── */
-function buildRows() {
-  const tbody = document.getElementById('ganttBody');
+    const DOT_COLOR = {
+      pm: 'var(--pm)',
+      fe: 'var(--fe)',
+      be: 'var(--be)',
+      dba: 'var(--dba)',
+      'all-team': 'var(--all)',
+    };
 
-  TASKS.forEach(t => {
-    const tr = document.createElement('tr');
-    tr.dataset.roles = t.roles.join(',');
-
-    /* Task cell */
-    const tdTask = document.createElement('td');
-    tdTask.className = 'td-task';
-    tdTask.textContent = t.label;
-    tr.appendChild(tdTask);
-
-    /* Owner cell */
-    const tdOwner = document.createElement('td');
-    t.owners.forEach(([name, role]) => {
-      const tag = document.createElement('span');
-      tag.className = 'owner-tag ' + ROLE_TAG[role];
-      tag.innerHTML = `<span class="dot" style="background:${DOT_COLOR[role]};"></span>${name === 'All Members' ? '👥 All Members' : name}`;
-      tdOwner.appendChild(tag);
-    });
-    tr.appendChild(tdOwner);
-
-    /* Phase cell */
-    const tdPhase = document.createElement('td');
-    const ps = PHASE_STYLE[t.phase] || PHASE_STYLE['Delivery'];
-    tdPhase.innerHTML = `<span class="phase-badge" style="background:${ps.bg};color:${ps.color};border:1px solid ${ps.border};">${t.phase}</span>`;
-    tr.appendChild(tdPhase);
-
-    /* Milestone / Deliverable cell */
-    const tdDel = document.createElement('td');
-    tdDel.className = 'td-deliverable';
-    if (t.milestoneLabel) {
-      tdDel.innerHTML += `<span class="ms-badge ms-milestone">◆ ${t.milestoneLabel}</span><br/>`;
+    /* ─── Build day-header cells ─────────────────────── */
+    function buildDayHeaders() {
+      const colRow = document.querySelector('.col-headers');
+      for (let d = 1; d <= 42; d++) {
+        const th = document.createElement('th');
+        th.style.cssText = 'font-family:"JetBrains Mono",monospace;font-size:.52rem;padding:.6rem .1rem;text-align:center;min-width:22px;max-width:22px;';
+        const week = Math.ceil(d / 7);
+        th.style.color = (week % 2 === 0) ? 'var(--caption)' : 'var(--muted)';
+        th.textContent = d;
+        colRow.appendChild(th);
+      }
     }
-    if (t.deliverable) {
-      tdDel.innerHTML += `<span class="ms-badge ms-deliverable">↳ ${t.deliverable}</span>`;
-    }
-    tr.appendChild(tdDel);
 
-    /* Day cells */
-    const barCls = ROLE_BAR[t.primaryRole];
-    for (let d = 1; d <= 42; d++) {
-      const td = document.createElement('td');
-      td.className = 'td-day';
-      const week = Math.ceil(d / 7);
-      if (week % 2 === 0) td.classList.add('week-even');
+    /* ─── Build body rows ────────────────────────────── */
+    function buildRows() {
+      const tbody = document.getElementById('ganttBody');
 
-      if (d >= t.start && d <= t.end) {
-        const cell = document.createElement('div');
-        cell.className = 'day-cell';
+      TASKS.forEach(t => {
+        const tr = document.createElement('tr');
+        tr.dataset.roles = t.roles.join(',');
 
-        const seg = document.createElement('div');
-        let segClass = 'seg-mid';
-        if (t.start === t.end) segClass = 'seg-solo';
-        else if (d === t.start) segClass = 'seg-start';
-        else if (d === t.end)   segClass = 'seg-end';
+        /* Task cell */
+        const tdTask = document.createElement('td');
+        tdTask.className = 'td-task';
+        tdTask.textContent = t.label;
+        tr.appendChild(tdTask);
 
-        seg.className = `bar-segment ${segClass} ${barCls}`;
+        /* Owner cell */
+        const tdOwner = document.createElement('td');
+        t.owners.forEach(([name, role]) => {
+          const tag = document.createElement('span');
+          tag.className = 'owner-tag ' + ROLE_TAG[role];
+          tag.innerHTML = `<span class="dot" style="background:${DOT_COLOR[role]};"></span>${name === 'All Members' ? '👥 All Members' : name}`;
+          tdOwner.appendChild(tag);
+        });
+        tr.appendChild(tdOwner);
 
-        if (t.milestone && d === t.end) {
-          const diamond = document.createElement('div');
-          diamond.className = 'milestone';
-          seg.appendChild(diamond);
+        /* Phase cell */
+        const tdPhase = document.createElement('td');
+        const ps = PHASE_STYLE[t.phase] || PHASE_STYLE['Delivery'];
+        tdPhase.innerHTML = `<span class="phase-badge" style="background:${ps.bg};color:${ps.color};border:1px solid ${ps.border};">${t.phase}</span>`;
+        tr.appendChild(tdPhase);
+
+        /* Milestone / Deliverable cell */
+        const tdDel = document.createElement('td');
+        tdDel.className = 'td-deliverable';
+        if (t.milestoneLabel) {
+          tdDel.innerHTML += `<span class="ms-badge ms-milestone">◆ ${t.milestoneLabel}</span><br/>`;
+        }
+        if (t.deliverable) {
+          tdDel.innerHTML += `<span class="ms-badge ms-deliverable">↳ ${t.deliverable}</span>`;
+        }
+        tr.appendChild(tdDel);
+
+        /* Day cells */
+        const barCls = ROLE_BAR[t.primaryRole];
+        for (let d = 1; d <= 42; d++) {
+          const td = document.createElement('td');
+          td.className = 'td-day';
+          const week = Math.ceil(d / 7);
+          if (week % 2 === 0) td.classList.add('week-even');
+
+          if (d >= t.start && d <= t.end) {
+            const cell = document.createElement('div');
+            cell.className = 'day-cell';
+
+            const seg = document.createElement('div');
+            let segClass = 'seg-mid';
+            if (t.start === t.end) segClass = 'seg-solo';
+            else if (d === t.start) segClass = 'seg-start';
+            else if (d === t.end) segClass = 'seg-end';
+
+            seg.className = `bar-segment ${segClass} ${barCls}`;
+
+            if (t.milestone && d === t.end) {
+              const diamond = document.createElement('div');
+              diamond.className = 'milestone';
+              seg.appendChild(diamond);
+            }
+
+            cell.appendChild(seg);
+            td.appendChild(cell);
+          }
+
+          tr.appendChild(td);
         }
 
-        cell.appendChild(seg);
-        td.appendChild(cell);
-      }
-
-      tr.appendChild(td);
+        tbody.appendChild(tr);
+      });
     }
 
-    tbody.appendChild(tr);
-  });
-}
+    /* ─── Filter ─────────────────────────────────────── */
+    function filterRole(btn, role) {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
 
-/* ─── Filter ─────────────────────────────────────── */
-function filterRole(btn, role) {
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-
-  document.querySelectorAll('#ganttBody tr').forEach(tr => {
-    const rowRoles = tr.dataset.roles.split(',');
-    if (role === 'all') {
-      tr.classList.remove('hidden-row');
-    } else {
-      tr.classList.toggle('hidden-row', !rowRoles.includes(role));
+      document.querySelectorAll('#ganttBody tr').forEach(tr => {
+        const rowRoles = tr.dataset.roles.split(',');
+        if (role === 'all') {
+          tr.classList.remove('hidden-row');
+        } else {
+          tr.classList.toggle('hidden-row', !rowRoles.includes(role));
+        }
+      });
     }
-  });
-}
 
-buildDayHeaders();
-buildRows();
-</script>
+    buildDayHeaders();
+    buildRows();
+  </script>
 </body>
+
 </html>

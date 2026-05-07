@@ -35,19 +35,19 @@ try {
     $client_id = $client['id'];
 
     // ── 2. Read and sanitize form fields ─────────────────────────────────────
-    $product_type   = trim($_POST['product_type']   ?? 'Flyers');
-    $paper_weight   = trim($_POST['paper_weight']   ?? '');
-    $finish         = trim($_POST['finish']         ?? 'None');
-    $quantity       = max(1, intval($_POST['quantity'] ?? 1));
-    $size_width     = floatval($_POST['size_width']  ?? 4.0);
-    $size_height    = floatval($_POST['size_height'] ?? 6.0);
-    $total_amount   = floatval($_POST['total_price'] ?? 0.00);
-    $notes          = trim($_POST['notes']          ?? '');
+    $product_type = trim($_POST['product_type'] ?? 'Flyers');
+    $paper_weight = trim($_POST['paper_weight'] ?? '');
+    $finish = trim($_POST['finish'] ?? 'None');
+    $quantity = max(1, intval($_POST['quantity'] ?? 1));
+    $size_width = floatval($_POST['size_width'] ?? 4.0);
+    $size_height = floatval($_POST['size_height'] ?? 6.0);
+    $total_amount = floatval($_POST['total_price'] ?? 0.00);
+    $notes = trim($_POST['notes'] ?? '');
 
     // Turnaround: form sends 'standard' | 'rush' | 'priority'
     $turnaround_map = ['standard' => 'Standard', 'rush' => 'Rush', 'priority' => 'Priority'];
     $turnaround_raw = strtolower($_POST['turnaround'] ?? 'standard');
-    $turnaround     = $turnaround_map[$turnaround_raw] ?? 'Standard';
+    $turnaround = $turnaround_map[$turnaround_raw] ?? 'Standard';
 
     // Shipping: form sends 'free' | 'express' | 'overnight'
     $shipping_map = ['free' => 'Ground', 'express' => 'Express', 'overnight' => 'Overnight'];
@@ -56,21 +56,21 @@ try {
 
     // Bleed: form sends 'With Bleed...' | 'No Bleed...' | 'Custom...'
     $bleed_str = $_POST['bleed'] ?? 'With Bleed';
-    $bleed     = (stripos($bleed_str, 'No Bleed') !== false) ? 0 : 1;
+    $bleed = (stripos($bleed_str, 'No Bleed') !== false) ? 0 : 1;
 
     // Calc unit price from total
-    $tax_rate   = 12.00;
+    $tax_rate = 12.00;
     $unit_price = $quantity > 0 ? round($total_amount / $quantity, 4) : 0;
 
     // Due date: 3 business days for Standard, 1 for Rush, today for Priority
-    $days_map   = ['Standard' => 3, 'Rush' => 1, 'Priority' => 0];
-    $add_days   = $days_map[$turnaround] ?? 3;
-    $due_date   = date('Y-m-d', strtotime("+{$add_days} weekdays"));
+    $days_map = ['Standard' => 3, 'Rush' => 1, 'Priority' => 0];
+    $add_days = $days_map[$turnaround] ?? 3;
+    $due_date = date('Y-m-d', strtotime("+{$add_days} weekdays"));
 
     // ── 3. Auto-generate order number (PPR-XXX) ──────────────────────────────
     $stmt = $pdo->query("SELECT MAX(id) AS max_id FROM orders");
-    $row  = $stmt->fetch();
-    $next_num    = intval($row['max_id'] ?? 0) + 1;
+    $row = $stmt->fetch();
+    $next_num = intval($row['max_id'] ?? 0) + 1;
     $order_number = 'PPR-' . str_pad($next_num, 3, '0', STR_PAD_LEFT);
 
     // ── 4. Insert the order ───────────────────────────────────────────────────
@@ -95,31 +95,31 @@ try {
     ");
 
     $stmt->execute([
-        ':order_number'   => $order_number,
-        ':client_id'      => $client_id,
-        ':product_type'   => $product_type,
-        ':quantity'       => $quantity,
-        ':size_width'     => $size_width,
-        ':size_height'    => $size_height,
-        ':paper_weight'   => $paper_weight,
-        ':finish'         => $finish,
-        ':bleed'          => $bleed,
-        ':turnaround'     => $turnaround,
-        ':shipping_method'=> $shipping_method,
-        ':unit_price'     => $unit_price,
-        ':tax_rate'       => $tax_rate,
-        ':total_amount'   => $total_amount,
-        ':due_date'       => $due_date,
-        ':notes'          => $notes,
+        ':order_number' => $order_number,
+        ':client_id' => $client_id,
+        ':product_type' => $product_type,
+        ':quantity' => $quantity,
+        ':size_width' => $size_width,
+        ':size_height' => $size_height,
+        ':paper_weight' => $paper_weight,
+        ':finish' => $finish,
+        ':bleed' => $bleed,
+        ':turnaround' => $turnaround,
+        ':shipping_method' => $shipping_method,
+        ':unit_price' => $unit_price,
+        ':tax_rate' => $tax_rate,
+        ':total_amount' => $total_amount,
+        ':due_date' => $due_date,
+        ':notes' => $notes,
     ]);
 
     $order_id = $pdo->lastInsertId();
 
     echo json_encode([
-        'success'      => true,
-        'order_id'     => $order_id,
+        'success' => true,
+        'order_id' => $order_id,
         'order_number' => $order_number,
-        'due_date'     => $due_date,
+        'due_date' => $due_date,
     ]);
 
 } catch (PDOException $e) {
