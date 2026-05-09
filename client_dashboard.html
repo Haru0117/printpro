@@ -5040,12 +5040,10 @@
                             <div class="account-header">
                                 <div class="account-avatar-lg" id="accountAvatarBig">J</div>
                                 <div>
-                                    <div class="account-name" id="accountName">Juan Dela Cruz</div>
+                                    <div class="account-name" id="accountName">Loading...</div>
                                     <div class="account-email" id="accountEmail">juan@company.ph</div>
                                     <div style="display: flex; gap: 8px; margin-top: 10px;">
-                                        <button class="btn btn-sm btn-accent px-3"
-                                            onclick="alert('Profile edit mode enabled.')"><i class="bi bi-pencil"></i>
-                                            Edit Profile</button>
+
                                         <button class="btn btn-sm btn-outline-light border-0"
                                             style="background:rgba(255,255,255,.1); font-size:.75rem;"
                                             onclick="ppLogout(event)"><i class="bi bi-box-arrow-left"></i>
@@ -5060,25 +5058,23 @@
                                         <div class="notif-card-title">Personal Details</div>
                                         <div class="settings-row">
                                             <div class="settings-row-label">Full Name</div>
-                                            <input type="text" class="form-input" value="Juan Dela Cruz"
-                                                style="width:200px;">
+                                            <input type="text" class="form-input" id="profileFullName" value="" placeholder="Your Name" style="width:200px;">
                                         </div>
                                         <div class="settings-row">
                                             <div class="settings-row-label">Business Name</div>
-                                            <input type="text" class="form-input" value="Manila Design Hub"
-                                                style="width:200px;">
+                                            <input type="text" class="form-input" id="profileBusinessName" value="" placeholder="Business Name" style="width:200px;">
                                         </div>
                                         <div class="settings-row">
                                             <div class="settings-row-label">Industry</div>
-                                            <select class="form-input" style="width:200px;">
-                                                <option>Creative Agency</option>
-                                                <option>Corporate</option>
-                                                <option>Education</option>
+                                            <select class="form-input" id="profileIndustry" style="width:200px;">
+                                                <option value="Creative Agency">Creative Agency</option>
+                                                <option value="Corporate">Corporate</option>
+                                                <option value="Education">Education</option>
                                             </select>
                                         </div>
                                         <div style="margin-top:14px;">
                                             <button class="btn-accent rounded-3 px-4 py-2"
-                                                onclick="alert('Changes saved!')">Save Details</button>
+                                                id="saveProfileBtn" onclick="updateProfile()">Save Details</button>
                                         </div>
                                     </div>
 
@@ -5156,10 +5152,11 @@
                                         <div class="notif-card-title">Communication</div>
                                         <div class="settings-row">
                                             <span class="settings-row-label">Order Updates</span>
-                                            <label class="toggle"><input type="checkbox" checked><span <span
-                                                    class="settings-row-label">Promotional Emails</span>
-                                                <label class="toggle"><input type="checkbox"><span
-                                                        class="toggle-slider"></span></label>
+                                            <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                                        </div>
+                                        <div class="settings-row">
+                                            <span class="settings-row-label">Promotional Emails</span>
+                                            <label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label>
                                         </div>
                                         <div class="settings-row">
                                             <span class="settings-row-label">Monthly Reports</span>
@@ -6423,6 +6420,81 @@
                 overlay.style.display = 'none';
                 fmHandleUpload(e.dataTransfer.files);
             });
+        }
+
+        // Initialize User Profile
+        (function initUserProfile() {
+            const userData = JSON.parse(sessionStorage.getItem('pp_user') || '{}');
+            const displayName = userData.username || userData.name || 'User';
+
+            // Update Top Bar & Profile Headers
+            const nameEls = document.querySelectorAll('#accountName, .c-user-name');
+            nameEls.forEach(el => el.innerText = displayName);
+
+            // Update Avatar Initials
+            const avatarEls = document.querySelectorAll('.c-avatar, .account-avatar-lg');
+            const initial = displayName.charAt(0).toUpperCase();
+            avatarEls.forEach(el => el.innerText = initial);
+
+            // Update Account Form
+            const nameInput = document.getElementById('profileFullName');
+            if (nameInput) nameInput.value = userData.name || userData.username || '';
+            
+            const businessInput = document.getElementById('profileBusinessName');
+            if (businessInput) businessInput.value = userData.business_name || '';
+
+            const industryInput = document.getElementById('profileIndustry');
+            if (industryInput) industryInput.value = userData.industry || 'Creative Agency';
+            
+            const emailText = document.querySelector('.account-email');
+            if (emailText) emailText.innerText = userData.email || '';
+        })();
+
+        // 2. Update Profile Handler
+        async function updateProfile() {
+            const btn = document.getElementById('saveProfileBtn');
+            const name = document.getElementById('profileFullName').value;
+            const business = document.getElementById('profileBusinessName').value;
+            const industry = document.getElementById('profileIndustry').value;
+
+            if (!name) return alert('Please enter your name');
+
+            btn.disabled = true;
+            btn.innerText = 'Saving...';
+
+            const formData = new FormData();
+            formData.append('name', name);
+            formData.append('business_name', business);
+            formData.append('industry', industry);
+
+            try {
+                const response = await fetch('api/update_profile.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    // Update Local Storage
+                    const userData = JSON.parse(sessionStorage.getItem('pp_user') || '{}');
+                    userData.name = name;
+                    userData.business_name = business;
+                    userData.industry = industry;
+                    sessionStorage.setItem('pp_user', JSON.stringify(userData));
+
+                    // Update UI immediately
+                    document.querySelectorAll('#accountName, .c-user-name').forEach(el => el.innerText = name);
+                    
+                    alert('Profile updated successfully!');
+                } else {
+                    alert(data.message || 'Failed to update profile');
+                }
+            } catch (err) {
+                alert('An error occurred while saving.');
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'Save Details';
+            }
         }
 
         // Initialize on page load

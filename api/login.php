@@ -24,7 +24,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
+    $stmt = $pdo->prepare("
+        SELECT u.*, c.business_name, c.industry 
+        FROM users u 
+        LEFT JOIN clients c ON u.id = c.user_id 
+        WHERE u.email = ?
+    ");
     $stmt->execute([$email]);
     $user = $stmt->fetch();
 
@@ -41,7 +46,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $portal = 'client';
         }
 
-        echo json_encode(['success' => true, 'redirect' => $redirect, 'role' => $user['role'], 'portal' => $portal]);
+        echo json_encode([
+            'success' => true, 
+            'redirect' => $redirect, 
+            'role' => $user['role'], 
+            'portal' => $portal, 
+            'username' => $user['username'], 
+            'name' => $user['name'],
+            'email' => $user['email'],
+            'business_name' => $user['business_name'] ?? '',
+            'industry' => $user['industry'] ?? ''
+        ]);
     } else {
         echo json_encode(['success' => false, 'message' => 'Invalid email or password.']);
     }

@@ -1519,9 +1519,9 @@
                             style="width:100%;padding:11px 14px;border:1.5px solid #dde3f0;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.88rem;color:#1a2340;outline:none;background:#fff;transition:border-color .2s,box-shadow .2s;"
                             onfocus="this.style.borderColor='#1d8cf8';this.style.boxShadow='0 0 0 3px rgba(29,140,248,.12)'"
                             onblur="this.style.borderColor='#dde3f0';this.style.boxShadow='none'">
-                            <option value="Pro">Pro (₱999/mo)</option>
-                            <option value="Premium">Premium (₱1899/mo)</option>
-                            <option value="Premium+">Premium+ (₱2199/mo)</option>
+                            <option value="pro">Pro (₱999/mo)</option>
+                            <option value="premium">Premium (₱1899/mo)</option>
+                            <option value="premium+">Premium+ (₱2199/mo)</option>
                         </select>
                     </div>
 
@@ -1796,9 +1796,8 @@
                         return;
                     }
 
-                    const name = email.split('@')[0].replace(/\./g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-                    sessionStorage.setItem('pp_user', JSON.stringify({ email, role, name }));
-
+                    // Store user session data
+                    sessionStorage.setItem('pp_user', JSON.stringify(data));
                     window.location.href = data.redirect;
                 } else {
                     mShowAlert(data.message || 'Invalid email or password.');
@@ -1843,10 +1842,11 @@
             document.getElementById('rTerms').checked = false;
 
             const planSelect = document.getElementById('rPlan');
-            if (planSelect.querySelector(`option[value="${plan}"]`)) {
-                planSelect.value = plan;
+            const targetPlan = plan.toLowerCase();
+            if (planSelect.querySelector(`option[value="${targetPlan}"]`)) {
+                planSelect.value = targetPlan;
             } else {
-                planSelect.value = 'Free';
+                planSelect.value = 'pro';
             }
 
             const modal = document.getElementById('registerModal');

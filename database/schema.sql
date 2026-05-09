@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `company_name` varchar(255) DEFAULT NULL,
   `role` enum('client','admin') NOT NULL DEFAULT 'client',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `subscription_plan` enum('free','pro','premium','premium+') DEFAULT 'free',
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

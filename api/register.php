@@ -17,6 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $company_name = $_POST['business_name'] ?? '';
     $password = $_POST['password'] ?? '';
     $terms = $_POST['terms'] ?? '';
+    $plan = strtolower($_POST['plan'] ?? 'pro');
 
     if (empty($name) || empty($email) || empty($password) || empty($terms)) {
         echo json_encode(['success' => false, 'message' => 'Please fill in all required fields.']);
@@ -24,26 +25,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     try {
-        // Check if email exists
-        $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
-        $stmt->execute([$email]);
-        if ($stmt->fetch()) {
-            echo json_encode(['success' => false, 'message' => 'Email already registered.']);
-            exit;
-        }
-
         // Derive username from email
         $username = explode('@', $email)[0];
 
-        // We are storing plain text passwords as requested
-        $stmt = $pdo->prepare("INSERT INTO users (name, username, email, password_hash, role) VALUES (?, ?, ?, ?, 'client')");
+        // Check if email OR username already exists
+        $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ? OR username = ?");
+        $stmt->execute([$email, $username]);
+        if ($stmt->fetch()) {
+            echo json_encode(['success' => false, 'message' => 'This email or username is already registered. Please use a different one.']);
+            exit;
+        }
 
-        $stmt->execute([$name, $username, $email, $password]);
+        // We are storing passwords in both columns as requested
+        $stmt = $pdo->prepare("INSERT INTO users (name, username, email, password, password_hash, role, subscription_plan) VALUES (?, ?, ?, ?, ?, 'client', ?)");
+
+        $stmt->execute([$name, $username, $email, $password, $password, $plan]);
         $user_id = $pdo->lastInsertId();
 
         // Insert into clients table
         $stmt_client = $pdo->prepare("INSERT INTO clients (user_id, business_name) VALUES (?, ?)");
         $stmt_client->execute([$user_id, $company_name]);
+        $client_id = $pdo->lastInsertId();
+
+
 
         // Log them in immediately
         $_SESSION['user_id'] = $user_id;

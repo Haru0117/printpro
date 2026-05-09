@@ -20,6 +20,7 @@ CREATE TABLE users (
   email            VARCHAR(180)     NOT NULL,
   password_hash    VARCHAR(255)     NOT NULL,
   role             ENUM('admin','manager','operator','client') NOT NULL DEFAULT 'client',
+  subscription_plan ENUM('free','pro','premium','premium+')     DEFAULT 'free',
   status           ENUM('active','suspended')                  NOT NULL DEFAULT 'active',
   two_factor_enabled TINYINT(1)     NOT NULL DEFAULT 0,
   last_login_at    TIMESTAMP        NULL,
@@ -57,7 +58,7 @@ CREATE TABLE clients (
 CREATE TABLE subscriptions (
   id           INT UNSIGNED NOT NULL AUTO_INCREMENT,
   client_id    INT UNSIGNED NOT NULL,
-  plan         ENUM('Free','Basic','Premium','Enterprise') NOT NULL DEFAULT 'Free',
+  plan         ENUM('free','pro','premium','premium+') NOT NULL DEFAULT 'free',
   status       ENUM('Active','Canceled','Past Due')        NOT NULL DEFAULT 'Active',
   amount       DECIMAL(10,2) NOT NULL DEFAULT 0.00,
   applied_on   DATE          NOT NULL,

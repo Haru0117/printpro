@@ -11,7 +11,7 @@ USE printpro;
 CREATE TABLE IF NOT EXISTS subscriptions (
   id           INT UNSIGNED NOT NULL AUTO_INCREMENT,
   client_id    INT UNSIGNED NOT NULL,
-  plan         ENUM('Free','Basic','Premium','Enterprise') NOT NULL DEFAULT 'Free',
+  plan         ENUM('free','pro','premium','premium+') NOT NULL DEFAULT 'free',
   status       ENUM('Active','Canceled','Past Due')        NOT NULL DEFAULT 'Active',
   amount       DECIMAL(10,2) NOT NULL DEFAULT 0.00,
   applied_on   DATE          NOT NULL,
