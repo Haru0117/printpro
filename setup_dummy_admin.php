@@ -55,7 +55,7 @@ try {
     echo "<p class='text-muted small'>You can now use these credentials to log in via the main landing page.</p>";
     echo "<div class='d-grid gap-2'>";
     echo "<a href='index.php' class='btn btn-outline-primary'>Go to Home</a>";
-    echo "<a href='Admin Dashboard.html' class='btn btn-primary'>Go to Admin Dashboard</a>";
+    echo "<a href='admin_dashboard.html' class='btn btn-primary'>Go to Admin Dashboard</a>";
     echo "</div>";
     echo "<p class='mt-3 text-center'><small class='text-danger'>IMPORTANT: Delete this file after use for security.</small></p>";
     echo "</div>";

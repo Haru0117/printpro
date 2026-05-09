@@ -3583,9 +3583,9 @@
     <script>
         (function () {
             const session = sessionStorage.getItem('pp_user');
-            if (!session) { window.location.href = 'homepage.html#login'; return; }
+            if (!session) { window.location.href = 'index.html#login'; return; }
             const user = JSON.parse(session);
-            if (user.role !== 'client') { window.location.href = 'homepage.html#login'; }
+            if (user.role !== 'client') { window.location.href = 'index.html#login'; }
         })();
     </script>
 
@@ -5232,7 +5232,7 @@
         function ppLogout(e) {
             if (e) e.preventDefault();
             sessionStorage.removeItem('pp_user');
-            window.location.href = 'homepage.html#login';
+            window.location.href = 'index.html#login';
         }
 
         // Synchronize Order Status from Admin

@@ -1,16 +1,16 @@
 <?php
-// 1. Database Configuration
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "printpro_db"; // Make sure this matches your actual DB name
+// Database Configuration — AwardSpace Production
+$servername = "fdb1034.awardspace.net";
+$username   = "4728062_printpro";
+$password   = "iF8q#5:*9o/iqF!4";
+$dbname     = "4728062_printpro";
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
 
 // Check connection
 if ($conn->connect_error) {
-    die(json_encode(["success" => false, "message" => "Connection failed"]));
+    die(json_encode(["success" => false, "message" => "Connection failed: " . $conn->connect_error]));
 }
 
 // 2. Catch the raw JSON stream from your JavaScript

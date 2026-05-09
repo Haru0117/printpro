@@ -23,19 +23,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Check if email exists
-    $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
-    $stmt->execute([$email]);
-    if ($stmt->fetch()) {
-        echo json_encode(['success' => false, 'message' => 'Email already registered.']);
-        exit;
-    }
-
-    // We are storing plain text passwords as requested
-    $stmt = $pdo->prepare("INSERT INTO users (name, email, password_hash, role) VALUES (?, ?, ?, 'client')");
-
     try {
-        $stmt->execute([$name, $email, $password]);
+        // Check if email exists
+        $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
+        $stmt->execute([$email]);
+        if ($stmt->fetch()) {
+            echo json_encode(['success' => false, 'message' => 'Email already registered.']);
+            exit;
+        }
+
+        // Derive username from email
+        $username = explode('@', $email)[0];
+
+        // We are storing plain text passwords as requested
+        $stmt = $pdo->prepare("INSERT INTO users (name, username, email, password_hash, role) VALUES (?, ?, ?, ?, 'client')");
+
+        $stmt->execute([$name, $username, $email, $password]);
         $user_id = $pdo->lastInsertId();
 
         // Insert into clients table
@@ -47,9 +50,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['role'] = 'client';
         $_SESSION['name'] = $name;
 
-        echo json_encode(['success' => true, 'redirect' => 'Client Dashboard.html']);
+        echo json_encode(['success' => true, 'redirect' => 'client_dashboard.html']);
     } catch (PDOException $e) {
-        echo json_encode(['success' => false, 'message' => 'Registration failed: ' . $e->getMessage()]);
+        // Identify missing columns
+        if (strpos($e->getMessage(), "Unknown column 'name'") !== false) {
+            // Attempt fallback to full_name or username if necessary, or just report
+            echo json_encode(['success' => false, 'message' => 'Database schema error: name column missing.']);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Registration failed: ' . $e->getMessage()]);
+        }
     }
 
 } else {

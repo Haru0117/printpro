@@ -11,9 +11,9 @@ function check_auth($required_role = null)
     if ($required_role && $_SESSION['role'] !== $required_role) {
         // Redirect to their respective dashboards if they have the wrong role
         if ($_SESSION['role'] === 'admin') {
-            header("Location: /Admin Dashboard.html");
+            header("Location: /admin_dashboard.html");
         } else {
-            header("Location: /Client Dashboard.html");
+            header("Location: /client_dashboard.html");
         }
         exit();
     }

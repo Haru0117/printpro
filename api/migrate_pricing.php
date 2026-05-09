@@ -1,15 +1,18 @@
 <?php
-// We connect to MySQL without a database first to create it if it doesn't exist
-$host = 'localhost';
-$user = 'root';
-$pass = '';
+// ─────────────────────────────────────────────────────────────
+//  migrate_pricing.php — Seeds pricing tables on AwardSpace DB
+//  Run this ONCE to populate: tbl_products, tbl_base_prices,
+//  tbl_materials, tbl_sizes, tbl_finishes
+// ─────────────────────────────────────────────────────────────
+$host = 'fdb1034.awardspace.net';
+$user = '4728062_printpro';
+$pass = 'iF8q#5:*9o/iqF!4';
+$db   = '4728062_printpro';
 
 try {
-    $pdo = new PDO("mysql:host=$host", $user, $pass);
+    // Connect directly to the existing AwardSpace database
+    $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8mb4", $user, $pass);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-    $pdo->exec("CREATE DATABASE IF NOT EXISTS printpro CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
-    $pdo->exec("USE printpro");
 
     // Re-create tables if they don't exist
     $pdo->exec("CREATE TABLE IF NOT EXISTS tbl_products (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(100) NOT NULL, slug VARCHAR(50) NOT NULL UNIQUE)");
@@ -110,7 +113,7 @@ try {
 
     echo "<h2 style='color:green'>Success! Pricing Data Synchronized.</h2>";
     echo "<p>All products, sizes, and materials now match your UI exactly.</p>";
-    echo "<a href='../Client Dashboard.html'>Return to Dashboard</a>";
+    echo "<a href='../client_dashboard.html'>Return to Dashboard</a>";
 
 } catch (PDOException $e) {
     die("Database Error: " . $e->getMessage());

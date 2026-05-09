@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrintPro — Register</title>
+    <meta name="description" content="Create your PrintPro account to manage print jobs, orders, and more.">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+    <style>
+        :root {
+            --navy: #1a2340;
+            --navy-mid: #2a3558;
+            --accent: #1d8cf8;
+            --accent2: #00c6ff;
+            --teal: #3ec6c6;
+            --border: #dde3f0;
+            --muted: #6b7a99;
+            --off-white: #f4f6fb;
+            --danger: #f5365c;
+            --success: #2dce89;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: #f0f2f8;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── BACKGROUND DECORATION ── */
+        .bg-deco {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-deco::before {
+            content: '';
+            position: absolute;
+            top: -200px;
+            left: -200px;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(29, 140, 248, .12) 0%, transparent 70%);
+        }
+
+        .bg-deco::after {
+            content: '';
+            position: absolute;
+            bottom: -200px;
+            right: -150px;
+            width: 700px;
+            height: 700px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(62, 198, 198, .10) 0%, transparent 70%);
+        }
+
+        /* ── LAYOUT ── */
+        .login-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-container {
+            display: flex;
+            width: 100%;
+            max-width: 920px;
+            min-height: 560px;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 32px 80px rgba(26, 35, 64, .18), 0 4px 20px rgba(26, 35, 64, .08);
+        }
+
+        /* ── LEFT PANEL ── */
+        .left-panel {
+            flex: 1;
+            background: linear-gradient(160deg, #1a2340 0%, #0d1b3e 50%, #0f2057 100%);
+            padding: 50px 44px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .left-panel::before {
+            content: '';
+            position: absolute;
+            top: -80px;
+            right: -80px;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(29, 140, 248, .15) 0%, transparent 70%);
+        }
+
+        .left-panel::after {
+            content: '';
+            position: absolute;
+            bottom: -60px;
+            left: -60px;
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(62, 198, 198, .12) 0%, transparent 70%);
+        }
+
+        .left-brand {
+            position: relative;
+            z-index: 1;
+        }
+
+        .left-brand img {
+            height: 44px;
+            width: auto;
+            object-fit: contain;
+            filter: brightness(0) invert(1);
+        }
+
+        .left-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .left-title {
+            font-family: 'Sora', sans-serif;
+            font-size: 1.65rem;
+            font-weight: 800;
+            color: #fff;
+            line-height: 1.25;
+            margin-bottom: 14px;
+        }
+
+        .left-title span {
+            color: var(--accent2);
+        }
+
+        .left-desc {
+            font-size: .9rem;
+            color: rgba(255, 255, 255, .55);
+            line-height: 1.7;
+            margin-bottom: 28px;
+        }
+
+        .left-feature {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .left-feature-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent2);
+            flex-shrink: 0;
+        }
+
+        .left-feature span {
+            font-size: .82rem;
+            color: rgba(255, 255, 255, .65);
+        }
+
+        .left-footer {
+            position: relative;
+            z-index: 1;
+            font-size: .75rem;
+            color: rgba(255, 255, 255, .3);
+        }
+
+        /* ── RIGHT PANEL ── */
+        .right-panel {
+            width: 420px;
+            flex-shrink: 0;
+            background: #fff;
+            padding: 40px 44px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow-y: auto;
+        }
+
+        .form-heading {
+            font-family: 'Sora', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--navy);
+            margin-bottom: 6px;
+        }
+
+        .form-subheading {
+            font-size: .84rem;
+            color: var(--muted);
+            margin-bottom: 24px;
+        }
+
+        /* ── FORM FIELDS ── */
+        .field-group {
+            margin-bottom: 14px;
+        }
+
+        .field-label {
+            display: block;
+            font-size: .78rem;
+            font-weight: 600;
+            color: var(--navy);
+            margin-bottom: 6px;
+            letter-spacing: .02em;
+        }
+
+        .field-wrap {
+            position: relative;
+        }
+
+        .field-icon {
+            position: absolute;
+            left: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+            font-size: .95rem;
+            pointer-events: none;
+        }
+
+        .field-input {
+            width: 100%;
+            padding: 11px 14px 11px 38px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: .9rem;
+            color: var(--navy);
+            background: #fff;
+            transition: border-color .2s, box-shadow .2s;
+            outline: none;
+        }
+
+        .field-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(29, 140, 248, .12);
+        }
+
+        .field-input.error {
+            border-color: var(--danger);
+            box-shadow: 0 0 0 3px rgba(245, 54, 92, .10);
+        }
+
+        .toggle-pass {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--muted);
+            font-size: .95rem;
+            padding: 0;
+            line-height: 1;
+        }
+
+        /* ── ERROR MESSAGE ── */
+        .error-msg {
+            display: none;
+            font-size: .76rem;
+            color: var(--danger);
+            margin-top: 5px;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .error-msg.show {
+            display: flex;
+        }
+
+        /* ── ALERT BOX ── */
+        .alert-box {
+            display: none;
+            padding: 11px 14px;
+            border-radius: 10px;
+            font-size: .82rem;
+            margin-bottom: 18px;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .alert-box.show {
+            display: flex;
+        }
+
+        .alert-box.danger {
+            background: rgba(245, 54, 92, .08);
+            color: var(--danger);
+            border: 1px solid rgba(245, 54, 92, .2);
+        }
+
+        .alert-box.success {
+            background: rgba(45, 206, 137, .08);
+            color: #1aae6f;
+            border: 1px solid rgba(45, 206, 137, .2);
+        }
+
+        /* ── SUBMIT BUTTON ── */
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: .95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: opacity .2s, transform .15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 6px;
+        }
+
+        .btn-login:hover {
+            opacity: .9;
+            transform: translateY(-1px);
+        }
+
+        .btn-login.loading {
+            opacity: .7;
+            pointer-events: none;
+        }
+
+        /* ── SPINNER ── */
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, .4);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin .6s linear infinite;
+            display: none;
+        }
+
+        .btn-login.loading .spinner {
+            display: block;
+        }
+
+        .btn-login.loading .btn-text {
+            display: none;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ── FOOTER LINK ── */
+        .form-footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: .82rem;
+            color: var(--muted);
+        }
+
+        .form-footer a {
+            color: var(--accent);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 16px;
+        }
+
+        .back-link a {
+            font-size: .8rem;
+            color: var(--muted);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: color .2s;
+        }
+
+        .back-link a:hover {
+            color: var(--navy);
+        }
+
+        @media (max-width: 700px) {
+            .login-container {
+                flex-direction: column;
+                max-width: 440px;
+            }
+            .left-panel {
+                display: none;
+            }
+            .right-panel {
+                width: 100%;
+                padding: 40px 28px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="bg-deco"></div>
+
+    <div class="login-wrapper">
+        <div class="login-container">
+
+            <!-- ── LEFT PANEL ── -->
+            <div class="left-panel">
+                <div class="left-brand">
+                    <img src="assets/img/logo.png" alt="PrintPro" onerror="this.src='https://via.placeholder.com/150x44?text=PrintPro'">
+                </div>
+
+                <div class="left-content">
+                    <h1 class="left-title">
+                        Join the future of<br>print<br><span>management.</span>
+                    </h1>
+                    <p class="left-desc">
+                        Create an account to place orders, track shipments, and streamline your entire printing workflow.
+                    </p>
+                    <div class="left-feature">
+                        <div class="left-feature-dot"></div>
+                        <span>Customized B2B pricing</span>
+                    </div>
+                    <div class="left-feature">
+                        <div class="left-feature-dot"></div>
+                        <span>Dedicated support team</span>
+                    </div>
+                    <div class="left-feature">
+                        <div class="left-feature-dot"></div>
+                        <span>Easy order history & reordering</span>
+                    </div>
+                </div>
+
+                <div class="left-footer">
+                    &copy; 2026 PrintPro. All rights reserved.
+                </div>
+            </div>
+
+            <!-- ── RIGHT PANEL ── -->
+            <div class="right-panel">
+                <div class="form-heading">Create Account</div>
+                <div class="form-subheading">Sign up to get started with PrintPro</div>
+
+                <!-- Alert -->
+                <div class="alert-box danger" id="alertBox">
+                    <i class="bi bi-exclamation-circle-fill"></i>
+                    <span id="alertMsg"></span>
+                </div>
+
+                <!-- Form -->
+                <form id="registerForm" onsubmit="handleRegister(event)" novalidate>
+
+                    <!-- Full Name -->
+                    <div class="field-group">
+                        <label class="field-label" for="nameInput">Full Name</label>
+                        <div class="field-wrap">
+                            <i class="bi bi-person field-icon"></i>
+                            <input type="text" id="nameInput" class="field-input" placeholder="John Doe" required>
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="field-group">
+                        <label class="field-label" for="emailInput">Business Email</label>
+                        <div class="field-wrap">
+                            <i class="bi bi-envelope field-icon"></i>
+                            <input type="email" id="emailInput" class="field-input" placeholder="you@yourcompany.com" required>
+                        </div>
+                    </div>
+
+                    <!-- Business Name -->
+                    <div class="field-group">
+                        <label class="field-label" for="businessInput">Company Name</label>
+                        <div class="field-wrap">
+                            <i class="bi bi-building field-icon"></i>
+                            <input type="text" id="businessInput" class="field-input" placeholder="Acme Corp" required>
+                        </div>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="field-group">
+                        <label class="field-label" for="passInput">Password</label>
+                        <div class="field-wrap">
+                            <i class="bi bi-lock field-icon"></i>
+                            <input type="password" id="passInput" class="field-input" placeholder="Create a password" required>
+                            <button type="button" class="toggle-pass" onclick="togglePassword()">
+                                <i class="bi bi-eye" id="eyeIcon"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Terms -->
+                    <div style="margin-bottom:18px;">
+                        <label style="display:flex;align-items:flex-start;gap:7px;font-size:.82rem;color:var(--muted);cursor:pointer;line-height:1.4;">
+                            <input type="checkbox" id="termsInput" style="accent-color:var(--accent);width:14px;height:14px;margin-top:2px;" required>
+                            <span>I agree to the <a href="#" style="color:var(--accent);">Terms of Service</a> and <a href="#" style="color:var(--accent);">Privacy Policy</a></span>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn-login" id="registerBtn">
+                        <div class="spinner"></div>
+                        <span class="btn-text">
+                            <i class="bi bi-person-plus"></i> Create Account
+                        </span>
+                    </button>
+                </form>
+
+                <div class="form-footer">
+                    Already have an account? <a href="login.html">Sign in</a>
+                </div>
+
+                <div class="back-link">
+                    <a href="index.html"><i class="bi bi-arrow-left"></i> Back to Homepage</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <script>
+        function togglePassword() {
+            const input = document.getElementById('passInput');
+            const icon = document.getElementById('eyeIcon');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'bi bi-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'bi bi-eye';
+            }
+        }
+
+        function showAlert(msg, isSuccess = false) {
+            const alertBox = document.getElementById('alertBox');
+            document.getElementById('alertMsg').textContent = msg;
+            alertBox.className = 'alert-box show ' + (isSuccess ? 'success' : 'danger');
+        }
+
+        async function handleRegister(e) {
+            e.preventDefault();
+            const btn = document.getElementById('registerBtn');
+            const alertBox = document.getElementById('alertBox');
+            alertBox.classList.remove('show');
+
+            const name = document.getElementById('nameInput').value.trim();
+            const email = document.getElementById('emailInput').value.trim();
+            const business = document.getElementById('businessInput').value.trim();
+            const password = document.getElementById('passInput').value;
+            const terms = document.getElementById('termsInput').checked;
+
+            if (!name || !email || !business || !password) {
+                showAlert('Please fill in all fields.');
+                return;
+            }
+
+            if (!terms) {
+                showAlert('You must agree to the Terms of Service.');
+                return;
+            }
+
+            btn.classList.add('loading');
+
+            try {
+                const formData = new FormData();
+                formData.append('name', name);
+                formData.append('email', email);
+                formData.append('business_name', business);
+                formData.append('password', password);
+                formData.append('terms', '1');
+
+                const response = await fetch('api/register.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+                btn.classList.remove('loading');
+
+                if (result.success) {
+                    showAlert('Account created! Redirecting...', true);
+                    setTimeout(() => {
+                        window.location.href = result.redirect;
+                    }, 1000);
+                } else {
+                    showAlert(result.message || 'Registration failed.');
+                }
+            } catch (error) {
+                btn.classList.remove('loading');
+                showAlert('An error occurred. Please try again.');
+                console.error(error);
+            }
+        }
+    </script>
+</body>
+
+</html>

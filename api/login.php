@@ -34,10 +34,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['name'] = $user['name'];
 
         if ($user['role'] === 'admin' || $user['role'] === 'manager' || $user['role'] === 'operator') {
-            $redirect = 'Admin Dashboard.html';
+            $redirect = 'admin_dashboard.html';
             $portal = 'admin';
         } else {
-            $redirect = 'Client Dashboard.html';
+            $redirect = 'client_dashboard.html';
             $portal = 'client';
         }
 

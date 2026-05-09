@@ -1842,9 +1842,9 @@
     <script>
         (function () {
             const session = sessionStorage.getItem('pp_user');
-            if (!session) { window.location.href = 'homepage.html#login'; return; }
+            if (!session) { window.location.href = 'index.html#login'; return; }
             const user = JSON.parse(session);
-            if (user.role !== 'admin') { window.location.href = 'homepage.html#login'; }
+            if (user.role !== 'admin') { window.location.href = 'index.html#login'; }
         })();
     </script>
 
@@ -3775,7 +3775,7 @@
         }
 
         // 7. Theme & Logout
-        function ppLogout(e) { e.preventDefault(); sessionStorage.removeItem('pp_user'); window.location.href = 'homepage.html#login'; }
+        function ppLogout(e) { e.preventDefault(); sessionStorage.removeItem('pp_user'); window.location.href = 'index.html#login'; }
         function toggleMobileSidebar() {
             const sidebar = document.querySelector('.a-sidebar');
             const overlay = document.getElementById('sidebarOverlay');
