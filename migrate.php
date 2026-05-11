@@ -10,6 +10,7 @@ try {
     // matches the latest printpro.sql schema without dropping data.
     $alterStatements = [
         // 1. Orders table fixes
+        "ALTER TABLE orders ADD COLUMN order_number VARCHAR(20) DEFAULT NULL",
         "ALTER TABLE orders ADD COLUMN job_name VARCHAR(255) DEFAULT 'Untitled'",
         "ALTER TABLE orders ADD COLUMN paper_id INT DEFAULT 0",
         "ALTER TABLE orders ADD COLUMN size_id INT DEFAULT 0",
@@ -42,7 +43,35 @@ try {
         "ALTER TABLE subscriptions MODIFY COLUMN plan ENUM('free', 'pro', 'premium', 'premium+') NOT NULL DEFAULT 'free'",
 
         // 5. Users table subscription_plan migration (for existing users schema)
-        "ALTER TABLE users MODIFY COLUMN subscription_plan ENUM('free', 'pro', 'premium', 'premium+') DEFAULT 'free'"
+        "ALTER TABLE users MODIFY COLUMN subscription_plan ENUM('free', 'pro', 'premium', 'premium+') DEFAULT 'free'",
+
+        // 6. Client Credits table
+        "CREATE TABLE IF NOT EXISTS client_credits (
+            id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+            client_id INT UNSIGNED NOT NULL,
+            balance DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            UNIQUE KEY uq_client_credits_client (client_id),
+            CONSTRAINT fk_client_credits_client FOREIGN KEY (client_id) REFERENCES clients (id) ON DELETE CASCADE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+
+        // 7. Credit Transactions table
+        "CREATE TABLE IF NOT EXISTS credit_transactions (
+            id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+            client_id INT UNSIGNED NOT NULL,
+            transaction_type ENUM('add','deduct') NOT NULL,
+            amount DECIMAL(12,2) NOT NULL,
+            description VARCHAR(255) DEFAULT NULL,
+            order_id INT UNSIGNED DEFAULT NULL,
+            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            KEY idx_credit_transactions_client (client_id),
+            KEY idx_credit_transactions_order (order_id),
+            CONSTRAINT fk_credit_transactions_client FOREIGN KEY (client_id) REFERENCES clients (id) ON DELETE CASCADE,
+            CONSTRAINT fk_credit_transactions_order FOREIGN KEY (order_id) REFERENCES orders (id) ON DELETE SET NULL
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
     ];
 
     foreach ($alterStatements as $sql) {
@@ -64,6 +93,46 @@ try {
     if (!$checkColumn) {
         $pdo->exec("ALTER TABLE clients ADD industry VARCHAR(100) AFTER business_name");
     }
+
+    // Create triggers for credits system
+    $triggerSQL = "
+        DELIMITER //
+        CREATE TRIGGER IF NOT EXISTS update_credit_balance_after_insert
+        AFTER INSERT ON credit_transactions
+        FOR EACH ROW
+        BEGIN
+          IF NEW.transaction_type = 'add' THEN
+            UPDATE client_credits SET balance = balance + NEW.amount, updated_at = CURRENT_TIMESTAMP WHERE client_id = NEW.client_id;
+          ELSEIF NEW.transaction_type = 'deduct' THEN
+            UPDATE client_credits SET balance = balance - NEW.amount, updated_at = CURRENT_TIMESTAMP WHERE client_id = NEW.client_id;
+          END IF;
+        END //
+        DELIMITER ;
+    ";
+    try {
+        $pdo->exec($triggerSQL);
+    } catch (\PDOException $e) {
+        // Trigger might already exist, ignore
+    }
+
+    $trigger2SQL = "
+        DELIMITER //
+        CREATE TRIGGER IF NOT EXISTS create_default_credits_after_client_insert
+        AFTER INSERT ON clients
+        FOR EACH ROW
+        BEGIN
+          INSERT INTO client_credits (client_id, balance) VALUES (NEW.id, 10000.00);
+        END //
+        DELIMITER ;
+    ";
+    try {
+        $pdo->exec($trigger2SQL);
+    } catch (\PDOException $e) {
+        // Trigger might already exist, ignore
+    }
+
+    // Insert default credits for existing clients
+    $pdo->exec("INSERT IGNORE INTO client_credits (client_id, balance) SELECT id, 10000.00 FROM clients");
 
     echo "Migration completed successfully! All required columns and tables are present.";
 

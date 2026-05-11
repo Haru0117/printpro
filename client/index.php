@@ -8,6 +8,33 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'client') {
 $userName = $_SESSION['name'] ?? 'Client';
 $userEmail = $_SESSION['email'] ?? 'client@example.com';
 $userRole = $_SESSION['role'] ?? 'client';
+
+// Get client credit balance
+require_once '../includes/db.php';
+$credit_balance = 0;
+$recent_transactions = [];
+try {
+  $stmt = $pdo->prepare("SELECT cc.balance FROM client_credits cc JOIN clients c ON cc.client_id = c.id WHERE c.user_id = ?");
+  $stmt->execute([$_SESSION['user_id']]);
+  $row = $stmt->fetch();
+  $credit_balance = $row ? floatval($row['balance']) : 0;
+
+  // Get recent credit transactions
+  $stmt = $pdo->prepare("
+    SELECT ct.transaction_type, ct.amount, ct.description, ct.created_at, COALESCE(o.order_number, o.id) as order_number
+    FROM credit_transactions ct
+    JOIN clients c ON ct.client_id = c.id
+    LEFT JOIN orders o ON ct.order_id = o.id
+    WHERE c.user_id = ?
+    ORDER BY ct.created_at DESC
+    LIMIT 5
+  ");
+  $stmt->execute([$_SESSION['user_id']]);
+  $recent_transactions = $stmt->fetchAll();
+} catch (Exception $e) {
+  $credit_balance = 0;
+  $recent_transactions = [];
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -38,6 +65,13 @@ $userRole = $_SESSION['role'] ?? 'client';
       </div>
       <div class="topbar-right">
         <i class="bi bi-bell" style="color:var(--muted);font-size:1.05rem;cursor:pointer;"></i>
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 16px;background:linear-gradient(135deg,rgba(45,206,137,.15),rgba(45,206,137,.05));border:1px solid rgba(45,206,137,.3);border-radius:8px;cursor:pointer;" onclick="showPage('cbilling')" title="Click to view billing">
+          <i class="bi bi-credit-card" style="color:var(--success);font-size:1.1rem;"></i>
+          <div style="font-size:.85rem;line-height:1.2;">
+            <div style="color:var(--muted);font-size:.7rem;font-weight:500;">CREDITS</div>
+            <div style="font-weight:700;color:var(--success);font-size:.95rem;" id="topbarCredits">₱<?php echo number_format($credit_balance, 0); ?></div>
+          </div>
+        </div>
         <div class="avatar" id="topAvatar" style="background:linear-gradient(135deg,#7c4dff,#1d8cf8);cursor:pointer;"
           onclick="showPage('account')"><?php echo strtoupper(substr($userName, 0, 1)); ?></div>
         <button class="btn btn-outline btn-sm" onclick="location.href='../api/logout.php'"><i
@@ -121,7 +155,64 @@ $userRole = $_SESSION['role'] ?? 'client';
                   class="bi bi-credit-card"></i></div>
               <div>
                 <div class="kpi-lbl">Credits</div>
-                <div class="kpi-val">₱14k</div>
+                <div class="kpi-val">₱<?php echo number_format($credit_balance, 0); ?></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Credits Overview Section -->
+          <div style="display:grid;grid-template-columns:1fr 2fr;gap:20px;margin-bottom:20px;">
+            <div class="card" style="padding:24px;">
+              <div style="display:flex;align-items:center;margin-bottom:16px;">
+                <div style="background:rgba(45,206,137,.1);color:var(--success);padding:12px;border-radius:12px;margin-right:16px;">
+                  <i class="bi bi-credit-card" style="font-size:1.5rem;"></i>
+                </div>
+                <div>
+                  <h5 style="margin:0;font-weight:600;">Credit Balance</h5>
+                  <p style="margin:4px 0 0 0;color:var(--muted);font-size:.9rem;">Available for orders</p>
+                </div>
+              </div>
+              <div style="font-size:2rem;font-weight:700;color:var(--success);margin-bottom:8px;">
+                ₱<?php echo number_format($credit_balance, 2); ?>
+              </div>
+              <div style="color:var(--muted);font-size:.85rem;">
+                Default: ₱10,000.00 | Used for order payments
+              </div>
+            </div>
+
+            <div class="card" style="padding:24px;">
+              <h5 style="margin-bottom:16px;font-weight:600;">Recent Transactions</h5>
+              <div style="max-height:200px;overflow-y:auto;">
+                <?php if (empty($recent_transactions)): ?>
+                  <div style="text-align:center;color:var(--muted);padding:20px;">
+                    <i class="bi bi-info-circle" style="font-size:2rem;margin-bottom:8px;"></i>
+                    <p>No transactions yet</p>
+                  </div>
+                <?php else: ?>
+                  <?php foreach ($recent_transactions as $transaction): 
+                    $order_num = $transaction['order_id'] ? 'PPR-' . str_pad($transaction['order_id'], 3, '0', STR_PAD_LEFT) : null;
+                  ?>
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border);">
+                      <div>
+                        <div style="font-weight:500;">
+                          <?php echo htmlspecialchars($transaction['description'] ?: 'Credit ' . $transaction['transaction_type']); ?>
+                          <?php if ($order_num): ?>
+                            <span style="color:var(--muted);font-size:.8rem;">(<?php echo $order_num; ?>)</span>
+                          <?php endif; ?>
+                        </div>
+                        <div style="color:var(--muted);font-size:.8rem;">
+                          <?php echo date('M j, Y g:i A', strtotime($transaction['created_at'])); ?>
+                        </div>
+                      </div>
+                      <div style="font-weight:600;<?php echo $transaction['transaction_type'] === 'add' ? 'color:var(--success);' : 'color:var(--danger);'; ?>">
+                        <?php echo $transaction['transaction_type'] === 'add' ? '+' : '-'; ?>₱<?php echo number_format($transaction['amount'], 2); ?>
+                      </div>
+                    </div>
+                  <?php endforeach; ?>
+                <?php endif; ?>
+              </div>
+              <div style="margin-top:16px;text-align:center;">
+                <button class="btn btn-outline btn-sm" onclick="showPage('cbilling')">View All Transactions</button>
               </div>
             </div>
           </div>
@@ -292,6 +383,117 @@ $userRole = $_SESSION['role'] ?? 'client';
           </div>
         </div>
 
+        <!-- ════ CLIENT: BILLING ════ -->
+        <div class="page" id="page-cbilling">
+          <div class="page-hdr">
+            <h4>Billing & Credits</h4>
+            <p>Manage your credits and view transaction history</p>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 2fr;gap:20px;margin-bottom:20px;">
+            <div class="card" style="padding:24px;">
+              <div style="display:flex;align-items:center;margin-bottom:16px;">
+                <div style="background:rgba(45,206,137,.1);color:var(--success);padding:12px;border-radius:12px;margin-right:16px;">
+                  <i class="bi bi-credit-card" style="font-size:1.5rem;"></i>
+                </div>
+                <div>
+                  <h5 style="margin:0;font-weight:600;">Current Balance</h5>
+                  <p style="margin:4px 0 0 0;color:var(--muted);font-size:.9rem;">Available credits</p>
+                </div>
+              </div>
+              <div style="font-size:2.5rem;font-weight:700;color:var(--success);margin-bottom:8px;">
+                ₱<?php echo number_format($credit_balance, 2); ?>
+              </div>
+              <div style="color:var(--muted);font-size:.85rem;">
+                Credits are automatically deducted when placing orders
+              </div>
+            </div>
+
+            <div class="card" style="padding:24px;">
+              <h5 style="margin-bottom:16px;font-weight:600;">Credit Usage Summary</h5>
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+                <div style="text-align:center;">
+                  <div style="font-size:1.5rem;font-weight:700;color:var(--primary);">₱10,000</div>
+                  <div style="color:var(--muted);font-size:.8rem;">Initial Credits</div>
+                </div>
+                <div style="text-align:center;">
+                  <div style="font-size:1.5rem;font-weight:700;color:var(--danger);">-₱<?php echo number_format(10000 - $credit_balance, 2); ?></div>
+                  <div style="color:var(--muted);font-size:.8rem;">Used</div>
+                </div>
+                <div style="text-align:center;">
+                  <div style="font-size:1.5rem;font-weight:700;color:var(--success);">₱<?php echo number_format($credit_balance, 2); ?></div>
+                  <div style="color:var(--muted);font-size:.8rem;">Remaining</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-hdr">
+              <span class="card-title">Credit Transaction History</span>
+            </div>
+            <div style="padding:20px;">
+              <?php if (empty($recent_transactions)): ?>
+                <div style="text-align:center;color:var(--muted);padding:40px;">
+                  <i class="bi bi-receipt" style="font-size:3rem;margin-bottom:16px;"></i>
+                  <h5>No transactions yet</h5>
+                  <p>Your credit transaction history will appear here</p>
+                </div>
+              <?php else: ?>
+                <div style="overflow-x:auto;">
+                  <table class="tbl">
+                    <thead>
+                      <tr>
+                        <th>Date</th>
+                        <th>Description</th>
+                        <th>Order</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <?php
+                      // Get all transactions for billing page
+                      try {
+                        $stmt = $pdo->prepare("
+                          SELECT ct.transaction_type, ct.amount, ct.description, ct.created_at, COALESCE(o.order_number, o.id) as order_number
+                          FROM credit_transactions ct
+                          JOIN clients c ON ct.client_id = c.id
+                          LEFT JOIN orders o ON ct.order_id = o.id
+                          WHERE c.user_id = ?
+                          ORDER BY ct.created_at DESC
+                        ");
+                        $stmt->execute([$_SESSION['user_id']]);
+                        $all_transactions = $stmt->fetchAll();
+                      } catch (Exception $e) {
+                        $all_transactions = [];
+                      }
+
+                      foreach ($all_transactions as $transaction): 
+                        $order_num = $transaction['order_id'] ? 'PPR-' . str_pad($transaction['order_id'], 3, '0', STR_PAD_LEFT) : null;
+                      ?>
+                        <tr>
+                          <td><?php echo date('M j, Y g:i A', strtotime($transaction['created_at'])); ?></td>
+                          <td><?php echo htmlspecialchars($transaction['description'] ?: 'Credit ' . $transaction['transaction_type']); ?></td>
+                          <td><?php echo $order_num ? '#' . $order_num : '—'; ?></td>
+                          <td>
+                            <span class="badge <?php echo $transaction['transaction_type'] === 'add' ? 'b-success' : 'b-danger'; ?>">
+                              <?php echo ucfirst($transaction['transaction_type']); ?>
+                            </span>
+                          </td>
+                          <td style="font-weight:600;<?php echo $transaction['transaction_type'] === 'add' ? 'color:var(--success);' : 'color:var(--danger);'; ?>">
+                            <?php echo $transaction['transaction_type'] === 'add' ? '+' : '-'; ?>₱<?php echo number_format($transaction['amount'], 2); ?>
+                          </td>
+                        </tr>
+                      <?php endforeach; ?>
+                    </tbody>
+                  </table>
+                </div>
+              <?php endif; ?>
+            </div>
+          </div>
+        </div>
+
         <!-- ════ ACCOUNT ════ -->
         <div class="page" id="page-account">
           <div class="account-header">
@@ -311,10 +513,100 @@ $userRole = $_SESSION['role'] ?? 'client';
 
   <script src="../assets/js/printpro.js"></script>
   <script>
+    // Load credits data
+    function loadCredits() {
+      fetch('../api/get_credits.php')
+        .then(res => res.json())
+        .then(data => {
+          console.log('Credits API response:', data);
+          if (data.success) {
+            // Update topbar credits
+            const topbarCredits = document.getElementById('topbarCredits');
+            if (topbarCredits) {
+              const balanceNum = parseFloat(data.balance_raw);
+              const displayValue = balanceNum >= 1000 ? (balanceNum / 1000).toFixed(1) + 'k' : balanceNum.toFixed(2);
+              topbarCredits.textContent = '₱' + displayValue;
+              console.log('Updated topbar credits to:', topbarCredits.textContent);
+            }
+
+            // Update KPI card
+            const creditKpi = document.querySelector('[onclick="showPage(\'cbilling\')"] .kpi-val');
+            if (creditKpi) {
+              creditKpi.textContent = '₱' + (parseFloat(data.balance_raw) / 1000).toFixed(1) + 'k';
+            }
+
+            // Update balance in credits overview card
+            const overviewCards = document.querySelectorAll('div[style*="font-size:2rem"]');
+            overviewCards.forEach(card => {
+              if (card.textContent.includes('₱') && card.parentElement.parentElement.querySelector('h5')?.textContent.includes('Credit Balance')) {
+                card.textContent = '₱' + data.balance;
+              }
+            });
+
+            // Update remaining balance
+            const remainingCards = document.querySelectorAll('div[style*="text-align:center"]');
+            remainingCards.forEach(card => {
+              const balanceDiv = card.querySelector('div:first-child');
+              if (balanceDiv && balanceDiv.textContent.includes('₱') && card.querySelector('div:last-child')?.textContent.includes('Remaining')) {
+                balanceDiv.textContent = '₱' + data.balance;
+              }
+              const usedDiv = card.querySelector('div:first-child');
+              if (usedDiv && usedDiv.textContent.includes('-₱') && card.querySelector('div:last-child')?.textContent.includes('Used')) {
+                usedDiv.textContent = '-₱' + data.used;
+              }
+            });
+
+            // Update transactions in recent transactions list
+            const recentTransList = document.querySelector('[style*="max-height:200px"]');
+            if (recentTransList && data.transactions.length > 0) {
+              recentTransList.innerHTML = data.transactions.map(t => `
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border);">
+                  <div>
+                    <div style="font-weight:500;">
+                      ${t.description || 'Credit ' + t.transaction_type}
+                      ${t.order_number ? '<span style="color:var(--muted);font-size:.8rem;">(' + t.order_number + ')</span>' : ''}
+                    </div>
+                    <div style="color:var(--muted);font-size:.8rem;">
+                      ${new Date(t.created_at).toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit'})}
+                    </div>
+                  </div>
+                  <div style="font-weight:600;${t.transaction_type === 'add' ? 'color:var(--success);' : 'color:var(--danger);'}">
+                    ${t.transaction_type === 'add' ? '+' : '-'}₱${parseFloat(t.amount).toFixed(2)}
+                  </div>
+                </div>
+              `).join('');
+            }
+
+            // Update billing page transaction table
+            const transTable = document.querySelector('table.tbl tbody');
+            if (transTable && data.transactions.length > 0) {
+              transTable.innerHTML = data.transactions.map(t => `
+                <tr>
+                  <td>${new Date(t.created_at).toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit'})}</td>
+                  <td>${t.description || 'Credit ' + t.transaction_type}</td>
+                  <td>${t.order_number ? '#' + t.order_number : '—'}</td>
+                  <td>
+                    <span class="badge ${t.transaction_type === 'add' ? 'b-success' : 'b-danger'}">
+                      ${t.transaction_type.charAt(0).toUpperCase() + t.transaction_type.slice(1)}
+                    </span>
+                  </td>
+                  <td style="font-weight:600;${t.transaction_type === 'add' ? 'color:var(--success);' : 'color:var(--danger);'}">
+                    ${t.transaction_type === 'add' ? '+' : '-'}₱${parseFloat(t.amount).toFixed(2)}
+                  </td>
+                </tr>
+              `).join('');
+            }
+          }
+        })
+        .catch(err => console.log('Credits load error:', err));
+    }
+
     // Local initialization
     document.addEventListener('DOMContentLoaded', () => {
       currentUser = { name: '<?php echo $userName; ?>', role: '<?php echo $userRole; ?>', email: '<?php echo $userEmail; ?>' };
       setupUI();
+      loadCredits(); // Load credits on page load
+      setInterval(loadCredits, 30000); // Refresh credits every 30 seconds
     });
   </script>
 </body>

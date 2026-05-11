@@ -34,7 +34,24 @@ try {
 
     $client_id = $client['id'];
 
-    // ── 2. Read and sanitize form fields ─────────────────────────────────────
+    // ── 2. Check client credits ──────────────────────────────────────────────
+    $stmt = $pdo->prepare("SELECT balance FROM client_credits WHERE client_id = ?");
+    $stmt->execute([$client_id]);
+    $credit_row = $stmt->fetch();
+
+    if (!$credit_row) {
+        echo json_encode(['success' => false, 'message' => 'No credit account found. Please contact support.']);
+        exit;
+    }
+
+    $current_balance = floatval($credit_row['balance']);
+
+    if ($current_balance < $total_amount) {
+        echo json_encode(['success' => false, 'message' => 'Insufficient credits. Current balance: ₱' . number_format($current_balance, 2) . ', Required: ₱' . number_format($total_amount, 2)]);
+        exit;
+    }
+
+    // ── 3. Read and sanitize form fields ─────────────────────────────────────
     $product_type = trim($_POST['product_type'] ?? 'Flyers');
     $paper_weight = trim($_POST['paper_weight'] ?? '');
     $finish = trim($_POST['finish'] ?? 'None');
@@ -114,6 +131,30 @@ try {
     ]);
 
     $order_id = $pdo->lastInsertId();
+
+    // ── 5. Deduct credits and record transaction ────────────────────────────
+    $pdo->beginTransaction();
+
+    try {
+        // Insert credit transaction
+        $stmt = $pdo->prepare("
+            INSERT INTO credit_transactions (client_id, transaction_type, amount, description, order_id)
+            VALUES (?, 'deduct', ?, ?, ?)
+        ");
+        $stmt->execute([$client_id, $total_amount, "Order #$order_number", $order_id]);
+
+        // The trigger will automatically update the balance
+        // But to be safe, we can manually update if trigger fails
+        $stmt = $pdo->prepare("UPDATE client_credits SET balance = balance - ? WHERE client_id = ?");
+        $stmt->execute([$total_amount, $client_id]);
+
+        $pdo->commit();
+
+    } catch (PDOException $e) {
+        $pdo->rollBack();
+        echo json_encode(['success' => false, 'message' => 'Failed to process payment: ' . $e->getMessage()]);
+        exit;
+    }
 
     echo json_encode([
         'success' => true,
