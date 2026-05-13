@@ -26,7 +26,19 @@ try {
         "ALTER TABLE users ADD COLUMN last_login_at TIMESTAMP NULL",
         "ALTER TABLE users ADD COLUMN updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
 
-        // 3. Clients table
+        // 3. Password Reset Tokens table
+        "CREATE TABLE IF NOT EXISTS password_reset_tokens (
+            id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+            email VARCHAR(160) NOT NULL,
+            token_hash VARCHAR(64) NOT NULL,
+            expires_at TIMESTAMP NOT NULL,
+            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            UNIQUE KEY uq_token_hash (token_hash),
+            KEY idx_email (email)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;",
+
+        // 4. Clients table
         "CREATE TABLE IF NOT EXISTS clients (
             id INT UNSIGNED NOT NULL AUTO_INCREMENT,
             user_id INT UNSIGNED NOT NULL,
@@ -39,13 +51,13 @@ try {
             KEY fk_clients_user (user_id)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
 
-        // 4. Subscriptions table migration
+        // 5. Subscriptions table migration
         "ALTER TABLE subscriptions MODIFY COLUMN plan ENUM('free', 'pro', 'premium', 'premium+') NOT NULL DEFAULT 'free'",
 
-        // 5. Users table subscription_plan migration (for existing users schema)
+        // 6. Users table subscription_plan migration (for existing users schema)
         "ALTER TABLE users MODIFY COLUMN subscription_plan ENUM('free', 'pro', 'premium', 'premium+') DEFAULT 'free'",
 
-        // 6. Client Credits table
+        // 7. Client Credits table
         "CREATE TABLE IF NOT EXISTS client_credits (
             id INT UNSIGNED NOT NULL AUTO_INCREMENT,
             client_id INT UNSIGNED NOT NULL,
@@ -57,7 +69,7 @@ try {
             CONSTRAINT fk_client_credits_client FOREIGN KEY (client_id) REFERENCES clients (id) ON DELETE CASCADE
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
 
-        // 7. Credit Transactions table
+        // 8. Credit Transactions table
         "CREATE TABLE IF NOT EXISTS credit_transactions (
             id INT UNSIGNED NOT NULL AUTO_INCREMENT,
             client_id INT UNSIGNED NOT NULL,
