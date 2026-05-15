@@ -54,7 +54,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['role'] = 'client';
         $_SESSION['name'] = $name;
 
-        echo json_encode(['success' => true, 'redirect' => 'client_dashboard.html']);
+        echo json_encode([
+            'success' => true, 
+            'id' => $user_id,
+            'role' => 'client',
+            'name' => $name,
+            'email' => $email,
+            'redirect' => 'client_dashboard.html'
+        ]);
     } catch (PDOException $e) {
         // Identify missing columns
         if (strpos($e->getMessage(), "Unknown column 'name'") !== false) {

@@ -25,7 +25,7 @@ echo "<h2>2. User Session Check</h2>";
 if (isset($_SESSION['user_id'])) {
     echo "<div class='ok'>✓ User ID: " . $_SESSION['user_id'] . "</div>";
 } else {
-    echo "<div class='error'>✗ No user logged in. <a href='login.html' style='color: blue; text-decoration: underline;'>Login here</a></div>";
+    echo "<div class='error'>✗ No user logged in. <a href='index.html#login' style='color: blue; text-decoration: underline;'>Login here</a></div>";
 }
 
 if ($tables_ok && isset($_SESSION['user_id'])) {

@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once '../includes/db.php';
+require_once '../includes/auth.php';
 
 header('Content-Type: application/json');
 
@@ -9,52 +10,38 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-$user_id = $_SESSION['user_id'];
-$name = $_POST['name'] ?? '';
-$business_name = $_POST['business_name'] ?? '';
-$industry = $_POST['industry'] ?? '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $name = $_POST['name'] ?? '';
+    $email = $_POST['email'] ?? '';
+    $user_id = $_SESSION['user_id'];
 
-if (empty($name)) {
-    echo json_encode(['success' => false, 'message' => 'Name cannot be empty']);
-    exit;
-}
-
-try {
-    $pdo->beginTransaction();
-
-    // 1. Update users table (Name)
-    $stmt = $pdo->prepare("UPDATE users SET name = ? WHERE id = ?");
-    $stmt->execute([$name, $user_id]);
-
-    // 2. Update/Insert clients table (Business & Industry)
-    // Check if client record exists
-    $stmt = $pdo->prepare("SELECT id FROM clients WHERE user_id = ?");
-    $stmt->execute([$user_id]);
-    $client = $stmt->fetch();
-
-    if ($client) {
-        $stmt = $pdo->prepare("UPDATE clients SET business_name = ?, industry = ? WHERE user_id = ?");
-        $stmt->execute([$business_name, $industry, $user_id]);
-    } else {
-        $stmt = $pdo->prepare("INSERT INTO clients (user_id, business_name, industry) VALUES (?, ?, ?)");
-        $stmt->execute([$user_id, $business_name, $industry]);
+    if (empty($name) || empty($email)) {
+        echo json_encode(['success' => false, 'message' => 'Name and email are required']);
+        exit;
     }
 
-    $pdo->commit();
+    try {
+        // Update users table
+        $stmt = $pdo->prepare("UPDATE users SET name = ?, email = ? WHERE id = ?");
+        $stmt->execute([$name, $email, $user_id]);
 
-    // Update session name if it changed
-    $_SESSION['name'] = $name;
+        // Update session variables
+        $_SESSION['name'] = $name;
+        $_SESSION['email'] = $email;
 
-    echo json_encode([
-        'success' => true, 
-        'message' => 'Profile updated successfully',
-        'data' => [
-            'name' => $name,
-            'business_name' => $business_name,
-            'industry' => $industry
-        ]
-    ]);
-} catch (PDOException $e) {
-    echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
+        echo json_encode([
+            'success' => true, 
+            'message' => 'Profile updated successfully',
+            'data' => ['name' => $name, 'email' => $email]
+        ]);
+    } catch (PDOException $e) {
+        if ($e->getCode() == 23000) {
+            echo json_encode(['success' => false, 'message' => 'Email address is already in use']);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
+        }
+    }
+} else {
+    echo json_encode(['success' => false, 'message' => 'Invalid request method']);
 }
 ?>

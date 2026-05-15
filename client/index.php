@@ -2,7 +2,7 @@
 session_start();
 // Basic role check
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'client') {
-  header('Location: ../login.html');
+  header('Location: ../index.html#login');
   exit;
 }
 $userName = $_SESSION['name'] ?? 'Client';

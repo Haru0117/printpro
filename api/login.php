@@ -34,6 +34,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user = $stmt->fetch();
 
     if ($user && (password_verify($password, $user['password_hash']) || $password === $user['password_hash'])) {
+        // Task: Check if account is suspended
+        if (isset($user['status']) && strtolower($user['status']) === 'suspended') {
+            echo json_encode(['success' => false, 'message' => 'Your account has been suspended. Please contact support.']);
+            exit;
+        }
+
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['role'] = $user['role'];
         $_SESSION['name'] = $user['name'];
@@ -48,6 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         echo json_encode([
             'success' => true, 
+            'id' => $user['id'],
             'redirect' => $redirect, 
             'role' => $user['role'], 
             'portal' => $portal, 
