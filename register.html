@@ -606,6 +606,9 @@
                 btn.classList.remove('loading');
 
                 if (result.success) {
+                    // Store user session data
+                    sessionStorage.setItem('pp_user', JSON.stringify(result));
+                    
                     showAlert('Account created! Redirecting...', true);
                     setTimeout(() => {
                         window.location.href = result.redirect;

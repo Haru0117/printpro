@@ -768,6 +768,9 @@
                 btn.classList.remove('loading');
 
                 if (result.success) {
+                    // Store user session data
+                    sessionStorage.setItem('pp_user', JSON.stringify(result));
+                    
                     // Success alert (optional)
                     document.getElementById('alertBox').className = 'alert-box success show';
                     document.getElementById('alertMsg').textContent = 'Sign in successful! Redirecting...';
