@@ -4752,6 +4752,10 @@
                                             <input type="text" class="form-input" id="profileFullName" value="" placeholder="Your Name" style="width:200px;">
                                         </div>
                                         <div class="settings-row">
+                                            <div class="settings-row-label">Email Address</div>
+                                            <input type="email" class="form-input" id="profileEmailInput" value="" placeholder="email@example.com" style="width:200px;">
+                                        </div>
+                                        <div class="settings-row">
                                             <div class="settings-row-label">Business Name</div>
                                             <input type="text" class="form-input" id="profileBusinessName" value="" placeholder="Business Name" style="width:200px;">
                                         </div>
@@ -6133,6 +6137,9 @@
             const industryInput = document.getElementById('profileIndustry');
             if (industryInput) industryInput.value = userData.industry || 'Creative Agency';
             
+            const emailInput = document.getElementById('profileEmailInput');
+            if (emailInput) emailInput.value = userData.email || '';
+            
             const emailText = document.querySelector('.account-email');
             if (emailText) emailText.innerText = userData.email || '';
         })();
@@ -6141,16 +6148,19 @@
         async function updateProfile() {
             const btn = document.getElementById('saveProfileBtn');
             const name = document.getElementById('profileFullName').value;
+            const email = document.getElementById('profileEmailInput').value;
             const business = document.getElementById('profileBusinessName').value;
             const industry = document.getElementById('profileIndustry').value;
 
             if (!name) return alert('Please enter your name');
+            if (!email) return alert('Please enter your email');
 
             btn.disabled = true;
             btn.innerText = 'Saving...';
 
             const formData = new FormData();
             formData.append('name', name);
+            formData.append('email', email);
             formData.append('business_name', business);
             formData.append('industry', industry);
 
@@ -6165,12 +6175,15 @@
                     // Update Local Storage
                     const userData = JSON.parse(sessionStorage.getItem('pp_user') || '{}');
                     userData.name = name;
+                    userData.email = email;
                     userData.business_name = business;
                     userData.industry = industry;
                     sessionStorage.setItem('pp_user', JSON.stringify(userData));
 
                     // Update UI immediately
                     document.querySelectorAll('#accountName, .c-user-name').forEach(el => el.innerText = name);
+                    const emailText = document.querySelector('.account-email');
+                    if (emailText) emailText.innerText = email;
                     
                     alert('Profile updated successfully!');
                 } else {
