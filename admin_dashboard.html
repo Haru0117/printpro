@@ -15,6 +15,7 @@
     <style>
         :root {
             --navy: #0d1b3e;
+            --text-main: #0d1b3e;
             --accent: #1d8cf8;
             --accent2: #00c6ff;
             --teal: #3ec6c6;
@@ -25,24 +26,25 @@
             --border: #dde3f0;
             --muted: #8898aa;
             --off: #f4f6fb;
-            --dark-bg: #0a1628;
-            --dark-card: #111e40;
+            --dark-bg: #070d19;
+            --dark-card: #0d1b3e;
             --dark-card2: #162048;
             --glass: rgba(255, 255, 255, 0.05);
         }
 
         [data-theme="dark"] {
-            --navy: #e0e6ed;
+            --text-main: #fff;
             --off: #0d1b3e;
-            --border: rgba(255, 255, 255, 0.08);
-            --dark-bg: #0a1628;
-            --dark-card: #111e40;
+            --border: rgba(255, 255, 255, 0.1);
+            --dark-bg: #070d19;
+            --dark-card: #0d1b3e;
             --dark-card2: #162048;
-            --muted: #8898aa;
-            --accent: #fb6340;
+            --muted: #a0aec0;
+            --accent: #1d8cf8;
         }
 
-        html, body {
+        html,
+        body {
             height: 100%;
             font-family: 'DM Sans', sans-serif;
             background: #f0f2f8;
@@ -51,7 +53,20 @@
 
         [data-theme="dark"] body {
             background: var(--dark-bg);
-            color: var(--navy);
+            color: #fff;
+        }
+
+        [data-theme="dark"] h1,
+        [data-theme="dark"] h2,
+        [data-theme="dark"] h3,
+        [data-theme="dark"] h4,
+        [data-theme="dark"] h5,
+        [data-theme="dark"] h6 {
+            color: #fff;
+        }
+
+        [data-theme="dark"] .text-muted {
+            color: #a0aec0 !important;
         }
 
         /* ── APP SHELL ── */
@@ -81,23 +96,35 @@
             padding: 24px;
             display: flex;
             align-items: center;
-            gap: 10px;
-            background: var(--navy);
+            gap: 12px;
+            background: transparent;
+            color: var(--navy);
+            border-bottom: 1px solid var(--border);
+        }
+
+        [data-theme="dark"] .a-brand {
             color: #fff;
+            border-bottom-color: rgba(255, 255, 255, 0.05);
         }
 
         .a-brand img {
-            height: 24px;
+            height: 28px;
+            width: auto;
+            object-fit: contain;
+            filter: none;
+        }
+
+        [data-theme="dark"] .a-brand img {
             filter: brightness(0) invert(1);
         }
 
         .a-brand-badge {
-            font-size: .65rem;
             background: var(--accent);
             color: #fff;
+            font-size: 10px;
+            font-weight: 700;
             padding: 2px 8px;
-            border-radius: 6px;
-            font-weight: 800;
+            border-radius: 4px;
             text-transform: uppercase;
         }
 
@@ -126,7 +153,7 @@
 
         [data-theme="dark"] .a-nav-item:hover {
             color: #fff;
-            background: rgba(255,255,255,0.05);
+            background: rgba(255, 255, 255, 0.05);
         }
 
         .a-nav-item.active {
@@ -150,7 +177,9 @@
             gap: 10px;
         }
 
-        .a-logout a:hover { color: var(--danger); }
+        .a-logout a:hover {
+            color: var(--danger);
+        }
 
         .a-main {
             flex: 1;
@@ -181,15 +210,20 @@
             padding: 24px;
         }
 
-        .a-page { display: none; }
-        .a-page.active { display: block; }
+        .a-page {
+            display: none;
+        }
+
+        .a-page.active {
+            display: block;
+        }
 
         /* ── COMPONENTS ── */
         .card {
             background: #fff;
             border-radius: 16px;
             border: 1px solid var(--border);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
             margin-bottom: 24px;
             overflow: hidden;
         }
@@ -219,6 +253,7 @@
         [data-theme="dark"] .kpi-card {
             background: var(--dark-card);
             border-color: var(--border);
+            color: #fff;
         }
 
         .kpi-icon {
@@ -234,11 +269,17 @@
             font-family: 'Sora', sans-serif;
             font-size: 1.5rem;
             font-weight: 800;
-            color: var(--navy);
+            color: var(--text-main);
             line-height: 1.2;
         }
 
-        [data-theme="dark"] .kpi-val { color: #fff; }
+        [data-theme="dark"] .kpi-val {
+            color: #fff;
+        }
+
+        [data-theme="dark"] .kpi-lbl {
+            color: #a0aec0;
+        }
 
         .kpi-lbl {
             font-size: .75rem;
@@ -248,9 +289,14 @@
             letter-spacing: 0.5px;
         }
 
-        .table-responsive { border-radius: 12px; }
+        .table-responsive {
+            border-radius: 12px;
+        }
 
-        .table { margin-bottom: 0; }
+        .table {
+            margin-bottom: 0;
+        }
+
         .table th {
             background: var(--off);
             color: var(--muted);
@@ -263,7 +309,7 @@
         }
 
         [data-theme="dark"] .table th {
-            background: rgba(255,255,255,0.02);
+            background: rgba(255, 255, 255, 0.02);
             border-color: var(--border);
         }
 
@@ -274,7 +320,33 @@
             border-bottom: 1px solid var(--border);
         }
 
-        [data-theme="dark"] .table td { border-color: var(--border); color: #b8c2d3; }
+        [data-theme="dark"] .table td {
+            border-color: var(--border);
+            color: #cbd5e0;
+        }
+
+        .table-dark-themed {
+            background: transparent !important;
+        }
+
+        [data-theme="dark"] .table {
+            --bs-table-bg: transparent;
+            --bs-table-color: #cbd5e0;
+            --bs-table-border-color: var(--border);
+            color: #cbd5e0;
+        }
+
+        [data-theme="dark"] .table tr {
+            background: transparent !important;
+        }
+
+        [data-theme="dark"] .table tr:hover {
+            background: rgba(255, 255, 255, 0.02) !important;
+        }
+
+        [data-theme="dark"] .table-responsive {
+            background: transparent !important;
+        }
 
         .badge-status {
             padding: 4px 10px;
@@ -283,10 +355,213 @@
             font-weight: 700;
         }
 
-        .badge-success { background: rgba(45, 206, 137, .15); color: var(--success); }
-        .badge-warning { background: rgba(251, 99, 64, .15); color: var(--warning); }
-        .badge-primary { background: rgba(29, 140, 248, .15); color: var(--accent); }
-        .badge-danger { background: rgba(245, 54, 92, .15); color: var(--danger); }
+        .badge-success {
+            background: rgba(45, 206, 137, .15);
+            color: var(--success);
+        }
+
+        .badge-warning {
+            background: rgba(251, 99, 64, .15);
+            color: var(--warning);
+        }
+
+        .badge-primary {
+            background: rgba(29, 140, 248, .15);
+            color: var(--accent);
+        }
+
+        .badge-danger {
+            background: rgba(245, 54, 92, .15);
+            color: var(--danger);
+        }
+
+        [data-theme="dark"] .table td {
+            border-color: var(--border);
+            color: #cbd5e0;
+        }
+
+        [data-theme="dark"] .table th {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+
+        [data-theme="dark"] .bg-white,
+        [data-theme="dark"] .bg-light,
+        [data-theme="dark"] .bg-white-subtle,
+        [data-theme="dark"] .bg-light-subtle {
+            background-color: var(--dark-card) !important;
+            color: #fff !important;
+        }
+
+        [data-theme="dark"] .card-header {
+            background-color: var(--dark-card) !important;
+            border-bottom: 1px solid var(--border) !important;
+            box-shadow: none !important;
+        }
+
+        [data-theme="dark"] .nav-tabs {
+            border-color: var(--border) !important;
+            background-color: transparent !important;
+        }
+
+        [data-theme="dark"] .nav-tabs .nav-link {
+            color: #a0aec0 !important;
+        }
+
+        [data-theme="dark"] .nav-tabs .nav-link.active {
+            background: transparent !important;
+            color: var(--accent) !important;
+            border-bottom: 2px solid var(--accent) !important;
+        }
+
+        [data-theme="dark"] .modal-content {
+            background-color: var(--dark-card) !important;
+            border: 1px solid var(--border) !important;
+            color: #fff !important;
+        }
+
+        [data-theme="dark"] .modal-header .btn-close {
+            filter: invert(1) grayscale(100%) brightness(200%);
+        }
+
+        [data-theme="dark"] .shadow-sm {
+            box-shadow: none !important;
+        }
+
+        [data-theme="dark"] .nav-link {
+            color: #a0aec0 !important;
+        }
+
+        [data-theme="dark"] .nav-link:hover {
+            color: #fff !important;
+        }
+
+        /* Button Refinements */
+        .btn {
+            white-space: nowrap !important;
+            font-weight: 600 !important;
+            display: inline-flex !important;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+            height: auto !important;
+            width: auto !important;
+        }
+
+        .btn-sm {
+            padding: 8px 16px !important;
+            font-size: 0.75rem;
+            border-radius: 8px;
+        }
+
+        .btn-primary {
+            box-shadow: 0 4px 12px rgba(29, 140, 248, 0.2);
+        }
+
+        .btn-light {
+            background: #f1f3f5;
+            border: 1px solid #e9ecef;
+            color: #495057;
+        }
+
+        .btn-light:hover {
+            background: #e9ecef;
+        }
+
+        [data-theme="dark"] .btn-light {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
+            color: #cbd5e0;
+        }
+
+        [data-theme="dark"] .btn-light:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .action-btn {
+            width: 34px !important;
+            height: 34px !important;
+            padding: 0 !important;
+            flex-shrink: 0;
+            border-radius: 8px;
+        }
+
+        [data-theme="dark"] .form-control {
+            background: var(--dark-card2);
+            border-color: var(--border);
+            color: #fff;
+        }
+
+        [data-theme="dark"] .form-control:focus {
+            background: var(--dark-card2);
+            border-color: var(--accent);
+            color: #fff;
+        }
+
+        [data-theme="dark"] .btn-light {
+            background: rgba(255, 255, 255, 0.1);
+            border: 0;
+            color: #fff;
+        }
+
+        [data-theme="dark"] .modal-content {
+            background: var(--dark-card);
+            border-color: var(--border);
+            color: #fff;
+        }
+
+        [data-theme="dark"] .modal-header,
+        [data-theme="dark"] .modal-footer {
+            border-color: var(--border);
+        }
+
+        [data-theme="dark"] label,
+        [data-theme="dark"] .form-label {
+            color: #cbd5e0;
+        }
+
+        [data-theme="dark"] .nav-tabs .nav-link:not(.active) {
+            color: #a0aec0 !important;
+        }
+
+        [data-theme="dark"] .table th {
+            background: rgba(255, 255, 255, 0.05) !important;
+            color: #fff !important;
+        }
+
+        [data-theme="dark"] .table td {
+            color: #cbd5e0 !important;
+        }
+
+        [data-theme="dark"] ::placeholder {
+            color: rgba(255, 255, 255, 0.4) !important;
+        }
+
+        [data-theme="dark"] .text-muted {
+            color: #a0aec0 !important;
+        }
+
+        [data-theme="dark"] .small {
+            color: #a0aec0 !important;
+        }
+
+        .btn-sm {
+            width: 32px;
+            height: 32px;
+            padding: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            border-radius: 8px;
+        }
+
+        .btn-sm i {
+            font-size: 1rem;
+            line-height: 1;
+            margin: 0;
+        }
 
         .progress-bar-wrap {
             width: 100%;
@@ -296,9 +571,14 @@
             overflow: hidden;
         }
 
-        [data-theme="dark"] .progress-bar-wrap { background: rgba(255,255,255,0.05); }
+        [data-theme="dark"] .progress-bar-wrap {
+            background: rgba(255, 255, 255, 0.05);
+        }
 
-        .progress-bar-fill { height: 100%; transition: width 0.5s ease; }
+        .progress-bar-fill {
+            height: 100%;
+            transition: width 0.5s ease;
+        }
 
         .status-select {
             padding: 4px 8px;
@@ -311,7 +591,10 @@
             cursor: pointer;
         }
 
-        [data-theme="dark"] .status-select { color: #fff; background: var(--dark-card2); }
+        [data-theme="dark"] .status-select {
+            color: #fff;
+            background: var(--dark-card2);
+        }
 
         /* ── LOADING STATES ── */
         .skeleton {
@@ -322,32 +605,114 @@
         }
 
         @keyframes skeleton-loading {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
         }
 
         /* ── TOAST ── */
-        .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 2000; }
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 2000;
+        }
 
-        /* ── USER PANEL ── */
-        .user-mgmt-layout { display: grid; grid-template-columns: 1fr 320px; gap: 24px; }
-        .profile-panel { position: sticky; top: 0; }
-
+        /* ── RESPONSIVE ── */
         @media (max-width: 1200px) {
-            .kpi-grid { grid-template-columns: repeat(2, 1fr); }
-            .user-mgmt-layout { grid-template-columns: 1fr; }
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .user-mgmt-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-panel {
+                position: static;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .a-sidebar {
+                position: fixed;
+                left: -260px;
+                height: 100vh;
+                box-shadow: 20px 0 50px rgba(0, 0, 0, 0.1);
+            }
+
+            .a-sidebar.show {
+                left: 0;
+            }
+
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 999;
+                backdrop-filter: blur(4px);
+            }
+
+            .sidebar-overlay.show {
+                display: block;
+            }
         }
 
         @media (max-width: 768px) {
-            .kpi-grid { grid-template-columns: 1fr; }
-            .a-sidebar { position: fixed; left: -260px; height: 100vh; }
-            .a-sidebar.active { left: 0; }
+            .a-topbar {
+                padding: 0 16px;
+            }
+
+            .a-content {
+                padding: 16px;
+            }
+
+            .kpi-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .kpi-card {
+                padding: 16px;
+            }
+
+            .a-brand {
+                padding: 16px;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .action-btn {
+                width: 34px !important;
+            }
+
+            /* Keep small */
+            .d-flex.gap-2 {
+                flex-wrap: wrap;
+            }
+
+            #orderSearch {
+                width: 100% !important;
+                margin-bottom: 10px;
+            }
         }
     </style>
 </head>
 
 <body>
     <div class="a-app">
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
         <!-- Sidebar -->
         <aside class="a-sidebar" id="sidebar">
             <div class="a-brand">
@@ -383,8 +748,8 @@
             <!-- Topbar -->
             <header class="a-topbar">
                 <div class="d-flex align-items-center gap-3">
-                    <button class="btn d-md-none p-0 border-0 fs-3" onclick="toggleSidebar()">
-                        <i class="bi bi-list"></i>
+                    <button class="btn btn-light d-lg-none action-btn" onclick="toggleSidebar()">
+                        <i class="bi bi-list fs-4"></i>
                     </button>
                     <h5 class="m-0 fw-bold" id="pageTitle">Dashboard</h5>
                 </div>
@@ -394,10 +759,12 @@
                     </button>
                     <div class="dropdown">
                         <div class="d-flex align-items-center gap-2 cursor-pointer" data-bs-toggle="dropdown">
-                            <div class="rounded-circle bg-primary text-white d-grid place-items-center" style="width:32px; height:32px; font-size:.8rem; font-weight:700;" id="userAvatar">A</div>
+                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
+                                style="width:34px; height:34px; font-size:.85rem; font-weight:700; line-height:1;"
+                                id="userAvatar">A</div>
                             <div class="d-none d-sm-block">
                                 <div class="fw-bold" style="font-size:.8rem;" id="userName">Admin</div>
-                                <div class="text-muted" style="font-size:.7rem;">Super Admin</div>
+                                <div class="text-muted" style="font-size:.7rem;">Admin</div>
                             </div>
                         </div>
                     </div>
@@ -409,21 +776,24 @@
                 <div class="a-page active" id="page-dashboard">
                     <div class="kpi-grid" id="dashboardKpis">
                         <div class="kpi-card">
-                            <div class="kpi-icon bg-primary-subtle text-primary"><i class="bi bi-currency-dollar"></i></div>
+                            <div class="kpi-icon bg-primary-subtle text-primary"><i class="bi bi-currency-dollar"></i>
+                            </div>
                             <div>
                                 <div class="kpi-lbl">Total Revenue</div>
                                 <div class="kpi-val">₱0.00</div>
                             </div>
                         </div>
                         <div class="kpi-card">
-                            <div class="kpi-icon bg-success-subtle text-success"><i class="bi bi-check-circle"></i></div>
+                            <div class="kpi-icon bg-success-subtle text-success"><i class="bi bi-check-circle"></i>
+                            </div>
                             <div>
                                 <div class="kpi-lbl">Completed</div>
                                 <div class="kpi-val">0</div>
                             </div>
                         </div>
                         <div class="kpi-card">
-                            <div class="kpi-icon bg-warning-subtle text-warning"><i class="bi bi-clock-history"></i></div>
+                            <div class="kpi-icon bg-warning-subtle text-warning"><i class="bi bi-clock-history"></i>
+                            </div>
                             <div>
                                 <div class="kpi-lbl">Pending</div>
                                 <div class="kpi-val">0</div>
@@ -444,15 +814,24 @@
                                 <div class="d-flex justify-content-between align-items-center mb-4">
                                     <h6 class="fw-bold m-0">Revenue Trends</h6>
                                     <div class="dropdown">
-                                        <button class="btn btn-sm btn-outline-primary dropdown-toggle border-0" type="button" data-bs-toggle="dropdown" id="revenueFilterBtn">
+                                        <button class="btn btn-sm btn-outline-primary dropdown-toggle border-0"
+                                            type="button" data-bs-toggle="dropdown" id="revenueFilterBtn">
                                             Last 6 Months
                                         </button>
-                                        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0" style="border-radius:12px;">
-                                            <li><a class="dropdown-item small fw-bold" href="#" onclick="updateRevenueChart('week', 'Last Week')">Last Week</a></li>
-                                            <li><a class="dropdown-item small fw-bold" href="#" onclick="updateRevenueChart('month', 'Last Month')">Last Month</a></li>
-                                            <li><a class="dropdown-item small fw-bold active" href="#" onclick="updateRevenueChart('6months', 'Last 6 Months')">Last 6 Months</a></li>
-                                            <li><a class="dropdown-item small fw-bold" href="#" onclick="updateRevenueChart('year', 'Last Year')">Last Year</a></li>
-                                            <li><a class="dropdown-item small fw-bold" href="#" onclick="updateRevenueChart('all', 'All Time')">All Time</a></li>
+                                        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0"
+                                            style="border-radius:12px;">
+                                            <li><a class="dropdown-item small fw-bold" href="#"
+                                                    onclick="updateRevenueChart('week', 'Last Week')">Last Week</a></li>
+                                            <li><a class="dropdown-item small fw-bold" href="#"
+                                                    onclick="updateRevenueChart('month', 'Last Month')">Last Month</a>
+                                            </li>
+                                            <li><a class="dropdown-item small fw-bold active" href="#"
+                                                    onclick="updateRevenueChart('6months', 'Last 6 Months')">Last 6
+                                                    Months</a></li>
+                                            <li><a class="dropdown-item small fw-bold" href="#"
+                                                    onclick="updateRevenueChart('year', 'Last Year')">Last Year</a></li>
+                                            <li><a class="dropdown-item small fw-bold" href="#"
+                                                    onclick="updateRevenueChart('all', 'All Time')">All Time</a></li>
                                         </ul>
                                     </div>
                                 </div>
@@ -461,7 +840,8 @@
                             <div class="card">
                                 <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
                                     <h6 class="fw-bold m-0">Recent Orders</h6>
-                                    <button class="btn btn-sm btn-link text-decoration-none p-0" onclick="showPage('orders')">View All</button>
+                                    <button class="btn btn-sm btn-link text-decoration-none p-0"
+                                        onclick="showPage('orders')">View All</button>
                                 </div>
                                 <div class="table-responsive">
                                     <table class="table" id="recentOrdersTable">
@@ -498,12 +878,44 @@
 
                 <!-- Orders Page -->
                 <div class="a-page" id="page-orders">
-                    <div class="card">
-                        <div class="p-4 border-bottom d-flex flex-wrap gap-3 justify-content-between align-items-center">
-                            <h6 class="fw-bold m-0">All Orders</h6>
+                    <div class="card border-0 shadow-sm overflow-hidden" style="border-radius:16px;">
+                        <div class="card-header bg-white border-bottom p-0">
+                            <ul class="nav nav-tabs border-0 px-4" id="orderTabs" role="tablist">
+                                <li class="nav-item">
+                                    <button class="nav-link active py-3 border-0 fw-bold small text-uppercase"
+                                        onclick="filterOrdersByStatus('All')">All Orders</button>
+                                </li>
+                                <li class="nav-item">
+                                    <button class="nav-link py-3 border-0 fw-bold small text-uppercase"
+                                        onclick="filterOrdersByStatus('Prepress')">Prepress</button>
+                                </li>
+                                <li class="nav-item">
+                                    <button class="nav-link py-3 border-0 fw-bold small text-uppercase"
+                                        onclick="filterOrdersByStatus('Printing')">Printing</button>
+                                </li>
+                                <li class="nav-item">
+                                    <button class="nav-link py-3 border-0 fw-bold small text-uppercase"
+                                        onclick="filterOrdersByStatus('Finishing')">Finishing</button>
+                                </li>
+                                <li class="nav-item">
+                                    <button class="nav-link py-3 border-0 fw-bold small text-uppercase"
+                                        onclick="filterOrdersByStatus('Shipping')">Shipping</button>
+                                </li>
+                                <li class="nav-item">
+                                    <button class="nav-link py-3 border-0 fw-bold small text-uppercase"
+                                        onclick="filterOrdersByStatus('Delivered')">Delivered</button>
+                                </li>
+                            </ul>
+                        </div>
+                        <div
+                            class="p-4 border-bottom d-flex justify-content-between align-items-center bg-light-subtle">
+                            <h6 class="fw-bold m-0" id="orderListTitle">All Orders</h6>
                             <div class="d-flex gap-2">
-                                <input type="text" class="form-control form-control-sm" placeholder="Search orders..." style="width:200px;" oninput="searchOrders(this.value)">
-                                <button class="btn btn-sm btn-primary" onclick="loadOrders()"><i class="bi bi-arrow-clockwise"></i></button>
+                                <input type="text" class="form-control form-control-sm" id="orderSearch"
+                                    placeholder="Search orders..." style="width:250px;"
+                                    oninput="searchOrders(this.value)">
+                                <button class="btn btn-primary btn-sm" onclick="loadOrders()"><i
+                                        class="bi bi-arrow-clockwise"></i></button>
                             </div>
                         </div>
                         <div class="table-responsive">
@@ -527,58 +939,31 @@
                     </div>
                 </div>
 
-                <!-- Users Page -->
                 <div class="a-page" id="page-users">
-                    <div class="user-mgmt-layout">
-                        <div class="card">
-                            <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
-                                <h6 class="fw-bold m-0">User Management</h6>
-                                <input type="text" class="form-control form-control-sm" placeholder="Search users..." style="width:200px;" oninput="searchUsers(this.value)">
-                            </div>
-                            <div class="table-responsive">
-                                <table class="table" id="usersTable">
-                                    <thead>
-                                        <tr>
-                                            <th>User</th>
-                                            <th>Business</th>
-                                            <th>Role</th>
-                                            <th>Status</th>
-                                            <th>Joined</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody></tbody>
-                                </table>
+                    <div class="card border-0 shadow-sm overflow-hidden" style="border-radius:16px;">
+                        <div class="p-4 border-bottom d-flex justify-content-between align-items-center bg-light-subtle">
+                            <h6 class="fw-bold m-0">User Management</h6>
+                            <div class="d-flex gap-2">
+                                <input type="text" class="form-control form-control-sm" placeholder="Search users..."
+                                    style="width:250px;" oninput="searchUsers(this.value)">
+                                <button class="btn btn-primary btn-sm" onclick="loadUsers()"><i
+                                        class="bi bi-arrow-clockwise"></i></button>
                             </div>
                         </div>
-                        <div class="profile-panel">
-                            <div class="card p-4" id="userProfileCard">
-                                <div class="text-center mb-4">
-                                    <div class="rounded-circle bg-primary-subtle text-primary mx-auto mb-3 d-grid place-items-center" style="width:80px; height:80px; font-size:2rem; font-weight:800;" id="profileAvatar">?</div>
-                                    <h5 class="fw-bold mb-1" id="profileName">Select a User</h5>
-                                    <p class="text-muted small" id="profileEmail">-</p>
-                                </div>
-                                <div class="d-grid gap-2 mb-4">
-                                    <div class="p-3 bg-light rounded-3 d-flex justify-content-between align-items-center">
-                                        <span class="text-muted small">Role</span>
-                                        <span class="badge bg-primary-subtle text-primary" id="profileRole">-</span>
-                                    </div>
-                                    <div class="p-3 bg-light rounded-3 d-flex justify-content-between align-items-center">
-                                        <span class="text-muted small">Status</span>
-                                        <span class="badge bg-success-subtle text-success" id="profileStatus">-</span>
-                                    </div>
-                                </div>
-                                <div class="small">
-                                    <div class="mb-2 d-flex justify-content-between">
-                                        <span class="text-muted">Business</span>
-                                        <span id="profileBusiness">-</span>
-                                    </div>
-                                    <div class="mb-2 d-flex justify-content-between">
-                                        <span class="text-muted">Joined</span>
-                                        <span id="profileJoined">-</span>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="table-responsive">
+                            <table class="table" id="usersTable">
+                                <thead>
+                                    <tr>
+                                        <th>User</th>
+                                        <th>Business</th>
+                                        <th>Role</th>
+                                        <th>Status</th>
+                                        <th>Joined</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -589,7 +974,9 @@
                         <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
                             <h6 class="fw-bold m-0">Client Subscriptions</h6>
                             <div class="d-flex gap-2">
-                                <input type="text" class="form-control form-control-sm" id="subSearch" placeholder="Search client or business..." style="width:250px;" oninput="searchSubscriptions(this.value)">
+                                <input type="text" class="form-control form-control-sm" id="subSearch"
+                                    placeholder="Search client or business..." style="width:250px;"
+                                    oninput="searchSubscriptions(this.value)">
                             </div>
                         </div>
                         <div class="table-responsive">
@@ -615,7 +1002,8 @@
                 <div class="a-page" id="page-specs">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h6 class="fw-bold m-0">Print Specifications</h6>
-                        <button class="btn btn-sm btn-primary" onclick="openSpecModal()"><i class="bi bi-plus-lg"></i> Add New</button>
+                        <button class="btn btn-sm btn-primary" onclick="openSpecModal()"><i class="bi bi-plus-lg"></i>
+                            Add New</button>
                     </div>
                     <div class="card">
                         <div class="table-responsive">
@@ -641,16 +1029,24 @@
                         <div class="card-header bg-white border-bottom p-0">
                             <ul class="nav nav-tabs border-0 px-4" id="settingsTabs" role="tablist">
                                 <li class="nav-item" role="presentation">
-                                    <button class="nav-link active py-3 border-0 fw-bold small text-uppercase" id="account-tab" data-bs-toggle="tab" data-bs-target="#account" type="button" role="tab">Account</button>
+                                    <button class="nav-link active py-3 border-0 fw-bold small text-uppercase"
+                                        id="account-tab" data-bs-toggle="tab" data-bs-target="#account" type="button"
+                                        role="tab">Account</button>
                                 </li>
                                 <li class="nav-item" role="presentation">
-                                    <button class="nav-link py-3 border-0 fw-bold small text-uppercase" id="security-tab" data-bs-toggle="tab" data-bs-target="#security" type="button" role="tab">Security</button>
+                                    <button class="nav-link py-3 border-0 fw-bold small text-uppercase"
+                                        id="security-tab" data-bs-toggle="tab" data-bs-target="#security" type="button"
+                                        role="tab">Security</button>
                                 </li>
                                 <li class="nav-item" role="presentation">
-                                    <button class="nav-link py-3 border-0 fw-bold small text-uppercase" id="business-tab" data-bs-toggle="tab" data-bs-target="#business" type="button" role="tab">Business Profile</button>
+                                    <button class="nav-link py-3 border-0 fw-bold small text-uppercase"
+                                        id="business-tab" data-bs-toggle="tab" data-bs-target="#business" type="button"
+                                        role="tab">Business Profile</button>
                                 </li>
                                 <li class="nav-item" role="presentation">
-                                    <button class="nav-link py-3 border-0 fw-bold small text-uppercase" id="system-tab" data-bs-toggle="tab" data-bs-target="#system" type="button" role="tab">System</button>
+                                    <button class="nav-link py-3 border-0 fw-bold small text-uppercase" id="system-tab"
+                                        data-bs-toggle="tab" data-bs-target="#system" type="button"
+                                        role="tab">System</button>
                                 </li>
                             </ul>
                         </div>
@@ -662,15 +1058,19 @@
                                         <div class="row g-3">
                                             <div class="col-md-6">
                                                 <label class="form-label small fw-bold">Full Name</label>
-                                                <input type="text" class="form-control" name="name" id="setAdminName" required>
+                                                <input type="text" class="form-control" name="name" id="setAdminName"
+                                                    required>
                                             </div>
                                             <div class="col-md-6">
                                                 <label class="form-label small fw-bold">Email Address</label>
-                                                <input type="email" class="form-control" name="email" id="setAdminEmail" required>
+                                                <input type="email" class="form-control" name="email" id="setAdminEmail"
+                                                    required>
                                             </div>
                                             <div class="col-12 mt-4 d-flex justify-content-between">
-                                                <button type="submit" class="btn btn-primary px-4 fw-bold">Update Account</button>
-                                                <button type="button" class="btn btn-outline-danger px-4 fw-bold" onclick="handleLogout(event)">
+                                                <button type="submit" class="btn btn-primary px-4 fw-bold">Update
+                                                    Account</button>
+                                                <button type="button" class="btn btn-outline-danger px-4 fw-bold"
+                                                    onclick="handleLogout(event)">
                                                     <i class="bi bi-box-arrow-left me-2"></i>Logout from Session
                                                 </button>
                                             </div>
@@ -683,15 +1083,18 @@
                                         <div class="row g-3">
                                             <div class="col-md-6">
                                                 <label class="form-label small fw-bold">Site Name</label>
-                                                <input type="text" class="form-control" name="site_name" value="PrintPro" required>
+                                                <input type="text" class="form-control" name="site_name"
+                                                    value="PrintPro" required>
                                             </div>
                                             <div class="col-md-6">
                                                 <label class="form-label small fw-bold">Contact Email</label>
-                                                <input type="email" class="form-control" name="contact_email" value="admin@printpro.ph" required>
+                                                <input type="email" class="form-control" name="contact_email"
+                                                    value="admin@printpro.ph" required>
                                             </div>
                                             <div class="col-md-6">
                                                 <label class="form-label small fw-bold">Currency Symbol</label>
-                                                <input type="text" class="form-control" name="currency_symbol" value="₱" required>
+                                                <input type="text" class="form-control" name="currency_symbol" value="₱"
+                                                    required>
                                             </div>
                                             <div class="col-md-6">
                                                 <label class="form-label small fw-bold">Default Theme</label>
@@ -701,7 +1104,8 @@
                                                 </select>
                                             </div>
                                             <div class="col-12 mt-4">
-                                                <button type="submit" class="btn btn-primary px-4 fw-bold">Save System Settings</button>
+                                                <button type="submit" class="btn btn-primary px-4 fw-bold">Save System
+                                                    Settings</button>
                                             </div>
                                         </div>
                                     </form>
@@ -712,18 +1116,22 @@
                                         <div class="row g-3">
                                             <div class="col-md-12">
                                                 <label class="form-label small fw-bold">Company Address</label>
-                                                <textarea class="form-control" name="company_address" rows="2" placeholder="Street, City, Zip Code"></textarea>
+                                                <textarea class="form-control" name="company_address" rows="2"
+                                                    placeholder="Street, City, Zip Code"></textarea>
                                             </div>
                                             <div class="col-md-6">
                                                 <label class="form-label small fw-bold">Tax ID / TIN</label>
-                                                <input type="text" class="form-control" name="tax_id" placeholder="000-000-000-000">
+                                                <input type="text" class="form-control" name="tax_id"
+                                                    placeholder="000-000-000-000">
                                             </div>
                                             <div class="col-md-6">
                                                 <label class="form-label small fw-bold">Contact Number</label>
-                                                <input type="text" class="form-control" name="contact_phone" placeholder="+63 900 000 0000">
+                                                <input type="text" class="form-control" name="contact_phone"
+                                                    placeholder="+63 900 000 0000">
                                             </div>
                                             <div class="col-12 mt-4">
-                                                <button type="submit" class="btn btn-primary px-4 fw-bold">Update Profile</button>
+                                                <button type="submit" class="btn btn-primary px-4 fw-bold">Update
+                                                    Profile</button>
                                             </div>
                                         </div>
                                     </form>
@@ -734,18 +1142,22 @@
                                         <div class="row g-3" style="max-width: 400px;">
                                             <div class="col-12">
                                                 <label class="form-label small fw-bold">Current Password</label>
-                                                <input type="password" class="form-control" name="current_password" required>
+                                                <input type="password" class="form-control" name="current_password"
+                                                    required>
                                             </div>
                                             <div class="col-12">
                                                 <label class="form-label small fw-bold">New Password</label>
-                                                <input type="password" class="form-control" name="new_password" required>
+                                                <input type="password" class="form-control" name="new_password"
+                                                    required>
                                             </div>
                                             <div class="col-12">
                                                 <label class="form-label small fw-bold">Confirm New Password</label>
-                                                <input type="password" class="form-control" name="confirm_password" required>
+                                                <input type="password" class="form-control" name="confirm_password"
+                                                    required>
                                             </div>
                                             <div class="col-12 mt-4">
-                                                <button type="submit" class="btn btn-primary px-4 fw-bold">Change Password</button>
+                                                <button type="submit" class="btn btn-primary px-4 fw-bold">Change
+                                                    Password</button>
                                             </div>
                                         </div>
                                     </form>
@@ -759,47 +1171,57 @@
     </div>
 
     <!-- Order Details Modal -->
-    <div class="modal fade" id="orderDetailModal" tabindex="-1">
+    <div class="modal fade" id="orderDetailsModal" tabindex="-1">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content border-0 shadow" style="border-radius:16px;">
                 <div class="modal-header border-0 px-4 pt-4">
-                    <h5 class="fw-bold m-0">Order Details <span id="detOrderId" class="text-primary"></span></h5>
+                    <h5 class="fw-bold m-0">Order Details <span id="detailOrderId" class="text-primary"></span></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-4">
                     <div class="row g-4">
                         <div class="col-md-7">
-                            <h6 class="fw-bold small text-uppercase text-muted mb-3">Order Description</h6>
-                            <div class="p-3 bg-light rounded" style="min-height: 100px;">
-                                <p id="detDescription" class="m-0"></p>
-                                <ul id="detSpecs" class="small mt-2 ps-3"></ul>
+                            <div class="mb-4">
+                                <h6 class="fw-bold small text-uppercase text-muted mb-3">Client Information</h6>
+                                <div class="d-flex align-items-center gap-3 p-3 bg-light rounded-3">
+                                    <div class="rounded-circle bg-white shadow-sm d-flex align-items-center justify-content-center fw-bold text-primary" style="width:45px; height:45px;">
+                                        <i class="bi bi-person"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold" id="detailClientName">Loading...</div>
+                                        <div class="text-muted small" id="detailBusiness">Loading...</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold small text-uppercase text-muted mb-3">Specifications</h6>
+                                <div class="row g-2" id="detailSpecList">
+                                    <!-- Dynamic Specs -->
+                                </div>
                             </div>
                         </div>
                         <div class="col-md-5">
-                            <h6 class="fw-bold small text-uppercase text-muted mb-3">Pricing Breakdown</h6>
-                            <div class="d-flex justify-content-between mb-2">
-                                <span>Quantity:</span>
-                                <span id="detQty" class="fw-bold"></span>
-                            </div>
-                            <div class="d-flex justify-content-between mb-2">
-                                <span>Unit Price:</span>
-                                <span id="detUnitPrice" class="fw-bold"></span>
-                            </div>
-                            <hr>
-                            <div class="d-flex justify-content-between text-primary h5 fw-bold">
-                                <span>Total:</span>
-                                <span id="detTotal"></span>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <h6 class="fw-bold small text-uppercase text-muted mb-3">File Details</h6>
-                            <div class="d-flex align-items-center p-3 border rounded">
-                                <i class="bi bi-file-earmark-pdf text-danger h2 m-0 me-3"></i>
-                                <div>
-                                    <div id="detFileName" class="fw-bold"></div>
-                                    <div class="small text-muted">Ready for production</div>
+                            <div class="card border-0 bg-primary text-white p-4 h-100" style="border-radius:20px;">
+                                <h6 class="text-white-50 small text-uppercase fw-bold mb-4">Payment Summary</h6>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Product:</span>
+                                    <span class="fw-bold" id="detailProduct">Loading...</span>
                                 </div>
-                                <button class="btn btn-sm btn-primary ms-auto">Download</button>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Quantity:</span>
+                                    <span class="fw-bold" id="detailQuantity">0</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Status:</span>
+                                    <span class="badge bg-white text-primary rounded-pill small" id="detailStatus">Loading...</span>
+                                </div>
+                                <div class="mt-auto pt-4 border-top border-white-50">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="h6 m-0">Total Amount</span>
+                                        <span class="h4 m-0 fw-bold" id="detailTotal">₱0.00</span>
+                                    </div>
+                                    <div class="small text-white-50 mt-2" id="detailDate">Loading...</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -827,11 +1249,13 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label small fw-bold">Name</label>
-                            <input type="text" class="form-control" id="specName" required placeholder="e.g. Matte 200gsm">
+                            <input type="text" class="form-control" id="specName" required
+                                placeholder="e.g. Matte 200gsm">
                         </div>
                         <div class="mb-3">
                             <label class="form-label small fw-bold">Price Modifier (₱)</label>
-                            <input type="number" step="0.01" class="form-control" id="specPrice" required placeholder="0.00">
+                            <input type="number" step="0.01" class="form-control" id="specPrice" required
+                                placeholder="0.00">
                         </div>
                         <div class="mb-3">
                             <label class="form-label small fw-bold">Status</label>
@@ -907,7 +1331,8 @@
 
         // UI Initialization
         document.addEventListener('DOMContentLoaded', () => {
-            if (!state.user.id || state.user.role !== 'admin') {
+            const userRole = (state.user.role || '').toLowerCase();
+            if (!state.user.id || (userRole !== 'admin' && userRole !== 'super_admin')) {
                 window.location.href = 'index.html#login';
                 return;
             }
@@ -922,7 +1347,9 @@
 
             document.getElementById('userAvatar').textContent = state.user.name ? state.user.name[0].toUpperCase() : 'A';
             document.getElementById('userName').textContent = state.user.name || 'Admin';
-            
+            const roleEl = document.querySelector('.text-muted[style*="font-size:.7rem"]');
+            if (roleEl) roleEl.textContent = state.user.role || 'Admin';
+
             // Fill settings inputs
             if (document.getElementById('setAdminName')) {
                 document.getElementById('setAdminName').value = state.user.name || '';
@@ -945,26 +1372,45 @@
             if (state.charts.revenue) state.charts.revenue.update();
         }
 
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            if (sidebar && overlay) {
+                sidebar.classList.toggle('show');
+                overlay.classList.toggle('show');
+            }
+        }
+
         function updateThemeIcon() {
             const icon = document.getElementById('themeIcon');
-            icon.className = state.theme === 'light' ? 'bi bi-moon-stars' : 'bi bi-sun';
+            if (icon) icon.className = state.theme === 'light' ? 'bi bi-moon-stars' : 'bi bi-sun';
+        }
+
+        async function handleLogout(e) {
+            e.preventDefault();
+            if (confirm('Are you sure you want to log out?')) {
+                window.location.href = 'api/logout.php';
+            }
         }
 
         // Navigation
         function showPage(id) {
+            const page = document.getElementById('page-' + id);
+            if (!page) return;
+
             document.querySelectorAll('.a-page').forEach(p => p.classList.remove('active'));
-            document.getElementById('page-' + id).classList.add('active');
-            
+            page.classList.add('active');
+
             document.querySelectorAll('.a-nav-item').forEach(n => n.classList.remove('active'));
-            const navItems = document.querySelectorAll('.a-nav-item');
-            navItems.forEach(item => {
+            document.querySelectorAll('.a-nav-item').forEach(item => {
                 if (item.textContent.trim().toLowerCase() === id.toLowerCase()) {
                     item.classList.add('active');
                 }
             });
 
             const titles = { dashboard: 'Dashboard', orders: 'All Orders', users: 'User Management', subscriptions: 'Subscriptions', specs: 'Specifications', settings: 'Settings' };
-            document.getElementById('pageTitle').textContent = titles[id] || id;
+            const titleEl = document.getElementById('pageTitle');
+            if (titleEl) titleEl.textContent = titles[id] || id;
 
             if (id === 'dashboard') updateDashboardData();
             if (id === 'orders') loadOrders();
@@ -972,11 +1418,10 @@
             if (id === 'subscriptions') loadSubscriptions();
             if (id === 'specs') loadSpecs();
 
-            if (window.innerWidth < 768) toggleSidebar();
-        }
-
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('active');
+            if (window.innerWidth < 992) {
+                const sb = document.getElementById('sidebar');
+                if (sb && sb.classList.contains('show')) toggleSidebar();
+            }
         }
 
         // Charts
@@ -985,7 +1430,7 @@
             state.charts.status = new Chart(statusCtx, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Pending', 'Printing', 'Finishing', 'Delivered'],
+                    labels: ['Prepress', 'Printing', 'Finishing', 'Delivered'],
                     datasets: [{
                         data: [0, 0, 0, 0],
                         backgroundColor: ['#fb6340', '#1171ef', '#7c4dff', '#2dce89'],
@@ -1015,36 +1460,58 @@
 
         async function updateDashboardData(period = '6months') {
             try {
-                const res = await fetch(`api/get_dashboard_stats.php?period=${period}`);
+                const res = await fetch(`api/get_dashboard_stats.php?period=${period}&_=${Date.now()}`);
                 const json = await res.json();
                 if (json.success) {
                     const d = json.data;
                     const kpis = document.querySelectorAll('#dashboardKpis .kpi-val');
-                    kpis[0].textContent = '₱' + parseFloat(d.total_revenue).toLocaleString(undefined, { minimumFractionDigits: 2 });
-                    kpis[1].textContent = d.status_counts['Delivered'] || 0;
-                    kpis[2].textContent = (d.status_counts['Prepress'] || 0) + (d.status_counts['Printing'] || 0) + (d.status_counts['Finishing'] || 0);
-                    kpis[3].textContent = d.new_users || 0;
-                    
+                    if (kpis.length >= 4) {
+                        kpis[0].textContent = '₱' + parseFloat(d.total_revenue || 0).toLocaleString(undefined, { minimumFractionDigits: 2 });
+                        kpis[1].textContent = d.status_counts['Delivered'] || 0;
+                        kpis[2].textContent = (parseInt(d.status_counts['Prepress'] || 0)) + (parseInt(d.status_counts['Printing'] || 0)) + (parseInt(d.status_counts['Finishing'] || 0));
+                        kpis[3].textContent = d.new_users || 0;
+                    }
+
                     // Update Charts
                     state.charts.status.data.datasets[0].data = [
-                        d.status_counts['Prepress'] || 0,
-                        d.status_counts['Printing'] || 0,
-                        d.status_counts['Finishing'] || 0,
-                        d.status_counts['Delivered'] || 0
+                        parseInt(d.status_counts['Prepress'] || 0),
+                        parseInt(d.status_counts['Printing'] || 0),
+                        parseInt(d.status_counts['Finishing'] || 0),
+                        parseInt(d.status_counts['Delivered'] || 0)
                     ];
                     state.charts.status.update();
 
-                    state.charts.revenue.data.labels = d.revenue_chart.map(r => r.label);
-                    state.charts.revenue.data.datasets[0].data = d.revenue_chart.map(r => parseFloat(r.value) || 0);
+                    if (d.revenue_chart) {
+                        state.charts.revenue.data.labels = d.revenue_chart.map(r => r.label);
+                        state.charts.revenue.data.datasets[0].data = d.revenue_chart.map(r => parseFloat(r.value) || 0);
+                        state.charts.revenue.update();
+                    }
+
+                    // Fix chart colors for dark mode
+                    if (state.theme === 'dark') {
+                        Chart.defaults.color = '#a0aec0';
+                        state.charts.revenue.options.scales.x.grid.color = 'rgba(255,255,255,0.05)';
+                        state.charts.revenue.options.scales.y.grid.color = 'rgba(255,255,255,0.05)';
+                    } else {
+                        Chart.defaults.color = '#666';
+                        state.charts.revenue.options.scales.x.grid.color = 'rgba(0,0,0,0.05)';
+                        state.charts.revenue.options.scales.y.grid.color = 'rgba(0,0,0,0.05)';
+                    }
+
                     state.charts.revenue.update();
+                } else {
+                    showToast(json.message || 'Failed to load stats', 'danger');
                 }
-            } catch (e) { showToast('Failed to load dashboard stats', 'danger'); }
+            } catch (e) { 
+                console.error(e);
+                showToast('Network error loading dashboard stats', 'danger'); 
+            }
         }
 
         async function updateRevenueChart(period, label) {
             const btn = document.getElementById('revenueFilterBtn');
             btn.textContent = label;
-            
+
             // Highlight active dropdown item
             document.querySelectorAll('.dropdown-item').forEach(item => {
                 item.classList.remove('active');
@@ -1056,15 +1523,17 @@
 
         async function loadOrders() {
             try {
-                const res = await fetch('api/get_orders.php');
+                const res = await fetch('api/get_orders.php?_=' + Date.now());
                 const json = await res.json();
                 if (json.success) {
                     state.orders = json.data;
                     renderOrders();
                     renderRecentOrders();
                     renderActivityFeed();
+                } else {
+                    showToast(json.message || 'Failed to load orders', 'danger');
                 }
-            } catch (e) { showToast('Failed to load orders', 'danger'); }
+            } catch (e) { showToast('Network error loading orders', 'danger'); }
         }
 
         function renderOrders(data = state.orders) {
@@ -1091,9 +1560,9 @@
                         <td class="text-muted small">${o.due_date ? new Date(o.due_date).toLocaleDateString() : '-'}</td>
                         <td class="fw-bold">₱${parseFloat(o.total_amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
                         <td>
-                            <div class="d-flex gap-1">
-                                <button class="btn btn-sm btn-light" onclick="viewOrderDetails(${o.id})"><i class="bi bi-eye"></i></button>
-                                <a href="api/generate_ticket.php?order_id=${o.id}" target="_blank" class="btn btn-sm btn-light"><i class="bi bi-ticket-perforated"></i></a>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-light action-btn" onclick="viewOrderDetails(${o.id})" title="View Details"><i class="bi bi-eye"></i></button>
+                                <a href="api/generate_ticket.php?order_id=${o.id}" target="_blank" class="btn btn-light action-btn" title="Job Ticket"><i class="bi bi-ticket-perforated"></i></a>
                             </div>
                         </td>
                     </tr>
@@ -1108,7 +1577,7 @@
                     <td class="fw-bold">#ORD-${o.id}</td>
                     <td>${o.business_name || o.client_name || 'Client'}</td>
                     <td>${o.product_type || 'Job'}</td>
-                    <td><span class="badge-status badge-primary">${o.status}</span></td>
+                    <td><span class="badge-status" style="background:${getStatusColor(o.status)}20; color:${getStatusColor(o.status)}; border: 1px solid ${getStatusColor(o.status)}40;">${o.status}</span></td>
                     <td class="fw-bold">₱${parseFloat(o.total_amount).toLocaleString()}</td>
                 </tr>
             `).join('');
@@ -1117,9 +1586,9 @@
         function renderActivityFeed() {
             const feed = document.getElementById('activityFeed');
             feed.innerHTML = state.orders.slice(0, 4).map(o => `
-                <div class="d-flex gap-3 mb-3">
-                    <div class="rounded-circle bg-light border d-grid place-items-center" style="width:36px; height:36px; flex-shrink:0;">
-                        <i class="bi bi-box-seam text-primary"></i>
+                <div class="d-flex gap-3 mb-3 align-items-center">
+                    <div class="rounded-circle bg-primary-subtle text-primary d-flex align-items-center justify-content-center" style="width:40px; height:40px; flex-shrink:0; font-size: 1.1rem;">
+                        <i class="bi bi-box-seam"></i>
                     </div>
                     <div>
                         <div class="small fw-bold">Order #ORD-${o.id} placed</div>
@@ -1127,6 +1596,73 @@
                     </div>
                 </div>
             `).join('');
+        }
+
+        function filterOrdersByStatus(status) {
+            // Update UI tabs
+            document.querySelectorAll('#orderTabs .nav-link').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.trim() === status || (status === 'All' && btn.textContent.trim() === 'All Orders')) {
+                    btn.classList.add('active');
+                }
+            });
+
+            document.getElementById('orderListTitle').textContent = status === 'All' ? 'All Orders' : status + ' Orders';
+
+            if (status === 'All') {
+                renderOrders(state.orders);
+            } else {
+                const filtered = state.orders.filter(o => o.status === status);
+                renderOrders(filtered);
+            }
+        }
+
+        function searchOrders(q) {
+            const query = q.toLowerCase();
+            const filtered = state.orders.filter(o =>
+                o.id.toString().includes(query) ||
+                (o.business_name || '').toLowerCase().includes(query) ||
+                (o.product_type || '').toLowerCase().includes(query)
+            );
+            renderOrders(filtered);
+        }
+
+        async function viewOrderDetails(id) {
+            try {
+                const res = await fetch(`api/get_order_details.php?id=${id}&_=${Date.now()}`);
+                const json = await res.json();
+                if (json.success) {
+                    const o = json.data;
+                    document.getElementById('detailOrderId').textContent = o.id;
+                    document.getElementById('detailClientName').textContent = o.client_name || 'N/A';
+                    document.getElementById('detailBusiness').textContent = o.business_name || 'Personal Account';
+                    document.getElementById('detailProduct').textContent = o.product_type || 'N/A';
+                    document.getElementById('detailQuantity').textContent = parseInt(o.quantity).toLocaleString();
+                    document.getElementById('detailTotal').textContent = '₱' + parseFloat(o.total_amount).toLocaleString(undefined, { minimumFractionDigits: 2 });
+                    document.getElementById('detailStatus').textContent = o.status;
+                    document.getElementById('detailDate').textContent = new Date(o.created_at).toLocaleString();
+
+                    // Render Specs
+                    const specList = document.getElementById('detailSpecList');
+                    specList.innerHTML = '';
+                    if (o.specs && Array.isArray(o.specs)) {
+                        o.specs.forEach(s => {
+                            specList.innerHTML += `
+                                <div class="col-6 mb-2">
+                                    <div class="text-muted small text-capitalize">${s.spec_type}</div>
+                                    <div class="fw-bold">${s.name}</div>
+                                </div>
+                            `;
+                        });
+                    } else {
+                        specList.innerHTML = '<div class="col-12 text-muted">No specifications recorded.</div>';
+                    }
+
+                    new bootstrap.Modal(document.getElementById('orderDetailsModal')).show();
+                } else {
+                    showToast(json.message || 'Failed to load details', 'danger');
+                }
+            } catch (e) { showToast('Network error', 'danger'); }
         }
 
         async function updateOrderStatus(orderId, status) {
@@ -1148,34 +1684,38 @@
 
         async function loadUsers() {
             try {
-                const res = await fetch('api/get_users.php');
+                const res = await fetch('api/get_users.php?_=' + Date.now());
                 const json = await res.json();
                 if (json.success) {
                     state.users = json.data;
                     renderUsers();
+                } else {
+                    showToast(json.message || 'Failed to load users', 'danger');
                 }
-            } catch (e) { showToast('Failed to load users', 'danger'); }
+            } catch (e) { showToast('Network error loading users', 'danger'); }
         }
 
         function renderUsers(data = state.users) {
             const tbody = document.querySelector('#usersTable tbody');
             tbody.innerHTML = data.map(u => `
-                <tr onclick="viewUserProfile(${u.id})" class="cursor-pointer">
+                <tr>
                     <td>
-                        <div class="d-flex align-items-center gap-2">
-                            <div class="rounded-circle bg-light d-grid place-items-center small fw-bold" style="width:28px; height:28px;">${u.name ? u.name[0] : 'U'}</div>
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="rounded-circle bg-primary-subtle text-primary d-flex align-items-center justify-content-center fw-bold" style="width:40px; height:40px; flex-shrink:0;">
+                                ${u.name ? u.name[0].toUpperCase() : 'U'}
+                            </div>
                             <div>
-                                <div class="fw-bold small">${u.name}</div>
-                                <div class="text-muted" style="font-size:.65rem;">${u.email}</div>
+                                <div class="fw-bold">${u.name}</div>
+                                <div class="text-muted small">${u.email}</div>
                             </div>
                         </div>
                     </td>
                     <td>${u.business_name || '-'}</td>
-                    <td><span class="badge bg-light text-dark small text-capitalize">${u.role}</span></td>
-                    <td><span class="badge-status ${u.status === 'active' ? 'badge-success' : 'badge-danger'}">${u.status}</span></td>
+                    <td><span class="badge bg-primary-subtle text-primary text-uppercase" style="font-size: .65rem;">${u.role}</span></td>
+                    <td><span class="badge-status ${(u.status || '').toLowerCase() === 'active' ? 'badge-success' : 'badge-danger'}">${u.status}</span></td>
                     <td class="text-muted small">${new Date(u.created_at).toLocaleDateString()}</td>
                     <td>
-                        <div class="d-flex gap-1" onclick="event.stopPropagation()">
+                        <div class="d-flex gap-1">
                             <button class="btn btn-sm btn-light" onclick="openUserEditModal(${u.id})"><i class="bi bi-pencil-square"></i></button>
                             <button class="btn btn-sm btn-light text-danger" onclick="deleteUser(${u.id})"><i class="bi bi-trash3"></i></button>
                         </div>
@@ -1196,8 +1736,8 @@
 
         function searchUsers(q) {
             const query = q.toLowerCase();
-            const filtered = state.users.filter(u => 
-                (u.name || '').toLowerCase().includes(query) || 
+            const filtered = state.users.filter(u =>
+                (u.name || '').toLowerCase().includes(query) ||
                 (u.email || '').toLowerCase().includes(query) ||
                 (u.business_name || '').toLowerCase().includes(query)
             );
@@ -1254,13 +1794,15 @@
 
         async function loadSubscriptions() {
             try {
-                const res = await fetch('api/get_subscriptions.php');
+                const res = await fetch('api/get_subscriptions.php?_=' + Date.now());
                 const json = await res.json();
                 if (json.success) {
                     state.subscriptions = json.data;
                     renderSubscriptions();
+                } else {
+                    showToast(json.message || 'Failed to load subscriptions', 'danger');
                 }
-            } catch (e) { console.error('Failed to load subscriptions'); }
+            } catch (e) { showToast('Network error loading subscriptions', 'danger'); }
         }
 
         function renderSubscriptions(data = state.subscriptions) {
@@ -1274,18 +1816,17 @@
                         <span class="badge bg-primary text-uppercase">${s.active_plan || s.base_plan}</span>
                     </td>
                     <td>
-                        <span class="badge-status ${
-                            (s.sub_status || '').toLowerCase() === 'active' ? 'badge-success' : 
-                            (s.sub_status || '').toLowerCase() === 'suspended' ? 'badge-danger' : 'badge-warning'
-                        }">
+                        <span class="badge-status ${(s.sub_status || '').toLowerCase() === 'active' ? 'badge-success' :
+                    (s.sub_status || '').toLowerCase() === 'suspended' ? 'badge-danger' : 'badge-warning'
+                }">
                             ${s.sub_status || 'Inactive'}
                         </span>
                     </td>
                     <td>${s.renews_on ? new Date(s.renews_on).toLocaleDateString() : '-'}</td>
                     <td>
-                        <button class="btn btn-sm ${ (s.sub_status || '').toLowerCase() === 'suspended' ? 'btn-outline-success' : 'btn-outline-danger' } fw-bold" 
+                        <button class="btn btn-sm ${(s.sub_status || '').toLowerCase() === 'suspended' ? 'btn-success' : 'btn-outline-danger'} px-3" 
                                 onclick="toggleUserAccountStatus(${s.user_id}, '${s.sub_status}')">
-                            ${ (s.sub_status || '').toLowerCase() === 'suspended' ? 'Activate' : 'Suspend' }
+                            ${(s.sub_status || '').toLowerCase() === 'suspended' ? 'Activate' : 'Suspend'}
                         </button>
                     </td>
                 </tr>
@@ -1294,8 +1835,8 @@
 
         function searchSubscriptions(q) {
             const query = q.toLowerCase();
-            const filtered = state.subscriptions.filter(s => 
-                (s.name || '').toLowerCase().includes(query) || 
+            const filtered = state.subscriptions.filter(s =>
+                (s.name || '').toLowerCase().includes(query) ||
                 (s.business_name || '').toLowerCase().includes(query) ||
                 (s.email || '').toLowerCase().includes(query)
             );
@@ -1305,7 +1846,7 @@
         async function toggleUserAccountStatus(id, currentStatus) {
             const newStatus = (currentStatus || '').toLowerCase() === 'suspended' ? 'active' : 'suspended';
             const action = newStatus === 'suspended' ? 'suspend' : 'activate';
-            
+
             if (!confirm(`Are you sure you want to ${action} this user account?`)) return;
 
             const formData = new FormData();
@@ -1340,12 +1881,14 @@
             tbody.innerHTML = state.specs.map(s => `
                 <tr>
                     <td class="text-capitalize small fw-bold">${s.spec_type}</td>
-                    <td>${s.name}</td>
+                    <td class="fw-bold">${s.name}</td>
                     <td class="fw-bold">₱${parseFloat(s.price_modifier).toFixed(2)}</td>
                     <td><span class="badge-status ${s.is_active == 1 ? 'badge-success' : 'badge-danger'}">${s.is_active == 1 ? 'Active' : 'Inactive'}</span></td>
                     <td>
-                        <button class="btn btn-sm btn-light" onclick="openSpecModal(${s.id})"><i class="bi bi-pencil"></i></button>
-                        <button class="btn btn-sm btn-light text-danger" onclick="deleteSpec(${s.id}, '${s.spec_type}')"><i class="bi bi-trash"></i></button>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-light action-btn" onclick="openSpecModal(${s.id})" title="Edit"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-light action-btn text-danger" onclick="deleteSpec(${s.id}, '${s.spec_type}')" title="Delete"><i class="bi bi-trash"></i></button>
+                        </div>
                     </td>
                 </tr>
             `).join('');
@@ -1429,127 +1972,6 @@
             return 'just now';
         }
 
-        function showToast(msg, type = 'primary') {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = `toast align-items-center text-white bg-${type} border-0 show mb-2`;
-            toast.innerHTML = `
-                <div class="d-flex">
-                    <div class="toast-body">${msg}</div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-                </div>
-            `;
-            container.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
-        }
-
-        function searchOrders(q) {
-            const query = q.toLowerCase();
-            const filtered = state.orders.filter(o => 
-                o.id.toString().includes(query) || 
-                (o.business_name || '').toLowerCase().includes(query) || 
-                (o.client_name || '').toLowerCase().includes(query) ||
-                (o.product_type || '').toLowerCase().includes(query)
-            );
-            renderOrders(filtered);
-        }
-
-        function handleLogout(e) {
-            e.preventDefault();
-            sessionStorage.removeItem('pp_user');
-            fetch('api/logout.php').finally(() => window.location.href = 'index.html#login');
-        }
-
-        async function saveAdminProfile(e) {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            showToast('Updating profile...', 'info');
-            try {
-                const res = await fetch('api/update_profile.php', { method: 'POST', body: formData });
-                const json = await res.json();
-                if (json.success) {
-                    showToast('Profile updated!', 'success');
-                    // Update global state and UI
-                    state.user.name = json.data.name;
-                    state.user.email = json.data.email;
-                    sessionStorage.setItem('pp_user', JSON.stringify(state.user));
-                    document.getElementById('userName').textContent = state.user.name;
-                    document.getElementById('userAvatar').textContent = state.user.name[0].toUpperCase();
-                } else {
-                    showToast(json.message, 'danger');
-                }
-            } catch (e) { showToast('Network error', 'danger'); }
-        }
-
-        async function saveSystemSettings(e) {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            showToast('Saving system settings...', 'info');
-            // Mock API call for site-wide settings (usually stored in a config table)
-            setTimeout(() => {
-                showToast('System settings updated!', 'success');
-                if (formData.get('default_theme') !== state.theme) {
-                    toggleTheme();
-                }
-            }, 1000);
-        }
-
-        async function saveBusinessSettings(e) {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            showToast('Updating business profile...', 'info');
-            // Mock API call
-            setTimeout(() => showToast('Business profile updated successfully!', 'success'), 1000);
-        }
-
-        async function saveSecuritySettings(e) {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            if (formData.get('new_password') !== formData.get('confirm_password')) {
-                return showToast('New passwords do not match!', 'danger');
-            }
-            
-            showToast('Updating password...', 'info');
-            try {
-                const res = await fetch('api/change_password.php', { method: 'POST', body: formData });
-                const json = await res.json();
-                if (json.success) {
-                    showToast('Password changed successfully!', 'success');
-                    e.target.reset();
-                } else {
-                    showToast(json.message, 'danger');
-                }
-            } catch (e) { showToast('Network error', 'danger'); }
-        }
-        async function viewOrderDetails(id) {
-            try {
-                const res = await fetch(`api/get_order_details.php?id=${id}`);
-                const json = await res.json();
-                if (json.success) {
-                    const o = json.data;
-                    document.getElementById('detOrderId').textContent = `#ORD-${o.id}`;
-                    document.getElementById('detDescription').textContent = `${o.product_type} - ${o.notes || 'Standard print order'}`;
-                    
-                    const specsList = document.getElementById('detSpecs');
-                    specsList.innerHTML = `
-                        <li>Paper: ${o.paper_weight || 'Standard'}</li>
-                        <li>Finish: ${o.finish || 'None'}</li>
-                        <li>Size: ${o.size_width}" x ${o.size_height}"</li>
-                        <li>Sides: ${o.print_sides}</li>
-                    `;
-                    
-                    document.getElementById('detQty').textContent = parseInt(o.quantity).toLocaleString();
-                    document.getElementById('detUnitPrice').textContent = '₱' + parseFloat(o.unit_price).toFixed(2);
-                    document.getElementById('detTotal').textContent = '₱' + parseFloat(o.total_amount).toLocaleString(undefined, { minimumFractionDigits: 2 });
-                    document.getElementById('detFileName').textContent = o.printed_file || 'No file uploaded';
-                    
-                    new bootstrap.Modal(document.getElementById('orderDetailModal')).show();
-                } else {
-                    showToast(json.message, 'danger');
-                }
-            } catch (e) { showToast('Network error', 'danger'); }
-        }
     </script>
 </body>
-
 </html>

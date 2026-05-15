@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['role'] = $user['role'];
         $_SESSION['name'] = $user['name'];
 
-        if ($user['role'] === 'admin' || $user['role'] === 'manager' || $user['role'] === 'operator') {
+        if ($user['role'] === 'admin' || $user['role'] === 'super_admin' || $user['role'] === 'manager' || $user['role'] === 'operator') {
             $redirect = 'admin_dashboard.html';
             $portal = 'admin';
         } else {

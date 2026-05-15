@@ -12,13 +12,10 @@ if (!$order_id)
     die('Order ID required');
 
 try {
-    $stmt = $pdo->prepare("SELECT o.*, u.name as client_name, u.business_name,
-                                 p.name as paper_name, s.name as size_name, f.name as finish_name
+    $stmt = $pdo->prepare("SELECT o.*, u.name as client_name, c.business_name
                           FROM orders o
-                          JOIN users u ON o.user_id = u.id
-                          LEFT JOIN tbl_materials p ON o.paper_id = p.id
-                          LEFT JOIN tbl_sizes s ON o.size_id = s.id
-                          LEFT JOIN tbl_finishes f ON o.finish_id = f.id
+                          JOIN clients c ON o.client_id = c.id
+                          JOIN users u ON c.user_id = u.id
                           WHERE o.id = ?");
     $stmt->execute([$order_id]);
     $order = $stmt->fetch();
@@ -27,7 +24,7 @@ try {
         die('Order not found');
 
 } catch (PDOException $e) {
-    die('Database error');
+    die('Database error: ' . $e->getMessage());
 }
 ?>
 <!DOCTYPE html>
@@ -124,26 +121,25 @@ try {
         <div class="section">
             <div class="section-title">Job Details</div>
             <div class="grid">
-                <div><strong>Job Name:</strong> <?php echo $order['job_name']; ?></div>
+                <div><strong>Product:</strong> <?php echo $order['product_type']; ?></div>
                 <div><strong>Quantity:</strong> <?php echo number_format($order['quantity']); ?> units</div>
                 <div><strong>Status:</strong> <?php echo $order['status']; ?></div>
-                <div><strong>Order Date:</strong> <?php echo $order['created_at']; ?></div>
+                <div><strong>Due Date:</strong> <?php echo $order['due_date']; ?></div>
             </div>
         </div>
 
         <div class="section">
             <div class="section-title">Technical Specifications</div>
             <div class="grid">
-                <div><strong>Size:</strong> <?php echo $order['size_name'] ?: 'Custom'; ?></div>
-                <div><strong>Paper:</strong> <?php echo $order['paper_name']; ?></div>
-                <div><strong>Finishing:</strong> <?php echo $order['finish_name'] ?: 'Standard'; ?></div>
+                <div><strong>Size:</strong> <?php echo $order['size_width'] . '" x ' . $order['size_height'] . '"'; ?></div>
+                <div><strong>Paper:</strong> <?php echo $order['paper_weight']; ?></div>
+                <div><strong>Finishing:</strong> <?php echo $order['finish'] ?: 'Standard'; ?></div>
             </div>
         </div>
 
         <div class="barcode">
-            <div style="font-family: 'Libre Barcode 39', cursive; font-size: 4rem;">*ORD-<?php echo $order['id']; ?>*
-            </div>
-            <div style="font-size: 0.8rem;">SCAN TO UPDATE PRODUCTION STATUS</div>
+            <div style="font-family: 'Courier New', Courier, monospace; font-size: 2.5rem; font-weight: 800; letter-spacing: 4px;">*ORD-<?php echo $order['id']; ?>*</div>
+            <div style="font-size: 0.8rem; font-weight: 600; letter-spacing: 1px; margin-top: 5px;">SCAN TO UPDATE PRODUCTION STATUS</div>
         </div>
 
         <div class="footer">

@@ -23,12 +23,17 @@ $user_id = $_SESSION['user_id'];
 $role = $_SESSION['role'] ?? 'client';
 
 try {
-    if ($role === 'admin') {
+    if ($role === 'admin' || $role === 'super_admin') {
         // Admins see all orders
         $stmt = $pdo->query("
-            SELECT o.*, o.product_type as job_name, o.total_amount as total_price, c.business_name as client_name 
+            SELECT o.*, 
+                   o.product_type as job_name, 
+                   o.total_amount as total_price, 
+                   c.business_name, 
+                   u.name as client_name 
             FROM orders o 
             JOIN clients c ON o.client_id = c.id 
+            JOIN users u ON c.user_id = u.id 
             ORDER BY o.created_at DESC
         ");
         $orders = $stmt->fetchAll();
