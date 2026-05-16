@@ -62,7 +62,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'name' => $user['name'],
             'email' => $user['email'],
             'business_name' => $user['business_name'] ?? '',
-            'industry' => $user['industry'] ?? ''
+            'industry' => $user['industry'] ?? '',
+            'subscription_plan' => $user['subscription_plan'] ?? 'pro'
         ]);
     } else {
         echo json_encode(['success' => false, 'message' => 'Invalid email or password.']);

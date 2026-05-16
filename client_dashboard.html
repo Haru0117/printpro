@@ -3680,7 +3680,6 @@
                                 style="color:var(--muted); font-size:1.1rem; display:flex; align-items:center;">
                                 <i class="bi bi-moon-stars"></i>
                             </button>
-                            <i class="bi bi-bell" style="color:var(--muted);cursor:pointer;font-size:1.05rem;"></i>
                             <div style="display:flex;align-items:center;gap:8px;cursor:pointer;"
                                 onclick="showClientPage('account', null)">
                                 <div class="c-avatar" id="clientAvatar" title="">J</div>
@@ -3720,7 +3719,7 @@
                                     <div
                                         style="display: flex; align-items: center; gap: 10px; margin-bottom: 24px; background: rgba(255,255,255,.1); width: fit-content; padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,.15);">
                                         <div style="font-size: .75rem; color: rgba(255,255,255,.8);">Current Plan:
-                                            <strong style="color: #fff;">Free Plan</strong>
+                                            <strong id="dashboardPlanName" style="color: #fff;">Free Plan</strong>
                                         </div>
                                         <div style="width: 1px; height: 12px; background: rgba(255,255,255,.2);"></div>
                                         <div style="font-size: .75rem; color: rgba(255,255,255,.8);">Status: <strong
@@ -6114,35 +6113,70 @@
         }
 
         // Initialize User Profile
-        (function initUserProfile() {
+        async function initUserProfile() {
             const userData = JSON.parse(sessionStorage.getItem('pp_user') || '{}');
-            const displayName = userData.username || userData.name || 'User';
-
-            // Update Top Bar & Profile Headers
-            const nameEls = document.querySelectorAll('#accountName, .c-user-name');
-            nameEls.forEach(el => el.innerText = displayName);
-
-            // Update Avatar Initials
-            const avatarEls = document.querySelectorAll('.c-avatar, .account-avatar-lg');
-            const initial = displayName.charAt(0).toUpperCase();
-            avatarEls.forEach(el => el.innerText = initial);
-
-            // Update Account Form
-            const nameInput = document.getElementById('profileFullName');
-            if (nameInput) nameInput.value = userData.name || userData.username || '';
             
-            const businessInput = document.getElementById('profileBusinessName');
-            if (businessInput) businessInput.value = userData.business_name || '';
+            // Helper to format plan name
+            const formatPlan = (plan) => {
+                if (!plan) return 'Free Plan';
+                if (plan === 'premium+') return 'Premium Plus';
+                return plan.charAt(0).toUpperCase() + plan.slice(1) + ' Plan';
+            };
 
-            const industryInput = document.getElementById('profileIndustry');
-            if (industryInput) industryInput.value = userData.industry || 'Creative Agency';
-            
-            const emailInput = document.getElementById('profileEmailInput');
-            if (emailInput) emailInput.value = userData.email || '';
-            
-            const emailText = document.querySelector('.account-email');
-            if (emailText) emailText.innerText = userData.email || '';
-        })();
+            const renderData = (data) => {
+                const displayName = data.name || data.username || 'User';
+                
+                // Update Top Bar & Profile Headers
+                document.querySelectorAll('#accountName, .c-user-name').forEach(el => el.innerText = displayName);
+
+                // Update Avatar Initials
+                const initial = displayName.charAt(0).toUpperCase();
+                document.querySelectorAll('.c-avatar, .account-avatar-lg').forEach(el => el.innerText = initial);
+
+                // Update Account Form
+                const nameInput = document.getElementById('profileFullName');
+                if (nameInput) nameInput.value = data.name || data.username || '';
+                
+                const businessInput = document.getElementById('profileBusinessName');
+                if (businessInput) businessInput.value = data.business_name || '';
+
+                const industryInput = document.getElementById('profileIndustry');
+                if (industryInput) industryInput.value = data.industry || '';
+                
+                const emailInput = document.getElementById('profileEmailInput');
+                if (emailInput) emailInput.value = data.email || '';
+                
+                const emailText = document.querySelector('.account-email');
+                if (emailText) emailText.innerText = data.email || '';
+
+                // Update Subscription Plan
+                const planEl = document.getElementById('dashboardPlanName');
+                if (planEl) {
+                    planEl.innerText = formatPlan(data.subscription_plan || data.plan);
+                }
+            };
+
+            // 1. Render immediate data from session
+            renderData(userData);
+
+            // 2. Fetch fresh data from server
+            try {
+                const response = await fetch('api/get_profile.php');
+                const result = await response.json();
+                if (result.success) {
+                    const freshData = result.data;
+                    // Merge with existing session data to preserve redirect info etc.
+                    const updatedUser = { ...userData, ...freshData };
+                    sessionStorage.setItem('pp_user', JSON.stringify(updatedUser));
+                    renderData(updatedUser);
+                }
+            } catch (err) {
+                console.error('Failed to fetch profile:', err);
+            }
+        }
+
+        // Run initialization
+        initUserProfile();
 
         // 2. Update Profile Handler
         async function updateProfile() {
