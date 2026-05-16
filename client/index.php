@@ -59,20 +59,18 @@ try {
     <!-- Topbar -->
     <div class="topbar">
       <div class="topbar-left">
-        <span class="logo-text">PrintPro</span>
-        <span class="role-badge role-client" id="topRoleBadge">Client</span>
-        <span style="font-size:.78rem;color:var(--muted);" id="topPageTitle">Dashboard</span>
+        <span style="font-size:.78rem;color:var(--muted);font-weight:600;" id="topPageTitle">Dashboard</span>
       </div>
       <div class="topbar-right">
         <i class="bi bi-bell" style="color:var(--muted);font-size:1.05rem;cursor:pointer;"></i>
-        <div style="display:flex;align-items:center;gap:12px;padding:10px 16px;background:linear-gradient(135deg,rgba(45,206,137,.15),rgba(45,206,137,.05));border:1px solid rgba(45,206,137,.3);border-radius:8px;cursor:pointer;" onclick="showPage('cbilling')" title="Click to view billing">
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 16px;background:rgba(45,206,137,0.05);border:1px solid rgba(45,206,137,0.2);border-radius:8px;cursor:pointer;" onclick="showPage('cbilling')" title="Click to view billing">
           <i class="bi bi-credit-card" style="color:var(--success);font-size:1.1rem;"></i>
           <div style="font-size:.85rem;line-height:1.2;">
             <div style="color:var(--muted);font-size:.7rem;font-weight:500;">CREDITS</div>
             <div style="font-weight:700;color:var(--success);font-size:.95rem;" id="topbarCredits">₱<?php echo number_format($credit_balance, 0); ?></div>
           </div>
         </div>
-        <div class="avatar" id="topAvatar" style="background:linear-gradient(135deg,#7c4dff,#1d8cf8);cursor:pointer;"
+        <div class="avatar" id="topAvatar" style="background:linear-gradient(135deg,var(--accent),var(--teal));cursor:pointer;width:32px;height:32px;"
           onclick="showPage('account')"><?php echo strtoupper(substr($userName, 0, 1)); ?></div>
         <button class="btn btn-outline btn-sm" onclick="location.href='../api/logout.php'"><i
             class="bi bi-box-arrow-right"></i> Logout</button>
@@ -83,6 +81,14 @@ try {
 
       <!-- SIDEBAR -->
       <div class="sidebar" id="sidebarEl">
+        <div style="padding: 24px 24px 18px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid rgba(255, 255, 255, .08);">
+          <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(255, 255, 255, .15); display: grid; place-items: center; color: #fff; font-size: 1.2rem;">P</div>
+          <div>
+            <div style="font-family: 'Sora', sans-serif; font-weight: 700; font-size: .95rem; color: #fff;">PrintPro</div>
+            <div style="font-size: .6rem; color: rgba(255, 255, 255, .4); letter-spacing: .05em;">BUSINESS SOLUTIONS</div>
+          </div>
+          <div style="font-size: .65rem; background: #1d8cf8; color: #fff; padding: 2px 9px; border-radius: 6px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.3px; flex-shrink: 0;">APP</div>
+        </div>
         <div id="clientNav">
           <div class="nav-section">
             <div class="nav-label">Overview</div>
