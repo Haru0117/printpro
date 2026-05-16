@@ -717,7 +717,7 @@
                 padding: 16px;
             }
 
-            .btn {
+            .btn:not(.action-btn):not(.btn-sm) {
                 width: 100%;
                 justify-content: center;
             }
@@ -1095,9 +1095,8 @@
                                                 <input type="email" class="form-control" name="email" id="setAdminEmail"
                                                     required>
                                             </div>
-                                            <div class="col-12 mt-4 d-flex justify-content-between">
-                                                <button type="submit" class="btn btn-primary px-4 fw-bold">Update
-                                                    Account</button>
+                                            <div class="col-12 mt-4 d-flex flex-column flex-sm-row justify-content-between gap-3">
+                                                <button type="submit" class="btn btn-primary px-4 fw-bold">Update Account</button>
                                                 <button type="button" class="btn btn-outline-danger px-4 fw-bold"
                                                     onclick="handleLogout(event)">
                                                     <i class="bi bi-box-arrow-left me-2"></i>Logout from Session
@@ -1321,8 +1320,6 @@
                             <label class="form-label small fw-bold">Role</label>
                             <select class="form-select" id="editUserRole" required>
                                 <option value="client">Client</option>
-                                <option value="operator">Operator</option>
-                                <option value="manager">Manager</option>
                                 <option value="admin">Admin</option>
                             </select>
                         </div>
