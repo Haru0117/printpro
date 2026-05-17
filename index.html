@@ -978,6 +978,7 @@
         html[data-theme="dark"] .qw-input option { background:#111e40; }
         html[data-theme="dark"] .qw-product-card { background:#0a1628; border-color:rgba(255,255,255,0.1); }
         html[data-theme="dark"] .qw-product-card:hover { border-color:rgba(255,255,255,0.3); }
+        html[data-theme="dark"] .qw-product-card.selected { border-color:#f97316; background:rgba(249,115,22,0.15); box-shadow:0 6px 20px rgba(249,115,22,0.2); }
         html[data-theme="dark"] .qw-product-name { color:#e0e6ed; }
         html[data-theme="dark"] .qw-slider-box { background:#0a1628; border-color:rgba(255,255,255,0.1); }
         html[data-theme="dark"] input[type=range].qw-range { background:rgba(255,255,255,0.1); }
@@ -985,7 +986,7 @@
         html[data-theme="dark"] .qw-error { background:rgba(239,68,68,0.14); border-color:rgba(239,68,68,0.3); color:#f87171; }
         html[data-theme="dark"] .qw-actions { border-top-color:rgba(255,255,255,0.08); }
         html[data-theme="dark"] .qw-quote-header { border-bottom-color:rgba(255,255,255,0.08); }
-        html[data-theme="dark"] .qw-sum-label { color:#64748b; }
+        html[data-theme="dark"] .qw-sum-label { color:#f97316; opacity:0.9; }
         html[data-theme="dark"] .qw-sum-table { background:#0a1628; border-color:rgba(255,255,255,0.08); }
         html[data-theme="dark"] .qw-sum-table td { border-bottom-color:rgba(255,255,255,0.06); }
         html[data-theme="dark"] .qw-sum-table td.lbl { color:#8a96b0; background:rgba(255,255,255,0.02); border-right-color:rgba(255,255,255,0.06); }
@@ -999,6 +1000,8 @@
         html[data-theme="dark"] .qw-price-note { color:#64748b; border-top-color:rgba(255,255,255,0.06); }
         html[data-theme="dark"] .qw-act-btn { background:#111e40; border-color:rgba(255,255,255,0.1); color:#e0e6ed; }
         html[data-theme="dark"] .qw-act-btn:hover { background:#0a1628; }
+        html[data-theme="dark"] .qw-act-btn.blue { background:#3b82f6; border-color:#3b82f6; color:#fff; }
+        html[data-theme="dark"] .qw-act-btn.blue:hover { background:#2563eb; }
     </style>
 </head>
 
@@ -1334,9 +1337,9 @@
     <section id="quotation" class="py-5">
         <div class="container-xl py-lg-4">
             <div class="text-center mb-5">
-                <span class="eyebrow mb-3 d-inline-block" style="color:#f97316;background:rgba(249,115,22,0.1);">Custom Projects</span>
+                <span class="eyebrow mb-3 d-inline-block">Custom Projects</span>
                 <h2 class="section-title mb-3" style="font-size:clamp(1.8rem,3vw,2.4rem);font-weight:800;color:var(--navy);">Request a Custom Quotation</h2>
-                <p style="color:#374151;max-width:540px;margin:0 auto;line-height:1.75;">Complete the 4-step wizard below to get an instant tiered price estimate in Philippine Peso (₱).</p>
+                <p class="text-muted-pp mx-auto mb-0" style="max-width:540px;line-height:1.75;">Complete the 4-step wizard below to get an instant tiered price estimate in Philippine Peso (₱).</p>
             </div>
             <!-- Wizard Form -->
             <div id="qwFormSection">
@@ -1382,7 +1385,7 @@
                                 <select id="qwStdSize" class="qw-input" onchange="qwSizeChange()">
                                     <option value="4x6">4" × 6"</option><option value="5x7">5" × 7"</option>
                                     <option value="5.5x8.5">5.5" × 8.5" (Half-Letter)</option><option value="8.5x11">8.5" × 11" (Letter)</option>
-                                    <option value="8.27x11.69">A4 (8.27" × 11.69")</option><option value="custom">Custom</option>
+                                    <option value="8.27x11.69">A4 (8.27" × 11.69")</option><option value="11x17">11" × 17" (Tabloid)</option><option value="custom">Custom</option>
                                 </select>
                             </div>
                             <div class="qw-group"><label class="qw-label">Width (in)</label><input type="number" id="qwW" class="qw-input" value="4" min="1" max="60" step="0.1"></div>
@@ -2783,10 +2786,28 @@
             document.querySelectorAll('.qw-product-card').forEach(c => c.classList.remove('selected'));
             el.classList.add('selected');
             document.getElementById('qwProduct').value = name;
+            
+            // Auto-select standard dimensions based on product type
+            const defaults = {
+                'Flyers': '4x6',
+                'Brochures': '8.5x11',
+                'Booklets': '8.5x11',
+                'Posters': '11x17',
+                'Mailers': '5x7',
+                'Cards': '4x6'
+            };
+            
+            if (defaults[name]) {
+                const stdSize = document.getElementById('qwStdSize');
+                if (stdSize) {
+                    stdSize.value = defaults[name];
+                    qwSizeChange(); // trigger dimension inputs update
+                }
+            }
         }
 
         function qwSizeChange() {
-            const map = { '4x6':{w:4,h:6}, '5x7':{w:5,h:7}, '5.5x8.5':{w:5.5,h:8.5}, '8.5x11':{w:8.5,h:11}, '8.27x11.69':{w:8.27,h:11.69} };
+            const map = { '4x6':{w:4,h:6}, '5x7':{w:5,h:7}, '5.5x8.5':{w:5.5,h:8.5}, '8.5x11':{w:8.5,h:11}, '8.27x11.69':{w:8.27,h:11.69}, '11x17':{w:11,h:17} };
             const v = document.getElementById('qwStdSize').value;
             if (map[v]) { document.getElementById('qwW').value = map[v].w; document.getElementById('qwH').value = map[v].h; }
         }
@@ -2890,16 +2911,173 @@
             document.getElementById('quotation').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
-        function qwExportPDF() {
+        async function qwExportPDF() {
             const q = qwQuoteData; if (!q) return;
-            // Show toast hint
-            const t = document.createElement('div');
-            t.style.cssText = 'position:fixed;bottom:28px;right:28px;background:#1a2340;color:#fff;padding:16px 22px;border-radius:14px;font-size:14px;font-weight:600;z-index:99999;box-shadow:0 8px 32px rgba(0,0,0,0.35);border-left:4px solid #f97316;line-height:1.6;max-width:320px;';
-            t.innerHTML = '📄 In the print dialog, set<br>Destination → <b style="color:#f97316">Save as PDF</b>';
-            document.body.appendChild(t);
-            setTimeout(() => t.remove(), 5000);
-            qwPrint();
+            
+            // Show loading state on button
+            const btn = document.querySelector('button[onclick="qwExportPDF()"]');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="width:1rem;height:1rem;border-width:.15em;margin-right:6px;"></span> Generating PDF...';
+            btn.style.pointerEvents = 'none';
+            btn.style.opacity = '0.7';
+
+            const base = location.href.replace(/[^\/]*$/, '');
+            const fmtP = n => '&#8369;' + n.toLocaleString('en-PH', {minimumFractionDigits:2, maximumFractionDigits:2});
+
+            // Create hidden container
+            const container = document.createElement('div');
+            container.style.width = '800px';
+            container.style.position = 'absolute';
+            container.style.left = '-9999px';
+            container.style.top = '0';
+            container.style.background = '#ffffff';
+            container.style.zIndex = '-1';
+            
+            container.innerHTML = `
+            <style>
+                .pdf-body { font-family: Arial, sans-serif; color: #1a2340; background: #fff; position: relative; padding: 40px; }
+                .pdf-wm { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-15deg); opacity: 0.04; z-index: 0; width: 500px; }
+                .pdf-content { position: relative; z-index: 1; }
+                .pdf-hdr { background: #1a2340; color: #fff; padding: 22px 32px; border-radius: 12px; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; }
+                .pdf-hdr img { height: 38px; object-fit: contain; }
+                .pdf-hdr-right { text-align: right; }
+                .pdf-hdr-right .lbl { font-size: 10px; opacity: .55; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+                .pdf-hdr-right .qid { font-size: 20px; font-weight: 800; letter-spacing: 1px; }
+                .pdf-accent-bar { height: 3px; background: linear-gradient(90deg, #f97316, #f97316 60%, transparent); border-radius: 0 0 4px 4px; margin-bottom: 20px; }
+                .pdf-meta { display: flex; justify-content: space-between; font-size: 12px; color: #6b7a99; margin-bottom: 22px; }
+                .pdf-sec-lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: #f97316; margin-bottom: 10px; }
+                .pdf-table { width: 100%; border-collapse: collapse; border: 1px solid #dde3f0; border-radius: 10px; overflow: hidden; margin-bottom: 22px; font-size: 13px; }
+                .pdf-table td { padding: 10px 14px; border-bottom: 1px solid #dde3f0; }
+                .pdf-table tr:last-child td { border-bottom: none; }
+                .pdf-table td.l { width: 22%; font-weight: 600; color: #6b7a99; background: #f4f6fb; }
+                .pdf-table td.v { font-weight: 600; }
+                .pdf-price-box { border: 2px solid rgba(249, 115, 22, .3); border-radius: 12px; padding: 20px; }
+                .pdf-pr { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid #dde3f0; font-size: 13px; }
+                .pdf-pr:last-of-type { border: none; }
+                .pdf-pr .pl { color: #6b7a99; font-weight: 600; }
+                .pdf-tot { display: flex; justify-content: space-between; border-top: 2px solid #dde3f0; padding-top: 14px; margin-top: 8px; }
+                .pdf-tot-l { font-size: 17px; font-weight: 800; }
+                .pdf-tot-v { font-size: 26px; font-weight: 900; color: #f97316; }
+                .pdf-note { text-align: center; font-size: 10px; color: #8a96b0; margin-top: 20px; }
+                .pdf-footer-bar { background: #1a2340; text-align: center; padding: 12px; color: rgba(255, 255, 255, .5); font-size: 10px; margin-top: 32px; border-radius: 10px; }
+                .pdf-footer-bar span { color: #f97316; }
+            </style>
+            <div class="pdf-body">
+                <img class="pdf-wm" src="${base}favicon.png" crossorigin="anonymous" alt="">
+                <div class="pdf-content">
+                    <div class="pdf-hdr">
+                        <img src="${base}assets/img/logo.png" crossorigin="anonymous" alt="PrintPro">
+                        <div class="pdf-hdr-right">
+                            <div class="lbl">Official Quotation</div>
+                            <div class="qid">${q.id}</div>
+                        </div>
+                    </div>
+                    <div class="pdf-accent-bar"></div>
+                    <div class="pdf-meta">
+                        <span>📅 Date Issued: ${q.date}</span>
+                        <span>⏳ Valid for 30 Days</span>
+                    </div>
+                    <div class="pdf-sec-lbl">Client Details</div>
+                    <table class="pdf-table">
+                        <tr><td class="l">Full Name</td><td class="v">${q.name}</td><td class="l">Email</td><td class="v">${q.email}</td></tr>
+                        <tr><td class="l">Phone</td><td class="v">${q.phone}</td><td class="l"></td><td class="v"></td></tr>
+                    </table>
+                    <div class="pdf-sec-lbl">Project Specifications</div>
+                    <table class="pdf-table">
+                        <tr><td class="l">Product</td><td class="v">${q.product}</td><td class="l">Dimensions</td><td class="v">${q.size}</td></tr>
+                        <tr><td class="l">Paper Weight</td><td class="v">${q.paper}</td><td class="l">Finishing</td><td class="v">${q.finish}</td></tr>
+                        <tr><td class="l">Bleed</td><td class="v">${q.bleed}</td><td class="l">Quantity</td><td class="v">${q.qty.toLocaleString()} units</td></tr>
+                        <tr><td class="l">Turnaround</td><td class="v">${q.turnaround}</td><td class="l">Shipping</td><td class="v">${q.shipping}</td></tr>
+                    </table>
+                    <div class="pdf-sec-lbl">Price Estimate Breakdown</div>
+                    <div class="pdf-price-box">
+                        <div class="pdf-pr"><span class="pl">Base Print Cost (${q.qty.toLocaleString()} units @ PHP ${q.rate.toFixed(2)}/unit)</span><span>${fmtP(q.baseCost)}</span></div>
+                        <div class="pdf-pr"><span class="pl">Finishing &amp; Coating Fee (${q.finish})</span><span>${fmtP(q.finishFee)}</span></div>
+                        <div class="pdf-pr"><span class="pl">Turnaround &amp; Shipping</span><span>${fmtP(q.shipFee)}</span></div>
+                        <div class="pdf-tot"><div class="pdf-tot-l">Estimated Total</div><div class="pdf-tot-v">${fmtP(q.total)}</div></div>
+                    </div>
+                    <div class="pdf-note">All prices in Philippine Peso • Final invoice may vary • VAT not included</div>
+                    <div class="pdf-footer-bar">© 2026 <span>PrintPro</span> — Engineered for Efficiency &nbsp;|&nbsp; ${q.id} &nbsp;|&nbsp; ${q.date}</div>
+                </div>
+            </div>
+            `;
+            
+            document.body.appendChild(container);
+
+            try {
+                // Allow images to load
+                await new Promise(resolve => setTimeout(resolve, 600));
+
+                const canvas = await html2canvas(container, {
+                    scale: 2,
+                    useCORS: true,
+                    logging: false,
+                    backgroundColor: '#ffffff'
+                });
+
+                const imgData = canvas.toDataURL('image/png');
+                const { jsPDF } = window.jspdf;
+                
+                const pdf = new jsPDF({
+                    orientation: 'p',
+                    unit: 'px',
+                    format: [canvas.width / 2, canvas.height / 2]
+                });
+                
+                pdf.addImage(imgData, 'PNG', 0, 0, canvas.width / 2, canvas.height / 2);
+                
+                const filename = `PrintPro_Quotation_${q.id}.pdf`;
+                const pdfBlob = pdf.output('blob');
+
+                // Advanced Mobile Support using Web Share API
+                let shared = false;
+                if (navigator.share && navigator.canShare) {
+                    const file = new File([pdfBlob], filename, { type: 'application/pdf' });
+                    if (navigator.canShare({ files: [file] })) {
+                        try {
+                            await navigator.share({
+                                files: [file],
+                                title: 'PrintPro Quotation',
+                                text: 'Here is your official PrintPro Quotation.'
+                            });
+                            shared = true;
+                        } catch (shareErr) {
+                            // Ignore AbortError (user cancelled share sheet)
+                            if (shareErr.name !== 'AbortError') {
+                                console.error('Share API error:', shareErr);
+                            } else {
+                                shared = true; // User cancelled intentionally, don't fallback to download
+                            }
+                        }
+                    }
+                }
+
+                // Fallback to standard robust download if share API isn't supported or failed
+                if (!shared) {
+                    const url = window.URL.createObjectURL(pdfBlob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    setTimeout(() => {
+                        document.body.removeChild(a);
+                        window.URL.revokeObjectURL(url);
+                    }, 200);
+                }
+
+            } catch (err) {
+                console.error('PDF Generation Error:', err);
+                alert('Could not generate PDF. Please try again.');
+            } finally {
+                document.body.removeChild(container);
+                btn.innerHTML = originalText;
+                btn.style.pointerEvents = '';
+                btn.style.opacity = '1';
+            }
         }
+
         function qwPrint() {
             const q = qwQuoteData; if (!q) return;
             const base = location.href.replace(/[^\/]*$/, '');
