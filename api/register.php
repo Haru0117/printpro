@@ -60,6 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'role' => 'client',
             'name' => $name,
             'email' => $email,
+            'subscription_plan' => $plan,
             'redirect' => 'client_dashboard.html'
         ]);
     } catch (PDOException $e) {
