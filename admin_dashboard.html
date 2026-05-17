@@ -970,12 +970,25 @@
 
                 <div class="a-page" id="page-users">
                     <div class="card border-0 shadow-sm overflow-hidden" style="border-radius:16px;">
-                        <div class="p-4 border-bottom d-flex justify-content-between align-items-center bg-light-subtle">
+                        <div class="p-4 border-bottom d-flex flex-wrap justify-content-between align-items-center bg-light-subtle gap-3">
                             <h6 class="fw-bold m-0">User Management</h6>
-                            <div class="d-flex gap-2">
-                                <input type="text" class="form-control form-control-sm" placeholder="Search users..."
-                                    style="width:250px;" oninput="searchUsers(this.value)">
-                                <button class="btn btn-primary btn-sm" onclick="loadUsers()"><i
+                            <div class="d-flex flex-wrap gap-2 align-items-center">
+                                <select class="form-select form-select-sm" id="userRoleFilter" style="width: 130px;" onchange="filterAndSortUsers()">
+                                    <option value="all">All Roles</option>
+                                    <option value="client">Client</option>
+                                    <option value="admin">Admin</option>
+                                </select>
+                                <select class="form-select form-select-sm" id="userSortSelect" style="width: 165px;" onchange="filterAndSortUsers()">
+                                    <option value="newest">Newest Joined</option>
+                                    <option value="oldest">Oldest Joined</option>
+                                    <option value="name_asc">Name (A-Z)</option>
+                                    <option value="name_desc">Name (Z-A)</option>
+                                    <option value="role_admin">Role (Admin first)</option>
+                                    <option value="role_client">Role (Client first)</option>
+                                </select>
+                                <input type="text" class="form-control form-control-sm" id="userSearchInput" placeholder="Search name, email, role..."
+                                    style="width:250px;" oninput="filterAndSortUsers()">
+                                <button class="btn btn-primary btn-sm" onclick="loadUsers()" title="Refresh"><i
                                         class="bi bi-arrow-clockwise"></i></button>
                             </div>
                         </div>
@@ -1031,8 +1044,6 @@
                 <div class="a-page" id="page-specs">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h6 class="fw-bold m-0">Print Specifications</h6>
-                        <button class="btn btn-sm btn-primary" onclick="openSpecModal()"><i class="bi bi-plus-lg"></i>
-                            Add New</button>
                     </div>
                     <div class="card">
                         <div class="table-responsive">
@@ -1261,33 +1272,28 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow" style="border-radius:16px;">
                 <div class="modal-header border-0 px-4 pt-4">
-                    <h5 class="fw-bold m-0" id="specModalTitle">Add Specification</h5>
+                    <h5 class="fw-bold m-0" id="specModalTitle">Update Specification Status</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <form id="specForm" onsubmit="handleSpecSubmit(event)">
                     <div class="modal-body p-4">
                         <input type="hidden" id="specId">
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold">Specification Type</label>
-                            <select class="form-select" id="specType" required>
-                                <option value="paper">Material (Paper)</option>
-                                <option value="finish">Finishing</option>
-                                <option value="size">Size</option>
-                            </select>
+                        <input type="hidden" id="specType">
+                        <input type="hidden" id="specName">
+                        <input type="hidden" id="specPrice">
+
+                        <div class="mb-4 p-3 bg-light-subtle rounded-3 border">
+                            <div class="small text-muted mb-1">Specification Details</div>
+                            <div class="fs-5 fw-bold text-white mb-2" id="displaySpecName">100lb Cover</div>
+                            <div class="d-flex gap-2 flex-wrap">
+                                <span class="badge bg-primary-subtle text-primary border border-primary-subtle" id="displaySpecType">Material (Paper)</span>
+                                <span class="badge bg-success-subtle text-success border border-success-subtle" id="displaySpecPrice">₱1.35</span>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold">Name</label>
-                            <input type="text" class="form-control" id="specName" required
-                                placeholder="e.g. Matte 200gsm">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold">Price Modifier (₱)</label>
-                            <input type="number" step="0.01" class="form-control" id="specPrice" required
-                                placeholder="0.00">
-                        </div>
+
                         <div class="mb-3">
                             <label class="form-label small fw-bold">Status</label>
-                            <select class="form-select" id="specActive">
+                            <select class="form-select form-select-lg" id="specActive">
                                 <option value="1">Available</option>
                                 <option value="0">Inactive</option>
                             </select>
@@ -1295,7 +1301,7 @@
                     </div>
                     <div class="modal-footer border-0 p-4 pt-0">
                         <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary" id="specSubmitBtn">Save Specification</button>
+                        <button type="submit" class="btn btn-primary px-4 fw-bold" id="specSubmitBtn">Save Status</button>
                     </div>
                 </form>
             </div>
@@ -1714,11 +1720,47 @@
                 const json = await res.json();
                 if (json.success) {
                     state.users = json.data;
-                    renderUsers();
+                    filterAndSortUsers();
                 } else {
                     showToast(json.message || 'Failed to load users', 'danger');
                 }
             } catch (e) { showToast('Network error loading users', 'danger'); }
+        }
+
+        function filterAndSortUsers() {
+            const roleFilter = (document.getElementById('userRoleFilter')?.value || 'all').toLowerCase();
+            const sortVal = document.getElementById('userSortSelect')?.value || 'newest';
+            const query = (document.getElementById('userSearchInput')?.value || '').toLowerCase();
+
+            let filtered = state.users.filter(u => {
+                const matchRoleFilter = roleFilter === 'all' || (u.role || '').toLowerCase() === roleFilter;
+                const matchQuery = (u.name || '').toLowerCase().includes(query) ||
+                    (u.email || '').toLowerCase().includes(query) ||
+                    (u.business_name || '').toLowerCase().includes(query) ||
+                    (u.role || '').toLowerCase().includes(query);
+                return matchRoleFilter && matchQuery;
+            });
+
+            filtered.sort((a, b) => {
+                if (sortVal === 'newest') {
+                    return new Date(b.created_at) - new Date(a.created_at);
+                } else if (sortVal === 'oldest') {
+                    return new Date(a.created_at) - new Date(b.created_at);
+                } else if (sortVal === 'name_asc') {
+                    return (a.name || '').localeCompare(b.name || '');
+                } else if (sortVal === 'name_desc') {
+                    return (b.name || '').localeCompare(a.name || '');
+                } else if (sortVal === 'role_admin') {
+                    if (a.role === b.role) return (a.name || '').localeCompare(b.name || '');
+                    return (a.role || '').toLowerCase() === 'admin' ? -1 : 1;
+                } else if (sortVal === 'role_client') {
+                    if (a.role === b.role) return (a.name || '').localeCompare(b.name || '');
+                    return (a.role || '').toLowerCase() === 'client' ? -1 : 1;
+                }
+                return 0;
+            });
+
+            renderUsers(filtered);
         }
 
         function renderUsers(data = state.users) {
@@ -1761,13 +1803,9 @@
         }
 
         function searchUsers(q) {
-            const query = q.toLowerCase();
-            const filtered = state.users.filter(u =>
-                (u.name || '').toLowerCase().includes(query) ||
-                (u.email || '').toLowerCase().includes(query) ||
-                (u.business_name || '').toLowerCase().includes(query)
-            );
-            renderUsers(filtered);
+            const input = document.getElementById('userSearchInput');
+            if (input) input.value = q;
+            filterAndSortUsers();
         }
 
         async function handleUserUpdate(e) {
@@ -1912,8 +1950,7 @@
                     <td><span class="badge-status ${s.is_active == 1 ? 'badge-success' : 'badge-danger'}">${s.is_active == 1 ? 'Active' : 'Inactive'}</span></td>
                     <td>
                         <div class="d-flex gap-2">
-                            <button class="btn btn-light action-btn" onclick="openSpecModal(${s.id})" title="Edit"><i class="bi bi-pencil"></i></button>
-                            <button class="btn btn-light action-btn text-danger" onclick="deleteSpec(${s.id}, '${s.spec_type}')" title="Delete"><i class="bi bi-trash"></i></button>
+                            <button class="btn btn-light action-btn" onclick="openSpecModal(${s.id})" title="Edit Status"><i class="bi bi-pencil"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -1925,7 +1962,7 @@
             const form = document.getElementById('specForm');
             form.reset();
             document.getElementById('specId').value = id || '';
-            document.getElementById('specModalTitle').textContent = id ? 'Edit Specification' : 'Add Specification';
+            document.getElementById('specModalTitle').textContent = 'Update Specification Status';
 
             if (id) {
                 const s = state.specs.find(x => x.id == id);
@@ -1934,6 +1971,11 @@
                     document.getElementById('specName').value = s.name;
                     document.getElementById('specPrice').value = s.price_modifier;
                     document.getElementById('specActive').value = s.is_active;
+
+                    document.getElementById('displaySpecName').textContent = s.name;
+                    const typeLabels = { paper: 'Material (Paper)', finish: 'Finishing', size: 'Size' };
+                    document.getElementById('displaySpecType').textContent = typeLabels[s.spec_type] || s.spec_type;
+                    document.getElementById('displaySpecPrice').textContent = s.spec_type === 'finish' ? `₱${parseFloat(s.price_modifier).toFixed(2)} Setup` : `${parseFloat(s.price_modifier).toFixed(2)}x Multiplier`;
                 }
             }
             modal.show();

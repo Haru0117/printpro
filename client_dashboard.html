@@ -5413,29 +5413,39 @@
             sel.innerHTML = '';
 
             names.forEach(name => {
-                // Try to find matching ID from masterSpecs
-                // Check if name is already an ID or a string
                 let match = null;
                 if (typeof masterSpecs !== 'undefined') {
                     match = masterSpecs.find(s => s.spec_type === type && s.name.toLowerCase().includes(name.toLowerCase().split('(')[0].trim().toLowerCase()));
                 }
-                const val = match ? match.id : name; // Fallback to name if not in DB
+                const val = match ? match.id : name;
                 const option = document.createElement('option');
                 option.value = val;
                 option.textContent = name;
+
+                if (match && (match.is_active == 0 || match.is_active === '0')) {
+                    option.disabled = true;
+                    option.textContent = name + ' (Unavailable)';
+                }
+
                 sel.appendChild(option);
             });
 
-            // Try to restore value if still exists
-            if (Array.from(sel.options).some(o => o.value == currentVal)) {
+            if (Array.from(sel.options).some(o => o.value == currentVal && !o.disabled)) {
                 sel.value = currentVal;
+            } else {
+                for (let i = 0; i < sel.options.length; i++) {
+                    if (!sel.options[i].disabled) {
+                        sel.selectedIndex = i;
+                        break;
+                    }
+                }
             }
         }
 
         function setSelectByText(id, text) {
             const sel = document.getElementById(id);
             for (let i = 0; i < sel.options.length; i++) {
-                if (sel.options[i].text.includes(text)) {
+                if (sel.options[i].text.includes(text) && !sel.options[i].disabled) {
                     sel.selectedIndex = i;
                     break;
                 }

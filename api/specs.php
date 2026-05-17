@@ -36,18 +36,29 @@ function getTableName($type)
 }
 
 try {
+    // Ensure is_active column exists on all three tables
+    try {
+        $pdo->exec("ALTER TABLE tbl_materials ADD COLUMN is_active TINYINT(1) NOT NULL DEFAULT 1");
+    } catch (Exception $e) {}
+    try {
+        $pdo->exec("ALTER TABLE tbl_sizes ADD COLUMN is_active TINYINT(1) NOT NULL DEFAULT 1");
+    } catch (Exception $e) {}
+    try {
+        $pdo->exec("ALTER TABLE tbl_finishes ADD COLUMN is_active TINYINT(1) NOT NULL DEFAULT 1");
+    } catch (Exception $e) {}
+
     if ($method === 'GET') {
         // Returns all specs — used by both Client Dashboard (loadOrderSpecs)
         // and Admin Dashboard (Spec Management page)
         $specs = [];
 
-        $stmt = $pdo->query("SELECT id, name, multiplier AS price_modifier, NULL AS setup_fee, NULL AS per_unit_fee, 1 AS is_active, 'paper' AS spec_type FROM tbl_materials ORDER BY name");
+        $stmt = $pdo->query("SELECT id, name, multiplier AS price_modifier, NULL AS setup_fee, NULL AS per_unit_fee, is_active, 'paper' AS spec_type FROM tbl_materials ORDER BY name");
         $specs = array_merge($specs, $stmt->fetchAll());
 
-        $stmt = $pdo->query("SELECT id, name, multiplier AS price_modifier, NULL AS setup_fee, NULL AS per_unit_fee, 1 AS is_active, 'size' AS spec_type FROM tbl_sizes ORDER BY name");
+        $stmt = $pdo->query("SELECT id, name, multiplier AS price_modifier, NULL AS setup_fee, NULL AS per_unit_fee, is_active, 'size' AS spec_type FROM tbl_sizes ORDER BY name");
         $specs = array_merge($specs, $stmt->fetchAll());
 
-        $stmt = $pdo->query("SELECT id, name, setup_fee AS price_modifier, setup_fee, per_unit_fee, 1 AS is_active, 'finish' AS spec_type FROM tbl_finishes ORDER BY name");
+        $stmt = $pdo->query("SELECT id, name, setup_fee AS price_modifier, setup_fee, per_unit_fee, is_active, 'finish' AS spec_type FROM tbl_finishes ORDER BY name");
         $specs = array_merge($specs, $stmt->fetchAll());
 
         echo json_encode(['success' => true, 'data' => $specs]);
@@ -78,6 +89,7 @@ try {
         $type = $put['spec_type'] ?? '';
         $name = trim($put['name'] ?? '');
         $price = floatval($put['price_modifier'] ?? 0);
+        $is_active = isset($put['is_active']) ? intval($put['is_active']) : 1;
         $table = getTableName($type);
 
         if (!$table || !$id)
@@ -85,11 +97,11 @@ try {
 
         if ($type === 'finish') {
             $per_unit = floatval($put['per_unit_fee'] ?? 0);
-            $stmt = $pdo->prepare("UPDATE $table SET name=?, setup_fee=?, per_unit_fee=? WHERE id=?");
-            $stmt->execute([$name, $price, $per_unit, $id]);
+            $stmt = $pdo->prepare("UPDATE $table SET name=?, setup_fee=?, per_unit_fee=?, is_active=? WHERE id=?");
+            $stmt->execute([$name, $price, $per_unit, $is_active, $id]);
         } else {
-            $stmt = $pdo->prepare("UPDATE $table SET name=?, multiplier=? WHERE id=?");
-            $stmt->execute([$name, $price, $id]);
+            $stmt = $pdo->prepare("UPDATE $table SET name=?, multiplier=?, is_active=? WHERE id=?");
+            $stmt->execute([$name, $price, $is_active, $id]);
         }
         echo json_encode(['success' => true]);
 
