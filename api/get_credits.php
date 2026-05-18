@@ -43,12 +43,10 @@ try {
     }, $transactions);
 
     echo json_encode([
-        'success' => true,
-        'balance' => number_format($balance, 2),
+        'success'     => true,
+        'balance'     => number_format($balance, 2),
         'balance_raw' => $balance,
         'transactions' => $formatted_trans,
-        'used' => number_format(10000 - $balance, 2),
-        'used_raw' => 10000 - $balance
     ]);
 
 } catch (Exception $e) {

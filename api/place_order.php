@@ -34,7 +34,17 @@ try {
 
     $client_id = $client['id'];
 
-    // ── 2. Check client credits ──────────────────────────────────────────────
+    // ── 3. Read and sanitize form fields FIRST ───────────────────────────
+    $product_type = trim($_POST['product_type'] ?? 'Flyers');
+    $paper_weight = trim($_POST['paper_weight'] ?? '');
+    $finish       = trim($_POST['finish'] ?? 'None');
+    $quantity     = max(1, intval($_POST['quantity'] ?? 1));
+    $size_width   = floatval($_POST['size_width'] ?? 4.0);
+    $size_height  = floatval($_POST['size_height'] ?? 6.0);
+    $total_amount = floatval($_POST['total_price'] ?? 0.00);
+    $notes        = trim($_POST['notes'] ?? '');
+
+    // ── 4. Check client credits (BEFORE creating the order) ──────────────
     $stmt = $pdo->prepare("SELECT balance FROM client_credits WHERE client_id = ?");
     $stmt->execute([$client_id]);
     $credit_row = $stmt->fetch();
@@ -51,16 +61,7 @@ try {
         exit;
     }
 
-    // ── 3. Read and sanitize form fields ─────────────────────────────────────
-    $product_type = trim($_POST['product_type'] ?? 'Flyers');
-    $paper_weight = trim($_POST['paper_weight'] ?? '');
-    $finish = trim($_POST['finish'] ?? 'None');
-    $quantity = max(1, intval($_POST['quantity'] ?? 1));
-    $size_width = floatval($_POST['size_width'] ?? 4.0);
-    $size_height = floatval($_POST['size_height'] ?? 6.0);
-    $total_amount = floatval($_POST['total_price'] ?? 0.00);
-    $notes = trim($_POST['notes'] ?? '');
-
+    // ── 5. Parse turnaround & shipping ──────────────────────────────────────
     // Turnaround: form sends 'standard' | 'rush' | 'priority'
     $turnaround_map = ['standard' => 'Standard', 'rush' => 'Rush', 'priority' => 'Priority'];
     $turnaround_raw = strtolower($_POST['turnaround'] ?? 'standard');
@@ -136,16 +137,16 @@ try {
     $pdo->beginTransaction();
 
     try {
-        // Insert credit transaction
+        // Insert credit transaction (order_deduction)
+        $balance_after = $current_balance - $total_amount;
         $stmt = $pdo->prepare("
             INSERT INTO credit_transactions (client_id, transaction_type, amount, description, order_id)
             VALUES (?, 'deduct', ?, ?, ?)
         ");
-        $stmt->execute([$client_id, $total_amount, "Order #$order_number", $order_id]);
+        $stmt->execute([$client_id, $total_amount, "Order #$order_number | Bal after: ₱" . number_format($balance_after, 2), $order_id]);
 
-        // The trigger will automatically update the balance
-        // But to be safe, we can manually update if trigger fails
-        $stmt = $pdo->prepare("UPDATE client_credits SET balance = balance - ? WHERE client_id = ?");
+        // Update balance — GREATEST(0,...) ensures it never goes negative
+        $stmt = $pdo->prepare("UPDATE client_credits SET balance = GREATEST(0, balance - ?), updated_at = NOW() WHERE client_id = ?");
         $stmt->execute([$total_amount, $client_id]);
 
         $pdo->commit();

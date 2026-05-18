@@ -1374,6 +1374,96 @@
             font-size: .7rem;
         }
 
+        /* ── WALLET / CREDITS ── */
+        .wallet-preset-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        .wallet-preset-btn {
+            padding: 8px 4px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            background: var(--off);
+            color: var(--navy);
+            font-size: .78rem;
+            font-weight: 700;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            transition: all .18s;
+            text-align: center;
+        }
+
+        .wallet-preset-btn:hover,
+        .wallet-preset-btn.active {
+            border-color: var(--accent);
+            background: rgba(29, 140, 248, .1);
+            color: var(--accent);
+            transform: translateY(-1px);
+        }
+
+        .wallet-tx-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 12px;
+            border-radius: 8px;
+            background: var(--off);
+            border: 1px solid var(--border);
+            font-size: .78rem;
+            transition: background .15s;
+        }
+
+        .wallet-tx-item:hover {
+            background: rgba(29, 140, 248, .05);
+        }
+
+        .wallet-tx-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            font-size: .75rem;
+            flex-shrink: 0;
+        }
+
+        .wallet-tx-icon.add {
+            background: rgba(45, 206, 137, .15);
+            color: #2dce89;
+        }
+
+        .wallet-tx-icon.deduct {
+            background: rgba(245, 54, 92, .12);
+            color: var(--danger);
+        }
+
+        .wallet-tx-amt.add { color: #2dce89; font-weight: 700; }
+        .wallet-tx-amt.deduct { color: var(--danger); font-weight: 700; }
+
+        /* dark mode wallet overrides */
+        html[data-theme="dark"] .wallet-preset-btn {
+            background: var(--dark-card2) !important;
+            border-color: var(--border) !important;
+            color: rgba(255,255,255,.7) !important;
+        }
+        html[data-theme="dark"] .wallet-preset-btn:hover,
+        html[data-theme="dark"] .wallet-preset-btn.active {
+            border-color: var(--accent) !important;
+            color: var(--accent) !important;
+            background: rgba(251,99,64,.08) !important;
+        }
+        html[data-theme="dark"] .wallet-tx-item {
+            background: var(--dark-card2) !important;
+            border-color: var(--border) !important;
+        }
+        html[data-theme="dark"] #walletCustomAmt {
+            background: var(--dark-card2) !important;
+            color: #fff !important;
+            border-color: var(--border) !important;
+        }
+
         /* ── BILLING ── */
         .spend-chart {
             padding: 16px 18px;
@@ -3631,9 +3721,6 @@
                     <div class="c-nav-item" onclick="showClientPage('files', this)">
                         <i class="bi bi-folder2"></i> <span>Files</span>
                     </div>
-                    <div class="c-nav-item" onclick="showClientPage('track', this)">
-                        <i class="bi bi-truck"></i> <span>Track</span>
-                    </div>
                     <div class="c-nav-item" onclick="showClientPage('billing', this)">
                         <i class="bi bi-credit-card"></i> <span>Billing</span>
                     </div>
@@ -3821,13 +3908,6 @@
                                         <div>
                                             <div class="action-title">Browse Templates</div>
                                             <div class="action-sub">Use a ready-made design</div>
-                                        </div>
-                                    </div>
-                                    <div class="action-item" onclick="showClientPage('track',null)">
-                                        <div class="action-icon orng"><i class="bi bi-truck"></i></div>
-                                        <div>
-                                            <div class="action-title">Track Shipment</div>
-                                            <div class="action-sub">Live order tracking</div>
                                         </div>
                                     </div>
                                     <div class="action-item" onclick="showClientPage('billing',null)">
@@ -4128,8 +4208,8 @@
                                         <span class="summary-total-lbl">Total Estimate</span>
                                         <span class="summary-total-val" id="summaryTotal">₱3,584.00</span>
                                     </div>
-                                    <button class="btn-continue" id="placeOrderBtn" onclick="placeOrder()">Place
-                                        Order →</button>
+
+                                    <button class="btn-continue" id="placeOrderBtn" onclick="placeOrder()">Place Order →</button>
                                 </div>
                             </div>
                         </div>
@@ -4502,39 +4582,6 @@
                     <div class="fm-toast" id="fm-toast"><i class="bi bi-check-circle-fill"></i><span
                             id="fm-toast-text"></span></div>
 
-                    <!-- ══ TRACK PAGE ══ -->
-                    <div class="c-page" id="c-track">
-                        <div class="c-dash">
-                            <div
-                                style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-                                <div>
-                                    <h4 class="page-title"
-                                        style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:var(--navy);margin:0;">
-                                        Order Tracking</h4>
-                                    <p style="font-size:.75rem;color:var(--muted);margin:0;">Real-time status for all
-                                        active shipments</p>
-                                </div>
-                            </div>
-
-                            <!-- Search bar -->
-                            <div
-                                style="background:var(--off);border-radius:12px;border:1px solid var(--border);padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;gap:12px;">
-                                <i class="bi bi-search" style="color:var(--muted);font-size:1rem;"></i>
-                                <input
-                                    style="flex:1;border:1px solid var(--border);border-radius:8px;padding:8px 14px;font-size:.85rem;font-family:'DM Sans',sans-serif;color:var(--navy);"
-                                    placeholder="Enter order ID or tracking number…" value="#PPR-48">
-                                <button
-                                    style="background:var(--accent);color:#fff;border:none;padding:8px 20px;border-radius:8px;font-size:.82rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">Track</button>
-                            </div>
-
-                            <div style="text-align:center; padding: 80px 20px; color: var(--muted); background: var(--off); border-radius: 16px; border: 1px dashed var(--border);">
-                                <i class="bi bi-geo-alt" style="font-size: 3.5rem; display: block; margin-bottom: 20px; opacity: 0.15;"></i>
-                                <h5 style="color: var(--navy); font-weight: 700; margin-bottom: 8px;">No active shipments</h5>
-                                <p style="font-size: .85rem; max-width: 300px; margin: 0 auto; opacity: 0.8;">Tracking information will appear here once your orders are processed and shipped.</p>
-                            </div>
-                        </div>
-                    </div><!-- /track -->
-
                     <!-- ══ BILLING PAGE ══ -->
                     <div class="c-page" id="c-billing">
                         <div class="c-order">
@@ -4563,13 +4610,7 @@
                                         </div>
                                         <div class="stat-icon blue"><i class="bi bi-currency-php">₱</i></div>
                                     </div>
-                                    <div class="stat-box">
-                                        <div>
-                                            <div class="stat-val">₱0</div>
-                                            <div class="stat-lbl">Outstanding Balance</div>
-                                        </div>
-                                        <div class="stat-icon teal"><i class="bi bi-exclamation-circle"></i></div>
-                                    </div>
+
                                     <div class="stat-box">
                                         <div>
                                             <div class="stat-val">₱0</div>
@@ -4631,20 +4672,78 @@
                                     </div>
                                 </div>
 
-                                <!-- Invoices table -->
-                                <div class="orders-card">
-                                    <div class="card-hdr">
-                                        <span class="card-hdr-title">Invoices</span>
-                                        <select
-                                            style="font-size:.75rem;border:1px solid var(--border);border-radius:6px;padding:4px 8px;color:var(--muted);">
-                                            <option>All</option>
-                                            <option>Paid</option>
-                                            <option>Outstanding</option>
-                                        </select>
+                                <!-- ══ WALLET / ADD CREDITS ══ -->
+                                <div class="wallet-card orders-card">
+                                    <!-- Wallet Header -->
+                                    <div class="card-hdr" style="background: linear-gradient(135deg, rgba(29,140,248,.1), rgba(0,198,255,.06)); border-bottom: 1px solid var(--border);">
+                                        <div style="display:flex; align-items:center; gap:10px;">
+                                            <div style="width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center;color:#fff;font-size:.9rem;flex-shrink:0;">
+                                                <i class="bi bi-wallet2"></i>
+                                            </div>
+                                            <div>
+                                                <div class="card-hdr-title">Credits Wallet</div>
+                                                <div style="font-size:.68rem;color:var(--muted);">Add credits · view history</div>
+                                            </div>
+                                        </div>
+                                        <div style="text-align:right;">
+                                            <div style="font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;">Balance</div>
+                                            <div id="walletBalanceDisplay" style="font-family:'Sora',sans-serif;font-size:1.35rem;font-weight:800;color:var(--accent);line-height:1.1;">₱—</div>
+                                        </div>
                                     </div>
-                                    <div style="padding: 60px 20px; text-align: center; color: var(--muted);">
-                                        <i class="bi bi-file-earmark-text" style="font-size: 2.5rem; display: block; margin-bottom: 15px; opacity: 0.2;"></i>
-                                        <p style="font-size: .85rem;">No invoices generated yet</p>
+
+                                    <div style="padding:18px;">
+
+                                        <!-- Preset Buttons -->
+                                        <div style="margin-bottom:14px;">
+                                            <div style="font-size:.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Quick Top-Up</div>
+                                            <div class="wallet-preset-grid">
+                                                <button class="wallet-preset-btn" data-amount="100">₱100</button>
+                                                <button class="wallet-preset-btn" data-amount="300">₱300</button>
+                                                <button class="wallet-preset-btn" data-amount="500">₱500</button>
+                                                <button class="wallet-preset-btn" data-amount="1000">₱1,000</button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Custom Amount -->
+                                        <div style="margin-bottom:14px;">
+                                            <div style="font-size:.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Custom Amount</div>
+                                            <div style="display:flex;gap:8px;align-items:center;">
+                                                <div style="position:relative;flex:1;">
+                                                    <span style="position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:.85rem;font-weight:700;color:var(--muted);">₱</span>
+                                                    <input id="walletCustomAmt" type="number" min="10" max="50000" step="10"
+                                                        placeholder="Enter amount"
+                                                        style="width:100%;padding:9px 12px 9px 26px;border:1px solid var(--border);border-radius:8px;font-size:.85rem;font-family:'DM Sans',sans-serif;color:var(--navy);background:var(--off);transition:border-color .2s;"
+                                                        onfocus="this.style.borderColor='var(--accent)';this.style.boxShadow='0 0 0 3px rgba(29,140,248,.1)'"
+                                                        onblur="this.style.borderColor='var(--border)';this.style.boxShadow='none'">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Add Credits Button -->
+                                        <button id="addCreditsBtn" onclick="walletAddCredits()"
+                                            style="width:100%;padding:11px;background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff;border:none;border-radius:9px;font-size:.88rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:opacity .2s,transform .15s;box-shadow:0 4px 14px rgba(29,140,248,.3);"
+                                            onmouseover="this.style.opacity='.88';this.style.transform='translateY(-1px)'"
+                                            onmouseout="this.style.opacity='1';this.style.transform='none'">
+                                            <i class="bi bi-plus-circle me-1"></i> Add Credits
+                                        </button>
+
+                                        <!-- Wallet Notification -->
+                                        <div id="walletNotif" style="display:none;margin-top:10px;padding:10px 14px;border-radius:8px;font-size:.8rem;font-weight:600;text-align:center;"></div>
+
+                                        <!-- Transaction History -->
+                                        <div style="margin-top:18px;">
+                                            <div style="font-size:.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;">
+                                                <span>Transaction History</span>
+                                                <span id="walletTxCount" style="background:rgba(29,140,248,.12);color:var(--accent);padding:1px 8px;border-radius:10px;font-size:.65rem;">0</span>
+                                            </div>
+                                            <div id="walletTxList" style="display:flex;flex-direction:column;gap:6px;max-height:240px;overflow-y:auto;">
+                                                <div style="text-align:center;padding:30px 0;color:var(--muted);font-size:.8rem;">
+                                                    <i class="bi bi-clock-history" style="font-size:1.6rem;display:block;margin-bottom:8px;opacity:.2;"></i>
+                                                    Loading transactions…
+                                                </div>
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </div>
 
@@ -4695,30 +4794,9 @@
                                     </div>
                                 </div>
 
-                                <!-- Payment Methods -->
-                                <div class="orders-card" style="margin-bottom:14px;">
-                                    <div class="card-hdr">
-                                        <span class="card-hdr-title">Payment Methods</span>
-                                        <a href="#"
-                                            style="font-size:.75rem;color:var(--accent);text-decoration:none;"><i
-                                                class="bi bi-plus-lg"></i> Add</a>
-                                    </div>
-                                    <div style="padding: 20px; text-align: center; color: var(--muted); font-size: .8rem; border: 1px dashed var(--border); border-radius: 8px;">
-                                        No payment methods added
-                                    </div>
-                                </div>
 
-                                <!-- Outstanding balance -->
-                                <div class="summary-card">
-                                    <div class="summary-total">
-                                        <span class="summary-total-lbl">Total Due</span>
-                                        <span class="summary-total-val">₱0</span>
-                                    </div>
-                                    <button class="btn-continue" disabled style="opacity: 0.5; cursor: not-allowed;">Pay Now →</button>
-                                    <div
-                                        style="text-align:center;margin-top:10px;font-size:.7rem;color:rgba(255,255,255,.35);">
-                                        Secured by Stripe · 256-bit SSL</div>
-                                </div>
+
+
 
                             </div><!-- /billing sidebar -->
                         </div>
@@ -4876,7 +4954,6 @@
             dashboard: 'nav-client-dashboard',
             orders: 'nav-client-orders',
             create: 'nav-client-create',
-            track: 'nav-client-track',
             templates: 'nav-client-templates',
             billing: 'nav-client-billing',
             files: 'nav-client-files',
@@ -4900,7 +4977,15 @@
             }
 
             if (id === 'files' && typeof fmRender === 'function') fmRender();
+
+            // Auto-load wallet when billing tab opens
+            if (id === 'billing' && typeof walletLoad === 'function') walletLoad();
         }
+
+        // Load wallet on initial page render (in case billing is default page)
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof walletLoad === 'function') walletLoad();
+        });
 
 
 
@@ -4925,6 +5010,168 @@
             sessionStorage.removeItem('pp_user');
             window.location.href = 'index.html#login';
         }
+
+        // ══════════════════════════════════════════════════════
+        //  WALLET / CREDITS SYSTEM
+        // ══════════════════════════════════════════════════════
+
+        let _walletSelectedAmount = 0;
+
+        // Wire preset buttons
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.wallet-preset-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    document.querySelectorAll('.wallet-preset-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    _walletSelectedAmount = parseFloat(this.dataset.amount);
+                    const inp = document.getElementById('walletCustomAmt');
+                    if (inp) inp.value = _walletSelectedAmount;
+                });
+            });
+
+            const customInp = document.getElementById('walletCustomAmt');
+            if (customInp) {
+                customInp.addEventListener('input', () => {
+                    document.querySelectorAll('.wallet-preset-btn').forEach(b => b.classList.remove('active'));
+                    _walletSelectedAmount = 0; // will read from input on submit
+                });
+            }
+        });
+
+        // Load wallet data (balance + transactions)
+        async function walletLoad() {
+            try {
+                const res = await fetch('api/get_credits.php');
+                const data = await res.json();
+                if (!data.success) throw new Error(data.error || 'Failed to load wallet');
+
+                // Update balance display
+                const balEl = document.getElementById('walletBalanceDisplay');
+                if (balEl) balEl.textContent = '₱' + parseFloat(data.balance_raw || 0).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+                // Calculate Spend and Paid to Date from transactions
+                let totalSpent = 0;
+                let totalPaid = 0;
+                if (data.transactions && data.transactions.length > 0) {
+                    data.transactions.forEach(tx => {
+                        if (tx.type === 'deduct') {
+                            totalSpent += parseFloat(tx.amount_raw || 0);
+                        } else if (tx.type === 'add') {
+                            totalPaid += parseFloat(tx.amount_raw || 0);
+                        }
+                    });
+                }
+
+                // Also update the top stat boxes
+                const spendEls = document.querySelectorAll('.client-total-spend');
+                const paidEls  = document.querySelectorAll('.client-paid-to-date');
+                spendEls.forEach(el => {
+                    el.textContent = '₱' + totalSpent.toLocaleString('en-PH', { minimumFractionDigits: 2 });
+                });
+                paidEls.forEach(el => {
+                    el.textContent = '₱' + totalPaid.toLocaleString('en-PH', { minimumFractionDigits: 2 });
+                });
+
+
+                walletRenderTransactions(data.transactions || []);
+            } catch (err) {
+                const txList = document.getElementById('walletTxList');
+                if (txList) txList.innerHTML = `<div style="text-align:center;padding:20px;color:var(--muted);font-size:.8rem;"><i class="bi bi-exclamation-circle" style="display:block;font-size:1.4rem;margin-bottom:6px;opacity:.4;"></i>Could not load wallet data</div>`;
+            }
+        }
+
+        function walletRenderTransactions(txs) {
+            const list = document.getElementById('walletTxList');
+            const countEl = document.getElementById('walletTxCount');
+            if (!list) return;
+            if (countEl) countEl.textContent = txs.length;
+
+            if (!txs.length) {
+                list.innerHTML = `<div style="text-align:center;padding:30px 0;color:var(--muted);font-size:.8rem;"><i class="bi bi-wallet2" style="font-size:1.6rem;display:block;margin-bottom:8px;opacity:.2;"></i>No transactions yet</div>`;
+                return;
+            }
+
+            list.innerHTML = txs.map(tx => {
+                const isAdd = tx.transaction_type === 'add';
+                const sign  = isAdd ? '+' : '-';
+                const amt   = parseFloat(tx.amount).toLocaleString('en-PH', { minimumFractionDigits: 2 });
+                const icon  = isAdd ? 'bi-arrow-down-circle-fill' : 'bi-arrow-up-circle-fill';
+                const label = tx.description || (isAdd ? 'Credits Added' : 'Order Deducted');
+                const ref   = tx.order_number ? `<span style="font-size:.65rem;color:var(--muted);margin-left:4px;">#${tx.order_number}</span>` : '';
+                const date  = tx.created_at ? new Date(tx.created_at).toLocaleDateString('en-PH', { month:'short', day:'numeric', year:'numeric' }) : '';
+
+                return `
+                <div class="wallet-tx-item">
+                    <div class="wallet-tx-icon ${tx.transaction_type}">
+                        <i class="bi ${icon}"></i>
+                    </div>
+                    <div style="flex:1;min-width:0;">
+                        <div style="font-size:.78rem;font-weight:600;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${label}${ref}</div>
+                        <div style="font-size:.68rem;color:var(--muted);">${date}</div>
+                    </div>
+                    <div class="wallet-tx-amt ${tx.transaction_type}">${sign}₱${amt}</div>
+                </div>`;
+            }).join('');
+        }
+
+        function walletShowNotif(msg, isSuccess) {
+            const el = document.getElementById('walletNotif');
+            if (!el) return;
+            el.style.display = 'block';
+            el.style.background = isSuccess ? 'rgba(45,206,137,.15)' : 'rgba(245,54,92,.12)';
+            el.style.color = isSuccess ? '#1aae6f' : 'var(--danger)';
+            el.style.border = `1px solid ${isSuccess ? 'rgba(45,206,137,.3)' : 'rgba(245,54,92,.25)'}`;
+            el.innerHTML = `<i class="bi ${isSuccess ? 'bi-check-circle-fill' : 'bi-x-circle-fill'} me-1"></i>${msg}`;
+            setTimeout(() => { el.style.display = 'none'; }, 4000);
+        }
+
+        async function walletAddCredits() {
+            const inp = document.getElementById('walletCustomAmt');
+            const amount = inp ? parseFloat(inp.value) : _walletSelectedAmount;
+
+            if (!amount || amount < 10) {
+                walletShowNotif('Please enter a valid amount (minimum ₱10).', false);
+                return;
+            }
+            if (amount > 50000) {
+                walletShowNotif('Maximum single top-up is ₱50,000.', false);
+                return;
+            }
+
+            const btn = document.getElementById('addCreditsBtn');
+            if (btn) { btn.disabled = true; btn.innerHTML = '<i class="bi bi-hourglass-split me-1"></i> Processing…'; }
+
+            try {
+                const res = await fetch('api/add_credits.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ amount })
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    walletShowNotif(data.message, true);
+                    // Update balance immediately
+                    const balEl = document.getElementById('walletBalanceDisplay');
+                    if (balEl && data.new_balance_raw !== undefined) {
+                        balEl.textContent = '₱' + parseFloat(data.new_balance_raw).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    }
+                    // Clear inputs
+                    if (inp) inp.value = '';
+                    document.querySelectorAll('.wallet-preset-btn').forEach(b => b.classList.remove('active'));
+                    _walletSelectedAmount = 0;
+                    // Reload full transaction history
+                    walletLoad();
+                } else {
+                    walletShowNotif(data.message || 'Failed to add credits.', false);
+                }
+            } catch (err) {
+                walletShowNotif('Network error. Please check your connection.', false);
+            } finally {
+                if (btn) { btn.disabled = false; btn.innerHTML = '<i class="bi bi-plus-circle me-1"></i> Add Credits'; }
+            }
+        }
+
 
         // Synchronize Order Status from Admin
         function syncOrderStatus() {
@@ -5348,6 +5595,8 @@
 
                     const sumShipping = document.getElementById('sumShipping');
                     if (sumShipping) sumShipping.textContent = '₱' + d.shipping_cost.toLocaleString(undefined, { minimumFractionDigits: 2 });
+
+                    orderWalletCheck();
                 }
             } catch (err) {
                 console.error("Pricing Error:", err);
@@ -5552,9 +5801,55 @@
             }
         }
 
+        let _orderWalletBalance = null;
+
+        async function orderWalletCheck() {
+            const totalCost = currentPricingData
+                ? (currentPricingData.grand_total ?? currentPricingData.breakdown?.grand_total ?? 0)
+                : 0;
+
+            try {
+                const res = await fetch('api/get_credits.php');
+                const data = await res.json();
+                _orderWalletBalance = data.success ? parseFloat(data.balance_raw || 0) : null;
+            } catch (e) {
+                _orderWalletBalance = null;
+            }
+
+            const btn = document.getElementById('placeOrderBtn');
+            if (!btn) return;
+
+            if (_orderWalletBalance !== null && _orderWalletBalance < totalCost) {
+                btn.disabled = true;
+                btn.style.opacity = '0.45';
+                btn.style.cursor = 'not-allowed';
+                btn.textContent = 'Insufficient Credits';
+            } else {
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                btn.style.cursor = 'pointer';
+                btn.textContent = 'Place Order →';
+            }
+        }
+
+        const _origShowCP = showClientPage;
+        showClientPage = function(id, navEl) {
+            _origShowCP(id, navEl);
+            if (id === 'create') orderWalletCheck();
+        };
+
         async function placeOrder() {
             if (!currentPricingData) {
                 alert('Please complete the specifications first.');
+                return;
+            }
+
+            const totalCost = currentPricingData.grand_total ?? currentPricingData.breakdown?.grand_total ?? 0;
+
+            if (_orderWalletBalance !== null && _orderWalletBalance < totalCost) {
+                const shortfall = (totalCost - _orderWalletBalance).toLocaleString('en-PH', { minimumFractionDigits: 2 });
+                alert('⚠️ Insufficient Credits\n\nYour wallet balance is too low to place this order.\nPlease add ₱' + shortfall + ' or more before continuing.');
+                showClientPage('billing', null);
                 return;
             }
 
@@ -5562,31 +5857,18 @@
             btn.disabled = true;
             btn.textContent = 'Processing...';
 
-            // Get selected product type
             const activeProductBtn = document.querySelector('.product-types .pt-btn.active');
             const productType = activeProductBtn ? activeProductBtn.textContent.trim() : 'Flyers';
-
-            // Get size dimensions from custom fields or parse from select
-            const sizeWidth = parseFloat(document.getElementById('customWidth').value) || 4.0;
+            const sizeWidth  = parseFloat(document.getElementById('customWidth').value) || 4.0;
             const sizeHeight = parseFloat(document.getElementById('customHeight').value) || 6.0;
-
-            // Get paper weight text (option label, not value ID)
-            const paperSel = document.getElementById('paperSelect');
+            const paperSel  = document.getElementById('paperSelect');
             const paperWeight = paperSel.options[paperSel.selectedIndex]?.text || '';
-
-            // Get finish text
             const finishSel = document.getElementById('finishSelect');
-            const finish = finishSel.options[finishSel.selectedIndex]?.text || 'None';
-
-            // Get bleed option text
-            const bleedSel = document.getElementById('bleedSelect');
-            const bleed = bleedSel.options[bleedSel.selectedIndex]?.text || 'With Bleed';
-
-            // Get turnaround value
+            const finish    = finishSel.options[finishSel.selectedIndex]?.text || 'None';
+            const bleedSel  = document.getElementById('bleedSelect');
+            const bleed     = bleedSel.options[bleedSel.selectedIndex]?.text || 'With Bleed';
             const turnaround = document.getElementById('turnaroundSelect').value || 'standard';
-
-            // Get shipping value
-            const shipping = document.getElementById('shippingSelect').value || 'free';
+            const shipping   = document.getElementById('shippingSelect').value || 'free';
 
             const formData = new FormData();
             formData.append('product_type', productType);
@@ -5598,19 +5880,25 @@
             formData.append('quantity', document.getElementById('qtySlider').value);
             formData.append('turnaround', turnaround);
             formData.append('shipping', shipping);
-            formData.append('total_price', currentPricingData.grand_total ?? currentPricingData.breakdown?.grand_total ?? 0);
+            formData.append('total_price', totalCost);
 
             try {
                 const res = await fetch(getApiUrl('api/place_order.php'), { method: 'POST', body: formData });
                 const data = await res.json();
                 if (data.success) {
+                    if (typeof walletLoad === 'function') walletLoad();
                     alert('✅ Order ' + data.order_number + ' placed successfully!\nEstimated due: ' + data.due_date);
                     showClientPage('orders', null);
                 } else {
-                    alert('❌ ' + (data.message || 'Error placing order. Please try again.'));
+                    if (data.message && data.message.toLowerCase().includes('insufficient')) {
+                        alert('⚠️ Insufficient Credits\n\n' + data.message + '\n\nPlease top up your wallet in the Billing section.');
+                        showClientPage('billing', null);
+                    } else {
+                        alert('❌ ' + (data.message || 'Error placing order. Please try again.'));
+                    }
                 }
             } catch (e) {
-                alert('Network error. Make sure you are connected to XAMPP and try again.');
+                alert('Network error. Make sure you are connected and try again.');
             } finally {
                 btn.disabled = false;
                 btn.textContent = 'Place Order →';
