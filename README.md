@@ -50,7 +50,6 @@ printpro/
 │   ├── place-order.php
 │   └── subscription.php
 ├── index.html          # Landing / home page
-├── login.html          # Login page
 └── register.html       # Registration page
 ```
 

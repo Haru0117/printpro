@@ -36,6 +36,10 @@ try {
 
     // ── 3. Read and sanitize form fields FIRST ───────────────────────────
     $product_type = trim($_POST['product_type'] ?? 'Flyers');
+    $job_name     = trim($_POST['job_name'] ?? '');
+    if (empty($job_name)) {
+        $job_name = $product_type . ' Project';
+    }
     $paper_weight = trim($_POST['paper_weight'] ?? '');
     $finish       = trim($_POST['finish'] ?? 'None');
     $quantity     = max(1, intval($_POST['quantity'] ?? 1));
@@ -43,6 +47,47 @@ try {
     $size_height  = floatval($_POST['size_height'] ?? 6.0);
     $total_amount = floatval($_POST['total_price'] ?? 0.00);
     $notes        = trim($_POST['notes'] ?? '');
+
+    // ── Artwork File Upload Handling ──
+    $artwork_path = null;
+    if (isset($_FILES['artwork_file']) && $_FILES['artwork_file']['error'] === UPLOAD_ERR_OK) {
+        $file = $_FILES['artwork_file'];
+        $fileName = basename($file['name']);
+        $fileSize = $file['size'];
+        $tmpName = $file['tmp_name'];
+        
+        // Check size (500MB limit)
+        if ($fileSize > 500 * 1024 * 1024) {
+            echo json_encode(['success' => false, 'message' => 'Artwork file exceeds the 500MB size limit.']);
+            exit;
+        }
+        
+        // Check extension
+        $ext = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+        $allowed = ['pdf', 'ai', 'psd', 'png', 'jpg', 'jpeg'];
+        if (!in_array($ext, $allowed)) {
+            echo json_encode(['success' => false, 'message' => 'Invalid file format. Supported: PDF, AI, PSD, PNG, JPG.']);
+            exit;
+        }
+        
+        // Define directory paths
+        $uploadDir = '../uploads/artwork/';
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
+        }
+        
+        // Make the file name unique
+        $safeFileName = preg_replace('/[^a-zA-Z0-9_.-]/', '_', pathinfo($fileName, PATHINFO_FILENAME));
+        $newFileName = 'artwork_' . time() . '_' . $safeFileName . '.' . $ext;
+        $destPath = $uploadDir . $newFileName;
+        
+        if (move_uploaded_file($tmpName, $destPath)) {
+            $artwork_path = 'uploads/artwork/' . $newFileName;
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Failed to save uploaded artwork file.']);
+            exit;
+        }
+    }
 
     // ── 4. Check client credits (BEFORE creating the order) ──────────────
     $stmt = $pdo->prepare("SELECT balance FROM client_credits WHERE client_id = ?");
@@ -62,25 +107,20 @@ try {
     }
 
     // ── 5. Parse turnaround & shipping ──────────────────────────────────────
-    // Turnaround: form sends 'standard' | 'rush' | 'priority'
     $turnaround_map = ['standard' => 'Standard', 'rush' => 'Rush', 'priority' => 'Priority'];
     $turnaround_raw = strtolower($_POST['turnaround'] ?? 'standard');
     $turnaround = $turnaround_map[$turnaround_raw] ?? 'Standard';
 
-    // Shipping: form sends 'free' | 'express' | 'overnight'
     $shipping_map = ['free' => 'Ground', 'express' => 'Express', 'overnight' => 'Overnight'];
     $shipping_raw = strtolower($_POST['shipping'] ?? 'free');
     $shipping_method = $shipping_map[$shipping_raw] ?? 'Ground';
 
-    // Bleed: form sends 'With Bleed...' | 'No Bleed...' | 'Custom...'
     $bleed_str = $_POST['bleed'] ?? 'With Bleed';
     $bleed = (stripos($bleed_str, 'No Bleed') !== false) ? 0 : 1;
 
-    // Calc unit price from total
     $tax_rate = 12.00;
     $unit_price = $quantity > 0 ? round($total_amount / $quantity, 4) : 0;
 
-    // Due date: 3 business days for Standard, 1 for Rush, today for Priority
     $days_map = ['Standard' => 3, 'Rush' => 1, 'Priority' => 0];
     $add_days = $days_map[$turnaround] ?? 3;
     $due_date = date('Y-m-d', strtotime("+{$add_days} weekdays"));
@@ -94,27 +134,30 @@ try {
     // ── 4. Insert the order ───────────────────────────────────────────────────
     $stmt = $pdo->prepare("
         INSERT INTO orders (
-            order_number, client_id,
+            order_number, client_id, job_name,
             product_type, quantity,
             size_width, size_height,
             paper_weight, finish, bleed,
             turnaround, shipping_method,
             unit_price, tax_rate, total_amount,
-            status, progress_pct, due_date, notes
+            status, progress_pct, due_date, notes,
+            artwork_file
         ) VALUES (
-            :order_number, :client_id,
+            :order_number, :client_id, :job_name,
             :product_type, :quantity,
             :size_width, :size_height,
             :paper_weight, :finish, :bleed,
             :turnaround, :shipping_method,
             :unit_price, :tax_rate, :total_amount,
-            'Prepress', 0, :due_date, :notes
+            'Proof Pending', 0, :due_date, :notes,
+            :artwork_file
         )
     ");
 
     $stmt->execute([
         ':order_number' => $order_number,
         ':client_id' => $client_id,
+        ':job_name' => $job_name,
         ':product_type' => $product_type,
         ':quantity' => $quantity,
         ':size_width' => $size_width,
@@ -129,6 +172,7 @@ try {
         ':total_amount' => $total_amount,
         ':due_date' => $due_date,
         ':notes' => $notes,
+        ':artwork_file' => $artwork_path,
     ]);
 
     $order_id = $pdo->lastInsertId();
@@ -137,7 +181,6 @@ try {
     $pdo->beginTransaction();
 
     try {
-        // Insert credit transaction (order_deduction)
         $balance_after = $current_balance - $total_amount;
         $stmt = $pdo->prepare("
             INSERT INTO credit_transactions (client_id, transaction_type, amount, description, order_id)
@@ -145,11 +188,16 @@ try {
         ");
         $stmt->execute([$client_id, $total_amount, "Order #$order_number | Bal after: ₱" . number_format($balance_after, 2), $order_id]);
 
-        // Update balance — GREATEST(0,...) ensures it never goes negative
         $stmt = $pdo->prepare("UPDATE client_credits SET balance = GREATEST(0, balance - ?), updated_at = NOW() WHERE client_id = ?");
         $stmt->execute([$total_amount, $client_id]);
 
         $pdo->commit();
+
+    } catch (PDOException $e) {
+        $pdo->rollBack();
+        echo json_encode(['success' => false, 'message' => 'Failed to process payment: ' . $e->getMessage()]);
+        exit;
+    }
 
     } catch (PDOException $e) {
         $pdo->rollBack();

@@ -4,7 +4,7 @@
 //  Environment: Auto-detect (Local XAMPP vs AwardSpace)
 // ─────────────────────────────────────────────────────────────
 
-$isLocal = ($_SERVER['SERVER_NAME'] === 'localhost' || $_SERVER['SERVER_ADDR'] === '127.0.0.1');
+$isLocal = (php_sapi_name() === 'cli' || (isset($_SERVER['SERVER_NAME']) && $_SERVER['SERVER_NAME'] === 'localhost') || (isset($_SERVER['SERVER_ADDR']) && $_SERVER['SERVER_ADDR'] === '127.0.0.1'));
 
 if ($isLocal) {
     $host = 'localhost';
@@ -29,11 +29,11 @@ try {
     $pdo = new PDO($dsn, $user, $pass, $options);
 } catch (\PDOException $e) {
     // Fail gracefully with a JSON error for API calls
-    if (strpos($_SERVER['REQUEST_URI'], '/api/') !== false) {
+    if (isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], '/api/') !== false) {
         header('Content-Type: application/json');
         echo json_encode(['success' => false, 'message' => 'Database connection failed: ' . $e->getMessage()]);
     } else {
-        die("Critical System Error: Unable to connect to database.");
+        die("Critical System Error: Unable to connect to database: " . $e->getMessage());
     }
     exit;
 }

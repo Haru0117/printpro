@@ -1,9 +1,20 @@
 <?php
 session_start();
-// Basic role check
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'client') {
-  header('Location: ../index.html#login');
-  exit;
+// Auth guard — must be logged in
+if (!isset($_SESSION['user_id'])) {
+    header('Location: ../index.html?action=login');
+    exit;
+}
+// Role guard — admins get bounced to their dashboard
+$_role = strtolower($_SESSION['role'] ?? '');
+if ($_role === 'admin' || $_role === 'super_admin') {
+    header('Location: ../admin/');
+    exit;
+}
+// Only 'client' role is allowed past this point
+if ($_role !== 'client') {
+    header('Location: ../index.html?action=login');
+    exit;
 }
 $userName = $_SESSION['name'] ?? 'Client';
 $userEmail = $_SESSION['email'] ?? 'client@example.com';
@@ -81,13 +92,9 @@ try {
 
       <!-- SIDEBAR -->
       <div class="sidebar" id="sidebarEl">
-        <div style="padding: 24px 24px 18px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid rgba(255, 255, 255, .08);">
-          <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(255, 255, 255, .15); display: grid; place-items: center; color: #fff; font-size: 1.2rem;">P</div>
-          <div>
-            <div style="font-family: 'Sora', sans-serif; font-weight: 700; font-size: .95rem; color: #fff;">PrintPro</div>
-            <div style="font-size: .6rem; color: rgba(255, 255, 255, .4); letter-spacing: .05em;">BUSINESS SOLUTIONS</div>
-          </div>
-          <div style="font-size: .65rem; background: #1d8cf8; color: #fff; padding: 2px 9px; border-radius: 6px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.3px; flex-shrink: 0;">APP</div>
+        <div style="padding: 24px 24px 18px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid rgba(255, 255, 255, .08);">
+          <img src="../assets/img/logo.png" alt="PrintPro" style="height: 24px; width: auto; object-fit: contain; max-width: 90px; filter: brightness(0) invert(1); flex-shrink: 0;">
+          <span style="font-size: .65rem; background: #1d8cf8; color: #fff; padding: 2px 9px; border-radius: 6px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.3px; flex-shrink: 0;">Client</span>
         </div>
         <div id="clientNav">
           <div class="nav-section">
@@ -252,21 +259,21 @@ try {
                 </div>
                 <div class="wizard-body">
                   <div class="dim-grid">
+                    <div class="form-row" style="grid-column: 1 / -1; margin-bottom: 12px;">
+                      <label class="form-label">Job Name</label>
+                      <input type="text" class="form-ctrl" id="jobNameInput" placeholder="e.g. Summer Promo Flyer" oninput="updateSummaryJobName(this.value)">
+                    </div>
                     <div class="form-row"><label class="form-label">Size</label><select class="form-ctrl"
                         id="sizeSelect" onchange="calcPrice()">
-                        <option value="0">Select Size</option>
-                        <option value="2">A4 (+₱2.00)</option>
-                        <option value="1">4x6 (+₱1.00)</option>
+                        <option value="0">Loading sizes...</option>
                       </select></div>
                     <div class="form-row"><label class="form-label">Paper</label><select class="form-ctrl"
                         id="paperSelect" onchange="calcPrice()">
-                        <option value="0">Select Paper</option>
-                        <option value="0.05">Standard (+₱0.05)</option>
+                        <option value="0">Loading materials...</option>
                       </select></div>
                     <div class="form-row"><label class="form-label">Finish</label><select class="form-ctrl"
                         id="finishSelect" onchange="calcPrice()">
-                        <option value="0">None</option>
-                        <option value="0.03">Gloss (+₱0.03)</option>
+                        <option value="0">Loading finishes...</option>
                       </select></div>
                     <div class="form-row"><label class="form-label">Sides</label><select class="form-ctrl"
                         id="sidesSelect" onchange="calcPrice()">
@@ -287,16 +294,45 @@ try {
                   <div id="qtyDisplay">100</div>
                 </div>
               </div>
+              <div class="wizard-card">
+                <div class="wizard-hdr">
+                  <div class="step-num">4</div>
+                  <div class="step-title">Upload Artwork</div>
+                </div>
+                <div class="wizard-body">
+                  <div id="upload-area" style="border: 2px dashed var(--border); border-radius: 12px; padding: 24px; text-align: center; background: var(--off); cursor: pointer; transition: all 0.2s;" onclick="document.getElementById('artworkUploadInput').click()">
+                    <i class="bi bi-cloud-arrow-up-fill" style="font-size: 2.5rem; color: var(--accent); display: block; margin-bottom: 8px;"></i>
+                    <span style="font-size: .85rem; font-weight: 600; color: var(--navy); display: block;">Drag & Drop Artwork Here</span>
+                    <span style="font-size: .75rem; color: var(--muted); display: block; margin-top: 4px;">Supports PDF, AI, PSD, PNG, JPG up to 500MB</span>
+                    <input type="file" id="artworkUploadInput" accept=".pdf,.ai,.psd,.png,.jpg,.jpeg" style="display: none;" onchange="handleArtworkSelection(this)">
+                  </div>
+                  <div id="upload-preview" style="display: none; margin-top: 14px;">
+                    <div style="font-size: .75rem; font-weight: 700; color: var(--navy); margin-bottom: 8px;">SELECTED FILE:</div>
+                    <div class="file-card" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: rgba(29, 140, 248, 0.05); border: 1px solid rgba(29, 140, 248, 0.2); border-radius: 8px;">
+                      <div style="display: flex; align-items: center; gap: 8px;">
+                        <span id="previewFileIcon" style="font-size: 1.5rem;">📄</span>
+                        <div style="text-align: left;">
+                          <div id="previewFileName" style="font-size: .8rem; font-weight: 600; color: var(--navy); word-break: break-all; max-width: 250px;">artwork.pdf</div>
+                          <div id="previewFileSize" style="font-size: .7rem; color: var(--muted);">0.00 MB</div>
+                        </div>
+                      </div>
+                      <button type="button" class="btn btn-sm btn-outline-danger" id="removeArtworkBtn" style="padding: 2px 8px; font-size: .7rem;" onclick="removeSelectedArtwork(event)">Remove</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
             <div>
               <div class="summary-card">
                 <div class="sum-title">PRICE PREVIEW</div>
+                <div class="sum-row"><span>Job Name</span><span id="sumJobName" style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600;">Untitled</span></div>
                 <div class="sum-row"><span>Product</span><span id="sumProduct">Flyers</span></div>
                 <div class="sum-row"><span>Quantity</span><span id="sumQty">100 units</span></div>
+                <div class="sum-row"><span>Artwork</span><span id="sumArtwork" style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--muted);">None</span></div>
                 <hr class="sum-divider">
                 <div class="sum-total"><span class="sum-total-lbl">Total</span><span class="sum-total-val"
                     id="sumTotal">₱—</span></div>
-                <button class="btn-place" onclick="placeOrder()">Place Order →</button>
+                <button class="btn-place" id="placeOrderBtn" onclick="submitClientOrder()">Place Order →</button>
               </div>
             </div>
           </div>
@@ -336,53 +372,15 @@ try {
                   <th>STATUS</th>
                   <th>DUE</th>
                   <th>TOTAL</th>
+                  <th>ACTION</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr data-status="active">
-                  <td style="font-weight:700;">#PPR-48</td>
-                  <td>3D Marketing Brochure</td>
-                  <td>Brochure</td>
-                  <td>1,000</td>
-                  <td><span class="badge b-active">Active</span></td>
-                  <td>Oct 24</td>
-                  <td style="font-weight:700;">₱4,250</td>
-                </tr>
-                <tr data-status="done">
-                  <td style="font-weight:700;">#PPR-47</td>
-                  <td>Holiday Flyer Pack</td>
-                  <td>Flyer</td>
-                  <td>5,000</td>
-                  <td><span class="badge b-done">Done</span></td>
-                  <td>Oct 18</td>
-                  <td style="font-weight:700;">₱2,450</td>
-                </tr>
-                <tr data-status="pending">
-                  <td style="font-weight:700;">#PPR-45</td>
-                  <td>Corporate Annual Report</td>
-                  <td>Booklet</td>
-                  <td>250</td>
-                  <td><span class="badge b-pending">Reprint</span></td>
-                  <td>—</td>
-                  <td style="font-weight:700;">₱12,800</td>
-                </tr>
-                <tr data-status="delivered">
-                  <td style="font-weight:700;">#PPR-43</td>
-                  <td>Conference Banner Set</td>
-                  <td>Banner</td>
-                  <td>1,200</td>
-                  <td><span class="badge b-done">Delivered</span></td>
-                  <td>Oct 21</td>
-                  <td style="font-weight:700;">₱15,500</td>
-                </tr>
-                <tr data-status="active">
-                  <td style="font-weight:700;">#PPR-41</td>
-                  <td>Promotional Mailers</td>
-                  <td>Mailer</td>
-                  <td>5,000</td>
-                  <td><span class="badge b-active">Active</span></td>
-                  <td>Nov 2</td>
-                  <td style="font-weight:700;">₱8,750</td>
+              <tbody id="ordersTbody">
+                <tr>
+                  <td colspan="8" style="text-align:center;color:var(--muted);padding:40px;">
+                    <i class="bi bi-arrow-repeat spin" style="font-size:2rem;display:block;margin-bottom:12px;"></i>
+                    Loading your orders history...
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -517,6 +515,65 @@ try {
 
   <div class="toast" id="toast"><i class="bi bi-check-circle-fill"></i> <span id="toastMsg"></span></div>
 
+  <!-- Proof Review Modal -->
+  <div class="modal" id="proofModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(10,18,42,0.8); backdrop-filter:blur(8px); z-index:9999; justify-content:center; align-items:center; opacity:0; transition:opacity 0.2s ease-in-out;">
+    <div style="background:var(--card); border:1px solid var(--border); border-radius:20px; width:95%; max-width:650px; padding:28px; box-shadow:0 15px 40px rgba(0,0,0,0.5); text-align:left; transform:scale(0.9); transition:transform 0.2s ease-in-out; max-height:90vh; overflow-y:auto;" id="proofModalContent">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <h4 style="margin:0; font-family:'Sora',sans-serif; font-weight:800; display:flex; align-items:center; gap:8px;">
+          <i class="bi bi-file-earmark-check-fill" style="color:var(--accent);"></i>
+          Review Print Proof
+        </h4>
+        <button type="button" class="btn btn-sm btn-outline" style="border-radius:50%; width:32px; height:32px; padding:0; display:grid; place-items:center;" onclick="closeProofModal()"><i class="bi bi-x" style="font-size:1.2rem;"></i></button>
+      </div>
+      
+      <div style="background:rgba(29, 140, 248, 0.05); border:1px solid rgba(29, 140, 248, 0.2); border-radius:12px; padding:16px; margin-bottom:20px;">
+        <div style="font-size:.75rem; font-weight:700; color:var(--accent); letter-spacing:.05em; text-transform:uppercase; margin-bottom:6px;">Order Details</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; font-size:.85rem;">
+          <div><strong>Order #:</strong> <span id="proofOrderNum">PPR-000</span></div>
+          <div><strong>Job Name:</strong> <span id="proofJobName">Flyer Pack</span></div>
+          <div><strong>Specs:</strong> <span id="proofSpecs">Flyers (100 units)</span></div>
+          <div><strong>Turnaround:</strong> <span id="proofTurnaround">Standard</span></div>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:24px;">
+        <!-- Client Original Artwork -->
+        <div style="border:1px solid var(--border); border-radius:12px; padding:16px; text-align:center; background:var(--off);">
+          <div style="font-size:.75rem; font-weight:700; color:var(--muted); margin-bottom:10px; text-transform:uppercase;">Your Uploaded Artwork</div>
+          <i class="bi bi-file-earmark-pdf" style="font-size:3rem; color:var(--muted); display:block; margin-bottom:8px;"></i>
+          <span style="font-size:.78rem; font-weight:600; display:block; word-break:break-all; margin-bottom:10px;" id="proofOriginalFileName">artwork.pdf</span>
+          <a id="proofOriginalDownload" href="#" target="_blank" class="btn btn-outline btn-sm" style="display:inline-flex; align-items:center; gap:6px;"><i class="bi bi-download"></i> View Artwork</a>
+        </div>
+        
+        <!-- Admin Proof File -->
+        <div style="border:2px dashed var(--accent); border-radius:12px; padding:16px; text-align:center; background:rgba(29,140,248,0.02);">
+          <div style="font-size:.75rem; font-weight:700; color:var(--accent); margin-bottom:10px; text-transform:uppercase;">Admin's Ready Proof</div>
+          <i class="bi bi-file-earmark-check" style="font-size:3rem; color:var(--accent); display:block; margin-bottom:8px;"></i>
+          <span style="font-size:.78rem; font-weight:600; display:block; word-break:break-all; margin-bottom:10px;" id="proofAdminFileName">proof_version_1.pdf</span>
+          <a id="proofAdminDownload" href="#" target="_blank" class="btn btn-primary btn-sm" style="display:inline-flex; align-items:center; gap:6px; background:var(--accent); color:#fff; border:none;"><i class="bi bi-eye"></i> View Print Proof</a>
+        </div>
+      </div>
+      
+      <div style="background:rgba(251, 99, 64, 0.05); border:1px solid rgba(251, 99, 64, 0.2); border-radius:12px; padding:16px; margin-bottom:24px; display:flex; gap:12px; align-items:center;">
+        <i class="bi bi-exclamation-triangle-fill" style="color:var(--warning); font-size:1.5rem; flex-shrink:0;"></i>
+        <div style="font-size:.8rem; color:var(--muted); line-height:1.4;">
+          Please carefully inspect the proof before approval. Approved proofs move immediately to prepress and printing stages. If changes are needed, click Request Revision.
+        </div>
+      </div>
+
+      <input type="hidden" id="proofOrderIdVal">
+
+      <div style="display:flex; justify-content:flex-end; gap:12px;">
+        <button type="button" class="btn btn-outline" style="border-color:var(--danger); color:var(--danger);" onclick="submitProofReview('revise')">
+          <i class="bi bi-x-circle"></i> Request Revision
+        </button>
+        <button type="button" class="btn btn-primary" style="background:var(--success); border:none; color:#fff;" onclick="submitProofReview('approve')">
+          <i class="bi bi-check-circle"></i> Approve Proof & Print
+        </button>
+      </div>
+    </div>
+  </div>
+
   <script src="../assets/js/printpro.js"></script>
   <script>
     // Load credits data
@@ -607,12 +664,416 @@ try {
         .catch(err => console.log('Credits load error:', err));
     }
 
+    // ── LOAD ORDER SPECS (dynamic dropdowns) ──────────────────
+    async function loadOrderSpecs() {
+      try {
+        const res  = await fetch('../api/specs.php');
+        const json = await res.json();
+        if (!json.success) return;
+
+        const sizes    = json.data.filter(s => s.spec_type === 'size'   && s.is_active == 1);
+        const papers   = json.data.filter(s => s.spec_type === 'paper'  && s.is_active == 1);
+        const finishes = json.data.filter(s => s.spec_type === 'finish' && s.is_active == 1);
+
+        const sizeEl   = document.getElementById('sizeSelect');
+        const paperEl  = document.getElementById('paperSelect');
+        const finishEl = document.getElementById('finishSelect');
+
+        sizeEl.innerHTML = '<option value="0">Select Size</option>' +
+          sizes.map(s => `<option value="${parseFloat(s.price_modifier).toFixed(2)}" data-id="${s.id}">${s.name} (${parseFloat(s.price_modifier).toFixed(2)}×)</option>`).join('');
+
+        paperEl.innerHTML = '<option value="0">Select Paper</option>' +
+          papers.map(p => `<option value="${parseFloat(p.price_modifier).toFixed(2)}" data-id="${p.id}">${p.name} (${parseFloat(p.price_modifier).toFixed(2)}×)</option>`).join('');
+
+        finishEl.innerHTML = '<option value="0">None</option>' +
+          finishes.map(f => `<option value="${parseFloat(f.per_unit_fee||0).toFixed(4)}" data-id="${f.id}" data-setup="${f.setup_fee||0}">${f.name} (+₱${parseFloat(f.per_unit_fee||0).toFixed(2)}/unit)</option>`).join('');
+
+      } catch(e) {
+        console.warn('Could not load order specs:', e);
+      }
+    }
+
+    // ── CLIENT ORDER WIZARD STATE & LOGIC ──────────────────
+    let selectedProduct = 'Flyers';
+    let selectedArtworkFile = null;
+
+    function selectProduct(btn, product) {
+        document.querySelectorAll('#productTypes .pt-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        selectedProduct = product;
+        document.getElementById('sumProduct').textContent = product;
+        
+        const jobNameInput = document.getElementById('jobNameInput');
+        if (jobNameInput && !jobNameInput.value.trim()) {
+            document.getElementById('sumJobName').textContent = product + ' Project';
+        }
+        
+        calcPrice();
+    }
+
+    function updateSummaryJobName(val) {
+        document.getElementById('sumJobName').textContent = val.trim() ? val.trim() : (selectedProduct + ' Project');
+    }
+
+    function updateQty(val) {
+        document.getElementById('qtyDisplay').textContent = val;
+        document.getElementById('sumQty').textContent = val + ' units';
+        calcPrice();
+    }
+
+    function calcPrice() {
+        const sizeSelect = document.getElementById('sizeSelect');
+        const paperSelect = document.getElementById('paperSelect');
+        const finishSelect = document.getElementById('finishSelect');
+        const sidesSelect = document.getElementById('sidesSelect');
+        const qtySlider = document.getElementById('qtySlider');
+
+        if (!sizeSelect || !paperSelect || !finishSelect || !qtySlider) return;
+
+        const sizeVal = parseFloat(sizeSelect.value) || 0;
+        const paperVal = parseFloat(paperSelect.value) || 0;
+        
+        const selectedFinishOpt = finishSelect.options[finishSelect.selectedIndex];
+        const finishPerUnit = parseFloat(selectedFinishOpt.value) || 0;
+        const finishSetup = parseFloat(selectedFinishOpt.getAttribute('data-setup')) || 0;
+
+        const sidesVal = parseFloat(sidesSelect.value) || 1;
+        const qty = parseInt(qtySlider.value) || 100;
+
+        let baseProdPrice = 1.5;
+        if (selectedProduct === 'Brochures') baseProdPrice = 2.5;
+        if (selectedProduct === 'Banners') baseProdPrice = 12.0;
+
+        let unitCost = baseProdPrice * sizeVal * paperVal * sidesVal;
+        if (unitCost === 0) {
+            document.getElementById('sumTotal').textContent = '₱—';
+            return;
+        }
+
+        let totalCost = (unitCost * qty) + finishSetup + (finishPerUnit * qty);
+        
+        document.getElementById('sumTotal').textContent = '₱' + totalCost.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        document.getElementById('sumTotal').setAttribute('data-total-raw', totalCost.toFixed(2));
+    }
+
+    function handleArtworkSelection(input) {
+        if (input.files && input.files.length > 0) {
+            const file = input.files[0];
+            selectedArtworkFile = file;
+            
+            document.getElementById('previewFileName').textContent = file.name;
+            document.getElementById('previewFileSize').textContent = (file.size / (1024 * 1024)).toFixed(2) + ' MB';
+            document.getElementById('sumArtwork').textContent = file.name;
+            document.getElementById('sumArtwork').style.color = 'var(--success)';
+            document.getElementById('upload-preview').style.display = 'block';
+            document.getElementById('upload-area').style.borderColor = 'var(--success)';
+            document.getElementById('upload-area').style.background = 'rgba(45, 206, 137, 0.05)';
+        }
+    }
+
+    function removeSelectedArtwork(e) {
+        if (e) e.stopPropagation();
+        selectedArtworkFile = null;
+        document.getElementById('artworkUploadInput').value = '';
+        document.getElementById('upload-preview').style.display = 'none';
+        document.getElementById('sumArtwork').textContent = 'None';
+        document.getElementById('sumArtwork').style.color = 'var(--muted)';
+        
+        const uploadArea = document.getElementById('upload-area');
+        if (uploadArea) {
+            uploadArea.style.borderColor = 'var(--border)';
+            uploadArea.style.background = 'var(--off)';
+        }
+    }
+
+    async function submitClientOrder() {
+        const sizeSelect = document.getElementById('sizeSelect');
+        const paperSelect = document.getElementById('paperSelect');
+        const finishSelect = document.getElementById('finishSelect');
+        const sidesSelect = document.getElementById('sidesSelect');
+        const qtySlider = document.getElementById('qtySlider');
+        const jobNameInput = document.getElementById('jobNameInput');
+        const totalSpan = document.getElementById('sumTotal');
+
+        if (!sizeSelect || sizeSelect.value === '0') {
+            showToast('Please select a size multiplier.');
+            return;
+        }
+        if (!paperSelect || paperSelect.value === '0') {
+            showToast('Please select a paper multiplier.');
+            return;
+        }
+        if (!selectedArtworkFile) {
+            showToast('Please upload an artwork file to complete Step 4.');
+            return;
+        }
+
+        const placeBtn = document.getElementById('placeOrderBtn');
+        placeBtn.disabled = true;
+        placeBtn.textContent = 'Placing Order...';
+
+        const totalCost = parseFloat(totalSpan.getAttribute('data-total-raw')) || 0;
+
+        const formData = new FormData();
+        formData.append('product_type', selectedProduct);
+        formData.append('job_name', jobNameInput.value.trim());
+        formData.append('size_width', sizeSelect.options[sizeSelect.selectedIndex].text.includes('8.5') ? 8.5 : 4.0);
+        formData.append('size_height', sizeSelect.options[sizeSelect.selectedIndex].text.includes('11') ? 11.0 : 6.0);
+        formData.append('paper_weight', paperSelect.options[paperSelect.selectedIndex].text.split(' (')[0]);
+        formData.append('finish', finishSelect.options[finishSelect.selectedIndex].text.split(' (+₱')[0]);
+        formData.append('bleed', 'With Bleed');
+        formData.append('quantity', qtySlider.value);
+        formData.append('turnaround', 'standard');
+        formData.append('shipping', 'free');
+        formData.append('total_price', totalCost);
+        formData.append('artwork_file', selectedArtworkFile);
+
+        try {
+            const res = await fetch('../api/place_order.php', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await res.json();
+            
+            if (data.success) {
+                showToast(`Order Placed! ID: ${data.order_number}`);
+                
+                // Reset form fields
+                jobNameInput.value = '';
+                removeSelectedArtwork();
+                sizeSelect.selectedIndex = 0;
+                paperSelect.selectedIndex = 0;
+                finishSelect.selectedIndex = 0;
+                sidesSelect.selectedIndex = 0;
+                qtySlider.value = 100;
+                updateQty(100);
+                
+                // Refresh data
+                loadCredits();
+                loadMyOrders();
+                
+                // Switch to orders page
+                showPage('corders');
+            } else {
+                showToast(data.message || 'Error placing order');
+            }
+        } catch (e) {
+            showToast('Network error while placing order.');
+        } finally {
+            placeBtn.disabled = false;
+            placeBtn.textContent = 'Place Order →';
+        }
+    }
+
+    // ── CLIENT MY ORDERS HISTORY & PROOF ACTIONS ──────────
+    let clientOrders = [];
+
+    async function loadMyOrders() {
+      try {
+        const res = await fetch('../api/get_orders.php');
+        const json = await res.json();
+        if (json.success) {
+          clientOrders = json.data;
+          renderOrdersTable();
+        } else {
+          console.warn('Failed to load client orders:', json.message);
+        }
+      } catch (e) {
+        console.warn('Network error loading orders:', e);
+      }
+    }
+
+    function renderOrdersTable() {
+      const tbody = document.getElementById('ordersTbody');
+      if (!tbody) return;
+
+      const filterSelect = document.querySelector('[onchange="filterOrdersBySelect(this)"]');
+      const filter = filterSelect ? filterSelect.value : 'All Status';
+
+      let filtered = clientOrders;
+      if (filter === 'Active') {
+        filtered = clientOrders.filter(o => ['Proof Pending', 'Proof Pending Review', 'Prepress', 'Printing', 'Finishing', 'Shipping'].includes(o.status));
+      } else if (filter === 'Pending') {
+        filtered = clientOrders.filter(o => ['Proof Pending', 'Proof Pending Review'].includes(o.status));
+      } else if (filter === 'Done' || filter === 'Delivered') {
+        filtered = clientOrders.filter(o => o.status === 'Delivered' || o.status === 'Reprint' || o.status === 'Done');
+      }
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="8" style="text-align:center;color:var(--muted);padding:40px;">
+              <i class="bi bi-info-circle" style="font-size:2rem;display:block;margin-bottom:12px;"></i>
+              No orders found matching this status.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(o => {
+        const orderNum = o.order_number || ('PPR-' + String(o.id).padStart(3, '0'));
+        const jobName = o.job_name || (o.product_type + ' Project');
+        const formattedTotal = parseFloat(o.total_price || o.total_amount || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        
+        let badgeClass = 'b-active';
+        if (o.status === 'Proof Pending') badgeClass = 'b-pending';
+        if (o.status === 'Proof Pending Review') badgeClass = 'b-pending';
+        if (o.status === 'Prepress') badgeClass = 'b-active';
+        if (o.status === 'Printing') badgeClass = 'b-active';
+        if (o.status === 'Finishing') badgeClass = 'b-active';
+        if (o.status === 'Shipping') badgeClass = 'b-active';
+        if (o.status === 'Delivered' || o.status === 'Done') badgeClass = 'b-done';
+        if (o.status === 'Reprint') badgeClass = 'b-pending';
+
+        let actionCell = '—';
+        if (o.status === 'Proof Pending Review' && o.proof_file) {
+          actionCell = `<button class="btn btn-sm btn-primary" style="padding:4px 10px; font-size:.78rem; border-radius:6px; background:var(--accent); color:#fff; border:none; display:inline-flex; align-items:center; gap:4px; font-weight:600;" onclick="openClientProofModal(${o.id})"><i class="bi bi-file-earmark-check"></i> Review Proof</button>`;
+        }
+
+        const dateStr = o.due_date ? new Date(o.due_date).toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'}) : '—';
+
+        return `
+          <tr data-status="${o.status.toLowerCase()}">
+            <td style="font-weight:700;">#${orderNum}</td>
+            <td style="font-weight:500;">${escapeHtml(jobName)}</td>
+            <td>${o.product_type}</td>
+            <td>${parseInt(o.quantity).toLocaleString()}</td>
+            <td><span class="badge ${badgeClass}">${o.status}</span></td>
+            <td>${dateStr}</td>
+            <td style="font-weight:700; color:var(--navy);">₱${formattedTotal}</td>
+            <td>${actionCell}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function filterOrdersBySelect(select) {
+      renderOrdersTable();
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function openClientProofModal(orderId) {
+      const order = clientOrders.find(o => parseInt(o.id) === parseInt(orderId));
+      if (!order) return;
+
+      const modal = document.getElementById('proofModal');
+      
+      document.getElementById('proofOrderNum').textContent = order.order_number || ('PPR-' + String(order.id).padStart(3, '0'));
+      document.getElementById('proofJobName').textContent = order.job_name || (order.product_type + ' Project');
+      document.getElementById('proofSpecs').textContent = `${order.product_type} (${parseInt(order.quantity).toLocaleString()} units)`;
+      document.getElementById('proofTurnaround').textContent = order.turnaround || 'Standard';
+      
+      const artworkFileName = order.artwork_file ? order.artwork_file.split('/').pop() : 'artwork.pdf';
+      document.getElementById('proofOriginalFileName').textContent = artworkFileName;
+      
+      const originalPath = order.artwork_file ? '../' + order.artwork_file.replace(/^\.\.\//, '') : '#';
+      document.getElementById('proofOriginalDownload').href = originalPath;
+      
+      const proofFileName = order.proof_file ? order.proof_file.split('/').pop() : 'proof.pdf';
+      document.getElementById('proofAdminFileName').textContent = proofFileName;
+      
+      const proofPath = order.proof_file ? '../' + order.proof_file.replace(/^\.\.\//, '') : '#';
+      document.getElementById('proofAdminDownload').href = proofPath;
+      
+      document.getElementById('proofOrderIdVal').value = order.id;
+      
+      modal.style.display = 'flex';
+      setTimeout(() => {
+        modal.style.opacity = '1';
+        document.getElementById('proofModalContent').style.transform = 'scale(1)';
+      }, 10);
+    }
+
+    function closeProofModal() {
+      const modal = document.getElementById('proofModal');
+      modal.style.opacity = '0';
+      document.getElementById('proofModalContent').style.transform = 'scale(0.9)';
+      setTimeout(() => {
+        modal.style.display = 'none';
+      }, 200);
+    }
+
+    async function submitProofReview(action) {
+      const orderId = document.getElementById('proofOrderIdVal').value;
+      if (!orderId) return;
+      
+      const confirmation = action === 'approve' 
+        ? 'Are you sure you want to APPROVE this proof? The order will move directly to Prepress and production.' 
+        : 'Are you sure you want to REQUEST REVISIONS on this proof? The order status will revert to Proof Pending.';
+      
+      if (!confirm(confirmation)) return;
+      
+      const formData = new FormData();
+      formData.append('order_id', orderId);
+      formData.append('action', action);
+      
+      try {
+        const res = await fetch('../api/review_proof.php', {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast(action === 'approve' ? 'Proof approved! Status updated to Prepress.' : 'Revision requested successfully.');
+          closeProofModal();
+          loadCredits();
+          loadMyOrders();
+        } else {
+          showToast(data.message || 'Error processing proof review');
+        }
+      } catch (e) {
+        showToast('Network error during proof review.');
+      }
+    }
+
     // Local initialization
     document.addEventListener('DOMContentLoaded', () => {
       currentUser = { name: '<?php echo $userName; ?>', role: '<?php echo $userRole; ?>', email: '<?php echo $userEmail; ?>' };
       setupUI();
-      loadCredits(); // Load credits on page load
-      setInterval(loadCredits, 30000); // Refresh credits every 30 seconds
+      loadCredits();
+      loadOrderSpecs();
+      loadMyOrders();
+      setInterval(loadCredits, 30000);
+      
+      // Setup upload area drag and drop listeners
+      const uploadArea = document.getElementById('upload-area');
+      if (uploadArea) {
+          uploadArea.addEventListener('dragover', (e) => {
+              e.preventDefault();
+              uploadArea.style.borderColor = 'var(--accent)';
+              uploadArea.style.background = 'rgba(29, 140, 248, 0.05)';
+          });
+          uploadArea.addEventListener('dragleave', () => {
+              if (selectedArtworkFile) {
+                  uploadArea.style.borderColor = 'var(--success)';
+                  uploadArea.style.background = 'rgba(45, 206, 137, 0.05)';
+              } else {
+                  uploadArea.style.borderColor = 'var(--border)';
+                  uploadArea.style.background = 'var(--off)';
+              }
+          });
+          uploadArea.addEventListener('drop', (e) => {
+              e.preventDefault();
+              const files = e.dataTransfer.files;
+              if (files && files.length > 0) {
+                  const fileInput = document.getElementById('artworkUploadInput');
+                  if (fileInput) {
+                      fileInput.files = files;
+                      handleArtworkSelection(fileInput);
+                  }
+              }
+          });
+      }
     });
   </script>
 </body>

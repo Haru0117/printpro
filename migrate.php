@@ -16,6 +16,11 @@ try {
         "ALTER TABLE orders ADD COLUMN size_id INT DEFAULT 0",
         "ALTER TABLE orders ADD COLUMN finish_id INT DEFAULT 0",
         "ALTER TABLE orders ADD COLUMN total_price DECIMAL(10,2) DEFAULT 0.00",
+        "ALTER TABLE orders MODIFY COLUMN status ENUM('Proof Pending', 'Proof Pending Review', 'Proof Approved', 'Prepress', 'Printing', 'Finishing', 'Shipping', 'Delivered', 'Reprint') NOT NULL DEFAULT 'Proof Pending'",
+        "ALTER TABLE orders ADD COLUMN artwork_file VARCHAR(255) DEFAULT NULL",
+        "ALTER TABLE orders ADD COLUMN proof_file VARCHAR(255) DEFAULT NULL",
+        "ALTER TABLE orders ADD COLUMN proof_requested_at TIMESTAMP NULL DEFAULT NULL",
+        "ALTER TABLE orders ADD COLUMN proof_reviewed_at TIMESTAMP NULL DEFAULT NULL",
 
         // 2. Users table fixes
         "ALTER TABLE users ADD COLUMN name VARCHAR(120) NOT NULL AFTER id",

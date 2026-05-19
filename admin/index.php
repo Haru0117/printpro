@@ -1,1959 +1,2438 @@
+<?php
+// â”€â”€ AUTH GUARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+session_start();
+
+// Not logged in → login page
+if (!isset($_SESSION['user_id'])) {
+    header('Location: ../index.html?action=login');
+    exit;
+}
+
+// Clients hitting this page → bounce to client dashboard
+$_role = strtolower($_SESSION['role'] ?? '');
+if ($_role === 'client') {
+    header('Location: ../client/');
+    exit;
+}
+
+// Only admin / super_admin allowed past here
+if ($_role !== 'admin' && $_role !== 'super_admin') {
+    header('Location: ../index.html?action=login');
+    exit;
+}
+
+$userName = htmlspecialchars($_SESSION['name'] ?? 'Admin');
+$userEmail = htmlspecialchars($_SESSION['email'] ?? '');
+$userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
+?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PrintPro — Engineers for Efficiency</title>
-
-    <!-- Bootstrap 5 -->
+    <title>PrintPro Admin Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <!-- Google Fonts -->
     <link
         href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap"
         rel="stylesheet">
-
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon.png">
     <style>
         :root {
-            --navy: #1a2340;
-            --navy-mid: #2a3558;
-            --accent: #4f7ef7;
-            --accent-light: #7ba3ff;
+            --navy: #0d1b3e;
+            --sidebar: #0f2057;
+            --accent: #1d8cf8;
+            --accent2: #00c6ff;
             --teal: #3ec6c6;
-            --off-white: #f4f6fb;
-            --muted: #6b7a99;
+            --danger: #f5365c;
+            --warning: #fb6340;
+            --success: #2dce89;
+            --purple: #7c4dff;
             --border: #dde3f0;
-            --slate: #8a96b0;
+            --muted: #8898aa;
+            --off: #f4f6fb;
+            --dark-bg: #0a1628;
+            --dark-card: #111e40;
+            --dark-card2: #162048;
         }
 
-        @media (max-width: 768px) {
-            .navbar-brand img {
-                height: 28px !important;
-            }
-
-            .hero-title {
-                font-size: 2.25rem !important;
-            }
-
-            .hero-desc {
-                font-size: 1rem !important;
-                margin-left: auto;
-                margin-right: auto;
-            }
-
-            #hero {
-                text-align: center;
-                padding-top: 3rem !important;
-            }
-
-            #hero .d-flex {
-                justify-content: center;
-            }
-
-            .dashboard-mockup {
-                display: none;
-            }
+        [data-theme="dark"] {
+            --navy: #e0e6ed;
+            --off: #0d1b3e;
+            --border: rgba(255, 255, 255, 0.08);
+            --dark-bg: #0a1628;
+            --dark-card: #111e40;
+            --dark-card2: #162048;
+            --muted: #8898aa;
+            --accent: #fb6340;
         }
 
-        /* ── MODAL RESPONSIVENESS ── */
-        @media (max-width: 576px) {
-            #loginModal {
-                padding: 10px;
-                align-items: flex-end;
-                /* Mobile bottom sheet style */
-            }
-
-            #loginModal>div:last-child {
-                border-radius: 20px 20px 0 0 !important;
-                max-width: 100% !important;
-                animation: modalSlideUp .3s cubic-bezier(.34, 1.56, .64, 1);
-            }
-
-            #loginModal .modal-header {
-                padding: 18px 20px 14px !important;
-            }
-
-            #loginModal .modal-body {
-                padding: 20px 20px 30px !important;
-                max-height: 70vh;
-                overflow-y: auto;
-            }
-        }
-
-        @keyframes modalSlideUp {
-            from {
-                transform: translateY(100%);
-            }
-
-            to {
-                transform: translateY(0);
-            }
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            font-family: 'DM Sans', sans-serif;
-            color: var(--navy);
-            overflow-x: hidden;
-        }
-
-        /* ── UTILITIES ── */
-        .font-sora {
-            font-family: 'Sora', sans-serif;
-        }
-
-        .bg-navy {
-            background-color: var(--navy) !important;
-        }
-
-        .bg-navy-mid {
-            background-color: var(--navy-mid) !important;
-        }
-
-        .bg-off-white {
-            background-color: var(--off-white) !important;
-        }
-
-        .text-accent {
-            color: var(--accent) !important;
-        }
-
-        .text-accent-light {
-            color: var(--accent-light) !important;
-        }
-
-        .text-muted-pp {
-            color: var(--muted) !important;
-        }
-
-        .text-slate {
-            color: var(--slate) !important;
-        }
-
-        /* ── NAVBAR ── */
-        .navbar {
-            border-bottom: 1px solid var(--border);
-            box-shadow: 0 2px 16px rgba(26, 35, 64, .06);
-        }
-
-        .navbar-brand {
-            font-family: 'Sora', sans-serif;
-            font-weight: 700;
-            font-size: 1.15rem;
-            color: var(--navy);
-        }
-
-        .logo-icon {
-            width: 30px;
-            height: 30px;
-            background: linear-gradient(135deg, var(--accent), var(--teal));
-            border-radius: 7px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .nav-link {
-            color: var(--muted) !important;
-            font-weight: 500;
-            font-size: .9rem;
-            transition: color .2s;
-        }
-
-        .nav-link:hover {
+        /* ── GLOBAL DARK MODE OVERRIDES ── */
+        html[data-theme="dark"] body {
+            background: var(--dark-bg) !important;
             color: var(--navy) !important;
         }
 
-        /* ── BUTTONS ── */
-        .btn-accent {
-            background: var(--accent);
+        html[data-theme="dark"] .a-sidebar,
+        html[data-theme="dark"] .a-topbar,
+        html[data-theme="dark"] .card,
+        html[data-theme="dark"] .kpi-card,
+        html[data-theme="dark"] .chart-card,
+        html[data-theme="dark"] .orders-card,
+        html[data-theme="dark"] .notif-card,
+        html[data-theme="dark"] .actions-card,
+        html[data-theme="dark"] .users-card {
+            background: var(--dark-card) !important;
+            border-color: var(--border) !important;
+            color: var(--navy) !important;
+        }
+
+        html[data-theme="dark"] .a-content {
+            background: var(--dark-bg) !important;
+        }
+
+        html[data-theme="dark"] .a-nav-item:hover,
+        html[data-theme="dark"] .a-tab:hover {
+            background: rgba(255, 255, 255, 0.03) !important;
+            color: #fff !important;
+        }
+
+        html[data-theme="dark"] table th {
+            background: rgba(255, 255, 255, 0.02) !important;
+            color: var(--muted) !important;
+            border-bottom: 1px solid var(--border) !important;
+        }
+
+        html[data-theme="dark"] table td {
+            border-bottom: 1px solid var(--border) !important;
+            color: var(--navy) !important;
+        }
+
+        html[data-theme="dark"] .btn-light {
+            background: var(--dark-card2) !important;
+            border: 1px solid var(--border) !important;
+            color: #fff !important;
+        }
+
+        html[data-theme="dark"] input,
+        html[data-theme="dark"] select,
+        html[data-theme="dark"] textarea {
+            background: var(--dark-card2) !important;
+            border-color: var(--border) !important;
+            color: #fff !important;
+        }
+
+        html,
+        body {
+            height: 100%;
+            font-family: 'DM Sans', sans-serif;
+            background: #f0f2f8;
+            transition: background 0.3s ease;
+        }
+
+        [data-theme="dark"] body {
+            background: var(--dark-bg);
             color: #fff;
-            border: none;
-            font-weight: 600;
-            transition: background .2s, transform .15s;
         }
 
-        .btn-accent:hover {
-            background: #3a6be8;
+        [data-theme="dark"] h1,
+        [data-theme="dark"] h2,
+        [data-theme="dark"] h3,
+        [data-theme="dark"] h4,
+        [data-theme="dark"] h5,
+        [data-theme="dark"] h6 {
             color: #fff;
-            transform: translateY(-1px);
         }
 
-        .btn-outline-navy {
-            border: 1px solid var(--border);
-            color: var(--navy);
-            background: transparent;
-            font-weight: 500;
-            transition: background .2s;
+        [data-theme="dark"] .text-muted {
+            color: #a0aec0 !important;
         }
 
-        .btn-outline-navy:hover {
-            background: var(--off-white);
-            color: var(--navy);
-        }
-
-        /* ── EYEBROW ── */
-        .eyebrow {
-            display: inline-block;
-            font-size: .72rem;
-            font-weight: 700;
-            letter-spacing: .12em;
-            text-transform: uppercase;
-            color: var(--accent);
-            background: rgba(79, 126, 247, .1);
-            padding: 4px 14px;
-            border-radius: 20px;
-        }
-
-        /* ── SECTION TITLE ── */
-        .section-title {
-            font-family: 'Sora', sans-serif;
-            font-size: clamp(1.6rem, 3vw, 2rem);
-            font-weight: 800;
-        }
-
-        /* ── HERO ── */
-        #hero {
-            position: relative;
+        /* ── APP SHELL ── */
+        .a-app {
+            display: flex;
+            height: 100vh;
             overflow: hidden;
         }
 
-        #hero::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(ellipse 60% 70% at 80% 50%, rgba(79, 126, 247, .09) 0%, transparent 70%);
-            pointer-events: none;
+        .a-sidebar {
+            width: 240px;
+            flex-shrink: 0;
+            background: linear-gradient(180deg, #0f2057 0%, #0d1b3e 100%);
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+            z-index: 1000;
         }
 
-        .hero-title {
-            font-family: 'Sora', sans-serif;
-            font-size: clamp(2rem, 4vw, 2.8rem);
-            font-weight: 800;
-            line-height: 1.15;
-        }
-
-        /* ── DASHBOARD MOCKUP ── */
-        .dashboard-mockup {
-            border-radius: 16px;
-            box-shadow: 0 24px 80px rgba(26, 35, 64, .18), 0 4px 16px rgba(26, 35, 64, .08);
-            border: 1px solid var(--border);
-            overflow: hidden;
-        }
-
-        .mockup-bar {
-            background: var(--navy);
-            padding: 10px 16px;
+        .a-brand {
+            padding: 24px 24px 18px;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, .08);
+            color: #fff;
         }
 
-        .mockup-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, .2);
+        .a-brand img {
+            height: 28px;
+            width: auto;
+            object-fit: contain;
+            filter: brightness(0) invert(1);
         }
 
-        .stat-card {
-            background: var(--off-white);
-            border-radius: 10px;
-            border: 1px solid var(--border);
-            padding: 14px;
+        .a-brand-badge {
+            font-size: .65rem;
+            background: #1d8cf8;
+            color: #fff;
+            padding: 2px 9px;
+            border-radius: 6px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            flex-shrink: 0;
         }
 
-        .stat-num {
-            font-family: 'Sora', sans-serif;
-            font-size: 1.35rem;
-            font-weight: 700;
-            color: var(--navy);
-        }
-
-        .stat-label {
-            font-size: .7rem;
-            color: var(--muted);
-        }
-
-        .stat-up {
-            font-size: .7rem;
-            color: #22c55e;
-            font-weight: 600;
-        }
-
-        .mockup-chart {
-            background: var(--off-white);
-            border-radius: 10px;
-            border: 1px solid var(--border);
-            height: 100px;
-            display: flex;
-            align-items: flex-end;
-            gap: 6px;
-            padding: 10px;
-        }
-
-        .chart-bar {
+        .a-nav {
+            padding: 10px 0;
             flex: 1;
-            border-radius: 4px 4px 0 0;
-            background: linear-gradient(180deg, var(--accent) 0%, var(--accent-light) 100%);
-            transition: opacity .2s;
+            overflow-y: auto;
         }
 
-        .chart-bar:hover {
-            opacity: .75;
-        }
-
-        /* ── ABOUT ── */
-        .about-logo-big {
-            font-family: 'Sora', sans-serif;
-            font-weight: 800;
-            font-size: 1.9rem;
-            color: #fff;
-        }
-
-        .logo-icon-big {
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, var(--accent), var(--teal));
-            border-radius: 12px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* ── FEATURE CARDS ── */
-        .feature-card {
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            transition: box-shadow .2s, transform .2s;
-        }
-
-        .feature-card:hover {
-            box-shadow: 0 12px 40px rgba(26, 35, 64, .1);
-            transform: translateY(-4px);
-        }
-
-        .feature-icon {
-            width: 46px;
-            height: 46px;
-            border-radius: 10px;
-            background: rgba(79, 126, 247, .1);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.3rem;
-            color: var(--accent);
-        }
-
-        /* ── PRICING ── */
-        .plan-card {
-            border: 1px solid rgba(255, 255, 255, .12);
-            border-radius: 16px;
-            background: rgba(255, 255, 255, .05);
-            transition: background .2s, border-color .2s;
-            position: relative;
-        }
-
-        .plan-card:hover {
-            background: rgba(255, 255, 255, .09);
-            border-color: rgba(255, 255, 255, .22);
-        }
-
-        .plan-card.featured {
-            background: var(--accent);
-            border-color: var(--accent);
-        }
-
-        .plan-badge {
-            position: absolute;
-            top: -13px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--teal);
-            color: #fff;
-            font-size: .68rem;
-            font-weight: 700;
-            letter-spacing: .08em;
-            text-transform: uppercase;
-            padding: 4px 14px;
-            border-radius: 20px;
-            white-space: nowrap;
-        }
-
-        .plan-name {
-            font-size: .78rem;
-            font-weight: 700;
-            letter-spacing: .1em;
-            text-transform: uppercase;
-            color: rgba(255, 255, 255, .65);
-        }
-
-        .plan-price {
-            font-family: 'Sora', sans-serif;
-            font-size: 2.4rem;
-            font-weight: 800;
-            color: #fff;
-        }
-
-        .plan-price small {
-            font-size: 1rem;
-            font-weight: 400;
-            opacity: .55;
-        }
-
-        .plan-desc {
-            font-size: .82rem;
-            color: rgba(255, 255, 255, .5);
-            line-height: 1.55;
-        }
-
-        .plan-features {
-            list-style: none;
-            padding: 0;
-        }
-
-        .plan-features li {
-            font-size: .85rem;
-            color: rgba(255, 255, 255, .82);
+        .a-nav-item {
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 5px 0;
-        }
-
-        .plan-features li i {
-            color: var(--teal);
-        }
-
-        .plan-card.featured .plan-features li i {
-            color: #fff;
-        }
-
-        .btn-plan {
-            width: 100%;
-            padding: 10px;
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: .9rem;
-            border: 1px solid rgba(255, 255, 255, .3);
-            background: rgba(255, 255, 255, .1);
-            color: #fff;
+            gap: 10px;
+            padding: 10px 24px;
+            font-size: .83rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, .55);
             cursor: pointer;
-            transition: background .2s;
-            font-family: 'DM Sans', sans-serif;
+            border-left: 3px solid transparent;
+            transition: all .15s;
         }
 
-        .btn-plan:hover {
-            background: rgba(255, 255, 255, .2);
+        .a-nav-item i {
+            font-size: 1rem;
+            width: 18px;
         }
 
-        .plan-card.featured .btn-plan {
-            background: #fff;
-            color: var(--accent);
-            border-color: #fff;
+        .a-nav-item:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, .05);
         }
 
-        .plan-card.featured .btn-plan:hover {
-            background: var(--off-white);
+        .a-nav-item.active {
+            color: #fff;
+            background: rgba(29, 140, 248, .18);
+            border-left-color: var(--accent);
+            font-weight: 600;
         }
 
-        /* ── QUOTATION ── */
-        .quotation-card {
-            background: #fff;
-            border-radius: 16px;
-            box-shadow: 0 24px 80px rgba(26, 35, 64, .08), 0 4px 16px rgba(26, 35, 64, .04);
-            border: 1px solid var(--border);
-            position: relative;
+        .a-logout {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        .a-logout a {
+            color: var(--muted);
+            text-decoration: none;
+            font-size: .85rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .a-logout a:hover {
+            color: var(--danger);
+        }
+
+        .a-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
             overflow: hidden;
         }
 
-        .quotation-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, var(--accent), var(--teal));
-        }
-
-        .custom-input {
-            padding: 12px 16px;
-            border: 1.5px solid #dde3f0;
-            border-radius: 10px;
-            font-family: 'DM Sans', sans-serif;
-            font-size: .9rem;
-            color: var(--navy);
-            transition: border-color .2s, box-shadow .2s;
-            background: var(--off-white);
-        }
-
-        .custom-input:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(79, 126, 247, .12);
+        .a-topbar {
+            height: 48px;
             background: #fff;
-            outline: none;
-        }
-
-        .custom-input::placeholder {
-            color: #a0aabf;
-        }
-
-        /* ── FOOTER ── */
-        .footer-col h5 {
-            font-family: 'Sora', sans-serif;
-            font-size: .875rem;
-            font-weight: 700;
-            color: var(--navy);
-        }
-
-        .footer-col ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .footer-col ul li a {
-            font-size: .875rem;
-            color: var(--muted);
-            text-decoration: none;
-            transition: color .2s;
-        }
-
-        .footer-col ul li a:hover {
-            color: var(--navy);
-        }
-
-        .social-btn {
-            width: 36px;
-            height: 36px;
-            border-radius: 8px;
-            background: var(--navy);
-            color: #fff;
-            display: inline-flex;
+            border-bottom: 1px solid var(--border);
+            display: flex;
             align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            font-size: .85rem;
-            transition: background .2s;
+            justify-content: space-between;
+            padding: 0 20px;
+            box-shadow: 0 1px 6px rgba(0, 0, 0, .06);
+            position: relative;
+            z-index: 100;
+            flex-shrink: 0;
         }
 
-        .social-btn:hover {
-            background: var(--accent);
-            color: #fff;
+        .a-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
         }
 
-        .footer-bottom {
-            font-size: .8rem;
-            color: var(--slate);
+        .a-page {
+            display: none;
         }
 
-        .footer-bottom a {
-            color: var(--slate);
-            text-decoration: none;
+        .a-page.active {
+            display: block;
         }
 
-        .footer-bottom a:hover {
+        /* ── COMPONENTS ── */
+        .card {
+            background: #fff;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        [data-theme="dark"] .card {
+            background: var(--dark-card);
+            border-color: var(--border);
+        }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .kpi-card {
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+            transition: transform .2s, background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .kpi-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .kpi-val {
+            font-family: 'Sora', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 800;
             color: var(--navy);
+            line-height: 1.2;
         }
 
-        /* ── THEME TRANSITIONS ── */
-        html {
-            transition: background-color 0.3s ease;
+        .kpi-lbl {
+            font-size: .75rem;
+            color: var(--muted);
+            margin-top: 1px;
+            font-weight: 500;
         }
 
-        body,
-        .bg-white,
-        .bg-off-white,
-        .navbar,
-        .feature-card,
-        .plan-card,
-        .quotation-card,
-        .custom-input,
-        .mockup-bar,
-        .stat-card,
-        .mockup-chart,
-        footer {
-            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        .table-responsive {
+            border-radius: 12px;
         }
 
-        /* ── DARK MODE THEME ── */
-        html[data-theme="dark"] body,
-        html[data-theme="dark"] .bg-white,
-        html[data-theme="dark"] .bg-off-white,
-        html[data-theme="dark"] .navbar,
-        html[data-theme="dark"] .bg-light {
-            background-color: #0a1628 !important;
-            color: #e0e6ed !important;
+        .table {
+            margin-bottom: 0;
         }
 
-        html[data-theme="dark"] .text-navy,
-        html[data-theme="dark"] .navbar-brand,
-        html[data-theme="dark"] .nav-link:hover,
-        html[data-theme="dark"] .hero-title,
-        html[data-theme="dark"] .section-title,
-        html[data-theme="dark"] .stat-num,
-        html[data-theme="dark"] .font-sora,
-        html[data-theme="dark"] .feature-card h5,
-        html[data-theme="dark"] .footer-col h5 {
-            color: #e0e6ed !important;
+        .table th {
+            padding: 8px 14px;
+            color: var(--muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: .68rem;
+            letter-spacing: .05em;
+            background: var(--off);
+            border-bottom: 1px solid var(--border);
         }
 
-        html[data-theme="dark"] .text-muted-pp,
-        html[data-theme="dark"] .nav-link,
-        html[data-theme="dark"] .hero-desc,
-        html[data-theme="dark"] .stat-label,
-        html[data-theme="dark"] .feature-card p,
-        html[data-theme="dark"] .plan-desc {
-            color: #8a96b0 !important;
+        .table td {
+            padding: 9px 14px;
+            border-bottom: 1px solid #f0f2f8;
+            color: #344767;
+            vertical-align: middle;
+            font-size: .78rem;
         }
 
-        html[data-theme="dark"] .feature-card,
-        html[data-theme="dark"] .plan-card:not(.featured),
-        html[data-theme="dark"] .quotation-card,
-        html[data-theme="dark"] .dashboard-mockup,
-        html[data-theme="dark"] .stat-card,
-        html[data-theme="dark"] .mockup-chart {
-            background-color: #111e40 !important;
-            border-color: rgba(255, 255, 255, 0.08) !important;
+        .table-dark-themed {
+            background: transparent !important;
         }
 
-        html[data-theme="dark"] .mockup-bar {
-            background-color: #0a1628 !important;
+        [data-theme="dark"] .table {
+            --bs-table-bg: transparent;
+            --bs-table-color: #cbd5e0;
+            --bs-table-border-color: var(--border);
+            color: #cbd5e0;
         }
 
-        html[data-theme="dark"] .custom-input {
-            background-color: #0a1628 !important;
-            border-color: rgba(255, 255, 255, 0.1) !important;
-            color: #e0e6ed !important;
+        [data-theme="dark"] .table tr {
+            background: transparent !important;
         }
 
-        html[data-theme="dark"] .custom-input:focus {
-            background-color: #111e40 !important;
+        [data-theme="dark"] .table tr:hover {
+            background: rgba(255, 255, 255, 0.02) !important;
         }
 
-        html[data-theme="dark"] .btn-outline-navy {
-            border-color: rgba(255, 255, 255, 0.2);
-            color: #e0e6ed;
+        [data-theme="dark"] .table-responsive {
+            background: transparent !important;
         }
 
-        html[data-theme="dark"] .btn-outline-navy:hover {
-            background-color: rgba(255, 255, 255, 0.05);
+        .badge-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: .65rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .02em;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .badge-success {
+            background: #2dce89 !important;
+            color: #fff !important;
+        }
+
+        .badge-warning {
+            background: #fb6340 !important;
+            color: #fff !important;
+        }
+
+        .badge-primary {
+            background: #1d8cf8 !important;
+            color: #fff !important;
+        }
+
+        .badge-danger {
+            background: #f5365c !important;
+            color: #fff !important;
+        }
+
+        [data-theme="dark"] .table td {
+            border-color: var(--border);
+            color: #cbd5e0;
+        }
+
+        [data-theme="dark"] .table th {
+            background: rgba(255, 255, 255, 0.05);
             color: #fff;
         }
 
-        html[data-theme="dark"] .navbar {
-            border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+        [data-theme="dark"] .bg-white,
+        [data-theme="dark"] .bg-light,
+        [data-theme="dark"] .bg-white-subtle,
+        [data-theme="dark"] .bg-light-subtle {
+            background-color: var(--dark-card) !important;
+            color: #fff !important;
         }
 
-        html[data-theme="dark"] #themeToggleBtn {
-            color: #e0e6ed !important;
+        [data-theme="dark"] .card-header {
+            background-color: var(--dark-card) !important;
+            border-bottom: 1px solid var(--border) !important;
+            box-shadow: none !important;
         }
 
-        html[data-theme="dark"] .modal-content {
-            background-color: #111e40 !important;
-            color: #e0e6ed;
-            border-color: rgba(255, 255, 255, 0.08);
+        [data-theme="dark"] .nav-tabs {
+            border-color: var(--border) !important;
+            background-color: transparent !important;
         }
 
-        html[data-theme="dark"] .modal-header {
-            border-bottom-color: rgba(255, 255, 255, 0.05);
+        [data-theme="dark"] .nav-tabs .nav-link {
+            color: #a0aec0 !important;
         }
 
-        html[data-theme="dark"] .form-label,
-        html[data-theme="dark"] .modal-title,
-        html[data-theme="dark"] .modal-body h5,
-        html[data-theme="dark"] .modal-body h4 {
-            color: #e0e6ed !important;
+        [data-theme="dark"] .nav-tabs .nav-link.active {
+            background: transparent !important;
+            color: var(--accent) !important;
+            border-bottom: 2px solid var(--accent) !important;
         }
 
-        html[data-theme="dark"] .form-control {
-            background-color: #0a1628;
-            border-color: rgba(255, 255, 255, 0.1);
-            color: #e0e6ed;
+        [data-theme="dark"] .modal-content {
+            background-color: var(--dark-card) !important;
+            border: 1px solid var(--border) !important;
+            color: #fff !important;
         }
 
-        html[data-theme="dark"] .form-control:focus {
-            background-color: #111e40;
-            border-color: var(--accent);
-            color: #e0e6ed;
-        }
-
-        html[data-theme="dark"] .form-text,
-        html[data-theme="dark"] .text-muted {
-            color: #8a96b0 !important;
-        }
-
-        html[data-theme="dark"] .close,
-        html[data-theme="dark"] .btn-close {
+        [data-theme="dark"] .modal-header .btn-close {
             filter: invert(1) grayscale(100%) brightness(200%);
         }
+
+        [data-theme="dark"] .shadow-sm {
+            box-shadow: none !important;
+        }
+
+        [data-theme="dark"] .nav-link {
+            color: #a0aec0 !important;
+        }
+
+        [data-theme="dark"] .nav-link:hover {
+            color: #fff !important;
+        }
+
+        /* Button Refinements */
+        .btn {
+            white-space: nowrap !important;
+            font-weight: 600 !important;
+            display: inline-flex !important;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+            height: auto !important;
+            width: auto !important;
+        }
+
+        .btn-sm {
+            padding: 8px 16px !important;
+            font-size: 0.75rem;
+            border-radius: 8px;
+        }
+
+        .btn-primary {
+            box-shadow: 0 4px 12px rgba(29, 140, 248, 0.2);
+        }
+
+        .btn-light {
+            background: #f1f3f5;
+            border: 1px solid #e9ecef;
+            color: #495057;
+        }
+
+        .btn-light:hover {
+            background: #e9ecef;
+        }
+
+        [data-theme="dark"] .btn-light {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
+            color: #cbd5e0;
+        }
+
+        [data-theme="dark"] .btn-light:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .action-btn {
+            width: 34px !important;
+            height: 34px !important;
+            padding: 0 !important;
+            flex-shrink: 0;
+            border-radius: 8px;
+        }
+
+        [data-theme="dark"] .form-control {
+            background: var(--dark-card2);
+            border-color: var(--border);
+            color: #fff;
+        }
+
+        [data-theme="dark"] .form-control:focus {
+            background: var(--dark-card2);
+            border-color: var(--accent);
+            color: #fff;
+        }
+
+        [data-theme="dark"] .btn-light {
+            background: rgba(255, 255, 255, 0.1);
+            border: 0;
+            color: #fff;
+        }
+
+        [data-theme="dark"] .modal-content {
+            background: var(--dark-card);
+            border-color: var(--border);
+            color: #fff;
+        }
+
+        [data-theme="dark"] .modal-header,
+        [data-theme="dark"] .modal-footer {
+            border-color: var(--border);
+        }
+
+        [data-theme="dark"] label,
+        [data-theme="dark"] .form-label {
+            color: #cbd5e0;
+        }
+
+        [data-theme="dark"] .nav-tabs .nav-link:not(.active) {
+            color: #a0aec0 !important;
+        }
+
+        [data-theme="dark"] .table th {
+            background: rgba(255, 255, 255, 0.05) !important;
+            color: #fff !important;
+        }
+
+        [data-theme="dark"] .table td {
+            color: #cbd5e0 !important;
+        }
+
+        [data-theme="dark"] ::placeholder {
+            color: rgba(255, 255, 255, 0.4) !important;
+        }
+
+        [data-theme="dark"] .text-muted {
+            color: #a0aec0 !important;
+        }
+
+        [data-theme="dark"] .small {
+            color: #a0aec0 !important;
+        }
+
+        .btn-sm {
+            width: 32px;
+            height: 32px;
+            padding: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            border-radius: 8px;
+        }
+
+        .btn-sm i {
+            font-size: 1rem;
+            line-height: 1;
+            margin: 0;
+        }
+
+        .progress-bar-wrap {
+            width: 100%;
+            height: 6px;
+            background: var(--off);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        [data-theme="dark"] .progress-bar-wrap {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            transition: width 0.5s ease;
+        }
+
+        .status-select {
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: .75rem;
+            font-weight: 600;
+            border: 1px solid var(--border);
+            background: transparent;
+            outline: none;
+            cursor: pointer;
+        }
+
+        [data-theme="dark"] .status-select {
+            color: #fff;
+            background: var(--dark-card2);
+        }
+
+        /* ── LOADING STATES ── */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f2f8 25%, #e0e6ed 50%, #f0f2f8 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+            border-radius: 4px;
+        }
+
+        @keyframes skeleton-loading {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        /* ── TOAST ── */
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 2000;
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 1200px) {
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .user-mgmt-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-panel {
+                position: static;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .a-sidebar {
+                position: fixed;
+                left: -260px;
+                height: 100vh;
+                box-shadow: 20px 0 50px rgba(0, 0, 0, 0.1);
+            }
+
+            .a-sidebar.show {
+                left: 0;
+            }
+
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 999;
+                backdrop-filter: blur(4px);
+            }
+
+            .sidebar-overlay.show {
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .a-topbar {
+                padding: 0 16px;
+            }
+
+            .a-content {
+                padding: 16px;
+            }
+
+            .kpi-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .kpi-card {
+                padding: 16px;
+            }
+
+            .a-brand {
+                padding: 16px;
+            }
+
+            .btn:not(.action-btn):not(.btn-sm) {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .action-btn {
+                width: 34px !important;
+            }
+
+            /* Keep small */
+            .d-flex.gap-2 {
+                flex-wrap: wrap;
+            }
+
+            #orderSearch {
+                width: 100% !important;
+                margin-bottom: 10px;
+            }
+        }
+
+        /* Custom Toggle switch style to override standard dashboard checkbox display issues */
+        .toggle-wrap { position:relative; display:inline-block; width:38px; height:21px; vertical-align:middle; }
+        .toggle-wrap input { opacity:0; width:0; height:0; display:inline-block !important; }
+        .toggle-slider { position:absolute; inset:0; background:#dde3f0; border-radius:21px; cursor:pointer; transition:.2s; }
+        .toggle-slider:before { content:''; position:absolute; width:15px; height:15px; left:3px; top:3px; background:#fff; border-radius:50%; transition:.2s; box-shadow:0 1px 3px rgba(0,0,0,.2); }
+        input:checked + .toggle-slider { background: #2dce89; }
+        input:checked + .toggle-slider:before { transform:translateX(17px); }
     </style>
 </head>
 
 <body>
+    <div class="a-app">
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+        <!-- Sidebar -->
+        <aside class="a-sidebar" id="sidebar">
+            <div class="a-brand">
+                <img src="../assets/img/logo.png" alt="PrintPro">
+                <span class="a-brand-badge">Admin</span>
+            </div>
+            <nav class="a-nav">
+                <div class="a-nav-item active" onclick="showPage('dashboard')">
+                    <i class="bi bi-speedometer2"></i> Dashboard
+                </div>
+                <div class="a-nav-item" onclick="showPage('orders')">
+                    <i class="bi bi-box-seam"></i> Orders
+                </div>
+                <div class="a-nav-item" onclick="showPage('users')">
+                    <i class="bi bi-people"></i> Users
+                </div>
+                <div class="a-nav-item" onclick="showPage('subscriptions')">
+                    <i class="bi bi-card-checklist"></i> Subscriptions
+                </div>
+                <div class="a-nav-item" onclick="showPage('specs')">
+                    <i class="bi bi-sliders"></i> Specifications
+                </div>
+                <div class="a-nav-item" onclick="showPage('settings')">
+                    <i class="bi bi-gear"></i> Settings
+                </div>
+            </nav>
+            <div class="a-logout">
+                <a href="#" onclick="handleLogout(event)"><i class="bi bi-box-arrow-left"></i> Logout</a>
+            </div>
+        </aside>
 
-    <!-- ════════════════════════════
-     NAVBAR
-════════════════════════════ -->
-    <nav class="navbar navbar-expand-lg bg-white sticky-top py-2">
-        <div class="container-xl">
-            <a class="navbar-brand d-flex align-items-center" href="#" onclick="handleLogoClick(event)">
-                <img src="assets/img/logo.png" alt="PrintPro" style="height:36px;width:auto;object-fit:contain;">
-            </a>
-
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
-                aria-controls="mainNav" aria-expanded="false">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="mainNav">
-                <ul class="navbar-nav mx-auto gap-lg-1">
-                    <li class="nav-item"><a class="nav-link px-3" href="#hero">Home</a></li>
-                    <li class="nav-item"><a class="nav-link px-3" href="#about">About Us</a></li>
-                    <li class="nav-item"><a class="nav-link px-3" href="#features">Services</a></li>
-                    <li class="nav-item"><a class="nav-link px-3" href="#pricing">Pricing</a></li>
-                    <li class="nav-item"><a class="nav-link px-3" href="#quotation">Quote</a></li>
-                </ul>
-                <div class="d-flex gap-2 mt-3 mt-lg-0 align-items-center">
-                    <button id="themeToggleBtn" class="btn border-0 p-0 me-2"
-                        style="color:var(--navy); font-size:1.2rem; display:flex; align-items:center;">
-                        <i class="bi bi-moon-stars"></i>
+        <main class="a-main">
+            <!-- Topbar -->
+            <header class="a-topbar">
+                <div class="d-flex align-items-center gap-3">
+                    <button class="btn btn-light d-lg-none action-btn" onclick="toggleSidebar()">
+                        <i class="bi bi-list fs-4"></i>
                     </button>
-                    <button class="btn btn-outline-navy rounded-3 px-3 py-2" onclick="openLoginModal('client')">Log
-                        In</button>
-                    <button class="btn btn-accent rounded-3 px-3 py-2" onclick="openRegisterModal()">Create an
-                        Account</button>
+                    <h5 class="m-0 fw-bold" id="pageTitle">Dashboard</h5>
                 </div>
-            </div>
-        </div>
-    </nav>
-
-
-    <!-- ════════════════════════════
-     HERO
-════════════════════════════ -->
-    <section id="hero" class="bg-off-white py-5">
-        <div class="container-xl py-lg-5">
-            <div class="row align-items-center g-5">
-
-                <!-- Copy -->
-                <div class="col-lg-6">
-                    <span class="eyebrow mb-3 d-inline-block">Professional Print Management</span>
-                    <h1 class="hero-title text-navy mb-4" style="color:var(--navy);">
-                        Turn Your Ideas into Professional Prints with
-                        <span class="text-accent">PrintPro.</span>
-                    </h1>
-                    <p class="hero-desc text-muted-pp mb-4"
-                        style="max-width:440px;line-height:1.75;font-size:clamp(0.9rem, 1.5vw, 1rem);">
-                        Bring your brand to life with high-quality, seamless printing solutions designed for businesses.
-                        At PrintPro, we make it easy to order and get the best results the printing industry can
-                        deliver.
-                    </p>
-                    <div class="d-flex flex-wrap gap-3 mb-3">
-                        <button class="btn btn-accent btn-lg rounded-3 px-4" onclick="openRegisterModal()">Get
-                            Started →</button>
-                        <a href="#features" class="btn btn-outline-navy btn-lg rounded-3 px-4">Learn More</a>
-                    </div>
-                    <p class="text-slate small mb-0">Trusted by 800+ print-ready businesses</p>
-                </div>
-
-                <!-- Dashboard mockup -->
-                <div class="col-lg-6 d-flex justify-content-center">
-                    <div class="dashboard-mockup bg-white w-100" style="max-width:460px;">
-                        <div class="mockup-bar">
-                            <div class="mockup-dot"></div>
-                            <div class="mockup-dot"></div>
-                            <div class="mockup-dot"></div>
-                        </div>
-                        <div class="p-3">
-                            <div class="row g-2 mb-3">
-                                <div class="col-4">
-                                    <div class="stat-card">
-                                        <div class="stat-num">2,847</div>
-                                        <div class="stat-label">Jobs Today</div>
-                                        <div class="stat-up">↑ 12%</div>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="stat-card">
-                                        <div class="stat-num">99.2%</div>
-                                        <div class="stat-label">On-Time Rate</div>
-                                        <div class="stat-up">↑ 0.4%</div>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="stat-card">
-                                        <div class="stat-num">₱236k</div>
-                                        <div class="stat-label">Revenue</div>
-                                        <div class="stat-up">↑ 8%</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="mockup-chart">
-                                <div class="chart-bar" style="height:40%"></div>
-                                <div class="chart-bar" style="height:60%"></div>
-                                <div class="chart-bar" style="height:50%"></div>
-                                <div class="chart-bar" style="height:80%"></div>
-                                <div class="chart-bar" style="height:65%"></div>
-                                <div class="chart-bar" style="height:90%"></div>
-                                <div class="chart-bar" style="height:75%"></div>
-                                <div class="chart-bar" style="height:100%"></div>
+                <div class="d-flex align-items-center gap-3">
+                    <button class="btn border-0 p-0 text-muted fs-5" onclick="toggleTheme()">
+                        <i class="bi bi-moon-stars" id="themeIcon"></i>
+                    </button>
+                    <div class="dropdown">
+                        <div class="d-flex align-items-center gap-2 cursor-pointer" data-bs-toggle="dropdown">
+                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
+                                style="width:34px; height:34px; font-size:.85rem; font-weight:700; line-height:1;"
+                                id="userAvatar">A</div>
+                            <div class="d-none d-sm-block">
+                                <div class="fw-bold" style="font-size:.8rem;" id="userName">Admin</div>
+                                <div class="text-muted" style="font-size:.7rem;">Admin</div>
                             </div>
                         </div>
                     </div>
                 </div>
+            </header>
 
-            </div>
-        </div>
-    </section>
-
-
-    <!-- ════════════════════════════
-     ABOUT
-════════════════════════════ -->
-    <section id="about" class="bg-navy-mid py-5">
-        <div class="container-xl py-lg-5">
-            <div class="row align-items-center g-5">
-
-                <!-- Brand -->
-                <div class="col-lg-5">
-                    <div class="mb-3">
-                        <img src="assets/img/logo.png" alt="PrintPro"
-                            style="height:48px;width:auto;object-fit:contain;filter:brightness(0) invert(1);">
-                    </div>
-                    <p style="color:rgba(255,255,255,.5);font-size:.9rem;line-height:1.75;max-width:300px;margin:0;">
-                        Professional print management for modern enterprises. Scalable, secure, and built to grow with
-                        you.
-                    </p>
-                </div>
-
-                <!-- Description -->
-                <div class="col-lg-7 text-lg-end">
-                    <h2 class="section-title text-white mb-4">
-                        About <span class="text-accent-light">PrintPro</span>
-                    </h2>
-                    <p style="color:rgba(255,255,255,.65);line-height:1.8;" class="mb-3">
-                        PrintPro provides smart, high-quality printing solutions for modern businesses. With a focus on
-                        <strong class="text-white">efficiency and precision</strong>, our platform simplifies print jobs
-                        across your entire company — from a single person to thousands, all in one seamless system.
-                    </p>
-                    <p style="color:rgba(255,255,255,.65);line-height:1.8;" class="mb-3">
-                        Driven by innovation, we combine advanced printing technology with an intuitive ordering
-                        experience.
-                        Our platform supports high-resolution file uploads, production-grade print quality, and
-                        automates
-                        real-time pricing, shipping status, order recurrence, and visual edits.
-                    </p>
-                    <p style="color:rgba(255,255,255,.65);line-height:1.8;" class="mb-0">
-                        With PrintPro's range, we offer unlimited printing and a business-first experience delivering
-                        <strong class="text-white">reliability, speed, and professional results</strong> — from small
-                        batch orders to high-volume production.
-                    </p>
-                </div>
-
-            </div>
-        </div>
-    </section>
-
-
-    <!-- ════════════════════════════
-     FEATURES
-════════════════════════════ -->
-    <section id="features" class="bg-off-white py-5">
-        <div class="container-xl py-lg-5">
-
-            <div class="text-center mb-5">
-                <span class="eyebrow mb-3 d-inline-block">Why PrintPro</span>
-                <h2 class="section-title mb-3" style="color:var(--navy);">
-                    Built for the demanding needs of modern print shops.
-                </h2>
-                <p class="text-muted-pp mx-auto mb-0" style="max-width:540px;line-height:1.75;">
-                    Stop juggling spreadsheets and legacy software. PrintPro brings everything into a single,
-                    unified interface designed for high-throughput operations.
-                </p>
-            </div>
-
-            <div class="row g-4">
-                <div class="col-md-6 col-lg-4">
-                    <div class="feature-card bg-white p-4 h-100 border-top border-4 border-accent">
-                        <div class="feature-icon mb-3" style="color:var(--accent);"><i class="bi bi-clock-history"></i>
-                        </div>
-                        <h5 class="font-sora fw-bold mb-2" style="color:var(--navy);">Real-time Tracking</h5>
-                        <p class="text-muted-pp small mb-0">Monitor every print job from submission to delivery with
-                            live status updates, automated alerts, and full audit trails for every order.</p>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-4">
-                    <div class="feature-card bg-white p-4 h-100 border-top border-4 border-teal">
-                        <div class="feature-icon mb-3" style="color:var(--teal);"><i class="bi bi-lightning-charge"></i>
-                        </div>
-                        <h5 class="font-sora fw-bold mb-2" style="color:var(--navy);">Fast Delivery</h5>
-                        <p class="text-muted-pp small mb-0">Integrated shipping and courier management that ensures
-                            prints reach customers on time. Real-time ETAs and route optimization built in.</p>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-4">
-                    <div class="feature-card bg-white p-4 h-100 border-top border-4 border-navy">
-                        <div class="feature-icon mb-3" style="color:var(--navy);"><i class="bi bi-shield-lock"></i>
-                        </div>
-                        <h5 class="font-sora fw-bold mb-2" style="color:var(--navy);">Enterprise Security</h5>
-                        <p class="text-muted-pp small mb-0">Bank-grade encryption for all print assets. Role-based
-                            access controls, SSO support, and full compliance with industry data standards.</p>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-4">
-                    <div class="feature-card bg-white p-4 h-100 border-bottom border-4 border-accent-light">
-                        <div class="feature-icon mb-3" style="color:var(--accent-light);"><i
-                                class="bi bi-bar-chart-line"></i></div>
-                        <h5 class="font-sora fw-bold mb-2" style="color:var(--navy);">Advanced Analytics</h5>
-                        <p class="text-muted-pp small mb-0">Comprehensive dashboards revealing production efficiency,
-                            waste reduction opportunities, cost-per-job breakdowns, and revenue forecasting.</p>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-4">
-                    <div class="feature-card bg-white p-4 h-100 border-bottom border-4 border-accent">
-                        <div class="feature-icon mb-3" style="color:var(--accent);"><i class="bi bi-globe2"></i></div>
-                        <h5 class="font-sora fw-bold mb-2" style="color:var(--navy);">Global Fulfillment</h5>
-                        <p class="text-muted-pp small mb-0">Connect with a worldwide network of print partners and
-                            fulfillment centers. Scale globally without managing your own print infrastructure.</p>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-4">
-                    <div class="feature-card bg-white p-4 h-100 border-bottom border-4 border-teal">
-                        <div class="feature-icon mb-3" style="color:var(--teal);"><i class="bi bi-patch-check"></i>
-                        </div>
-                        <h5 class="font-sora fw-bold mb-2" style="color:var(--navy);">Quality Work</h5>
-                        <p class="text-muted-pp small mb-0">AI-powered pre-flight checks, color profile management,
-                            resolution validation, and automated proofing so every job ships print-perfect.</p>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </section>
-
-
-    <!-- ════════════════════════════
-     PRICING
-════════════════════════════ -->
-    <section id="pricing" class="bg-navy py-5">
-        <div class="container-xl py-lg-5">
-
-            <div class="text-center mb-5">
-                <span class="eyebrow mb-3 d-inline-block"
-                    style="color:var(--accent-light);background:rgba(123,163,255,.12);">Simple Pricing</span>
-                <h2 class="section-title text-white mb-3">Choose the plan that fits your shop.</h2>
-                <p class="mx-auto mb-0" style="color:rgba(255,255,255,.5);max-width:460px;line-height:1.75;">
-                    No hidden fees. Cancel any time. Start free and upgrade when your volume demands it.
-                </p>
-            </div>
-
-            <div class="row g-4 justify-content-center mb-4">
-
-                <!-- Starter -->
-                <div class="col-md-4">
-                    <div class="plan-card p-4 h-100 d-flex flex-column">
-                        <div class="plan-name mb-2">Pro</div>
-                        <div class="plan-price mb-1">₱999<small>/mo</small></div>
-                        <p class="plan-desc mb-4">Perfect for small print shops just getting started with digital order
-                            management.</p>
-                        <ul class="plan-features flex-grow-1 mb-4">
-                            <li><i class="bi bi-check-circle-fill"></i> Up to 200 jobs/month</li>
-                            <li><i class="bi bi-check-circle-fill"></i> Real-time tracking</li>
-                            <li><i class="bi bi-check-circle-fill"></i> Basic analytics</li>
-                            <li><i class="bi bi-check-circle-fill"></i> Email support</li>
-                        </ul>
-                        <button class="btn-plan" onclick="openRegisterModal('Pro')">Get Started</button>
-                    </div>
-                </div>
-
-                <!-- Short Run (featured) -->
-                <div class="col-md-4">
-                    <div class="plan-card featured p-4 h-100 d-flex flex-column">
-                        <div class="plan-badge">Most Popular</div>
-                        <div class="plan-name mb-2">Premium</div>
-                        <div class="plan-price mb-1">₱1899<small>/mo</small></div>
-                        <p class="plan-desc mb-4">Designed for growing teams managing multiple customers and high-volume
-                            daily orders.</p>
-                        <ul class="plan-features flex-grow-1 mb-4">
-                            <li><i class="bi bi-check-circle-fill"></i> Up to 2,000 jobs/month</li>
-                            <li><i class="bi bi-check-circle-fill"></i> Advanced analytics</li>
-                            <li><i class="bi bi-check-circle-fill"></i> Global fulfillment</li>
-                            <li><i class="bi bi-check-circle-fill"></i> Priority support</li>
-                            <li><i class="bi bi-check-circle-fill"></i> Enterprise security</li>
-                        </ul>
-                        <button class="btn-plan" onclick="openRegisterModal('Premium')">Get Started</button>
-                    </div>
-                </div>
-
-                <!-- Premium+ -->
-                <div class="col-md-4">
-                    <div class="plan-card p-4 h-100 d-flex flex-column">
-                        <div class="plan-name mb-2">Premium+</div>
-                        <div class="plan-price mb-1">₱2199<small>/mo</small></div>
-                        <p class="plan-desc mb-4">For high-volume print operations with custom workflows and dedicated
-                            SLA guarantees.</p>
-                        <ul class="plan-features flex-grow-1 mb-4">
-                            <li><i class="bi bi-check-circle-fill"></i> Unlimited jobs</li>
-                            <li><i class="bi bi-check-circle-fill"></i> Custom integrations</li>
-                            <li><i class="bi bi-check-circle-fill"></i> Dedicated account manager</li>
-                            <li><i class="bi bi-check-circle-fill"></i> 99.99% uptime SLA</li>
-                            <li><i class="bi bi-check-circle-fill"></i> White-label options</li>
-                        </ul>
-                        <button class="btn-plan">Contact Sales</button>
-                    </div>
-                </div>
-
-            </div>
-
-            <p class="text-center mb-0" style="color:rgba(255,255,255,.45);font-size:.875rem;">
-                Need a custom plan?
-                <a href="#quotation" style="color:var(--accent-light);">Talk to our team →</a>
-            </p>
-
-        </div>
-    </section>
-
-
-    <!-- ════════════════════════════
-     REQUEST A QUOTATION
-════════════════════════════ -->
-    <section id="quotation" class="py-5 bg-white position-relative">
-        <!-- Background decorative elements -->
-        <div class="d-none d-lg-block"
-            style="position:absolute;top:0;left:0;width:100%;height:100%;overflow:hidden;pointer-events:none;">
-            <div
-                style="position:absolute;top:-20%;right:-10%;width:50%;height:50%;background:radial-gradient(circle, rgba(62,198,198,0.05) 0%, transparent 70%);border-radius:50%;">
-            </div>
-            <div
-                style="position:absolute;bottom:-20%;left:-10%;width:50%;height:50%;background:radial-gradient(circle, rgba(79,126,247,0.05) 0%, transparent 70%);border-radius:50%;">
-            </div>
-        </div>
-
-        <div class="container-xl py-lg-5 position-relative z-1">
-            <div class="row align-items-center g-5">
-                <!-- Text / Info Side -->
-                <div class="col-lg-5 text-center text-lg-start">
-                    <span class="eyebrow mb-3 d-inline-block">Custom Projects</span>
-                    <h2 class="section-title text-navy mb-4">Request a Custom Quotation</h2>
-                    <p class="text-muted-pp mb-4" style="line-height:1.75;">
-                        Have a specific project in mind? Fill out the form, and our print specialists will provide a
-                        detailed estimate tailored to your exact requirements within 24 hours.
-                    </p>
-
-                    <div class="d-none d-lg-block mt-5">
-                        <div class="d-flex align-items-center mb-4">
-                            <div class="feature-icon me-3" style="width:40px;height:40px;font-size:1.1rem;"><i
-                                    class="bi bi-headset"></i></div>
-                            <div>
-                                <h6 class="font-sora fw-bold mb-1" style="color:var(--navy);">Expert Consultation</h6>
-                                <p class="text-muted-pp small mb-0">Speak directly with our print specialists.</p>
-                            </div>
-                        </div>
-                        <div class="d-flex align-items-center mb-4">
-                            <div class="feature-icon me-3"
-                                style="width:40px;height:40px;font-size:1.1rem;color:var(--teal);background:rgba(62,198,198,0.1);">
-                                <i class="bi bi-palette"></i>
+            <div class="a-content">
+                <!-- Dashboard Page -->
+                <div class="a-page active" id="page-dashboard">
+                    <div class="kpi-grid" id="dashboardKpis">
+                        <div class="kpi-card">
+                            <div class="kpi-icon bg-primary-subtle text-primary"><i class="bi bi-currency-dollar"></i>
                             </div>
                             <div>
-                                <h6 class="font-sora fw-bold mb-1" style="color:var(--navy);">Material Samples</h6>
-                                <p class="text-muted-pp small mb-0">Physical proofs available upon request.</p>
+                                <div class="kpi-lbl">Total Revenue</div>
+                                <div class="kpi-val">₱0.00</div>
                             </div>
                         </div>
-                        <div class="d-flex align-items-center">
-                            <div class="feature-icon me-3"
-                                style="width:40px;height:40px;font-size:1.1rem;color:var(--navy);background:rgba(26,35,64,0.1);">
-                                <i class="bi bi-truck"></i>
+                        <div class="kpi-card">
+                            <div class="kpi-icon bg-success-subtle text-success"><i class="bi bi-check-circle"></i>
                             </div>
                             <div>
-                                <h6 class="font-sora fw-bold mb-1" style="color:var(--navy);">Volume Discounts</h6>
-                                <p class="text-muted-pp small mb-0">Special pricing for enterprise runs.</p>
+                                <div class="kpi-lbl">Completed</div>
+                                <div class="kpi-val">0</div>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon bg-warning-subtle text-warning"><i class="bi bi-clock-history"></i>
+                            </div>
+                            <div>
+                                <div class="kpi-lbl">Pending</div>
+                                <div class="kpi-val">0</div>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon bg-info-subtle text-info"><i class="bi bi-person-plus"></i></div>
+                            <div>
+                                <div class="kpi-lbl">New Users</div>
+                                <div class="kpi-val">0</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="card p-4">
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <h6 class="fw-bold m-0">Revenue Trends</h6>
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-outline-primary dropdown-toggle border-0"
+                                            type="button" data-bs-toggle="dropdown" id="revenueFilterBtn">
+                                            Last 6 Months
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0"
+                                            style="border-radius:12px;">
+                                            <li><a class="dropdown-item small fw-bold" href="#"
+                                                    onclick="updateRevenueChart('week', 'Last Week')">Last Week</a></li>
+                                            <li><a class="dropdown-item small fw-bold" href="#"
+                                                    onclick="updateRevenueChart('month', 'Last Month')">Last Month</a>
+                                            </li>
+                                            <li><a class="dropdown-item small fw-bold active" href="#"
+                                                    onclick="updateRevenueChart('6months', 'Last 6 Months')">Last 6
+                                                    Months</a></li>
+                                            <li><a class="dropdown-item small fw-bold" href="#"
+                                                    onclick="updateRevenueChart('year', 'Last Year')">Last Year</a></li>
+                                            <li><a class="dropdown-item small fw-bold" href="#"
+                                                    onclick="updateRevenueChart('all', 'All Time')">All Time</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div style="height: 300px;"><canvas id="revenueChart"></canvas></div>
+                            </div>
+                            <div class="card">
+                                <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
+                                    <h6 class="fw-bold m-0">Recent Orders</h6>
+                                    <button class="btn btn-sm btn-link text-decoration-none p-0"
+                                        onclick="showPage('orders')">View All</button>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table" id="recentOrdersTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Order ID</th>
+                                                <th>Client</th>
+                                                <th>Product</th>
+                                                <th>Status</th>
+                                                <th>Total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- Dynamic Content -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="card p-4">
+                                <h6 class="fw-bold mb-4">Status Distribution</h6>
+                                <div style="height: 250px;"><canvas id="statusChart"></canvas></div>
+                            </div>
+                            <div class="card p-4">
+                                <h6 class="fw-bold mb-3">Live Activity</h6>
+                                <div id="activityFeed">
+                                    <!-- Dynamic Content -->
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Form Side -->
-                <div class="col-lg-7">
-                    <div class="quotation-card p-4 p-md-5">
-                        <form id="quotationForm" onsubmit="handleQuotation(event)">
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold text-navy small">First Name</label>
-                                    <input type="text" class="form-control custom-input" placeholder="John" required>
+                <!-- Orders Page -->
+                <div class="a-page" id="page-orders">
+                    <div class="card border-0 shadow-sm overflow-hidden" style="border-radius:16px;">
+                        <div class="card-header bg-white border-bottom p-0">
+                            <ul class="nav nav-tabs border-0 px-4" id="orderTabs" role="tablist">
+                                <li class="nav-item">
+                                    <button class="nav-link active py-3 border-0 fw-bold small text-uppercase"
+                                        onclick="filterOrdersByStatus('All')">All Orders</button>
+                                </li>
+                                <li class="nav-item">
+                                    <button class="nav-link py-3 border-0 fw-bold small text-uppercase"
+                                        onclick="filterOrdersByStatus('Prepress')">Prepress</button>
+                                </li>
+                                <li class="nav-item">
+                                    <button class="nav-link py-3 border-0 fw-bold small text-uppercase"
+                                        onclick="filterOrdersByStatus('Printing')">Printing</button>
+                                </li>
+                                <li class="nav-item">
+                                    <button class="nav-link py-3 border-0 fw-bold small text-uppercase"
+                                        onclick="filterOrdersByStatus('Finishing')">Finishing</button>
+                                </li>
+                                <li class="nav-item">
+                                    <button class="nav-link py-3 border-0 fw-bold small text-uppercase"
+                                        onclick="filterOrdersByStatus('Shipping')">Shipping</button>
+                                </li>
+                                <li class="nav-item">
+                                    <button class="nav-link py-3 border-0 fw-bold small text-uppercase"
+                                        onclick="filterOrdersByStatus('Delivered')">Delivered</button>
+                                </li>
+                            </ul>
+                        </div>
+                        <div
+                            class="p-4 border-bottom d-flex justify-content-between align-items-center bg-light-subtle">
+                            <h6 class="fw-bold m-0" id="orderListTitle">All Orders</h6>
+                            <div class="d-flex gap-2">
+                                <input type="text" class="form-control form-control-sm" id="orderSearch"
+                                    placeholder="Search orders..." style="width:250px;"
+                                    oninput="searchOrders(this.value)">
+                                <button class="btn btn-primary btn-sm" onclick="loadOrders()"><i
+                                        class="bi bi-arrow-clockwise"></i></button>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table" id="ordersTable">
+                                <thead>
+                                    <tr>
+                                        <th>Order #</th>
+                                        <th>Client</th>
+                                        <th>Product</th>
+                                        <th>Qty</th>
+                                        <th>Progress</th>
+                                        <th>Status</th>
+                                        <th>Due Date</th>
+                                        <th>Amount</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="a-page" id="page-users">
+                    <div class="card border-0 shadow-sm overflow-hidden" style="border-radius:16px;">
+                        <div class="p-4 border-bottom d-flex flex-wrap justify-content-between align-items-center bg-light-subtle gap-3">
+                            <h6 class="fw-bold m-0">User Management</h6>
+                            <div class="d-flex flex-wrap gap-2 align-items-center">
+                                <select class="form-select form-select-sm" id="userRoleFilter" style="width: 130px;" onchange="filterAndSortUsers()">
+                                    <option value="all">All Roles</option>
+                                    <option value="client">Client</option>
+                                    <option value="admin">Admin</option>
+                                </select>
+                                <select class="form-select form-select-sm" id="userSortSelect" style="width: 165px;" onchange="filterAndSortUsers()">
+                                    <option value="newest">Newest Joined</option>
+                                    <option value="oldest">Oldest Joined</option>
+                                    <option value="name_asc">Name (A-Z)</option>
+                                    <option value="name_desc">Name (Z-A)</option>
+                                    <option value="role_admin">Role (Admin first)</option>
+                                    <option value="role_client">Role (Client first)</option>
+                                </select>
+                                <input type="text" class="form-control form-control-sm" id="userSearchInput" placeholder="Search name, email, role..."
+                                    style="width:250px;" oninput="filterAndSortUsers()">
+                                <button class="btn btn-primary btn-sm" onclick="loadUsers()" title="Refresh"><i
+                                        class="bi bi-arrow-clockwise"></i></button>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table" id="usersTable">
+                                <thead>
+                                    <tr>
+                                        <th>User</th>
+                                        <th>Business</th>
+                                        <th>Role</th>
+                                        <th>Status</th>
+                                        <th>Joined</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Subscriptions Page -->
+                <div class="a-page" id="page-subscriptions">
+                    <div class="card">
+                        <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
+                            <h6 class="fw-bold m-0">Client Subscriptions</h6>
+                            <div class="d-flex gap-2">
+                                <input type="text" class="form-control form-control-sm" id="subSearch"
+                                    placeholder="Search client or business..." style="width:250px;"
+                                    oninput="searchSubscriptions(this.value)">
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table" id="subsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Client</th>
+                                        <th>Email</th>
+                                        <th>Business</th>
+                                        <th>Plan</th>
+                                        <th>Status</th>
+                                        <th>Renews On</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Specifications Page -->
+                <div class="a-page" id="page-specs">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="fw-bold m-0 text-navy">Print Specifications</h5>
+                    </div>
+                    <div class="card border-0 shadow-sm overflow-hidden" style="border-radius:16px;">
+                        <div class="card-header bg-white border-bottom p-0">
+                            <ul class="nav nav-tabs border-0 px-4" id="specTabs" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active py-3 border-0 fw-bold small text-uppercase"
+                                        id="spec-materials-tab" data-bs-toggle="tab" data-bs-target="#spec-materials" type="button"
+                                        role="tab"><i class="bi bi-layers me-2"></i>Materials</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link py-3 border-0 fw-bold small text-uppercase"
+                                        id="spec-finishes-tab" data-bs-toggle="tab" data-bs-target="#spec-finishes" type="button"
+                                        role="tab"><i class="bi bi-stars me-2"></i>Finishes</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link py-3 border-0 fw-bold small text-uppercase"
+                                        id="spec-sizes-tab" data-bs-toggle="tab" data-bs-target="#spec-sizes" type="button"
+                                        role="tab"><i class="bi bi-aspect-ratio"></i>Sizes</button>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="tab-content" id="specTabContent">
+                                <!-- MATERIALS TAB -->
+                                <div class="tab-pane fade show active" id="spec-materials" role="tabpanel">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h6 class="fw-bold m-0 text-navy"><i class="bi bi-layers text-primary me-2"></i>Paper Materials</h6>
+                                        <button class="btn btn-primary btn-sm px-3" onclick="openSpecEditModal('paper')"><i class="bi bi-plus-lg"></i> Add Material</button>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table align-middle table-hover" id="table-paper">
+                                            <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Name</th>
+                                                    <th>Multiplier</th>
+                                                    <th>Status</th>
+                                                    <th>Active</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr><td colspan="6" class="text-center text-muted py-4"><i class="bi bi-hourglass-split me-2"></i>Loading...</td></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold text-navy small">Last Name</label>
-                                    <input type="text" class="form-control custom-input" placeholder="Doe" required>
+
+                                <!-- FINISHES TAB -->
+                                <div class="tab-pane fade" id="spec-finishes" role="tabpanel">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h6 class="fw-bold m-0 text-navy"><i class="bi bi-stars text-primary me-2"></i>Finishing Options</h6>
+                                        <button class="btn btn-primary btn-sm px-3" onclick="openSpecEditModal('finish')"><i class="bi bi-plus-lg"></i> Add Finish</button>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table align-middle table-hover" id="table-finish">
+                                            <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Name</th>
+                                                    <th>Setup Fee</th>
+                                                    <th>Per-Unit Fee</th>
+                                                    <th>Status</th>
+                                                    <th>Active</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr><td colspan="7" class="text-center text-muted py-4"><i class="bi bi-hourglass-split me-2"></i>Loading...</td></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold text-navy small">Business Email</label>
-                                    <input type="email" class="form-control custom-input" placeholder="john@company.com"
-                                        required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold text-navy small">Phone Number <span
-                                            class="fw-normal text-muted-pp">(Optional)</span></label>
-                                    <input type="tel" class="form-control custom-input" placeholder="+1 (555) 000-0000">
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold text-navy small">Project Category</label>
-                                    <select class="form-select custom-input" required>
-                                        <option value="" disabled selected>Select category...</option>
-                                        <option value="marketing">Marketing Materials</option>
-                                        <option value="packaging">Product Packaging</option>
-                                        <option value="books">Books & Magazines</option>
-                                        <option value="large_format">Large Format</option>
-                                        <option value="other">Other</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-semibold text-navy small">Estimated Quantity</label>
-                                    <input type="number" class="form-control custom-input" placeholder="e.g., 5000"
-                                        min="1" required>
-                                </div>
-                                <div class="col-12">
-                                    <label class="form-label fw-semibold text-navy small">Project Details</label>
-                                    <textarea class="form-control custom-input" rows="4"
-                                        placeholder="Tell us about the dimensions, paper stock, finishing options, and any specific requirements..."
-                                        required></textarea>
-                                </div>
-                                <div class="col-12 mt-4">
-                                    <button type="submit"
-                                        class="btn btn-accent w-100 py-3 rounded-3 d-flex align-items-center justify-content-center gap-2"
-                                        id="quoteSubmitBtn">
-                                        <span id="quoteBtnText">Request Quotation <i
-                                                class="bi bi-arrow-right"></i></span>
-                                        <svg id="quoteSpinner"
-                                            style="display:none;width:20px;height:20px;animation:spin .6s linear infinite;"
-                                            viewBox="0 0 24 24" fill="none">
-                                            <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,.3)"
-                                                stroke-width="3" />
-                                            <path d="M12 2a10 10 0 0 1 10 10" stroke="#fff" stroke-width="3"
-                                                stroke-linecap="round" />
-                                        </svg>
-                                    </button>
-                                </div>
-                                <div class="col-12 text-center mt-3">
-                                    <div id="quoteSuccess"
-                                        style="display:none;color:#22c55e;font-size:0.85rem;font-weight:600;">
-                                        <i class="bi bi-check-circle-fill me-1"></i> Your request has been sent
-                                        successfully! We'll be in touch shortly.
+
+                                <!-- SIZES TAB -->
+                                <div class="tab-pane fade" id="spec-sizes" role="tabpanel">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h6 class="fw-bold m-0 text-navy"><i class="bi bi-aspect-ratio text-primary me-2"></i>Print Sizes</h6>
+                                        <button class="btn btn-primary btn-sm px-3" onclick="openSpecEditModal('size')"><i class="bi bi-plus-lg"></i> Add Size</button>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table align-middle table-hover" id="table-size">
+                                            <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Name</th>
+                                                    <th>Multiplier</th>
+                                                    <th>Status</th>
+                                                    <th>Active</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr><td colspan="6" class="text-center text-muted py-4"><i class="bi bi-hourglass-split me-2"></i>Loading...</td></tr>
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
-                        </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Page -->
+                <div class="a-page" id="page-settings">
+                    <div class="card border-0 shadow-sm overflow-hidden" style="border-radius:16px;">
+                        <div class="card-header bg-white border-bottom p-0">
+                            <ul class="nav nav-tabs border-0 px-4" id="settingsTabs" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active py-3 border-0 fw-bold small text-uppercase"
+                                        id="account-tab" data-bs-toggle="tab" data-bs-target="#account" type="button"
+                                        role="tab">Account</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link py-3 border-0 fw-bold small text-uppercase"
+                                        id="security-tab" data-bs-toggle="tab" data-bs-target="#security" type="button"
+                                        role="tab">Security</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link py-3 border-0 fw-bold small text-uppercase"
+                                        id="business-tab" data-bs-toggle="tab" data-bs-target="#business" type="button"
+                                        role="tab">Business Profile</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link py-3 border-0 fw-bold small text-uppercase" id="system-tab"
+                                        data-bs-toggle="tab" data-bs-target="#system" type="button"
+                                        role="tab">System</button>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="tab-content" id="settingsTabsContent">
+                                <!-- Account Tab -->
+                                <div class="tab-pane fade show active" id="account" role="tabpanel">
+                                    <form id="adminProfileForm" onsubmit="saveAdminProfile(event)">
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label small fw-bold">Full Name</label>
+                                                <input type="text" class="form-control" name="name" id="setAdminName"
+                                                    required>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label small fw-bold">Email Address</label>
+                                                <input type="email" class="form-control" name="email" id="setAdminEmail"
+                                                    required>
+                                            </div>
+                                            <div class="col-12 mt-4 d-flex flex-column flex-sm-row justify-content-between gap-3">
+                                                <button type="submit" class="btn btn-primary px-4 fw-bold">Update Account</button>
+                                                <button type="button" class="btn btn-outline-danger px-4 fw-bold"
+                                                    onclick="handleLogout(event)">
+                                                    <i class="bi bi-box-arrow-left me-2"></i>Logout from Session
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <!-- System Tab -->
+                                <div class="tab-pane fade" id="system" role="tabpanel">
+                                    <form id="systemSettingsForm" onsubmit="saveSystemSettings(event)">
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label small fw-bold">Site Name</label>
+                                                <input type="text" class="form-control" name="site_name"
+                                                    value="PrintPro" required>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label small fw-bold">Contact Email</label>
+                                                <input type="email" class="form-control" name="contact_email"
+                                                    value="admin@printpro.ph" required>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label small fw-bold">Currency Symbol</label>
+                                                <input type="text" class="form-control" name="currency_symbol" value="₱"
+                                                    required>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label small fw-bold">Default Theme</label>
+                                                <select class="form-select" name="default_theme">
+                                                    <option value="light">Light Mode</option>
+                                                    <option value="dark">Dark Mode</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-12 mt-4">
+                                                <button type="submit" class="btn btn-primary px-4 fw-bold">Save System
+                                                    Settings</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <!-- Business Profile Tab -->
+                                <div class="tab-pane fade" id="business" role="tabpanel">
+                                    <form id="businessSettingsForm" onsubmit="saveBusinessSettings(event)">
+                                        <div class="row g-3">
+                                            <div class="col-md-12">
+                                                <label class="form-label small fw-bold">Company Address</label>
+                                                <textarea class="form-control" name="company_address" rows="2"
+                                                    placeholder="Street, City, Zip Code"></textarea>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label small fw-bold">Tax ID / TIN</label>
+                                                <input type="text" class="form-control" name="tax_id"
+                                                    placeholder="000-000-000-000">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label small fw-bold">Contact Number</label>
+                                                <input type="text" class="form-control" name="contact_phone"
+                                                    placeholder="+63 900 000 0000">
+                                            </div>
+                                            <div class="col-12 mt-4">
+                                                <button type="submit" class="btn btn-primary px-4 fw-bold">Update
+                                                    Profile</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <!-- Security Tab -->
+                                <div class="tab-pane fade" id="security" role="tabpanel">
+                                    <form id="securitySettingsForm" onsubmit="saveSecuritySettings(event)">
+                                        <div class="row g-3" style="max-width: 400px;">
+                                            <div class="col-12">
+                                                <label class="form-label small fw-bold">Current Password</label>
+                                                <input type="password" class="form-control" name="current_password"
+                                                    required>
+                                            </div>
+                                            <div class="col-12">
+                                                <label class="form-label small fw-bold">New Password</label>
+                                                <input type="password" class="form-control" name="new_password"
+                                                    required>
+                                            </div>
+                                            <div class="col-12">
+                                                <label class="form-label small fw-bold">Confirm New Password</label>
+                                                <input type="password" class="form-control" name="confirm_password"
+                                                    required>
+                                            </div>
+                                            <div class="col-12 mt-4">
+                                                <button type="submit" class="btn btn-primary px-4 fw-bold">Change
+                                                    Password</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Order Details Modal -->
+    <div class="modal fade" id="orderDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content border-0 shadow" style="border-radius:16px;">
+                <div class="modal-header border-0 px-4 pt-4">
+                    <h5 class="fw-bold m-0">Order Details <span id="detailOrderId" class="text-primary"></span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="row g-4">
+                        <div class="col-md-7">
+                            <div class="mb-4">
+                                <h6 class="fw-bold small text-uppercase text-muted mb-3">Client Information</h6>
+                                <div class="d-flex align-items-center gap-3 p-3 bg-light rounded-3">
+                                    <div class="rounded-circle bg-white shadow-sm d-flex align-items-center justify-content-center fw-bold text-primary" style="width:45px; height:45px;">
+                                        <i class="bi bi-person"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold" id="detailClientName">Loading...</div>
+                                        <div class="text-muted small" id="detailBusiness">Loading...</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold small text-uppercase text-muted mb-3">Specifications</h6>
+                                <div class="row g-2" id="detailSpecList">
+                                    <!-- Dynamic Specs -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="card border-0 bg-primary text-white p-4 h-100" style="border-radius:20px;">
+                                <h6 class="text-white-50 small text-uppercase fw-bold mb-4">Payment Summary</h6>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Product:</span>
+                                    <span class="fw-bold" id="detailProduct">Loading...</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Quantity:</span>
+                                    <span class="fw-bold" id="detailQuantity">0</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Status:</span>
+                                    <span class="badge bg-white text-primary rounded-pill small" id="detailStatus">Loading...</span>
+                                </div>
+                                <div class="mt-auto pt-4 border-top border-white-50">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="h6 m-0">Total Amount</span>
+                                        <span class="h4 m-0 fw-bold" id="detailTotal">₱0.00</span>
+                                    </div>
+                                    <div class="small text-white-50 mt-2" id="detailDate">Loading...</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+    <div class="modal fade" id="specEditModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow" style="border-radius:16px;">
+                <div class="modal-header border-0 px-4 pt-4">
+                    <h5 class="fw-bold m-0" id="specEditModalTitle">Add Specification</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="specEditForm" onsubmit="handleSpecEditSubmit(event)">
+                    <div class="modal-body p-4">
+                        <input type="hidden" id="specEditId">
+                        <input type="hidden" id="specEditType">
 
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Name</label>
+                            <input type="text" class="form-control" id="specEditName" required placeholder="e.g. 14pt Cardstock">
+                        </div>
 
-    <!-- ════════════════════════════
-     FOOTER
-════════════════════════════ -->
-    <footer class="py-5 bg-off-white" id="contact" style="border-top:1px solid var(--border);">
-        <div class="container-xl">
+                        <div class="mb-3" id="specEditMultiplierGroup">
+                            <label class="form-label small fw-bold">Price Modifier (Multiplier)</label>
+                            <input type="number" step="0.01" min="0" class="form-control" id="specEditMultiplier" placeholder="1.00">
+                        </div>
 
-            <div class="row g-5 mb-5">
+                        <div id="specEditFinishGroup" style="display: none;">
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">Setup Fee (₱)</label>
+                                <input type="number" step="0.01" min="0" class="form-control" id="specEditSetupFee" placeholder="0.00">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">Per-Unit Fee (₱)</label>
+                                <input type="number" step="0.01" min="0" class="form-control" id="specEditPerUnitFee" placeholder="0.00">
+                            </div>
+                        </div>
 
-                <!-- Brand -->
-                <div class="col-lg-5">
-                    <a href="#" class="d-inline-flex align-items-center text-decoration-none mb-3">
-                        <img src="assets/img/logo.png" alt="PrintPro"
-                            style="height:36px;width:auto;object-fit:contain;">
-                    </a>
-                    <p class="mb-3 text-muted-pp" style="max-width:280px;line-height:1.7;font-size:.875rem;">
-                        Professional print asset management for modern enterprises. Scalable, secure, and built to last.
-                    </p>
-                    <div class="d-flex gap-2">
-                        <a href="#" class="social-btn"><i class="bi bi-twitter-x"></i></a>
-                        <a href="#" class="social-btn"><i class="bi bi-linkedin"></i></a>
-                        <a href="#" class="social-btn"><i class="bi bi-github"></i></a>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Status</label>
+                            <select class="form-select" id="specEditActive">
+                                <option value="1">Available</option>
+                                <option value="0">Inactive</option>
+                            </select>
+                        </div>
                     </div>
-                </div>
-
-                <!-- Product -->
-                <div class="col-6 col-lg-3 footer-col">
-                    <h5 class="mb-3">Product</h5>
-                    <ul>
-                        <li class="mb-2"><a href="#">Features</a></li>
-                        <li class="mb-2"><a href="#">Enterprise</a></li>
-                        <li class="mb-2"><a href="#">Security</a></li>
-                    </ul>
-                </div>
-
-                <!-- Company -->
-                <div class="col-6 col-lg-3 footer-col">
-                    <h5 class="mb-3">Company</h5>
-                    <ul>
-                        <li class="mb-2"><a href="#">About Us</a></li>
-                        <li class="mb-2"><a href="#">Careers</a></li>
-                        <li class="mb-2"><a href="#">Contact</a></li>
-                    </ul>
-                </div>
-
+                    <div class="modal-footer border-0 p-4 pt-0">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary px-4 fw-bold" id="specEditSubmitBtn">Save Changes</button>
+                    </div>
+                </form>
             </div>
-
-            <hr style="border-color:var(--border);">
-
-            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 footer-bottom pt-2">
-                <p class="mb-0">© 2026 PRINTPRO. ENGINEERED FOR EFFICIENCY.</p>
-                <div class="d-flex gap-3">
-                    <a href="#">Legal Policy</a>
-                    <a href="#">Privacy Policy</a>
-                    <a href="#">Status</a>
-                </div>
-            </div>
-
         </div>
-    </footer>
+    </div>
 
-    <!-- Bootstrap 5 JS bundle -->
+    <div class="modal fade" id="userEditModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow" style="border-radius:16px;">
+                <div class="modal-header border-0 px-4 pt-4">
+                    <h5 class="fw-bold m-0">Edit User Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="userEditForm" onsubmit="handleUserUpdate(event)">
+                    <div class="modal-body p-4">
+                        <input type="hidden" id="editUserId">
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Full Name</label>
+                            <input type="text" class="form-control" id="editUserName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Role</label>
+                            <select class="form-select" id="editUserRole" required>
+                                <option value="client">Client</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Status</label>
+                            <select class="form-select" id="editUserStatus" required>
+                                <option value="active">Active</option>
+                                <option value="suspended">Suspended</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 p-4 pt-0">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary px-4 fw-bold">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Proof Upload Modal -->
+    <div class="modal fade" id="adminProofModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow" style="border-radius:16px;">
+                <div class="modal-header border-0 px-4 pt-4">
+                    <h5 class="fw-bold m-0">Upload Print Proof</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="adminProofForm" onsubmit="handleAdminProofUpload(event)">
+                    <div class="modal-body p-4">
+                        <input type="hidden" id="adminProofOrderId">
+                        <div class="mb-3 bg-light p-3 rounded" style="font-size: .85rem;">
+                            <div><strong>Order #:</strong> <span id="adminProofOrderNum">PPR-000</span></div>
+                            <div><strong>Client:</strong> <span id="adminProofClientName">Client Name</span></div>
+                            <div><strong>Product:</strong> <span id="adminProofProduct">Flyers</span></div>
+                            <div><strong>Qty:</strong> <span id="adminProofQty">100</span></div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Select Print Proof File (PDF, Images, AI, PSD up to 500MB)</label>
+                            <input type="file" class="form-control" id="adminProofFileInput" accept=".pdf,.png,.jpg,.jpeg,.ai,.psd" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 p-4 pt-0">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary px-4 fw-bold" id="adminProofSubmitBtn">Upload Proof</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-
-    <!-- ════════════════════════════
-         LOGIN MODAL
-    ════════════════════════════ -->
-    <div id="loginModal" style="
-        display:none;
-        position:fixed;inset:0;z-index:9999;
-        align-items:center;justify-content:center;
-        padding:20px;
-    ">
-        <!-- Backdrop -->
-        <div id="modalBackdrop" onclick="closeLoginModal()" style="
-            position:absolute;inset:0;
-            background:rgba(10,18,40,.65);
-            backdrop-filter:blur(6px);
-            -webkit-backdrop-filter:blur(6px);
-        "></div>
-
-        <!-- Modal Card -->
-        <div class="login-card" style="
-            position:relative;z-index:1;
-            background:#fff;
-            border-radius:20px;
-            width:100%;max-width:460px;
-            box-shadow:0 32px 80px rgba(10,18,40,.28),0 4px 20px rgba(10,18,40,.10);
-            overflow:hidden;
-            animation:modalIn .25s cubic-bezier(.34,1.56,.64,1);
-        ">
-            <!-- Modal Header -->
-            <div class="login-header-wrap login-header" style="
-                background:linear-gradient(135deg,#1a2340 0%,#0f2057 100%);
-                padding:28px 32px 24px;
-                position:relative;
-            ">
-                <img src="assets/img/logo.png" alt="PrintPro"
-                    style="height:34px;width:auto;object-fit:contain;filter:brightness(0) invert(1);margin-bottom:16px;display:block;">
-                <h2 style="font-family:'Sora',sans-serif;font-size:1.2rem;font-weight:800;color:#fff;margin:0 0 4px;">
-                    Welcome back
-                </h2>
-                <p style="font-size:.82rem;color:rgba(255,255,255,.5);margin:0;">Sign in to continue to your portal</p>
-                <button onclick="closeLoginModal()" style="
-                    position:absolute;top:18px;right:18px;
-                    background:rgba(255,255,255,.12);border:none;border-radius:8px;
-                    width:30px;height:30px;cursor:pointer;color:#fff;font-size:1rem;
-                    display:flex;align-items:center;justify-content:center;
-                    transition:background .15s;
-                " onmouseover="this.style.background='rgba(255,255,255,.22)'"
-                    onmouseout="this.style.background='rgba(255,255,255,.12)'">
-                    <i class="bi bi-x"></i>
-                </button>
-            </div>
-
-            <!-- Modal Body -->
-            <div class="login-body-wrap login-body" style="padding:28px 32px 32px;">
-
-                <!-- Portal Tabs -->
-                <div id="mPortalTabs" style="
-                    display:flex;background:#f4f6fb;
-                    border-radius:10px;padding:4px;margin-bottom:22px;gap:4px;
-                ">
-                    <button id="mTabClient" onclick="mSwitchTab('client')" style="
-                        flex:1;padding:8px;border-radius:8px;border:none;
-                        font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:600;
-                        cursor:pointer;transition:all .2s;
-                        display:flex;align-items:center;justify-content:center;gap:6px;
-                        background:#fff;color:#1a2340;
-                        box-shadow:0 2px 8px rgba(26,35,64,.10);
-                    ">
-                        <i class="bi bi-person-fill"></i> Client Portal
-                    </button>
-                    <button id="mTabAdmin" onclick="mSwitchTab('admin')" style="
-                        flex:1;padding:8px;border-radius:8px;border:none;
-                        font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:600;
-                        cursor:pointer;transition:all .2s;
-                        display:flex;align-items:center;justify-content:center;gap:6px;
-                        background:transparent;color:#6b7a99;
-                    ">
-                        <i class="bi bi-shield-fill"></i> Admin Portal
-                    </button>
-                </div>
-
-                <!-- Admin hint -->
-                <div id="mAdminHint" style="
-                    display:none;
-                    background:rgba(124,77,255,.07);
-                    border:1px solid rgba(124,77,255,.18);
-                    border-radius:10px;padding:10px 13px;
-                    font-size:.77rem;color:#5e35b1;
-                    align-items:flex-start;gap:8px;margin-bottom:18px;
-                ">
-                    <i class="bi bi-info-circle-fill" style="margin-top:1px;flex-shrink:0;"></i>
-                    <span>Admin access requires an approved admin email. Contact your system administrator if
-                        needed.</span>
-                </div>
-
-                <!-- Alert -->
-                <div id="mAlert" style="
-                    display:none;
-                    background:rgba(245,54,92,.08);
-                    border:1px solid rgba(245,54,92,.2);
-                    border-radius:10px;padding:10px 13px;
-                    font-size:.82rem;color:#f5365c;
-                    align-items:center;gap:8px;margin-bottom:16px;
-                ">
-                    <i class="bi bi-exclamation-circle-fill"></i>
-                    <span id="mAlertMsg"></span>
-                </div>
-
-                <!-- Form -->
-                <form id="mLoginForm" onsubmit="mHandleLogin(event)" novalidate>
-
-                    <!-- Email -->
-                    <div style="margin-bottom:16px;">
-                        <label style="display:block;font-size:.78rem;font-weight:600;color:#1a2340;margin-bottom:6px;"
-                            for="mEmail">
-                            <span id="mEmailLabel">Business Email</span>
-                        </label>
-                        <div style="position:relative;">
-                            <i class="bi bi-envelope"
-                                style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#6b7a99;font-size:.9rem;pointer-events:none;"></i>
-                            <input type="email" id="mEmail" autocomplete="email" placeholder="you@yourcompany.com"
-                                style="width:100%;padding:11px 14px 11px 36px;border:1.5px solid #dde3f0;border-radius:10px;
-                                font-family:'DM Sans',sans-serif;font-size:.88rem;color:#1a2340;outline:none;
-                                transition:border-color .2s,box-shadow .2s;"
-                                onfocus="this.style.borderColor='#1d8cf8';this.style.boxShadow='0 0 0 3px rgba(29,140,248,.12)'"
-                                onblur="this.style.borderColor='#dde3f0';this.style.boxShadow='none'">
-                        </div>
-                        <div id="mEmailErr" style="display:none;font-size:.76rem;color:#f5365c;margin-top:5px;">
-                            <i class="bi bi-exclamation-circle"></i> <span id="mEmailErrMsg">Please enter a valid
-                                email.</span>
-                        </div>
-                    </div>
-
-                    <!-- Password -->
-                    <div style="margin-bottom:16px;">
-                        <label style="display:block;font-size:.78rem;font-weight:600;color:#1a2340;margin-bottom:6px;"
-                            for="mPass">Password</label>
-                        <div style="position:relative;">
-                            <i class="bi bi-lock"
-                                style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#6b7a99;font-size:.9rem;pointer-events:none;"></i>
-                            <input type="password" id="mPass" autocomplete="current-password"
-                                placeholder="Enter your password" style="width:100%;padding:11px 38px 11px 36px;border:1.5px solid #dde3f0;border-radius:10px;
-                                font-family:'DM Sans',sans-serif;font-size:.88rem;color:#1a2340;outline:none;
-                                transition:border-color .2s,box-shadow .2s;"
-                                onfocus="this.style.borderColor='#1d8cf8';this.style.boxShadow='0 0 0 3px rgba(29,140,248,.12)'"
-                                onblur="this.style.borderColor='#dde3f0';this.style.boxShadow='none'">
-                            <button type="button" onclick="mTogglePass()" style="
-                                position:absolute;right:12px;top:50%;transform:translateY(-50%);
-                                background:none;border:none;cursor:pointer;color:#6b7a99;font-size:.9rem;padding:0;
-                            "><i class="bi bi-eye" id="mEyeIcon"></i></button>
-                        </div>
-                        <div id="mPassErr" style="display:none;font-size:.76rem;color:#f5365c;margin-top:5px;">
-                            <i class="bi bi-exclamation-circle"></i> Password must be at least 6 characters.
-                        </div>
-                    </div>
-
-                    <!-- Remember / Forgot -->
-                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-                        <label
-                            style="display:flex;align-items:center;gap:6px;font-size:.8rem;color:#6b7a99;cursor:pointer;">
-                            <input type="checkbox" style="accent-color:#1d8cf8;"> Remember me
-                        </label>
-                        <a href="#" style="font-size:.8rem;color:#1d8cf8;font-weight:600;text-decoration:none;">Forgot
-                            password?</a>
-                    </div>
-
-                    <!-- Submit -->
-                    <button type="submit" id="mLoginBtn" style="
-                        width:100%;padding:12px;
-                        background:linear-gradient(90deg,#1d8cf8,#00c6ff);
-                        color:#fff;border:none;border-radius:10px;
-                        font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:700;
-                        cursor:pointer;transition:opacity .2s,transform .15s;
-                        display:flex;align-items:center;justify-content:center;gap:8px;
-                    " onmouseover="this.style.opacity='.9'" onmouseout="this.style.opacity='1'">
-                        <span id="mBtnContent"><i class="bi bi-box-arrow-in-right"></i> Sign In</span>
-                        <svg id="mSpinner"
-                            style="display:none;width:18px;height:18px;animation:spin .6s linear infinite;"
-                            viewBox="0 0 24 24" fill="none">
-                            <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,.3)" stroke-width="3" />
-                            <path d="M12 2a10 10 0 0 1 10 10" stroke="#fff" stroke-width="3" stroke-linecap="round" />
-                        </svg>
-                    </button>
-
-                    <p style="text-align:center;font-size:.82rem;color:#6b7a99;margin-top:20px;margin-bottom:0;">
-                        Don't have an account? <a href="#" onclick="closeLoginModal();openRegisterModal();return false;"
-                            style="color:#1d8cf8;font-weight:600;text-decoration:none;">Create an Account</a>
-                    </p>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- ════════════════════════════
-         REGISTER MODAL
-    ════════════════════════════ -->
-    <div id="registerModal" style="
-        display:none;
-        position:fixed;inset:0;z-index:9999;
-        align-items:center;justify-content:center;
-        padding:20px;
-    ">
-        <!-- Backdrop -->
-        <div id="registerBackdrop" onclick="closeRegisterModal()" style="
-            position:absolute;inset:0;
-            background:rgba(10,18,40,.65);
-            backdrop-filter:blur(6px);
-            -webkit-backdrop-filter:blur(6px);
-        "></div>
-
-        <!-- Modal Card -->
-        <div class="login-card" style="
-            position:relative;z-index:1;
-            background:#fff;
-            border-radius:20px;
-            width:100%;max-width:500px;
-            box-shadow:0 32px 80px rgba(10,18,40,.28),0 4px 20px rgba(10,18,40,.10);
-            overflow:hidden;
-            animation:modalIn .25s cubic-bezier(.34,1.56,.64,1);
-        ">
-            <!-- Modal Header -->
-            <div class="login-header-wrap login-header" style="
-                background:linear-gradient(135deg,#1a2340 0%,#0f2057 100%);
-                padding:28px 32px 24px;
-                position:relative;
-            ">
-                <h2 style="font-family:'Sora',sans-serif;font-size:1.2rem;font-weight:800;color:#fff;margin:0 0 4px;">
-                    Create an Account
-                </h2>
-                <p style="font-size:.82rem;color:rgba(255,255,255,.5);margin:0;">Join PrintPro and simplify your
-                    workflow.</p>
-                <button onclick="closeRegisterModal()" style="
-                    position:absolute;top:18px;right:18px;
-                    background:rgba(255,255,255,.12);border:none;border-radius:8px;
-                    width:30px;height:30px;cursor:pointer;color:#fff;font-size:1rem;
-                    display:flex;align-items:center;justify-content:center;
-                    transition:background .15s;
-                " onmouseover="this.style.background='rgba(255,255,255,.22)'"
-                    onmouseout="this.style.background='rgba(255,255,255,.12)'">
-                    <i class="bi bi-x"></i>
-                </button>
-            </div>
-
-            <!-- Modal Body -->
-            <div class="login-body-wrap login-body"
-                style="padding:28px 32px 32px; max-height: calc(100vh - 150px); overflow-y: auto;">
-                <form id="rRegisterForm" onsubmit="rHandleRegister(event)" novalidate>
-                    <div class="row g-3 mb-3">
-                        <!-- Name -->
-                        <div class="col-sm-6">
-                            <label
-                                style="display:block;font-size:.78rem;font-weight:600;color:#1a2340;margin-bottom:6px;">Full
-                                Name</label>
-                            <input type="text" id="rName" required placeholder="John Doe"
-                                style="width:100%;padding:11px 14px;border:1.5px solid #dde3f0;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.88rem;color:#1a2340;outline:none;transition:border-color .2s,box-shadow .2s;"
-                                onfocus="this.style.borderColor='#1d8cf8';this.style.boxShadow='0 0 0 3px rgba(29,140,248,.12)'"
-                                onblur="this.style.borderColor='#dde3f0';this.style.boxShadow='none'">
-                        </div>
-                        <!-- Business Name -->
-                        <div class="col-sm-6">
-                            <label
-                                style="display:block;font-size:.78rem;font-weight:600;color:#1a2340;margin-bottom:6px;">Business
-                                Name</label>
-                            <input type="text" id="rBusiness" required placeholder="Company Ltd."
-                                style="width:100%;padding:11px 14px;border:1.5px solid #dde3f0;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.88rem;color:#1a2340;outline:none;transition:border-color .2s,box-shadow .2s;"
-                                onfocus="this.style.borderColor='#1d8cf8';this.style.boxShadow='0 0 0 3px rgba(29,140,248,.12)'"
-                                onblur="this.style.borderColor='#dde3f0';this.style.boxShadow='none'">
-                        </div>
-                    </div>
-
-                    <!-- Email -->
-                    <div style="margin-bottom:16px;">
-                        <label
-                            style="display:block;font-size:.78rem;font-weight:600;color:#1a2340;margin-bottom:6px;">Business
-                            Email</label>
-                        <input type="email" id="rEmail" required placeholder="you@company.com"
-                            style="width:100%;padding:11px 14px;border:1.5px solid #dde3f0;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.88rem;color:#1a2340;outline:none;transition:border-color .2s,box-shadow .2s;"
-                            onfocus="this.style.borderColor='#1d8cf8';this.style.boxShadow='0 0 0 3px rgba(29,140,248,.12)'"
-                            onblur="this.style.borderColor='#dde3f0';this.style.boxShadow='none'">
-                    </div>
-
-                    <!-- Password -->
-                    <div style="margin-bottom:16px;">
-                        <label
-                            style="display:block;font-size:.78rem;font-weight:600;color:#1a2340;margin-bottom:6px;">Password</label>
-                        <input type="password" id="rPass" required placeholder="Create a strong password"
-                            style="width:100%;padding:11px 14px;border:1.5px solid #dde3f0;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.88rem;color:#1a2340;outline:none;transition:border-color .2s,box-shadow .2s;"
-                            onfocus="this.style.borderColor='#1d8cf8';this.style.boxShadow='0 0 0 3px rgba(29,140,248,.12)'"
-                            onblur="this.style.borderColor='#dde3f0';this.style.boxShadow='none'">
-                    </div>
-
-                    <!-- Plan -->
-                    <div style="margin-bottom:20px;">
-                        <label
-                            style="display:block;font-size:.78rem;font-weight:600;color:#1a2340;margin-bottom:6px;">Subscription
-                            Plan</label>
-                        <select id="rPlan"
-                            style="width:100%;padding:11px 14px;border:1.5px solid #dde3f0;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.88rem;color:#1a2340;outline:none;background:#fff;transition:border-color .2s,box-shadow .2s;"
-                            onfocus="this.style.borderColor='#1d8cf8';this.style.boxShadow='0 0 0 3px rgba(29,140,248,.12)'"
-                            onblur="this.style.borderColor='#dde3f0';this.style.boxShadow='none'">
-                            <option value="Pro">Pro (₱999/mo)</option>
-                            <option value="Premium">Premium (₱1899/mo)</option>
-                            <option value="Premium+">Premium+ (₱2199/mo)</option>
-                        </select>
-                    </div>
-
-                    <!-- Terms -->
-                    <div style="margin-bottom:24px;">
-                        <label
-                            style="display:flex;align-items:flex-start;gap:8px;font-size:.8rem;color:#6b7a99;cursor:pointer;">
-                            <input type="checkbox" id="rTerms" required style="accent-color:#1d8cf8;margin-top:3px;">
-                            <span>I agree to the <a href="#" style="color:#1d8cf8;text-decoration:none;">Terms &
-                                    Conditions</a> and <a href="#" style="color:#1d8cf8;text-decoration:none;">Privacy
-                                    Policy</a>.</span>
-                        </label>
-                    </div>
-
-                    <!-- Success Message -->
-                    <div id="rSuccess"
-                        style="display:none;color:#22c55e;font-size:0.85rem;font-weight:600;text-align:center;margin-bottom:15px;background:rgba(34,197,94,0.1);padding:10px;border-radius:8px;">
-                        <i class="bi bi-check-circle-fill me-1"></i> Account created successfully!
-                    </div>
-
-                    <!-- Submit -->
-                    <button type="submit" id="rSubmitBtn" style="
-                        width:100%;padding:12px;
-                        background:linear-gradient(90deg,#1d8cf8,#00c6ff);
-                        color:#fff;border:none;border-radius:10px;
-                        font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:700;
-                        cursor:pointer;transition:opacity .2s,transform .15s;
-                        display:flex;align-items:center;justify-content:center;gap:8px;
-                    " onmouseover="this.style.opacity='.9'" onmouseout="this.style.opacity='1'">
-                        <span id="rBtnContent">Create Account</span>
-                        <svg id="rSpinner"
-                            style="display:none;width:18px;height:18px;animation:spin .6s linear infinite;"
-                            viewBox="0 0 24 24" fill="none">
-                            <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,.3)" stroke-width="3" />
-                            <path d="M12 2a10 10 0 0 1 10 10" stroke="#fff" stroke-width="3" stroke-linecap="round" />
-                        </svg>
-                    </button>
-
-                    <p style="text-align:center;font-size:.82rem;color:#6b7a99;margin-top:20px;margin-bottom:0;">
-                        Already have an account? <a href="#"
-                            onclick="closeRegisterModal();openLoginModal('client');return false;"
-                            style="color:#1d8cf8;font-weight:600;text-decoration:none;">Log In</a>
-                    </p>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <style>
-        @keyframes modalIn {
-            from {
-                opacity: 0;
-                transform: scale(.92) translateY(12px);
-            }
-
-            to {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-            }
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        @media (max-width: 576px) {
-            .login-card {
-                margin: 10px;
-                width: calc(100% - 20px) !important;
-                border-radius: 16px !important;
-            }
-
-            .login-header {
-                padding: 22px 20px 18px !important;
-                display: block !important;
-            }
-
-            .login-header img {
-                height: 24px !important;
-                margin-bottom: 10px !important;
-                display: block !important;
-            }
-
-            .login-header h2 {
-                font-size: 1.05rem !important;
-                margin-bottom: 2px !important;
-            }
-
-            .login-header p {
-                font-size: .75rem !important;
-            }
-
-            .login-body {
-                padding: 20px 18px 24px !important;
-            }
-
-            #mPortalTabs {
-                margin-bottom: 18px !important;
-                padding: 3px !important;
-            }
-
-            #mPortalTabs button {
-                font-size: .72rem !important;
-                padding: 6px 3px !important;
-            }
-
-            #mAdminHint,
-            #mAlert {
-                padding: 8px 10px !important;
-                font-size: .72rem !important;
-            }
-
-            #mLoginForm label {
-                font-size: .75rem !important;
-            }
-
-            #mLoginForm input {
-                padding-top: 9px !important;
-                padding-bottom: 9px !important;
-                font-size: .85rem !important;
-            }
-        }
-    </style>
-
     <script>
-        // Global API Path Helper for Live Server (Port 5500)
-        function getApiUrl(path) {
-            const isLiveServer = window.location.port === '5500';
-            if (isLiveServer) {
-                // If you get "API Connection Failed", ensure this path matches your local PHP server (XAMPP htdocs)
-                const localBasePath = 'http://localhost/printpro/';
-                return localBasePath + path;
+        // Global State
+        const state = {
+            user: JSON.parse(sessionStorage.getItem('pp_user') || '{}'),
+            theme: localStorage.getItem('printpro-theme') || 'light',
+            charts: { status: null, revenue: null },
+            orders: [],
+            users: [],
+            specs: [],
+            subscriptions: []
+        };
+
+        // UI Initialization
+        document.addEventListener('DOMContentLoaded', () => {
+            const userRole = (state.user.role || '').toLowerCase();
+            if (!state.user.id || (userRole !== 'admin' && userRole !== 'super_admin')) {
+                window.location.href = 'index.html#login';
+                return;
             }
-            return path;
-        }
 
-        /* ── CONFIG ── */
-        const ADMIN_EMAILS = [
-            'admin@printpro.com',
-            'superadmin@printpro.com',
-            'manager@printpro.com',
-            'admin@printpro.ph',
-        ];
-        const FREE_DOMAINS = ['gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'icloud.com', 'aol.com', 'live.com', 'msn.com', 'mail.com', 'protonmail.com', 'ymail.com'];
+            initTheme();
+            initCharts();
+            updateDashboardData();
+            loadOrders();
+            loadUsers();
+            loadSubscriptions();
+            loadSpecs();
 
-        let mCurrentTab = 'client';
+            document.getElementById('userAvatar').textContent = state.user.name ? state.user.name[0].toUpperCase() : 'A';
+            document.getElementById('userName').textContent = state.user.name || 'Admin';
+            const roleEl = document.querySelector('.text-muted[style*="font-size:.7rem"]');
+            if (roleEl) roleEl.textContent = state.user.role || 'Admin';
 
-        /* ── OPEN / CLOSE ── */
-        function openLoginModal(tab = 'client') {
-            mSwitchTab(tab);
-            mClearErrors();
-            document.getElementById('mEmail').value = '';
-            document.getElementById('mPass').value = '';
-            const modal = document.getElementById('loginModal');
-            modal.style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-            setTimeout(() => document.getElementById('mEmail').focus(), 80);
-        }
-
-        function closeLoginModal() {
-            document.getElementById('loginModal').style.display = 'none';
-            document.body.style.overflow = '';
-        }
-
-        // Close on Escape key
-        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLoginModal(); });
-
-        /* ── TAB SWITCH ── */
-        function mSwitchTab(tab) {
-            mCurrentTab = tab;
-            const cBtn = document.getElementById('mTabClient');
-            const aBtn = document.getElementById('mTabAdmin');
-            const hint = document.getElementById('mAdminHint');
-            const lbl = document.getElementById('mEmailLabel');
-            const inp = document.getElementById('mEmail');
-
-            if (tab === 'client') {
-                cBtn.style.background = '#fff'; cBtn.style.color = '#1a2340';
-                cBtn.style.boxShadow = '0 2px 8px rgba(26,35,64,.10)';
-                aBtn.style.background = 'transparent'; aBtn.style.color = '#6b7a99';
-                aBtn.style.boxShadow = 'none';
-                hint.style.display = 'none';
-                lbl.textContent = 'Business Email';
-                inp.placeholder = 'you@yourcompany.com';
-            } else {
-                aBtn.style.background = '#fff'; aBtn.style.color = '#1a2340';
-                aBtn.style.boxShadow = '0 2px 8px rgba(26,35,64,.10)';
-                cBtn.style.background = 'transparent'; cBtn.style.color = '#6b7a99';
-                cBtn.style.boxShadow = 'none';
-                hint.style.display = 'flex';
-                lbl.textContent = 'Admin Email';
-                inp.placeholder = 'admin@printpro.com';
+            // Fill settings inputs
+            if (document.getElementById('setAdminName')) {
+                document.getElementById('setAdminName').value = state.user.name || '';
+                document.getElementById('setAdminEmail').value = state.user.email || '';
             }
-            mClearErrors();
+            // Route to initial page from URL query parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const pageParam = urlParams.get('page');
+            if (pageParam && ['dashboard', 'orders', 'users', 'subscriptions', 'specs', 'settings'].includes(pageParam)) {
+                showPage(pageParam);
+            }
+        });
+
+        // Theme Toggle
+        function initTheme() {
+            document.documentElement.setAttribute('data-theme', state.theme);
+            updateThemeIcon();
         }
 
-        /* ── TOGGLE PASSWORD ── */
-        function mTogglePass() {
-            const i = document.getElementById('mPass');
-            const icon = document.getElementById('mEyeIcon');
-            i.type = i.type === 'password' ? 'text' : 'password';
-            icon.className = i.type === 'password' ? 'bi bi-eye' : 'bi bi-eye-slash';
+        function toggleTheme() {
+            state.theme = state.theme === 'light' ? 'dark' : 'light';
+            localStorage.setItem('printpro-theme', state.theme);
+            document.documentElement.setAttribute('data-theme', state.theme);
+            updateThemeIcon();
+            if (state.charts.status) state.charts.status.update();
+            if (state.charts.revenue) state.charts.revenue.update();
         }
 
-        /* ── CLEAR ERRORS ── */
-        function mClearErrors() {
-            document.getElementById('mAlert').style.display = 'none';
-            document.getElementById('mEmailErr').style.display = 'none';
-            document.getElementById('mPassErr').style.display = 'none';
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            if (sidebar && overlay) {
+                sidebar.classList.toggle('show');
+                overlay.classList.toggle('show');
+            }
         }
 
-        /* ── SHOW ALERT ── */
-        function mShowAlert(msg) {
-            document.getElementById('mAlertMsg').textContent = msg;
-            document.getElementById('mAlert').style.display = 'flex';
+        function updateThemeIcon() {
+            const icon = document.getElementById('themeIcon');
+            if (icon) icon.className = state.theme === 'light' ? 'bi bi-moon-stars' : 'bi bi-sun';
         }
 
-        /* ── HELPERS ── */
-        const isValidEmail = e => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
-        const isBusinessEmail = e => !FREE_DOMAINS.includes((e.split('@')[1] || '').toLowerCase());
-
-        /* ── LOGIN HANDLER ── */
-        async function mHandleLogin(e) {
+        async function handleLogout(e) {
             e.preventDefault();
-            mClearErrors();
-
-            const email = document.getElementById('mEmail').value.trim();
-            const pass = document.getElementById('mPass').value;
-            const btn = document.getElementById('mLoginBtn');
-
-            if (!isValidEmail(email)) {
-                document.getElementById('mEmailErrMsg').textContent = 'Please enter a valid email address.';
-                document.getElementById('mEmailErr').style.display = 'block';
-                return;
+            if (confirm('Are you sure you want to log out?')) {
+                window.location.href = '../api/logout.php';
             }
-            if (pass.length < 6) {
-                document.getElementById('mPassErr').style.display = 'block';
-                return;
-            }
+        }
 
-            btn.style.opacity = '.7'; btn.style.pointerEvents = 'none';
-            document.getElementById('mBtnContent').style.display = 'none';
-            document.getElementById('mSpinner').style.display = 'block';
+        // Navigation
+        function showPage(id) {
+            const page = document.getElementById('page-' + id);
+            if (!page) return;
 
-            const formData = new FormData();
-            formData.append('email', email);
-            formData.append('password', pass);
+            document.querySelectorAll('.a-page').forEach(p => p.classList.remove('active'));
+            page.classList.add('active');
 
-            try {
-                const response = await fetch(getApiUrl('api/login.php'), {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const data = await response.json();
-
-                btn.style.opacity = '1'; btn.style.pointerEvents = '';
-                document.getElementById('mBtnContent').style.display = 'flex';
-                document.getElementById('mSpinner').style.display = 'none';
-
-                if (data.success) {
-                    const role = data.role;
-                    const portal = data.portal;
-                    if (mCurrentTab === 'admin' && portal !== 'admin') {
-                        mShowAlert('This email is not authorized for admin access.');
-                        return;
-                    }
-                    if (mCurrentTab === 'client' && portal !== 'client') {
-                        mShowAlert('Please use the Admin Portal tab to sign in.');
-                        return;
-                    }
-
-                    const name = email.split('@')[0].replace(/\./g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-                    sessionStorage.setItem('pp_user', JSON.stringify({ email, role, name }));
-
-                    window.location.href = data.redirect;
-                } else {
-                    mShowAlert(data.message || 'Invalid email or password.');
+            document.querySelectorAll('.a-nav-item').forEach(n => n.classList.remove('active'));
+            document.querySelectorAll('.a-nav-item').forEach(item => {
+                if (item.textContent.trim().toLowerCase() === id.toLowerCase()) {
+                    item.classList.add('active');
                 }
-            } catch (err) {
-                btn.style.opacity = '1'; btn.style.pointerEvents = '';
-                document.getElementById('mBtnContent').style.display = 'flex';
-                document.getElementById('mSpinner').style.display = 'none';
-                mShowAlert('A network error occurred. Please try again later.');
+            });
+
+            const titles = { dashboard: 'Dashboard', orders: 'All Orders', users: 'User Management', subscriptions: 'Subscriptions', specs: 'Specifications', settings: 'Settings' };
+            const titleEl = document.getElementById('pageTitle');
+            if (titleEl) titleEl.textContent = titles[id] || id;
+
+            if (id === 'dashboard') updateDashboardData();
+            if (id === 'orders') loadOrders();
+            if (id === 'users') loadUsers();
+            if (id === 'subscriptions') loadSubscriptions();
+            if (id === 'specs') loadSpecs();
+
+            if (window.innerWidth < 992) {
+                const sb = document.getElementById('sidebar');
+                if (sb && sb.classList.contains('show')) toggleSidebar();
             }
         }
 
-        /* ── QUOTATION HANDLER ── */
-        function handleQuotation(e) {
-            e.preventDefault();
-            const btn = document.getElementById('quoteSubmitBtn');
-            const txt = document.getElementById('quoteBtnText');
-            const spinner = document.getElementById('quoteSpinner');
-            const success = document.getElementById('quoteSuccess');
+        // Charts
+        function initCharts() {
+            const statusCtx = document.getElementById('statusChart').getContext('2d');
+            state.charts.status = new Chart(statusCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Prepress', 'Printing', 'Finishing', 'Delivered'],
+                    datasets: [{
+                        data: [0, 0, 0, 0],
+                        backgroundColor: ['#fb6340', '#1171ef', '#7c4dff', '#2dce89'],
+                        borderWidth: 0
+                    }]
+                },
+                options: { maintainAspectRatio: false, cutout: '80%', plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, font: { size: 10 } } } } }
+            });
 
-            btn.style.opacity = '.7'; btn.style.pointerEvents = 'none';
-            txt.style.display = 'none';
-            spinner.style.display = 'block';
-            success.style.display = 'none';
-
-            setTimeout(() => {
-                btn.style.opacity = '1'; btn.style.pointerEvents = '';
-                txt.style.display = 'flex';
-                spinner.style.display = 'none';
-                success.style.display = 'block';
-                document.getElementById('quotationForm').reset();
-                setTimeout(() => { success.style.display = 'none'; }, 5000);
-            }, 1200);
+            const revCtx = document.getElementById('revenueChart').getContext('2d');
+            state.charts.revenue = new Chart(revCtx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Revenue',
+                        data: [],
+                        borderColor: '#1d8cf8',
+                        backgroundColor: 'rgba(29, 140, 248, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } }, x: { grid: { display: false } } } }
+            });
         }
 
-        /* ── REGISTER MODAL OPEN/CLOSE ── */
-        function openRegisterModal(plan = 'Pro') {
-            document.getElementById('rName').value = '';
-            document.getElementById('rBusiness').value = '';
-            document.getElementById('rEmail').value = '';
-            document.getElementById('rPass').value = '';
-            document.getElementById('rTerms').checked = false;
-
-            const planSelect = document.getElementById('rPlan');
-            if (planSelect.querySelector(`option[value="${plan}"]`)) {
-                planSelect.value = plan;
-            } else {
-                planSelect.value = 'Free';
-            }
-
-            const modal = document.getElementById('registerModal');
-            modal.style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-            setTimeout(() => document.getElementById('rName').focus(), 80);
-        }
-
-        function closeRegisterModal() {
-            document.getElementById('registerModal').style.display = 'none';
-            document.body.style.overflow = '';
-        }
-
-        /* ── REGISTER HANDLER ── */
-        async function rHandleRegister(e) {
-            e.preventDefault();
-
-            const form = document.getElementById('rRegisterForm');
-            if (!form.checkValidity()) {
-                form.reportValidity();
-                return;
-            }
-
-            const btn = document.getElementById('rSubmitBtn');
-            const txt = document.getElementById('rBtnContent');
-            const spinner = document.getElementById('rSpinner');
-            const successMsg = document.getElementById('rSuccess');
-
-            if (!document.getElementById('rTerms').checked) {
-                alert("Please agree to the Terms & Conditions.");
-                return;
-            }
-
-            btn.style.opacity = '.7'; btn.style.pointerEvents = 'none';
-            txt.style.display = 'none';
-            spinner.style.display = 'block';
-
-            const formData = new FormData();
-            formData.append('name', document.getElementById('rName').value);
-            formData.append('business_name', document.getElementById('rBusiness').value);
-            formData.append('email', document.getElementById('rEmail').value);
-            formData.append('password', document.getElementById('rPass').value);
-            formData.append('plan', document.getElementById('rPlan').value);
-            formData.append('terms', '1');
-
+        async function updateDashboardData(period = '6months') {
             try {
-                const response = await fetch(getApiUrl('api/register.php'), {
-                    method: 'POST',
-                    body: formData
-                });
+                const res = await fetch(`../api/get_dashboard_stats.php?period=${period}&_=${Date.now()}`);
+                const json = await res.json();
+                if (json.success) {
+                    const d = json.data;
+                    const kpis = document.querySelectorAll('#dashboardKpis .kpi-val');
+                    if (kpis.length >= 4) {
+                        kpis[0].textContent = '₱' + parseFloat(d.total_revenue || 0).toLocaleString(undefined, { minimumFractionDigits: 2 });
+                        kpis[1].textContent = d.status_counts['Delivered'] || 0;
+                        kpis[2].textContent = (parseInt(d.status_counts['Prepress'] || 0)) + (parseInt(d.status_counts['Printing'] || 0)) + (parseInt(d.status_counts['Finishing'] || 0));
+                        kpis[3].textContent = d.new_users || 0;
+                    }
 
-                const data = await response.json();
+                    // Update Charts
+                    state.charts.status.data.datasets[0].data = [
+                        parseInt(d.status_counts['Prepress'] || 0),
+                        parseInt(d.status_counts['Printing'] || 0),
+                        parseInt(d.status_counts['Finishing'] || 0),
+                        parseInt(d.status_counts['Delivered'] || 0)
+                    ];
+                    state.charts.status.update();
 
-                btn.style.opacity = '1'; btn.style.pointerEvents = '';
-                txt.style.display = 'flex';
-                spinner.style.display = 'none';
+                    if (d.revenue_chart) {
+                        state.charts.revenue.data.labels = d.revenue_chart.map(r => r.label);
+                        state.charts.revenue.data.datasets[0].data = d.revenue_chart.map(r => parseFloat(r.value) || 0);
+                        state.charts.revenue.update();
+                    }
 
-                if (data.success) {
-                    successMsg.style.display = 'block';
-                    setTimeout(() => {
-                        window.location.href = data.redirect;
-                    }, 1500);
-                } else {
-                    alert(data.message || 'Registration failed.');
-                }
-            } catch (err) {
-                btn.style.opacity = '1'; btn.style.pointerEvents = '';
-                txt.style.display = 'flex';
-                spinner.style.display = 'none';
-                alert('A network error occurred. Please try again later.');
-            }
-        }
-
-        // Close Register Modal on Escape key
-        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeRegisterModal(); });
-
-        // Theme Toggle Logic
-        (function () {
-            const toggleBtn = document.getElementById('themeToggleBtn');
-            const icon = toggleBtn ? toggleBtn.querySelector('i') : null;
-
-            function setTheme(theme) {
-                document.documentElement.setAttribute('data-theme', theme);
-                localStorage.setItem('printpro-theme', theme);
-                if (icon) {
-                    if (theme === 'dark') {
-                        icon.className = 'bi bi-sun';
-                        icon.style.color = '#fb6340';
+                    // Fix chart colors for dark mode
+                    if (state.theme === 'dark') {
+                        Chart.defaults.color = '#a0aec0';
+                        state.charts.revenue.options.scales.x.grid.color = 'rgba(255,255,255,0.05)';
+                        state.charts.revenue.options.scales.y.grid.color = 'rgba(255,255,255,0.05)';
                     } else {
-                        icon.className = 'bi bi-moon-stars';
-                        icon.style.color = 'var(--navy)';
+                        Chart.defaults.color = '#666';
+                        state.charts.revenue.options.scales.x.grid.color = 'rgba(0,0,0,0.05)';
+                        state.charts.revenue.options.scales.y.grid.color = 'rgba(0,0,0,0.05)';
                     }
+
+                    state.charts.revenue.update();
+                } else {
+                    showToast(json.message || 'Failed to load stats', 'danger');
                 }
+            } catch (e) { 
+                console.error(e);
+                showToast('Network error loading dashboard stats', 'danger'); 
+            }
+        }
+
+        async function updateRevenueChart(period, label) {
+            const btn = document.getElementById('revenueFilterBtn');
+            btn.textContent = label;
+
+            // Highlight active dropdown item
+            document.querySelectorAll('.dropdown-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.textContent === label) item.classList.add('active');
+            });
+
+            await updateDashboardData(period);
+        }
+
+        async function loadOrders() {
+            try {
+                const res = await fetch('../api/get_orders.php?_=' + Date.now());
+                const json = await res.json();
+                if (json.success) {
+                    state.orders = json.data;
+                    renderOrders();
+                    renderRecentOrders();
+                    renderActivityFeed();
+                } else {
+                    showToast(json.message || 'Failed to load orders', 'danger');
+                }
+            } catch (e) { showToast('Network error loading orders', 'danger'); }
+        }
+
+        function renderOrders(data = state.orders) {
+            const tbody = document.querySelector('#ordersTable tbody');
+            tbody.innerHTML = data.map(o => {
+                const progress = getProgress(o.status);
+                const sColor = getStatusColor(o.status);
+                const orderNum = o.order_number || ('PPR-' + String(o.id).padStart(3, '0'));
+                
+                // Highlight rows that are Proof Pending or Proof Pending Review
+                let rowStyle = '';
+                if (o.status === 'Proof Pending') {
+                    rowStyle = 'style="background: rgba(251, 99, 64, 0.05);"';
+                } else if (o.status === 'Proof Pending Review') {
+                    rowStyle = 'style="background: rgba(29, 140, 248, 0.03);"';
+                }
+
+                // Custom actions for proof files
+                let proofBtn = '';
+                if (o.status === 'Proof Pending') {
+                    proofBtn = `<button class="btn btn-warning action-btn text-white" style="background:var(--warning); border:none;" onclick="openAdminProofUploadModal(${o.id})" title="Upload Print Proof"><i class="bi bi-cloud-arrow-up"></i></button>`;
+                } else if (o.proof_file) {
+                    const proofPath = '../' + o.proof_file.replace(/^\.\.\//, '');
+                    proofBtn = `<a href="${proofPath}" target="_blank" class="btn btn-success action-btn text-white" style="background:#2dce89; border:none;" title="View Print Proof"><i class="bi bi-file-earmark-check"></i></a>`;
+                }
+
+                return `
+                    <tr ${rowStyle}>
+                        <td class="fw-bold">#${orderNum}</td>
+                        <td>${o.business_name || o.client_name || 'Walk-in'}</td>
+                        <td>${o.product_type || 'Custom'}</td>
+                        <td>${parseInt(o.quantity).toLocaleString()}</td>
+                        <td style="width:120px;">
+                            <div class="progress-bar-wrap">
+                                <div class="progress-bar-fill" style="width:${progress}%; background:${sColor};"></div>
+                            </div>
+                        </td>
+                        <td>
+                            <select class="status-select" style="color:${sColor}; border-color:${sColor}; font-size: .73rem; padding: 2px 6px;" onchange="updateOrderStatus(${o.id}, this.value)">
+                                ${['Proof Pending', 'Proof Pending Review', 'Prepress', 'Printing', 'Finishing', 'Shipping', 'Delivered', 'Reprint'].map(s => `<option value="${s}" ${o.status === s ? 'selected' : ''}>${s}</option>`).join('')}
+                            </select>
+                        </td>
+                        <td class="text-muted small">${o.due_date ? new Date(o.due_date).toLocaleDateString() : '-'}</td>
+                        <td class="fw-bold">₱${parseFloat(o.total_amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-light action-btn" onclick="viewOrderDetails(${o.id})" title="View Details"><i class="bi bi-eye"></i></button>
+                                <a href="../api/generate_ticket.php?order_id=${o.id}" target="_blank" class="btn btn-light action-btn" title="Job Ticket"><i class="bi bi-ticket-perforated"></i></a>
+                                ${proofBtn}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('') || '<tr><td colspan="9" class="text-center p-5 text-muted">No orders found.</td></tr>';
+        }
+
+        function renderRecentOrders() {
+            const tbody = document.querySelector('#recentOrdersTable tbody');
+            tbody.innerHTML = state.orders.slice(0, 5).map(o => `
+                <tr>
+                    <td class="fw-bold">#ORD-${o.id}</td>
+                    <td>${o.business_name || o.client_name || 'Client'}</td>
+                    <td>${o.product_type || 'Job'}</td>
+                    <td><span class="badge-status" style="background:${getStatusColor(o.status)}20; color:${getStatusColor(o.status)}; border: 1px solid ${getStatusColor(o.status)}40;">${o.status}</span></td>
+                    <td class="fw-bold">₱${parseFloat(o.total_amount).toLocaleString()}</td>
+                </tr>
+            `).join('');
+        }
+
+        function renderActivityFeed() {
+            const feed = document.getElementById('activityFeed');
+            feed.innerHTML = state.orders.slice(0, 4).map(o => `
+                <div class="d-flex gap-3 mb-3 align-items-center">
+                    <div class="rounded-circle bg-primary-subtle text-primary d-flex align-items-center justify-content-center" style="width:40px; height:40px; flex-shrink:0; font-size: 1.1rem;">
+                        <i class="bi bi-box-seam"></i>
+                    </div>
+                    <div>
+                        <div class="small fw-bold">Order #ORD-${o.id} placed</div>
+                        <div class="text-muted" style="font-size:.7rem;">By ${o.business_name || o.client_name} • ${timeAgo(o.created_at)}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterOrdersByStatus(status) {
+            // Update UI tabs
+            document.querySelectorAll('#orderTabs .nav-link').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.trim() === status || (status === 'All' && btn.textContent.trim() === 'All Orders')) {
+                    btn.classList.add('active');
+                }
+            });
+
+            document.getElementById('orderListTitle').textContent = status === 'All' ? 'All Orders' : status + ' Orders';
+
+            if (status === 'All') {
+                renderOrders(state.orders);
+            } else {
+                const filtered = state.orders.filter(o => o.status === status);
+                renderOrders(filtered);
+            }
+        }
+
+        function searchOrders(q) {
+            const query = q.toLowerCase();
+            const filtered = state.orders.filter(o =>
+                o.id.toString().includes(query) ||
+                (o.business_name || '').toLowerCase().includes(query) ||
+                (o.product_type || '').toLowerCase().includes(query)
+            );
+            renderOrders(filtered);
+        }
+
+        async function viewOrderDetails(id) {
+            try {
+                const res = await fetch(`../api/get_order_details.php?id=${id}&_=${Date.now()}`);
+                const json = await res.json();
+                if (json.success) {
+                    const o = json.data;
+                    document.getElementById('detailOrderId').textContent = o.id;
+                    document.getElementById('detailClientName').textContent = o.client_name || 'N/A';
+                    document.getElementById('detailBusiness').textContent = o.business_name || 'Personal Account';
+                    document.getElementById('detailProduct').textContent = o.product_type || 'N/A';
+                    document.getElementById('detailQuantity').textContent = parseInt(o.quantity).toLocaleString();
+                    document.getElementById('detailTotal').textContent = '₱' + parseFloat(o.total_amount).toLocaleString(undefined, { minimumFractionDigits: 2 });
+                    document.getElementById('detailStatus').textContent = o.status;
+                    document.getElementById('detailDate').textContent = new Date(o.created_at).toLocaleString();
+
+                    // Render Specs
+                    const specList = document.getElementById('detailSpecList');
+                    specList.innerHTML = '';
+                    if (o.specs && Array.isArray(o.specs)) {
+                        o.specs.forEach(s => {
+                            specList.innerHTML += `
+                                <div class="col-6 mb-2">
+                                    <div class="text-muted small text-capitalize">${s.spec_type}</div>
+                                    <div class="fw-bold">${s.name}</div>
+                                </div>
+                            `;
+                        });
+                    } else {
+                        specList.innerHTML = '<div class="col-12 text-muted">No specifications recorded.</div>';
+                    }
+
+                    new bootstrap.Modal(document.getElementById('orderDetailsModal')).show();
+                } else {
+                    showToast(json.message || 'Failed to load details', 'danger');
+                }
+            } catch (e) { showToast('Network error', 'danger'); }
+        }
+
+        async function updateOrderStatus(orderId, status) {
+            try {
+                const formData = new FormData();
+                formData.append('order_id', orderId);
+                formData.append('status', status);
+                const res = await fetch('../api/update_order_status.php', { method: 'POST', body: formData });
+                const json = await res.json();
+                if (json.success) {
+                    showToast(`Order #ORD-${orderId} updated to ${status}`, 'success');
+                    loadOrders();
+                    updateDashboardData();
+                } else {
+                    showToast(json.message || 'Update failed', 'danger');
+                }
+            } catch (e) { showToast('Network error', 'danger'); }
+        }
+
+        async function loadUsers() {
+            try {
+                const res = await fetch('../api/get_users.php?_=' + Date.now());
+                const json = await res.json();
+                if (json.success) {
+                    state.users = json.data;
+                    filterAndSortUsers();
+                } else {
+                    showToast(json.message || 'Failed to load users', 'danger');
+                }
+            } catch (e) { showToast('Network error loading users', 'danger'); }
+        }
+
+        function filterAndSortUsers() {
+            const roleFilter = (document.getElementById('userRoleFilter')?.value || 'all').toLowerCase();
+            const sortVal = document.getElementById('userSortSelect')?.value || 'newest';
+            const query = (document.getElementById('userSearchInput')?.value || '').toLowerCase();
+
+            let filtered = state.users.filter(u => {
+                const matchRoleFilter = roleFilter === 'all' || (u.role || '').toLowerCase() === roleFilter;
+                const matchQuery = (u.name || '').toLowerCase().includes(query) ||
+                    (u.email || '').toLowerCase().includes(query) ||
+                    (u.business_name || '').toLowerCase().includes(query) ||
+                    (u.role || '').toLowerCase().includes(query);
+                return matchRoleFilter && matchQuery;
+            });
+
+            filtered.sort((a, b) => {
+                if (sortVal === 'newest') {
+                    return new Date(b.created_at) - new Date(a.created_at);
+                } else if (sortVal === 'oldest') {
+                    return new Date(a.created_at) - new Date(b.created_at);
+                } else if (sortVal === 'name_asc') {
+                    return (a.name || '').localeCompare(b.name || '');
+                } else if (sortVal === 'name_desc') {
+                    return (b.name || '').localeCompare(a.name || '');
+                } else if (sortVal === 'role_admin') {
+                    if (a.role === b.role) return (a.name || '').localeCompare(b.name || '');
+                    return (a.role || '').toLowerCase() === 'admin' ? -1 : 1;
+                } else if (sortVal === 'role_client') {
+                    if (a.role === b.role) return (a.name || '').localeCompare(b.name || '');
+                    return (a.role || '').toLowerCase() === 'client' ? -1 : 1;
+                }
+                return 0;
+            });
+
+            renderUsers(filtered);
+        }
+
+        function renderUsers(data = state.users) {
+            const tbody = document.querySelector('#usersTable tbody');
+            tbody.innerHTML = data.map(u => `
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="rounded-circle bg-primary-subtle text-primary d-flex align-items-center justify-content-center fw-bold" style="width:40px; height:40px; flex-shrink:0;">
+                                ${u.name ? u.name[0].toUpperCase() : 'U'}
+                            </div>
+                            <div>
+                                <div class="fw-bold">${u.name}</div>
+                                <div class="text-muted small">${u.email}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${u.business_name || '-'}</td>
+                    <td><span class="badge bg-primary-subtle text-primary text-uppercase" style="font-size: .65rem;">${u.role}</span></td>
+                    <td><span class="badge-status ${(u.status || '').toLowerCase() === 'active' ? 'badge-success' : 'badge-danger'}">${u.status}</span></td>
+                    <td class="text-muted small">${new Date(u.created_at).toLocaleDateString()}</td>
+                    <td>
+                        <div class="d-flex gap-1">
+                            <button class="btn btn-sm btn-light" onclick="openUserEditModal(${u.id})"><i class="bi bi-pencil-square"></i></button>
+                            <button class="btn btn-sm btn-light text-danger" onclick="deleteUser(${u.id})"><i class="bi bi-trash3"></i></button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('') || '<tr><td colspan="6" class="text-center p-4 text-muted">No users found.</td></tr>';
+        }
+
+        function openUserEditModal(id) {
+            const u = state.users.find(x => x.id == id);
+            if (!u) return;
+            document.getElementById('editUserId').value = u.id;
+            document.getElementById('editUserName').value = u.name;
+            document.getElementById('editUserRole').value = u.role;
+            document.getElementById('editUserStatus').value = u.status;
+            new bootstrap.Modal(document.getElementById('userEditModal')).show();
+        }
+
+        function searchUsers(q) {
+            const input = document.getElementById('userSearchInput');
+            if (input) input.value = q;
+            filterAndSortUsers();
+        }
+
+        async function handleUserUpdate(e) {
+            e.preventDefault();
+            const id = document.getElementById('editUserId').value;
+            const formData = new FormData();
+            formData.append('id', id);
+            formData.append('name', document.getElementById('editUserName').value);
+            formData.append('role', document.getElementById('editUserRole').value);
+            formData.append('status', document.getElementById('editUserStatus').value);
+
+            try {
+                const res = await fetch('../api/update_user.php', { method: 'POST', body: formData });
+                const json = await res.json();
+                if (json.success) {
+                    showToast('User updated successfully', 'success');
+                    bootstrap.Modal.getInstance(document.getElementById('userEditModal')).hide();
+                    loadUsers();
+                } else {
+                    showToast(json.message || 'Update failed', 'danger');
+                }
+            } catch (e) { showToast('Network error', 'danger'); }
+        }
+
+        async function deleteUser(id) {
+            if (!confirm('Are you sure you want to delete this user? This may affect associated orders.')) return;
+            try {
+                const res = await fetch(`../api/delete_user.php?id=${id}`, { method: 'DELETE' });
+                const json = await res.json();
+                if (json.success) {
+                    showToast('User deleted successfully', 'success');
+                    loadUsers();
+                } else {
+                    showToast(json.message || 'Delete failed', 'danger');
+                }
+            } catch (e) { showToast('Network error', 'danger'); }
+        }
+
+        function viewUserProfile(id) {
+            const u = state.users.find(x => x.id == id);
+            if (!u) return;
+            document.getElementById('profileAvatar').textContent = u.name[0];
+            document.getElementById('profileName').textContent = u.name;
+            document.getElementById('profileEmail').textContent = u.email;
+            document.getElementById('profileRole').textContent = u.role;
+            document.getElementById('profileStatus').textContent = u.status;
+            document.getElementById('profileBusiness').textContent = u.business_name || 'Personal Account';
+            document.getElementById('profileJoined').textContent = new Date(u.created_at).toLocaleDateString();
+        }
+
+        async function loadSubscriptions() {
+            try {
+                const res = await fetch('../api/get_subscriptions.php?_=' + Date.now());
+                const json = await res.json();
+                if (json.success) {
+                    state.subscriptions = json.data;
+                    renderSubscriptions();
+                } else {
+                    showToast(json.message || 'Failed to load subscriptions', 'danger');
+                }
+            } catch (e) { showToast('Network error loading subscriptions', 'danger'); }
+        }
+
+        function renderSubscriptions(data = state.subscriptions) {
+            const tbody = document.querySelector('#subsTable tbody');
+            tbody.innerHTML = data.map(s => `
+                <tr>
+                    <td class="fw-bold">${s.name}</td>
+                    <td>${s.email}</td>
+                    <td>${s.business_name || 'N/A'}</td>
+                    <td>
+                        <span class="badge bg-primary text-uppercase">${s.active_plan || s.base_plan}</span>
+                    </td>
+                    <td>
+                        <span class="badge-status ${(s.sub_status || '').toLowerCase() === 'active' ? 'badge-success' :
+                    (s.sub_status || '').toLowerCase() === 'suspended' ? 'badge-danger' : 'badge-warning'
+                }">
+                            ${s.sub_status || 'Inactive'}
+                        </span>
+                    </td>
+                    <td>${s.renews_on ? new Date(s.renews_on).toLocaleDateString() : '-'}</td>
+                    <td>
+                        <button class="btn btn-sm ${(s.sub_status || '').toLowerCase() === 'suspended' ? 'btn-success' : 'btn-outline-danger'} px-3" 
+                                onclick="toggleUserAccountStatus(${s.user_id}, '${s.sub_status}')">
+                            ${(s.sub_status || '').toLowerCase() === 'suspended' ? 'Activate' : 'Suspend'}
+                        </button>
+                    </td>
+                </tr>
+            `).join('') || '<tr><td colspan="7" class="text-center p-4 text-muted">No matching subscriptions.</td></tr>';
+        }
+
+        function searchSubscriptions(q) {
+            const query = q.toLowerCase();
+            const filtered = state.subscriptions.filter(s =>
+                (s.name || '').toLowerCase().includes(query) ||
+                (s.business_name || '').toLowerCase().includes(query) ||
+                (s.email || '').toLowerCase().includes(query)
+            );
+            renderSubscriptions(filtered);
+        }
+
+        async function toggleUserAccountStatus(id, currentStatus) {
+            const newStatus = (currentStatus || '').toLowerCase() === 'suspended' ? 'active' : 'suspended';
+            const action = newStatus === 'suspended' ? 'suspend' : 'activate';
+
+            if (!confirm(`Are you sure you want to ${action} this user account?`)) return;
+
+            const formData = new FormData();
+            formData.append('id', id);
+            formData.append('status', newStatus);
+
+            try {
+                const res = await fetch('../api/toggle_user_status.php', { method: 'POST', body: formData });
+                const json = await res.json();
+                if (json.success) {
+                    showToast(`User account ${newStatus} successfully`, 'success');
+                    loadSubscriptions(); // Refresh table
+                } else {
+                    showToast(json.message, 'danger');
+                }
+            } catch (e) { showToast('Network error', 'danger'); }
+        }
+
+        async function loadSpecs() {
+            try {
+                const res = await fetch('../api/specs.php');
+                const json = await res.json();
+                if (json.success) {
+                    state.specs = json.data;
+                    renderSpecs();
+                }
+            } catch (e) { showToast('Failed to load specifications', 'danger'); }
+        }
+
+        function renderSpecs() {
+            // Materials table
+            const paperBody = document.querySelector('#table-paper tbody');
+            const paperSpecs = state.specs.filter(s => s.spec_type === 'paper');
+            if (paperSpecs.length === 0) {
+                paperBody.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-4"><i class="bi bi-inbox me-2"></i>No records found.</td></tr>`;
+            } else {
+                paperBody.innerHTML = paperSpecs.map(s => `
+                    <tr>
+                        <td class="text-muted fw-bold">#${s.id}</td>
+                        <td class="fw-bold">${escapeHtml(s.name)}</td>
+                        <td>${parseFloat(s.price_modifier).toFixed(2)}×</td>
+                        <td><span class="badge-status ${s.is_active == 1 ? 'badge-success' : 'badge-danger'}">${s.is_active == 1 ? 'Active' : 'Inactive'}</span></td>
+                        <td>
+                            <label class="toggle-wrap">
+                                <input type="checkbox" ${s.is_active == 1 ? 'checked' : ''} onchange="toggleSpecActive('${s.spec_type}', ${s.id}, this.checked)">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-light action-btn" onclick="openSpecEditModal('${s.spec_type}', ${s.id})" title="Edit"><i class="bi bi-pencil"></i></button>
+                                <button class="btn btn-light action-btn text-danger" onclick="deleteSpec(${s.id}, '${s.spec_type}')" title="Delete"><i class="bi bi-trash3"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
             }
 
-            // Initialize theme
-            const currentTheme = localStorage.getItem('printpro-theme') || 'light';
-            setTheme(currentTheme);
+            // Finishes table
+            const finishBody = document.querySelector('#table-finish tbody');
+            const finishSpecs = state.specs.filter(s => s.spec_type === 'finish');
+            if (finishSpecs.length === 0) {
+                finishBody.innerHTML = `<tr><td colspan="7" class="text-center text-muted py-4"><i class="bi bi-inbox me-2"></i>No records found.</td></tr>`;
+            } else {
+                finishBody.innerHTML = finishSpecs.map(s => `
+                    <tr>
+                        <td class="text-muted fw-bold">#${s.id}</td>
+                        <td class="fw-bold">${escapeHtml(s.name)}</td>
+                        <td class="fw-bold">₱${parseFloat(s.price_modifier || 0).toLocaleString('en-PH', {minimumFractionDigits: 2})}</td>
+                        <td class="fw-bold">₱${parseFloat(s.per_unit_fee || 0).toLocaleString('en-PH', {minimumFractionDigits: 2})}</td>
+                        <td><span class="badge-status ${s.is_active == 1 ? 'badge-success' : 'badge-danger'}">${s.is_active == 1 ? 'Active' : 'Inactive'}</span></td>
+                        <td>
+                            <label class="toggle-wrap">
+                                <input type="checkbox" ${s.is_active == 1 ? 'checked' : ''} onchange="toggleSpecActive('${s.spec_type}', ${s.id}, this.checked)">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-light action-btn" onclick="openSpecEditModal('${s.spec_type}', ${s.id})" title="Edit"><i class="bi bi-pencil"></i></button>
+                                <button class="btn btn-light action-btn text-danger" onclick="deleteSpec(${s.id}, '${s.spec_type}')" title="Delete"><i class="bi bi-trash3"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+            }
 
-            if (toggleBtn) {
-                toggleBtn.addEventListener('click', () => {
-                    const newTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-                    setTheme(newTheme);
+            // Sizes table
+            const sizeBody = document.querySelector('#table-size tbody');
+            const sizeSpecs = state.specs.filter(s => s.spec_type === 'size');
+            if (sizeSpecs.length === 0) {
+                sizeBody.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-4"><i class="bi bi-inbox me-2"></i>No records found.</td></tr>`;
+            } else {
+                sizeBody.innerHTML = sizeSpecs.map(s => `
+                    <tr>
+                        <td class="text-muted fw-bold">#${s.id}</td>
+                        <td class="fw-bold">${escapeHtml(s.name)}</td>
+                        <td>${parseFloat(s.price_modifier).toFixed(2)}×</td>
+                        <td><span class="badge-status ${s.is_active == 1 ? 'badge-success' : 'badge-danger'}">${s.is_active == 1 ? 'Active' : 'Inactive'}</span></td>
+                        <td>
+                            <label class="toggle-wrap">
+                                <input type="checkbox" ${s.is_active == 1 ? 'checked' : ''} onchange="toggleSpecActive('${s.spec_type}', ${s.id}, this.checked)">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-light action-btn" onclick="openSpecEditModal('${s.spec_type}', ${s.id})" title="Edit"><i class="bi bi-pencil"></i></button>
+                                <button class="btn btn-light action-btn text-danger" onclick="deleteSpec(${s.id}, '${s.spec_type}')" title="Delete"><i class="bi bi-trash3"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        async function toggleSpecActive(type, id, active) {
+            const row = state.specs.find(s => s.id == id && s.spec_type === type);
+            if (!row) return;
+            const body = new URLSearchParams();
+            body.append('id', id);
+            body.append('spec_type', type);
+            body.append('name', row.name);
+            body.append('is_active', active ? 1 : 0);
+            body.append('price_modifier', row.price_modifier || 0);
+            body.append('per_unit_fee', row.per_unit_fee || 0);
+
+            try {
+                const res = await fetch('../api/specs.php', { method: 'PUT', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body });
+                const json = await res.json();
+                if (json.success) {
+                    showToast(active ? 'Activated specification' : 'Deactivated specification', 'success');
+                    loadSpecs();
+                } else {
+                    showToast(json.message || 'Error updating status', 'danger');
+                    loadSpecs();
+                }
+            } catch (e) { 
+                showToast('Network error', 'danger'); 
+                loadSpecs();
+            }
+        }
+
+        function openSpecEditModal(type, id = null) {
+            const modal = new bootstrap.Modal(document.getElementById('specEditModal'));
+            const form = document.getElementById('specEditForm');
+            form.reset();
+
+            document.getElementById('specEditId').value = id || '';
+            document.getElementById('specEditType').value = type;
+
+            const typeNames = { paper: 'Material', finish: 'Finish', size: 'Size' };
+            document.getElementById('specEditModalTitle').textContent = (id ? 'Edit ' : 'Add ') + typeNames[type];
+
+            const isFinish = type === 'finish';
+            document.getElementById('specEditMultiplierGroup').style.display = isFinish ? 'none' : 'block';
+            document.getElementById('specEditFinishGroup').style.display = isFinish ? 'block' : 'none';
+
+            document.getElementById('specEditMultiplier').required = !isFinish;
+            document.getElementById('specEditSetupFee').required = isFinish;
+            document.getElementById('specEditPerUnitFee').required = isFinish;
+
+            if (id) {
+                const s = state.specs.find(x => x.id == id && x.spec_type === type);
+                if (s) {
+                    document.getElementById('specEditName').value = s.name;
+                    if (isFinish) {
+                        document.getElementById('specEditSetupFee').value = s.price_modifier || '0.00';
+                        document.getElementById('specEditPerUnitFee').value = s.per_unit_fee || '0.00';
+                    } else {
+                        document.getElementById('specEditMultiplier').value = s.price_modifier || '1.00';
+                    }
+                    document.getElementById('specEditActive').value = s.is_active;
+                }
+            } else {
+                document.getElementById('specEditActive').value = '1';
+            }
+
+            modal.show();
+        }
+
+        async function handleSpecEditSubmit(e) {
+            e.preventDefault();
+            const id = document.getElementById('specEditId').value;
+            const type = document.getElementById('specEditType').value;
+            const name = document.getElementById('specEditName').value.trim();
+            const is_active = document.getElementById('specEditActive').value;
+
+            const isFinish = type === 'finish';
+            const price_modifier = isFinish 
+                ? document.getElementById('specEditSetupFee').value 
+                : document.getElementById('specEditMultiplier').value;
+            const per_unit_fee = isFinish 
+                ? document.getElementById('specEditPerUnitFee').value 
+                : '0.00';
+
+            const method = id ? 'PUT' : 'POST';
+            const body = new URLSearchParams();
+            if (id) body.append('id', id);
+            body.append('spec_type', type);
+            body.append('name', name);
+            body.append('is_active', is_active);
+            body.append('price_modifier', price_modifier);
+            body.append('per_unit_fee', per_unit_fee);
+
+            try {
+                const res = await fetch('../api/specs.php', { method, headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body });
+                const json = await res.json();
+                if (json.success) {
+                    showToast(id ? 'Specification updated' : 'Specification added', 'success');
+                    bootstrap.Modal.getInstance(document.getElementById('specEditModal')).hide();
+                    loadSpecs();
+                } else {
+                    showToast(json.message || 'Failed to save specification', 'danger');
+                }
+            } catch (e) { showToast('Network error', 'danger'); }
+        }
+
+        async function deleteSpec(id, type) {
+            if (!confirm('Are you sure you want to delete this?')) return;
+            try {
+                const body = new URLSearchParams();
+                body.append('id', id);
+                body.append('spec_type', type);
+                const res = await fetch('../api/specs.php', { method: 'DELETE', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body });
+                const json = await res.json();
+                if (json.success) {
+                    showToast('Deleted successfully', 'success');
+                    loadSpecs();
+                }
+            } catch (e) { showToast('Network error', 'danger'); }
+        }
+
+        function escapeHtml(s) {
+            return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
+        // Helpers
+        function getProgress(status) {
+            return {
+                'Proof Pending': 5,
+                'Proof Pending Review': 10,
+                'Prepress': 20,
+                'Printing': 40,
+                'Finishing': 60,
+                'Shipping': 80,
+                'Delivered': 100
+            }[status] || 0;
+        }
+
+        function getStatusColor(status) {
+            return {
+                'Proof Pending': '#fb6340',
+                'Proof Pending Review': '#1d8cf8',
+                'Prepress': '#1171ef',
+                'Printing': '#7c4dff',
+                'Finishing': '#8c09ff',
+                'Shipping': '#2dce89',
+                'Delivered': '#2dce89',
+                'Reprint': '#f5365c'
+            }[status] || '#8898aa';
+        }
+
+        function timeAgo(date) {
+            const seconds = Math.floor((new Date() - new Date(date)) / 1000);
+            if (seconds < 60) return 'just now';
+            const intervals = { 'yr': 31536000, 'mo': 2592000, 'd': 86400, 'h': 3600, 'm': 60 };
+            for (let [suffix, val] of Object.entries(intervals)) {
+                const count = Math.floor(seconds / val);
+                if (count > 0) return `${count}${suffix} ago`;
+            }
+            return 'just now';
+        }
+
+        // ── ADMIN PROOF UPLOAD HANDLERS ──────────────────
+        function openAdminProofUploadModal(orderId) {
+            const o = state.orders.find(x => x.id == orderId);
+            if (!o) return;
+
+            document.getElementById('adminProofOrderId').value = o.id;
+            document.getElementById('adminProofOrderNum').textContent = o.order_number || ('PPR-' + String(o.id).padStart(3, '0'));
+            document.getElementById('adminProofClientName').textContent = o.business_name || o.client_name || 'Client';
+            document.getElementById('adminProofProduct').textContent = o.product_type || 'Custom';
+            document.getElementById('adminProofQty').textContent = parseInt(o.quantity).toLocaleString();
+            
+            document.getElementById('adminProofFileInput').value = '';
+
+            const modal = new bootstrap.Modal(document.getElementById('adminProofModal'));
+            modal.show();
+        }
+
+        async function handleAdminProofUpload(e) {
+            e.preventDefault();
+            const orderId = document.getElementById('adminProofOrderId').value;
+            const fileInput = document.getElementById('adminProofFileInput');
+            
+            if (!orderId || !fileInput.files.length) {
+                showToast('Please select a proof file.', 'warning');
+                return;
+            }
+
+            const submitBtn = document.getElementById('adminProofSubmitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Uploading...';
+
+            const formData = new FormData();
+            formData.append('order_id', orderId);
+            formData.append('proof_file', fileInput.files[0]);
+
+            try {
+                const res = await fetch('../api/upload_proof.php', {
+                    method: 'POST',
+                    body: formData
                 });
+                const json = await res.json();
+                if (json.success) {
+                    showToast('Print proof uploaded successfully!', 'success');
+                    
+                    // Hide modal cleanly
+                    const modalEl = document.getElementById('adminProofModal');
+                    const modalInst = bootstrap.Modal.getInstance(modalEl);
+                    if (modalInst) modalInst.hide();
+                    
+                    loadOrders();
+                    updateDashboardData();
+                } else {
+                    showToast(json.message || 'Failed to upload proof', 'danger');
+                }
+            } catch (e) {
+                showToast('Network error during proof upload.', 'danger');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Upload Proof';
             }
-        })();
+        }
+
     </script>
 </body>
-
 </html>

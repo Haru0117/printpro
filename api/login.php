@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $stmt = $pdo->prepare("
-        SELECT u.*, c.business_name, c.industry 
+        SELECT u.*, c.id as client_id, c.business_name, c.industry 
         FROM users u 
         LEFT JOIN clients c ON u.id = c.user_id 
         WHERE u.email = ?
@@ -41,28 +41,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $_SESSION['user_id'] = $user['id'];
-        $_SESSION['role'] = $user['role'];
-        $_SESSION['name'] = $user['name'];
+        $_SESSION['name']    = $user['name'];
+        $_SESSION['email']   = $user['email'];
+        $_SESSION['role']    = $user['role'];
 
-        if ($user['role'] === 'admin' || $user['role'] === 'super_admin' || $user['role'] === 'manager' || $user['role'] === 'operator') {
-            $redirect = 'admin_dashboard.html';
+        // Store client_id for client-role users
+        $client_id = null;
+        if (strtolower($user['role']) === 'client') {
+            $cstmt = $pdo->prepare('SELECT id FROM clients WHERE user_id = ?');
+            $cstmt->execute([$user['id']]);
+            $crow = $cstmt->fetch();
+            $client_id = $crow ? (int)$crow['id'] : null;
+        }
+        $_SESSION['client_id'] = $client_id;
+
+        $role = strtolower($user['role']);
+        if ($role === 'admin' || $role === 'super_admin' || $role === 'manager' || $role === 'operator') {
+            $redirect = 'admin/';
             $portal = 'admin';
         } else {
-            $redirect = 'client_dashboard.html';
+            $redirect = 'client/';
             $portal = 'client';
         }
 
         echo json_encode([
-            'success' => true, 
-            'id' => $user['id'],
-            'redirect' => $redirect, 
-            'role' => $user['role'], 
-            'portal' => $portal, 
-            'username' => $user['username'], 
-            'name' => $user['name'],
-            'email' => $user['email'],
-            'business_name' => $user['business_name'] ?? '',
-            'industry' => $user['industry'] ?? '',
+            'success'           => true,
+            'id'                => $user['id'],
+            'redirect'          => $redirect,
+            'role'              => $user['role'],
+            'portal'            => $portal,
+            'name'              => $user['name'],
+            'email'             => $user['email'],
+            'client_id'         => $client_id,
+            'business_name'     => $user['business_name'] ?? '',
+            'industry'          => $user['industry'] ?? '',
             'subscription_plan' => $user['subscription_plan'] ?? 'pro'
         ]);
     } else {

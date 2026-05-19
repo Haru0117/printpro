@@ -27,7 +27,7 @@ try {
         // Admins see all orders
         $stmt = $pdo->query("
             SELECT o.*, 
-                   o.product_type as job_name, 
+                   COALESCE(NULLIF(o.job_name, ''), o.product_type) as job_name, 
                    o.total_amount as total_price, 
                    c.business_name, 
                    u.name as client_name 
@@ -47,7 +47,7 @@ try {
         if ($client) {
             $client_id = $client['id'];
             $stmt = $pdo->prepare("
-                SELECT *, product_type as job_name, total_amount as total_price 
+                SELECT *, COALESCE(NULLIF(job_name, ''), product_type) as job_name, total_amount as total_price 
                 FROM orders 
                 WHERE client_id = ? 
                 ORDER BY created_at DESC
