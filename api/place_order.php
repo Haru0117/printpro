@@ -199,12 +199,6 @@ try {
         exit;
     }
 
-    } catch (PDOException $e) {
-        $pdo->rollBack();
-        echo json_encode(['success' => false, 'message' => 'Failed to process payment: ' . $e->getMessage()]);
-        exit;
-    }
-
     echo json_encode([
         'success' => true,
         'order_id' => $order_id,

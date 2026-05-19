@@ -6015,13 +6015,28 @@
             formData.append('turnaround', turnaround);
             formData.append('shipping', shipping);
             formData.append('total_price', totalCost);
+            
+            // Add artwork file if selected
+            if (uploadedFiles && uploadedFiles.length > 0) {
+                formData.append('artwork_file', uploadedFiles[0]);
+            }
 
             try {
                 const res = await fetch(getApiUrl('api/place_order.php'), { method: 'POST', body: formData });
                 const data = await res.json();
                 if (data.success) {
                     if (typeof walletLoad === 'function') walletLoad();
-                    alert('✅ Order ' + data.order_number + ' placed successfully!\nEstimated due: ' + data.due_date);
+                    // show success toast instead of alert if possible, or just alert
+                    if (typeof showToast === 'function') {
+                        showToast('Order ' + data.order_number + ' placed successfully!');
+                    } else {
+                        alert('✅ Order ' + data.order_number + ' placed successfully!\nEstimated due: ' + data.due_date);
+                    }
+                    
+                    // Call loadOrders or refresh wallet if exists
+                    if (typeof orderWalletCheck === 'function') orderWalletCheck();
+                    if (typeof loadOrders === 'function') loadOrders();
+                    
                     showClientPage('orders', null);
                 } else {
                     if (data.message && data.message.toLowerCase().includes('insufficient')) {

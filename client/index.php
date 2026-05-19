@@ -332,7 +332,7 @@ try {
                 <hr class="sum-divider">
                 <div class="sum-total"><span class="sum-total-lbl">Total</span><span class="sum-total-val"
                     id="sumTotal">₱—</span></div>
-                <button class="btn-place" id="placeOrderBtn" onclick="submitClientOrder()">Place Order →</button>
+                <button class="btn-place" id="placeOrderBtn" onclick="placeOrder()">Place Order →</button>
               </div>
             </div>
           </div>
@@ -721,6 +721,8 @@ try {
         calcPrice();
     }
 
+    let currentPricingData = { grand_total: 0 };
+
     function calcPrice() {
         const sizeSelect = document.getElementById('sizeSelect');
         const paperSelect = document.getElementById('paperSelect');
@@ -747,11 +749,13 @@ try {
         let unitCost = baseProdPrice * sizeVal * paperVal * sidesVal;
         if (unitCost === 0) {
             document.getElementById('sumTotal').textContent = '₱—';
+            currentPricingData.grand_total = 0;
             return;
         }
 
         let totalCost = (unitCost * qty) + finishSetup + (finishPerUnit * qty);
         
+        currentPricingData.grand_total = totalCost;
         document.getElementById('sumTotal').textContent = '₱' + totalCost.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
         document.getElementById('sumTotal').setAttribute('data-total-raw', totalCost.toFixed(2));
     }
@@ -786,14 +790,13 @@ try {
         }
     }
 
-    async function submitClientOrder() {
+    async function placeOrder() {
         const sizeSelect = document.getElementById('sizeSelect');
         const paperSelect = document.getElementById('paperSelect');
         const finishSelect = document.getElementById('finishSelect');
         const sidesSelect = document.getElementById('sidesSelect');
         const qtySlider = document.getElementById('qtySlider');
         const jobNameInput = document.getElementById('jobNameInput');
-        const totalSpan = document.getElementById('sumTotal');
 
         if (!sizeSelect || sizeSelect.value === '0') {
             showToast('Please select a size multiplier.');
@@ -812,7 +815,7 @@ try {
         placeBtn.disabled = true;
         placeBtn.textContent = 'Placing Order...';
 
-        const totalCost = parseFloat(totalSpan.getAttribute('data-total-raw')) || 0;
+        const totalCost = currentPricingData.grand_total;
 
         const formData = new FormData();
         formData.append('product_type', selectedProduct);
