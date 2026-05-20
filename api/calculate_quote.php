@@ -113,7 +113,24 @@ function calculateOrderTotal($pdo, $params)
     // ── Step 7: 10% Safety Markup ────────────────────────────────────────────
     $subtotal_final = ($subtotal_with_addons * $turnaround_multiplier) * 1.10;
 
-    // ── Step 8: 12% VAT ──────────────────────────────────────────────────────
+    // ── Step 8: Bulk Discount ─────────────────────────────────────────────────
+    $discount_rate = 0;
+    $discount_amount = 0;
+    if ($quantity >= 7500) {
+        $discount_rate = 30;
+    } elseif ($quantity >= 5000) {
+        $discount_rate = 20;
+    } elseif ($quantity >= 2500) {
+        $discount_rate = 10;
+    } elseif ($quantity >= 1000) {
+        $discount_rate = 5;
+    }
+    if ($discount_rate > 0) {
+        $discount_amount = $subtotal_final * ($discount_rate / 100);
+        $subtotal_final -= $discount_amount;
+    }
+
+    // ── Step 9: 12% VAT ──────────────────────────────────────────────────────
     $vat_tax = $subtotal_final * 0.12;
 
     // ── Step 9: Shipping Fee ─────────────────────────────────────────────────
@@ -138,6 +155,8 @@ function calculateOrderTotal($pdo, $params)
             'setup_fee' => round($setup_fee, 2),
             'finishing_unit_fee' => round($per_unit_fee, 4),
             'subtotal_raw' => round($subtotal_with_addons, 2),
+            'discount_rate' => $discount_rate,
+            'discount_amount' => round($discount_amount, 2),
             'subtotal_final' => round($subtotal_final, 2),
             'shipping_cost' => round($shipping_cost, 2),
             'vat_tax' => round($vat_tax, 2),
@@ -148,13 +167,38 @@ function calculateOrderTotal($pdo, $params)
 
 $method = $_SERVER['REQUEST_METHOD'] ?? 'CLI';
 
+$response = null;
 if ($method === 'POST' || $method === 'GET') {
     $params = $method === 'POST' ? $_POST : $_GET;
-    echo json_encode(calculateOrderTotal($pdo, $params));
+
+    // If POST is empty, try parsing from php://input (for JSON or form-urlencoded)
+    if ($method === 'POST' && empty($params)) {
+        $rawInput = file_get_contents('php://input');
+        if (strpos($rawInput, '=') !== false) {
+            // Form-urlencoded
+            parse_str($rawInput, $params);
+        }
+    }
+
+    if (empty($params)) {
+        $response = ['success' => false, 'message' => 'No parameters received', 'debug' => $rawInput ?? 'empty'];
+    } else {
+        $response = calculateOrderTotal($pdo, $params);
+    }
 } elseif ($method === 'CLI') {
     // Quick CLI test
     $params = ['product_id' => 1, 'quantity' => 250, 'custom_width' => 4, 'custom_height' => 6, 'bleed' => 0.125, 'material' => '100lb Text (Standard)', 'finish' => 'UV Coating'];
-    echo json_encode(calculateOrderTotal($pdo, $params), JSON_PRETTY_PRINT);
+    $response = calculateOrderTotal($pdo, $params);
 } else {
-    echo json_encode(['success' => false, 'message' => 'Invalid request method.']);
+    $response = ['success' => false, 'message' => 'Invalid request method.'];
+}
+
+// CLOSE CONNECTION IMMEDIATELY after fetching data (Fetch-Close-Render pattern)
+$pdo = null;
+
+// Now perform rendering
+if ($method === 'CLI') {
+    echo json_encode($response, JSON_PRETTY_PRINT);
+} else {
+    echo json_encode($response);
 }

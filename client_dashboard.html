@@ -4068,8 +4068,7 @@
                                             </div>
                                             <div>
                                                 <div class="form-label-sm">Paper Weight</div>
-                                                <select class="form-control-sm-pp" id="paperSelect"
-                                                    onchange="updatePricing()">
+                                                <select class="form-control-sm-pp" id="paperSelect">
                                                     <option value="">Select Paper</option>
                                                 </select>
                                             </div>
@@ -4090,15 +4089,13 @@
                                             </div>
                                             <div>
                                                 <div class="form-label-sm">Finishing</div>
-                                                <select class="form-control-sm-pp" id="finishSelect"
-                                                    onchange="updatePricing()">
+                                                <select class="form-control-sm-pp" id="finishSelect">
                                                     <option value="">None / Standard</option>
                                                 </select>
                                             </div>
                                             <div>
                                                 <div class="form-label-sm">Bleed Option</div>
-                                                <select class="form-control-sm-pp" id="bleedSelect"
-                                                    onchange="updatePricing()">
+                                                <select class="form-control-sm-pp" id="bleedSelect">
                                                     <option>With Bleed (0.125")</option>
                                                     <option>No Bleed (Exact Size)</option>
                                                     <option>Custom Bleed (0.25")</option>
@@ -4118,10 +4115,10 @@
                                             <div class="form-label-sm">Print Quantity</div>
                                             <div
                                                 style="display:flex;align-items:center;gap:12px;margin-top:6px; flex-wrap: wrap;">
-                                                <input type="range" class="qty-slider" min="50" max="10000" step="50"
+                                                <input type="range" class="qty-slider" min="50" max="10000" step="1"
                                                     value="500" id="qtySlider" style="flex: 1; min-width: 200px;">
                                                 <input type="number" id="qtyVal" class="qty-input-pp" min="50"
-                                                    max="10000" step="50" value="500"
+                                                    max="10000" step="1" value="500"
                                                     title="Enter print quantity (min 50, max 10,000)">
                                                 <div class="d-flex justify-content-between mt-2" style="width:100%;">
                                                     <span class="fw-bold" id="qtyValDetailed">500 units</span>
@@ -4133,8 +4130,7 @@
                                         <div class="dim-grid">
                                             <div>
                                                 <div class="form-label-sm">Turnaround</div>
-                                                <select class="form-control-sm-pp" id="turnaroundSelect"
-                                                    onchange="updatePricing()">
+                                                <select class="form-control-sm-pp" id="turnaroundSelect">
                                                     <option value="standard">3-5 Business Days (Standard)</option>
                                                     <option value="rush">1-2 Business Days (Rush)</option>
                                                     <option value="priority">Same Day (Priority)</option>
@@ -4142,8 +4138,7 @@
                                             </div>
                                             <div>
                                                 <div class="form-label-sm">Shipping Method</div>
-                                                <select class="form-control-sm-pp" id="shippingSelect"
-                                                    onchange="updatePricing()">
+                                                <select class="form-control-sm-pp" id="shippingSelect">
                                                     <option value="free">Ground (Free)</option>
                                                     <option value="express">Express 2-Day</option>
                                                     <option value="overnight">Overnight</option>
@@ -4173,17 +4168,17 @@
 
                                         <!-- Upload Area -->
                                         <div id="upload-area"
-                                            style="display: none; border: 2px dashed var(--border); border-radius: 12px; padding: 30px; text-align: center; background: var(--off); cursor: pointer; transition: all .2s;"
+                                            style="display: none; border: 2px dashed var(--border); border-radius: 12px; padding: 20px; text-align: center; background: var(--off); cursor: pointer; transition: all .2s; min-height: 150px;"
                                             onmouseover="if(!this.classList.contains('dragover')) this.style.borderColor='var(--accent)';"
                                             onmouseout="if(!this.classList.contains('dragover')) this.style.borderColor='var(--border)';">
                                             <input type="file" id="file-upload-input" multiple style="display: none;"
                                                 accept=".pdf,.ai,.psd,.png,.jpg,.jpeg">
                                             <i class="bi bi-cloud-arrow-up"
-                                                style="font-size: 2.5rem; color: var(--accent); margin-bottom: 10px; display: block;"></i>
+                                                style="font-size: 2rem; color: var(--accent); margin-bottom: 8px; display: block;"></i>
                                             <h5
-                                                style="font-size: .9rem; font-family: 'Sora', sans-serif; font-weight: 700; color: var(--navy); margin-bottom: 4px;">
+                                                style="font-size: .85rem; font-family: 'Sora', sans-serif; font-weight: 700; color: var(--navy); margin-bottom: 4px;">
                                                 Drag &amp; Drop or Browse</h5>
-                                            <p style="font-size: .75rem; color: var(--muted); margin: 0;">Supports PDF,
+                                            <p style="font-size: .7rem; color: var(--muted); margin: 0;">Supports PDF,
                                                 AI, PSD, PNG, JPG (Max 500MB)</p>
                                         </div>
 
@@ -5108,6 +5103,7 @@
     <!-- ── SCRIPTS ── -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        console.log('Script loaded - client dashboard');
         // 1. Navigation Mapping
         const clientNavMap = {
             dashboard: 'nav-client-dashboard',
@@ -5449,14 +5445,29 @@
             function clampQty(val) {
                 val = parseInt(val) || 50;
                 val = Math.max(50, Math.min(10000, val));   // hard cap at 10 000
-                return Math.round(val / 50) * 50;            // round to nearest 50
+                return val;                                   // no rounding, step=1 for precision
             }
 
+            // Debounce function to reduce API calls
+            function debounce(func, wait) {
+                let timeout;
+                return function executedFunction(...args) {
+                    const later = () => {
+                        clearTimeout(timeout);
+                        func(...args);
+                    };
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                };
+            }
+
+            const debouncedUpdatePricing = debounce(updatePricing, 500);
+
             if (qtySlider && qtyInput) {
-                // Slider → input (live, no rounding needed — slider already steps by 50)
+                // Slider → input (live, no rounding needed — slider already steps by 1)
                 qtySlider.addEventListener('input', () => {
                     qtyInput.value = qtySlider.value;
-                    updatePricing();
+                    debouncedUpdatePricing();
                 });
 
                 // Input → slider (live as user types)
@@ -5464,7 +5475,7 @@
                     const raw = parseInt(qtyInput.value) || 50;
                     const clamped = Math.max(50, Math.min(10000, raw));
                     qtySlider.value = clamped;
-                    updatePricing();
+                    debouncedUpdatePricing();
                 });
 
                 // Input → enforce clamp + round to 50 on blur / Enter
@@ -5478,10 +5489,20 @@
                 qtyInput.addEventListener('keydown', (e) => {
                     if (e.key === 'Enter') { e.preventDefault(); qtyInput.blur(); }
                 });
-            } else if (qtySlider) {
-                // Fallback: slider only
-                qtySlider.addEventListener('input', updatePricing);
             }
+
+            // Add debounced event listeners to select elements
+            const paperSelect = document.getElementById('paperSelect');
+            const finishSelect = document.getElementById('finishSelect');
+            const bleedSelect = document.getElementById('bleedSelect');
+            const turnaroundSelect = document.getElementById('turnaroundSelect');
+            const shippingSelect = document.getElementById('shippingSelect');
+
+            if (paperSelect) paperSelect.addEventListener('change', debouncedUpdatePricing);
+            if (finishSelect) finishSelect.addEventListener('change', debouncedUpdatePricing);
+            if (bleedSelect) bleedSelect.addEventListener('change', debouncedUpdatePricing);
+            if (turnaroundSelect) turnaroundSelect.addEventListener('change', debouncedUpdatePricing);
+            if (shippingSelect) shippingSelect.addEventListener('change', debouncedUpdatePricing);
 
             loadOrderSpecs();
             loadOrders();
@@ -5659,12 +5680,26 @@
 
         masterSpecs = [];
 
+        // Cache for specs to reduce database calls
+        let specsCache = null;
+        let specsCacheTime = 0;
+        const SPECS_CACHE_DURATION = 300000; // 5 minutes
+
         async function loadOrderSpecs() {
+            // Check cache first
+            const now = Date.now();
+            if (specsCache && (now - specsCacheTime) < SPECS_CACHE_DURATION) {
+                masterSpecs = specsCache;
+                return;
+            }
+
             try {
                 const res = await fetch('api/specs.php');
                 const data = await res.json();
                 if (data.success) {
                     masterSpecs = data.data;
+                    specsCache = data.data;
+                    specsCacheTime = now;
                 }
             } catch (e) {
                 console.error("Specs API error:", e);
@@ -5821,17 +5856,20 @@
             formData.append('shipping', shipping);
 
             try {
-                const response = await fetch('api/calculate_quote.php', {
+                console.log('Sending pricing request:', formData.toString());
+                const response = await fetch('../api/calculate_quote.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: formData.toString()
                 });
 
                 const result = await response.json();
+                console.log('API response:', result);
 
                 if (result.success) {
                     const d = result.breakdown;
                     currentPricingData = d;
+                    console.log('Pricing breakdown:', d);
 
                     // Update Summary UI
                     const summaryTotal = document.getElementById('summaryTotal');
@@ -5992,44 +6030,46 @@
 
         // Step 4: File Upload Handling
         let uploadedFiles = [];
+        let savedFiles = [];
 
         document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM Content Loaded - initializing file upload');
             const uploadArea = document.getElementById('upload-area');
             const fileInput = document.getElementById('file-upload-input');
             const previewArea = document.getElementById('upload-preview');
             const previewList = document.getElementById('upload-preview-list');
 
+            console.log('upload-area:', uploadArea);
+            console.log('file-upload-input:', fileInput);
+
+            // Load saved files from database
+            console.log('Loading saved files on page load...');
+            loadSavedFiles();
+
             if (uploadArea && fileInput) {
-                uploadArea.addEventListener('click', () => fileInput.click());
-
-                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(evt => {
-                    uploadArea.addEventListener(evt, e => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                    });
+                console.log('Adding click event listener to upload area');
+                uploadArea.addEventListener('click', () => {
+                    console.log('Upload area clicked, triggering file input click');
+                    fileInput.click();
                 });
 
-                uploadArea.addEventListener('dragover', () => {
+                uploadArea.addEventListener('dragover', (e) => {
+                    e.preventDefault();
                     uploadArea.style.borderColor = 'var(--accent)';
-                    uploadArea.style.background = 'rgba(29, 140, 248, 0.05)';
+                    uploadArea.style.background = 'rgba(29, 140, 248, .04)';
                 });
 
-                ['dragleave', 'drop'].forEach(evt => {
-                    uploadArea.addEventListener(evt, () => {
-                        uploadArea.style.borderColor = 'var(--border)';
-                        uploadArea.style.background = 'var(--off)';
-                    });
+                uploadArea.addEventListener('dragleave', () => {
+                    uploadArea.style.borderColor = 'var(--border)';
+                    uploadArea.style.background = 'transparent';
                 });
 
-                uploadArea.addEventListener('drop', e => {
-                    handleFiles(e.dataTransfer.files);
-                });
+                uploadArea.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    uploadArea.style.borderColor = 'var(--border)';
+                    uploadArea.style.background = 'transparent';
 
-                fileInput.addEventListener('change', e => {
-                    handleFiles(e.target.files);
-                });
-
-                function handleFiles(files) {
+                    const files = e.dataTransfer.files;
                     if (files.length > 0) {
                         previewArea.style.display = 'block';
                         Array.from(files).forEach(file => {
@@ -6037,11 +6077,15 @@
                             const card = document.createElement('div');
                             card.className = 'file-card';
                             card.style.padding = '12px';
-                            card.style.position = 'relative';
+                            card.style.marginBottom = '8px';
+                            card.style.border = '1px solid var(--border)';
+                            card.style.borderRadius = '8px';
+                            card.style.display = 'flex';
+                            card.style.justifyContent = 'space-between';
+                            card.style.alignItems = 'center';
                             card.innerHTML = `
-                                <span class="file-icon" style="font-size: 1.8rem; margin-bottom: 6px;">📄</span>
-                                <div class="file-name" style="font-size: .75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%;">${file.name}</div>
-                                <button type="button" class="btn-close" style="position: absolute; top: 5px; right: 5px; width: 10px; height: 10px; padding: 0;" onclick="event.stopPropagation(); removeFile(this, '${file.name}')"></button>
+                                <span style="font-size: 0.85rem;">${file.name}</span>
+                                <button type="button" onclick="removeFile(this, '${file.name}')" style="background: none; border: none; color: #dc3545; cursor: pointer; font-size: 1.2rem;">&times;</button>
                             `;
                             previewList.appendChild(card);
                         });
@@ -6049,11 +6093,49 @@
 
                         // Clear selection from account
                         document.querySelectorAll('#account-files .file-card').forEach(c => {
-                            c.style.borderColor = 'var(--border)';
-                            c.style.background = '#fff';
+                            c.classList.remove('active');
                         });
+
+                        // Save files to database
+                        saveFilesToDatabase(files);
                     }
-                }
+                });
+
+                fileInput.addEventListener('change', (e) => {
+                    console.log('File input change event triggered');
+                    const files = e.target.files;
+                    console.log('Files selected:', files);
+                    if (files.length > 0) {
+                        previewArea.style.display = 'block';
+                        Array.from(files).forEach(file => {
+                            uploadedFiles.push(file);
+                            const card = document.createElement('div');
+                            card.className = 'file-card';
+                            card.style.padding = '12px';
+                            card.style.marginBottom = '8px';
+                            card.style.border = '1px solid var(--border)';
+                            card.style.borderRadius = '8px';
+                            card.style.display = 'flex';
+                            card.style.justifyContent = 'space-between';
+                            card.style.alignItems = 'center';
+                            card.innerHTML = `
+                                <span style="font-size: 0.85rem;">${file.name}</span>
+                                <button type="button" onclick="removeFile(this, '${file.name}')" style="background: none; border: none; color: #dc3545; cursor: pointer; font-size: 1.2rem;">&times;</button>
+                            `;
+                            previewList.appendChild(card);
+                        });
+                        document.getElementById('sumArtwork').textContent = uploadedFiles.length + ' file(s) selected';
+
+                        // Clear selection from account
+                        document.querySelectorAll('#account-files .file-card').forEach(c => {
+                            c.classList.remove('active');
+                        });
+
+                        // Save files to database
+                        console.log('Calling saveFilesToDatabase...');
+                        saveFilesToDatabase(files);
+                    }
+                });
             }
         });
 
@@ -6065,6 +6147,127 @@
                 document.getElementById('sumArtwork').textContent = 'None';
             } else {
                 document.getElementById('sumArtwork').textContent = uploadedFiles.length + ' file(s) selected';
+            }
+        }
+
+        async function saveFilesToDatabase(files) {
+            console.log('Saving files to database:', files);
+            for (const file of Array.from(files)) {
+                const formData = new FormData();
+                formData.append('file', file);
+
+                try {
+                    console.log('Uploading file:', file.name);
+                    const response = await fetch('../api/user_files.php', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const result = await response.json();
+                    console.log('Upload response:', result);
+                    if (result.success) {
+                        console.log('File saved to database:', result.original_filename);
+                    } else {
+                        console.error('Upload failed:', result.message);
+                    }
+                } catch (e) {
+                    console.error('Error saving file to database:', e);
+                }
+            }
+            // Reload saved files after upload
+            loadSavedFiles();
+        }
+
+        async function loadSavedFiles() {
+            console.log('Loading saved files...');
+            try {
+                const response = await fetch('../api/user_files.php');
+                const result = await response.json();
+                console.log('Load saved files response:', result);
+                if (result.success) {
+                    savedFiles = result.data;
+                    console.log('Saved files loaded:', savedFiles);
+                    renderSavedFiles();
+                } else {
+                    console.error('Failed to load saved files:', result.message);
+                }
+            } catch (e) {
+                console.error('Error loading saved files:', e);
+            }
+        }
+
+        function renderSavedFiles() {
+            const container = document.getElementById('wizard-account-files');
+            if (!container) return;
+
+            container.innerHTML = '';
+            if (savedFiles.length === 0) {
+                container.innerHTML = `
+                    <div style="grid-column: 1/-1; padding: 20px; text-align: center; color: var(--muted); font-size: .8rem; border: 1px dashed var(--border); border-radius: 8px;">
+                        No saved files found. Upload files to save them for future use.
+                    </div>
+                `;
+                return;
+            }
+
+            savedFiles.forEach(file => {
+                const card = document.createElement('div');
+                card.className = 'file-card';
+                card.style.padding = '12px';
+                card.style.marginBottom = '8px';
+                card.style.border = '1px solid var(--border)';
+                card.style.borderRadius = '8px';
+                card.style.cursor = 'pointer';
+                card.style.display = 'flex';
+                card.style.justifyContent = 'space-between';
+                card.style.alignItems = 'center';
+                card.style.transition = 'all 0.2s';
+                card.innerHTML = `
+                    <span style="font-size: 0.85rem;">${file.original_filename}</span>
+                    <button type="button" onclick="deleteSavedFile(${file.id})" style="background: none; border: none; color: #dc3545; cursor: pointer; font-size: 1.2rem;">&times;</button>
+                `;
+                card.onclick = (e) => {
+                    if (e.target.tagName !== 'BUTTON') {
+                        selectSavedFile(file.id, file.original_filename);
+                    }
+                };
+                container.appendChild(card);
+            });
+        }
+
+        async function selectSavedFile(fileId, filename) {
+            // Clear manual uploads
+            uploadedFiles = [];
+            document.getElementById('upload-preview').style.display = 'none';
+            document.getElementById('upload-preview-list').innerHTML = '';
+
+            // Mark as selected in UI
+            document.querySelectorAll('#wizard-account-files .file-card').forEach(c => {
+                c.classList.remove('active');
+                c.style.background = 'transparent';
+            });
+            event.target.closest('.file-card').classList.add('active');
+            event.target.closest('.file-card').style.background = 'rgba(29, 140, 248, .04)';
+
+            // Update summary
+            document.getElementById('sumArtwork').textContent = filename;
+
+            // Store selected file ID for order submission
+            window.selectedSavedFileId = fileId;
+        }
+
+        async function deleteSavedFile(fileId) {
+            if (!confirm('Are you sure you want to delete this file?')) return;
+
+            try {
+                const response = await fetch(`../api/user_files.php?id=${fileId}`, {
+                    method: 'DELETE'
+                });
+                const result = await response.json();
+                if (result.success) {
+                    loadSavedFiles();
+                }
+            } catch (e) {
+                console.error('Error deleting file:', e);
             }
         }
 
@@ -6111,6 +6314,12 @@
                 return;
             }
 
+            // Validate that a file is attached (either uploaded or selected from saved files)
+            if ((!uploadedFiles || uploadedFiles.length === 0) && !window.selectedSavedFileId) {
+                alert('⚠️ Please attach an artwork file before placing your order.');
+                return;
+            }
+
             const totalCost = currentPricingData.grand_total ?? currentPricingData.breakdown?.grand_total ?? 0;
 
             if (_orderWalletBalance !== null && _orderWalletBalance < totalCost) {
@@ -6152,9 +6361,11 @@
             formData.append('shipping', shipping);
             formData.append('total_price', totalCost);
 
-            // Add artwork file if selected
+            // Add artwork file if selected (either uploaded or saved)
             if (uploadedFiles && uploadedFiles.length > 0) {
                 formData.append('artwork_file', uploadedFiles[0]);
+            } else if (window.selectedSavedFileId) {
+                formData.append('saved_file_id', window.selectedSavedFileId);
             }
 
             try {
@@ -6412,10 +6623,43 @@
         let fmSearchQuery = '';
 
         function fmInit() {
+            fmLoadSavedFiles();
             fmRender();
             fmSetupDragAndDrop();
             document.addEventListener('click', () => fmHideContext());
             window.addEventListener('resize', () => fmHideContext());
+        }
+
+        async function fmLoadSavedFiles() {
+            try {
+                const response = await fetch('../api/user_files.php');
+                const result = await response.json();
+                if (result.success) {
+                    // Convert database files to file manager format
+                    fmFiles = result.data.map(file => ({
+                        id: file.id,
+                        name: file.original_filename,
+                        type: getFileTypeFromMime(file.mime_type),
+                        size: file.file_size,
+                        date: file.uploaded_at,
+                        deleted: false,
+                        starred: false,
+                        recent: true,
+                        shared: false,
+                        filePath: file.file_path
+                    }));
+                    console.log('Loaded files into file manager:', fmFiles);
+                }
+            } catch (e) {
+                console.error('Error loading files for file manager:', e);
+            }
+        }
+
+        function getFileTypeFromMime(mimeType) {
+            if (mimeType.includes('pdf')) return 'pdf';
+            if (mimeType.includes('image')) return 'image';
+            if (mimeType.includes('illustrator') || mimeType.includes('postscript')) return 'ai';
+            return 'file';
         }
 
         function fmRender() {

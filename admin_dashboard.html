@@ -1980,12 +1980,26 @@
             } catch (e) { showToast('Network error', 'danger'); }
         }
 
+        // Cache for specs to reduce database calls
+        let specsCache = null;
+        let specsCacheTime = 0;
+        const SPECS_CACHE_DURATION = 300000; // 5 minutes
+
         async function loadSpecs() {
+            // Check cache first
+            const now = Date.now();
+            if (specsCache && (now - specsCacheTime) < SPECS_CACHE_DURATION) {
+                state.specs = specsCache;
+                return;
+            }
+
             try {
                 const res = await fetch('api/specs.php');
                 const json = await res.json();
                 if (json.success) {
                     state.specs = json.data;
+                    specsCache = json.data;
+                    specsCacheTime = now;
                     renderSpecs();
                 }
             } catch (e) { showToast('Failed to load specifications', 'danger'); }

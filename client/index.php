@@ -261,7 +261,7 @@ try {
                   <div class="dim-grid">
                     <div class="form-row" style="grid-column: 1 / -1; margin-bottom: 12px;">
                       <label class="form-label">Job Name</label>
-                      <input type="text" class="form-ctrl" id="jobNameInput" placeholder="e.g. Summer Promo Flyer" oninput="updateSummaryJobName(this.value)">
+                      <input type="text" class="form-ctrl" id="jobNameInput" placeholder="e.g. Summer Promo Flyer">
                     </div>
                     <div class="form-row"><label class="form-label">Size</label><select class="form-ctrl"
                         id="sizeSelect" onchange="calcPrice()">
@@ -289,9 +289,8 @@ try {
                   <div class="step-title">Quantity</div>
                 </div>
                 <div class="wizard-body">
-                  <input type="range" class="qty-slider" id="qtySlider" min="100" max="10000" step="100" value="100"
-                    oninput="updateQty(this.value)">
-                  <div id="qtyDisplay">100</div>
+                  <input type="range" class="qty-slider" id="qtySlider" min="100" max="10000" step="1" value="100">
+                  <input type="number" id="qtyDisplay" min="100" max="10000" value="100" style="width: 100px; padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px; text-align: center; font-size: 1rem; margin-top: 12px; cursor: pointer; background: white; pointer-events: auto;">
                 </div>
               </div>
               <div class="wizard-card">
@@ -576,7 +575,16 @@ try {
 
   <script src="../assets/js/printpro.js"></script>
   <script>
-    // Load credits data
+    // Debounce utility function to prevent excessive AJAX calls
+    function debounce(func, wait) {
+      let timeout;
+      return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+      };
+    }
+
+    // Load credits
     function loadCredits() {
       fetch('../api/get_credits.php')
         .then(res => res.json())
@@ -718,46 +726,125 @@ try {
     function updateQty(val) {
         document.getElementById('qtyDisplay').textContent = val;
         document.getElementById('sumQty').textContent = val + ' units';
-        calcPrice();
+        updatePricing();
     }
 
     let currentPricingData = { grand_total: 0 };
 
-    function calcPrice() {
+    async function updatePricing() {
+        const qtySlider = document.getElementById('qtySlider');
+        const qty = parseInt(qtySlider.value) || 100;
+
+        // Update quantity display
+        document.getElementById('qtyDisplay').textContent = qty;
+        document.getElementById('sumQty').textContent = qty + ' units';
+
         const sizeSelect = document.getElementById('sizeSelect');
         const paperSelect = document.getElementById('paperSelect');
         const finishSelect = document.getElementById('finishSelect');
-        const sidesSelect = document.getElementById('sidesSelect');
-        const qtySlider = document.getElementById('qtySlider');
 
-        if (!sizeSelect || !paperSelect || !finishSelect || !qtySlider) return;
+        if (!sizeSelect || !paperSelect || !finishSelect) return;
 
-        const sizeVal = parseFloat(sizeSelect.value) || 0;
-        const paperVal = parseFloat(paperSelect.value) || 0;
-        
-        const selectedFinishOpt = finishSelect.options[finishSelect.selectedIndex];
-        const finishPerUnit = parseFloat(selectedFinishOpt.value) || 0;
-        const finishSetup = parseFloat(selectedFinishOpt.getAttribute('data-setup')) || 0;
+        const sizeText = sizeSelect.options[sizeSelect.selectedIndex]?.text || '';
+        const paperText = paperSelect.options[paperSelect.selectedIndex]?.text || '';
+        const finishText = finishSelect.options[finishSelect.selectedIndex]?.text || '';
 
-        const sidesVal = parseFloat(sidesSelect.value) || 1;
-        const qty = parseInt(qtySlider.value) || 100;
+        // Get custom dimensions (default to 4x6 if not available)
+        let custom_width = 4.0;
+        let custom_height = 6.0;
 
-        let baseProdPrice = 1.5;
-        if (selectedProduct === 'Brochures') baseProdPrice = 2.5;
-        if (selectedProduct === 'Banners') baseProdPrice = 12.0;
-
-        let unitCost = baseProdPrice * sizeVal * paperVal * sidesVal;
-        if (unitCost === 0) {
-            document.getElementById('sumTotal').textContent = '₱—';
-            currentPricingData.grand_total = 0;
-            return;
+        // Try to extract dimensions from size text if it contains dimensions
+        const sizeMatch = sizeText.match(/(\d+\.?\d*)\s*[x×]\s*(\d+\.?\d*)/i);
+        if (sizeMatch) {
+            custom_width = parseFloat(sizeMatch[1]);
+            custom_height = parseFloat(sizeMatch[2]);
         }
 
-        let totalCost = (unitCost * qty) + finishSetup + (finishPerUnit * qty);
-        
-        currentPricingData.grand_total = totalCost;
-        document.getElementById('sumTotal').textContent = '₱' + totalCost.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-        document.getElementById('sumTotal').setAttribute('data-total-raw', totalCost.toFixed(2));
+        // Get bleed value (default to 0.125 if bleedSelect doesn't exist)
+        let bleed = 0.125;
+        const bleedSelect = document.getElementById('bleedSelect');
+        if (bleedSelect) {
+            const bleedText = bleedSelect.value;
+            if (bleedText.includes('0.125')) bleed = 0.125;
+            else if (bleedText.includes('0.25')) bleed = 0.25;
+            else if (bleedText.includes('No Bleed') || bleedText === '0') bleed = 0;
+        }
+
+        // Resolve product_id from selectedProduct
+        const productIdMap = { 'Flyers': 1, 'Brochures': 2, 'Booklets': 3, 'Cards': 4, 'Posters': 5, 'Mailers': 6, 'Banners': 1 };
+        const resolvedProductId = productIdMap[selectedProduct] || 1;
+
+        // Get turnaround and shipping (default to standard/free if selects don't exist)
+        const turnaroundSelect = document.getElementById('turnaroundSelect');
+        const turnaround = turnaroundSelect ? turnaroundSelect.value : 'standard';
+
+        const shippingSelect = document.getElementById('shippingSelect');
+        const shipping = shippingSelect ? shippingSelect.value : 'free';
+
+        // Prepare form data
+        const formData = new URLSearchParams();
+        formData.append('product_id', resolvedProductId);
+        formData.append('quantity', qty);
+        formData.append('custom_width', custom_width);
+        formData.append('custom_height', custom_height);
+        formData.append('bleed', bleed);
+        formData.append('material', paperText);
+        formData.append('finish', finishText);
+        formData.append('turnaround', turnaround);
+        formData.append('shipping', shipping);
+
+        try {
+            const response = await fetch('../api/calculate_quote.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: formData.toString()
+            });
+
+            const result = await response.json();
+
+            if (result.success && result.breakdown) {
+                const d = result.breakdown;
+                window.currentPricingData = d;
+
+                // Update summary card
+                const sumTotal = document.getElementById('sumTotal');
+                if (sumTotal) {
+                    sumTotal.textContent = '₱' + d.grand_total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    sumTotal.setAttribute('data-total-raw', d.grand_total.toFixed(2));
+                }
+
+                // Update additional summary fields if they exist
+                const sumSubtotal = document.getElementById('sumSubtotal');
+                if (sumSubtotal) sumSubtotal.textContent = '₱' + d.subtotal_final.toLocaleString('en-US', { minimumFractionDigits: 2 });
+
+                const sumTax = document.getElementById('sumTax');
+                if (sumTax) sumTax.textContent = '₱' + d.vat_tax.toLocaleString('en-US', { minimumFractionDigits: 2 });
+
+                const sumShipping = document.getElementById('sumShipping');
+                if (sumShipping) sumShipping.textContent = '₱' + d.shipping_cost.toLocaleString('en-US', { minimumFractionDigits: 2 });
+
+                const sumSize = document.getElementById('sumSize');
+                if (sumSize) sumSize.textContent = custom_width + '" × ' + custom_height + '"';
+
+                const sumStock = document.getElementById('sumStock');
+                if (sumStock) sumStock.textContent = paperText;
+
+                const sumFinish = document.getElementById('sumFinish');
+                if (sumFinish) sumFinish.textContent = finishText;
+
+                // Call orderWalletCheck if it exists
+                if (typeof orderWalletCheck === 'function') {
+                    orderWalletCheck();
+                }
+            }
+        } catch (err) {
+            console.error('Pricing error:', err);
+        }
+    }
+
+    // Keep calcPrice as an alias for backward compatibility
+    function calcPrice() {
+        updatePricing();
     }
 
     function handleArtworkSelection(input) {
@@ -1047,7 +1134,45 @@ try {
       loadOrderSpecs();
       loadMyOrders();
       setInterval(loadCredits, 30000);
-      
+
+      // Add debounced event listeners for input fields to prevent excessive calls
+      const jobNameInput = document.getElementById('jobNameInput');
+      if (jobNameInput) {
+        const debouncedUpdateJobName = debounce((val) => updateSummaryJobName(val), 300);
+        jobNameInput.addEventListener('input', (e) => debouncedUpdateJobName(e.target.value));
+      }
+
+      const qtySlider = document.getElementById('qtySlider');
+      const qtyDisplay = document.getElementById('qtyDisplay');
+
+      if (qtySlider && qtyDisplay) {
+        const debouncedUpdatePricing = debounce(() => updatePricing(), 300);
+
+        // Slider change updates input
+        qtySlider.addEventListener('input', (e) => {
+          qtyDisplay.value = e.target.value;
+          document.getElementById('sumQty').textContent = e.target.value + ' units';
+          debouncedUpdatePricing();
+        });
+
+        // Input change updates slider
+        qtyDisplay.addEventListener('input', (e) => {
+          let val = parseInt(e.target.value) || 100;
+          val = Math.max(100, Math.min(10000, val));
+          qtySlider.value = val;
+          document.getElementById('sumQty').textContent = val + ' units';
+          debouncedUpdatePricing();
+        });
+
+        // Ensure input is within bounds on blur
+        qtyDisplay.addEventListener('blur', (e) => {
+          let val = parseInt(e.target.value) || 100;
+          val = Math.max(100, Math.min(10000, val));
+          qtyDisplay.value = val;
+          qtySlider.value = val;
+        });
+      }
+
       // Setup upload area drag and drop listeners
       const uploadArea = document.getElementById('upload-area');
       if (uploadArea) {

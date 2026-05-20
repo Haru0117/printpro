@@ -199,14 +199,20 @@ try {
         exit;
     }
 
-    echo json_encode([
+    $response = [
         'success' => true,
         'order_id' => $order_id,
         'order_number' => $order_number,
         'due_date' => $due_date,
-    ]);
+    ];
 
 } catch (PDOException $e) {
-    echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
+    $response = ['success' => false, 'message' => 'Database error: ' . $e->getMessage()];
 }
+
+// CLOSE CONNECTION IMMEDIATELY after fetching data (Fetch-Close-Render pattern)
+$pdo = null;
+
+// Now perform rendering
+echo json_encode($response);
 ?>

@@ -128,7 +128,7 @@ try {
     $grand_total = $final_total + $tax;
 
     // 11. Success Response
-    echo json_encode([
+    $response = [
         'success' => true,
         'data' => [
             'subtotal' => round($subtotal, 2),
@@ -138,11 +138,17 @@ try {
             'tax' => round($tax, 2),
             'grand_total' => round($grand_total, 2)
         ]
-    ]);
+    ];
 
 } catch (PDOException $e) {
-    returnError('Database Error: ' . $e->getMessage());
+    $response = ['success' => false, 'message' => 'Database Error: ' . $e->getMessage()];
 } catch (Exception $e) {
-    returnError('System Error: ' . $e->getMessage());
+    $response = ['success' => false, 'message' => 'System Error: ' . $e->getMessage()];
 }
+
+// CLOSE CONNECTION IMMEDIATELY after fetching data (Fetch-Close-Render pattern)
+$pdo = null;
+
+// Now perform rendering
+echo json_encode($response);
 ?>

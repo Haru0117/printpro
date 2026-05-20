@@ -35,6 +35,8 @@ function getTableName($type)
     return null;
 }
 
+$response = ['success' => false, 'message' => 'Invalid request method'];
+
 try {
     // Ensure is_active column exists on all three tables
     try {
@@ -61,7 +63,7 @@ try {
         $stmt = $pdo->query("SELECT id, name, setup_fee AS price_modifier, setup_fee, per_unit_fee, is_active, 'finish' AS spec_type FROM tbl_finishes ORDER BY name");
         $specs = array_merge($specs, $stmt->fetchAll());
 
-        echo json_encode(['success' => true, 'data' => $specs]);
+        $response = ['success' => true, 'data' => $specs];
 
     } elseif ($method === 'POST') {
         // Add new spec
@@ -81,7 +83,7 @@ try {
             $stmt = $pdo->prepare("INSERT INTO $table (name, multiplier) VALUES (?, ?)");
             $stmt->execute([$name, $price]);
         }
-        echo json_encode(['success' => true, 'id' => $pdo->lastInsertId()]);
+        $response = ['success' => true, 'id' => $pdo->lastInsertId()];
 
     } elseif ($method === 'PUT') {
         parse_str(file_get_contents("php://input"), $put);
@@ -103,7 +105,7 @@ try {
             $stmt = $pdo->prepare("UPDATE $table SET name=?, multiplier=?, is_active=? WHERE id=?");
             $stmt->execute([$name, $price, $is_active, $id]);
         }
-        echo json_encode(['success' => true]);
+        $response = ['success' => true];
 
     } elseif ($method === 'DELETE') {
         parse_str(file_get_contents("php://input"), $del);
@@ -116,10 +118,16 @@ try {
 
         $stmt = $pdo->prepare("DELETE FROM $table WHERE id=?");
         $stmt->execute([$id]);
-        echo json_encode(['success' => true]);
+        $response = ['success' => true];
     }
 
 } catch (Exception $e) {
-    echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+    $response = ['success' => false, 'message' => $e->getMessage()];
 }
+
+// CLOSE CONNECTION IMMEDIATELY after fetching data (Fetch-Close-Render pattern)
+$pdo = null;
+
+// Now perform rendering
+echo json_encode($response);
 ?>

@@ -15,7 +15,7 @@ if ($isLocal) {
     $host = 'fdb1034.awardspace.net';
     $db   = '4728062_printpro';
     $user = '4728062_printpro';
-    $pass = 'iF8q#5:*9o/iqF!4';
+    $pass = 'u{AYyW8)9^5fDJpc';
 }
 
 $dsn = "mysql:host=$host;dbname=$db;charset=utf8mb4";
@@ -37,4 +37,11 @@ try {
     }
     exit;
 }
+
+// Register shutdown function to ensure connection is always closed
+register_shutdown_function(function() use (&$pdo) {
+    if ($pdo !== null) {
+        $pdo = null;
+    }
+});
 ?>
