@@ -140,10 +140,8 @@ try {
           </div>
           <div
             style="background:linear-gradient(135deg,var(--navy),#2a3558);border-radius:16px;padding:24px;margin-bottom:20px;color:#fff;">
-            <h2 style="font-family:'Sora',sans-serif;font-weight:800;margin-bottom:8px;" id="heroGreeting">Welcome back!
-            </h2>
-            <p style="color:rgba(255,255,255,.7);margin-bottom:16px;">You have 3 orders ready for review and 2 active
-              shipments.</p>
+            <h2 style="font-family:'Sora',sans-serif;font-weight:800;margin-bottom:8px;" id="heroGreeting">Welcome back, <?php echo htmlspecialchars($userName); ?>!</h2>
+            <p style="color:rgba(255,255,255,.7);margin-bottom:16px;" id="heroBannerSubtitle">Loading your orders...</p>
             <button class="btn btn-primary" onclick="showPage('create')">+ New Project →</button>
           </div>
           <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;">
@@ -152,15 +150,15 @@ try {
                   class="bi bi-box-seam"></i></div>
               <div>
                 <div class="kpi-lbl">Active Orders</div>
-                <div class="kpi-val">12</div>
+                <div class="kpi-val" id="kpiActiveOrders">—</div>
               </div>
             </div>
             <div class="kpi-card" onclick="showPage('cfiles')">
               <div class="kpi-icon" style="background:rgba(62,198,198,.1);color:var(--teal);"><i
                   class="bi bi-folder2"></i></div>
               <div>
-                <div class="kpi-lbl">Files</div>
-                <div class="kpi-val">48</div>
+                <div class="kpi-lbl">Assets</div>
+                <div class="kpi-val" id="kpiFiles">—</div>
               </div>
             </div>
             <div class="kpi-card" onclick="showPage('cbilling')">
@@ -168,7 +166,7 @@ try {
                   class="bi bi-credit-card"></i></div>
               <div>
                 <div class="kpi-lbl">Credits</div>
-                <div class="kpi-val">₱<?php echo number_format($credit_balance, 0); ?></div>
+                <div class="kpi-val" id="kpiCredits">₱<?php echo number_format($credit_balance, 0); ?></div>
               </div>
             </div>
           </div>
@@ -185,11 +183,11 @@ try {
                   <p style="margin:4px 0 0 0;color:var(--muted);font-size:.9rem;">Available for orders</p>
                 </div>
               </div>
-              <div style="font-size:2rem;font-weight:700;color:var(--success);margin-bottom:8px;">
+              <div id="dashCreditBalance" style="font-size:2rem;font-weight:700;color:var(--success);margin-bottom:8px;">
                 ₱<?php echo number_format($credit_balance, 2); ?>
               </div>
               <div style="color:var(--muted);font-size:.85rem;">
-                Default: ₱10,000.00 | Used for order payments
+                Used for order payments
               </div>
             </div>
 
@@ -228,6 +226,37 @@ try {
                 <button class="btn btn-outline btn-sm" onclick="showPage('cbilling')">View All Transactions</button>
               </div>
             </div>
+          </div>
+
+          <!-- Recent Orders on Dashboard -->
+          <div class="card orders-card">
+            <div class="card-hdr" style="display:flex;justify-content:space-between;align-items:center;">
+              <span class="card-title">Recent Orders</span>
+              <div style="display:flex;gap:8px;">
+                <button class="btn btn-primary btn-sm" style="padding:6px 14px;font-size:.78rem;" onclick="showPage('create')">+ New Order</button>
+                <button class="btn btn-outline btn-sm" style="padding:6px 14px;font-size:.78rem;" onclick="showPage('corders')">View all</button>
+              </div>
+            </div>
+            <table class="tbl orders-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>JOB NAME</th>
+                  <th>QTY</th>
+                  <th>STATUS</th>
+                  <th>DUE</th>
+                  <th>TOTAL</th>
+                </tr>
+              </thead>
+              <tbody id="dashRecentOrdersTbody">
+                <tr>
+                  <td colspan="6" style="text-align:center;color:var(--muted);padding:30px;">
+                    <i class="bi bi-arrow-repeat spin" style="font-size:1.5rem;display:block;margin-bottom:8px;"></i>
+                    Loading...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
 
@@ -589,22 +618,21 @@ try {
       fetch('../api/get_credits.php')
         .then(res => res.json())
         .then(data => {
-          console.log('Credits API response:', data);
           if (data.success) {
-            // Update topbar credits
-            const topbarCredits = document.getElementById('topbarCredits');
-            if (topbarCredits) {
-              const balanceNum = parseFloat(data.balance_raw);
-              const displayValue = balanceNum >= 1000 ? (balanceNum / 1000).toFixed(1) + 'k' : balanceNum.toFixed(2);
-              topbarCredits.textContent = '₱' + displayValue;
-              console.log('Updated topbar credits to:', topbarCredits.textContent);
-            }
+            const balanceNum = parseFloat(data.balance_raw) || 0;
+            const formatted  = '₱' + balanceNum.toLocaleString('en-PH', {minimumFractionDigits: 2, maximumFractionDigits: 2});
 
-            // Update KPI card
-            const creditKpi = document.querySelector('[onclick="showPage(\'cbilling\')"] .kpi-val');
-            if (creditKpi) {
-              creditKpi.textContent = '₱' + (parseFloat(data.balance_raw) / 1000).toFixed(1) + 'k';
-            }
+            // Topbar
+            const topbarCredits = document.getElementById('topbarCredits');
+            if (topbarCredits) topbarCredits.textContent = formatted;
+
+            // KPI card — use stable ID
+            const kpiCredits = document.getElementById('kpiCredits');
+            if (kpiCredits) kpiCredits.textContent = formatted;
+
+            // Dashboard credit balance card
+            const dashCredit = document.getElementById('dashCreditBalance');
+            if (dashCredit) dashCredit.textContent = formatted;
 
             // Update balance in credits overview card
             const overviewCards = document.querySelectorAll('div[style*="font-size:2rem"]');
@@ -965,11 +993,100 @@ try {
         if (json.success) {
           clientOrders = json.data;
           renderOrdersTable();
+          updateDashboardKpis();
         } else {
           console.warn('Failed to load client orders:', json.message);
+          updateDashboardKpis(); // still update with 0
         }
       } catch (e) {
         console.warn('Network error loading orders:', e);
+        updateDashboardKpis();
+      }
+    }
+
+    function updateDashboardKpis() {
+      const activeStatuses = ['Prepress','Printing','Finishing','Shipping','Proof Pending','Proof Pending Review'];
+      const activeOrders = clientOrders.filter(o => activeStatuses.includes(o.status));
+      const proofPending = clientOrders.filter(o => o.status === 'Proof Pending Review' && o.proof_file);
+      const inShipping  = clientOrders.filter(o => o.status === 'Shipping');
+
+      // Active Orders KPI
+      const kpiActive = document.getElementById('kpiActiveOrders');
+      if (kpiActive) kpiActive.textContent = activeOrders.length;
+
+      // Hero banner subtitle
+      const subtitle = document.getElementById('heroBannerSubtitle');
+      if (subtitle) {
+        if (clientOrders.length === 0) {
+          subtitle.textContent = 'You have no orders yet. Start your first project by clicking the button below!';
+        } else {
+          const parts = [];
+          if (proofPending.length > 0) parts.push(`${proofPending.length} proof${proofPending.length > 1 ? 's' : ''} ready for review`);
+          if (inShipping.length > 0)  parts.push(`${inShipping.length} active shipment${inShipping.length > 1 ? 's' : ''}`);
+          if (activeOrders.length > 0 && parts.length === 0) parts.push(`${activeOrders.length} order${activeOrders.length > 1 ? 's' : ''} in progress`);
+          subtitle.textContent = parts.length > 0 ? 'You have ' + parts.join(' and ') + '.' : 'All caught up! Place a new order anytime.';
+        }
+      }
+
+      // Load file count separately
+      loadFileCount();
+
+      // Render recent orders on dashboard (last 5)
+      renderDashboardRecentOrders();
+    }
+
+    function renderDashboardRecentOrders() {
+      const tbody = document.getElementById('dashRecentOrdersTbody');
+      if (!tbody) return;
+
+      const recent = clientOrders.slice(0, 5);
+
+      if (recent.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" style="text-align:center;color:var(--muted);padding:30px;">
+              <i class="bi bi-inbox" style="font-size:2rem;display:block;margin-bottom:8px;"></i>
+              No orders yet. Place your first order!
+            </td>
+          </tr>`;
+        return;
+      }
+
+      tbody.innerHTML = recent.map(o => {
+        const orderNum = o.order_number || ('PPR-' + String(o.id).padStart(3, '0'));
+        const jobName  = o.job_name || (o.product_type + ' Project');
+        const total    = parseFloat(o.total_price || o.total_amount || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        const dateStr  = o.due_date ? new Date(o.due_date).toLocaleDateString('en-US', {month: 'short', day: 'numeric'}) : '—';
+
+        let badgeClass = 'b-active';
+        if (['Proof Pending','Proof Pending Review'].includes(o.status)) badgeClass = 'b-pending';
+        if (['Delivered','Done'].includes(o.status)) badgeClass = 'b-done';
+        if (o.status === 'Reprint') badgeClass = 'b-pending';
+
+        return `
+          <tr>
+            <td style="font-weight:700;">#${orderNum}</td>
+            <td style="font-weight:500;">${escapeHtml(jobName)}</td>
+            <td>${parseInt(o.quantity).toLocaleString()}</td>
+            <td><span class="badge ${badgeClass}">${o.status}</span></td>
+            <td>${dateStr}</td>
+            <td style="font-weight:700;">₱${total}</td>
+          </tr>`;
+      }).join('');
+    }
+
+    async function loadFileCount() {
+      try {
+        const res = await fetch('../api/user_files.php');
+        const json = await res.json();
+        const kpiFiles = document.getElementById('kpiFiles');
+        if (kpiFiles) {
+          const count = (json.success && Array.isArray(json.data)) ? json.data.length : 0;
+          kpiFiles.textContent = count;
+        }
+      } catch (e) {
+        const kpiFiles = document.getElementById('kpiFiles');
+        if (kpiFiles) kpiFiles.textContent = '0';
       }
     }
 

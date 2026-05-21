@@ -784,35 +784,108 @@
         }
 
         /* ── CLIENT CREATE ORDER ── */
+        /* ── CREATE ORDER LAYOUT ── */
         .c-order {
             padding: 20px 24px;
-            display: flex;
+            display: grid;
+            grid-template-columns: 58% 1fr;
             gap: 20px;
-            align-items: flex-start;
+            align-items: start;
         }
 
-        @media (max-width: 991px) {
+        .c-order-main {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            min-width: 0;
+        }
+
+        .c-order-sidebar {
+            position: sticky;
+            top: 20px;
+            min-width: 0;
+        }
+
+        @media (max-width: 1023px) {
             .c-order {
-                flex-direction: column;
+                grid-template-columns: 1fr;
                 padding: 16px;
             }
-
             .c-order-sidebar {
+                position: static;
                 width: 100%;
             }
         }
 
-        .c-order-main {
-            flex: 1;
+        /* ── STEP PROGRESS BAR ── */
+        .order-progress {
             display: flex;
-            flex-direction: column;
-            gap: 16px;
+            align-items: center;
+            margin-bottom: 20px;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 20px;
+            overflow-x: auto;
         }
 
-        .c-order-sidebar {
-            width: 260px;
+        .order-progress-step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
             flex-shrink: 0;
         }
+
+        .order-progress-step .prog-num {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: var(--border);
+            color: var(--muted);
+            font-size: .72rem;
+            font-weight: 700;
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+            transition: all .2s;
+        }
+
+        .order-progress-step .prog-label {
+            font-size: .75rem;
+            font-weight: 600;
+            color: var(--muted);
+            white-space: nowrap;
+            transition: color .2s;
+        }
+
+        .order-progress-step.active .prog-num { background: var(--accent); color: #fff; }
+        .order-progress-step.active .prog-label { color: var(--accent); }
+        .order-progress-step.done .prog-num { background: #2dce89; color: #fff; }
+        .order-progress-step.done .prog-label { color: #2dce89; }
+
+        .order-progress-connector {
+            flex: 1;
+            height: 2px;
+            background: var(--border);
+            margin: 0 8px;
+            min-width: 20px;
+            transition: background .3s;
+        }
+        .order-progress-connector.done { background: #2dce89; }
+
+        [data-theme="dark"] .order-progress { background: var(--dark-card); }
+
+        /* ── SUMMARY CARD EXTRAS ── */
+        .sum-section-title {
+            font-size: .65rem;
+            font-weight: 700;
+            color: rgba(255,255,255,.35);
+            text-transform: uppercase;
+            letter-spacing: .1em;
+            margin: 14px 0 8px;
+        }
+        .delivery-lbl { font-size: .7rem; color: rgba(255,255,255,.45); margin-bottom: 3px; }
+        .delivery-val { font-size: .82rem; font-weight: 600; color: rgba(255,255,255,.85); }
 
         .wizard-card {
             background: #fff;
@@ -3839,15 +3912,14 @@
                                     <h2 id="clientGreeting"
                                         style="font-family:'Sora',sans-serif; font-weight: 800; margin-bottom: 8px;">
                                         Welcome to PrintPro!</h2>
-                                    <p
+                                    <p id="heroBannerSubtitle"
                                         style="color: rgba(255,255,255,.7); font-size: .9rem; max-width: 400px; margin-bottom: 12px;">
-                                        You have no active orders yet. Start your first project by clicking the button
-                                        below!
+                                        Loading your orders...
                                     </p>
                                     <div
                                         style="display: flex; align-items: center; gap: 10px; margin-bottom: 24px; background: rgba(255,255,255,.1); width: fit-content; padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,.15);">
                                         <div style="font-size: .75rem; color: rgba(255,255,255,.8);">Current Plan:
-                                            <strong id="dashboardPlanName" style="color: #fff;">Free Plan</strong>
+                                            <strong id="dashboardPlanName" style="color: #fff;">Pro</strong>
                                         </div>
                                         <div style="width: 1px; height: 12px; background: rgba(255,255,255,.2);"></div>
                                         <div style="font-size: .75rem; color: rgba(255,255,255,.8);">Status: <strong
@@ -3869,7 +3941,7 @@
                                         style="width: 40px; height: 40px; background: rgba(79, 126, 247, .1); color: var(--accent); border-radius: 10px; display: grid; place-items: center; font-size: 1.2rem; margin-bottom: 8px;">
                                         <i class="bi bi-box-seam"></i>
                                     </div>
-                                    <div class="c-action-stat">0</div>
+                                    <div class="c-action-stat" id="kpiActiveOrders">—</div>
                                     <div class="c-action-label">Active Orders</div>
                                 </div>
                                 <div class="c-action-card" onclick="showClientPage('files', null)"
@@ -3879,7 +3951,7 @@
                                         style="width: 40px; height: 40px; background: rgba(62, 198, 198, .1); color: var(--teal); border-radius: 10px; display: grid; place-items: center; font-size: 1.2rem; margin-bottom: 8px;">
                                         <i class="bi bi-folder2"></i>
                                     </div>
-                                    <div class="c-action-stat">0</div>
+                                    <div class="c-action-stat" id="kpiAssets">—</div>
                                     <div class="c-action-label">Assets</div>
                                 </div>
                                 <div class="c-action-card" onclick="showClientPage('billing', null)"
@@ -3889,7 +3961,7 @@
                                         style="width: 40px; height: 40px; background: rgba(45, 206, 137, .1); color: #2dce89; border-radius: 10px; display: grid; place-items: center; font-size: 1.2rem; margin-bottom: 8px;">
                                         <i class="bi bi-credit-card"></i>
                                     </div>
-                                    <div class="c-action-stat">₱0</div>
+                                    <div class="c-action-stat" id="kpiCredits">₱—</div>
                                     <div class="c-action-label">Credits</div>
                                 </div>
                             </div>
@@ -4027,6 +4099,29 @@
                         <div class="c-order">
                             <div class="c-order-main">
 
+                                <!-- Step Progress Bar -->
+                                <div class="order-progress" id="orderProgressBar">
+                                    <div class="order-progress-step active" id="prog-step-1">
+                                        <div class="prog-num">1</div>
+                                        <div class="prog-label">Product</div>
+                                    </div>
+                                    <div class="order-progress-connector" id="prog-conn-1"></div>
+                                    <div class="order-progress-step" id="prog-step-2">
+                                        <div class="prog-num">2</div>
+                                        <div class="prog-label">Material & Size</div>
+                                    </div>
+                                    <div class="order-progress-connector" id="prog-conn-2"></div>
+                                    <div class="order-progress-step" id="prog-step-3">
+                                        <div class="prog-num">3</div>
+                                        <div class="prog-label">Quantity & Production</div>
+                                    </div>
+                                    <div class="order-progress-connector" id="prog-conn-3"></div>
+                                    <div class="order-progress-step" id="prog-step-4">
+                                        <div class="prog-num">4</div>
+                                        <div class="prog-label">Artwork</div>
+                                    </div>
+                                </div>
+
                                 <!-- Step 1: Product Type -->
                                 <div class="wizard-card">
                                     <div class="wizard-hdr">
@@ -4161,26 +4256,33 @@
                                 </div>
 
                                 <!-- Step 5: Artwork & Files -->
-                                <div class="wizard-card">
+                                <div class="wizard-card" id="artworkStep">
                                     <div class="wizard-hdr">
                                         <div class="step-num">5</div>
-                                        <div class="step-title">Artwork &amp; Files</div>
+                                        <div class="step-title">Artwork &amp; Files <span style="background:#f5365c;color:#fff;font-size:.6rem;font-weight:800;padding:2px 7px;border-radius:10px;vertical-align:middle;letter-spacing:.04em;">REQUIRED</span></div>
                                     </div>
                                     <div class="wizard-body">
+                                        <!-- Required notice -->
+                                        <div id="artworkRequiredNotice" style="display:flex;align-items:center;gap:8px;background:rgba(245,54,92,.08);border:1px solid rgba(245,54,92,.2);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:.78rem;color:#f5365c;font-weight:600;">
+                                            <i class="bi bi-exclamation-circle-fill"></i>
+                                            You must attach your print-ready artwork file before placing an order. Accepted: PDF, AI, PSD, PNG, JPG (Max 500MB)
+                                        </div>
+
                                         <div style="display:flex; gap: 12px; margin-bottom: 16px;">
-                                            <button class="pt-btn" style="flex:1; padding: 10px;"
-                                                onclick="document.getElementById('upload-area').style.display='block'; document.getElementById('account-files').style.display='none'; this.classList.add('active'); this.nextElementSibling.classList.remove('active');"><i
+                                            <button class="pt-btn active" style="flex:1; padding: 10px;" id="uploadNewTab"
+                                                onclick="document.getElementById('upload-area').style.display='block'; document.getElementById('account-files').style.display='none'; this.classList.add('active'); document.getElementById('selectFromAccountTab').classList.remove('active');"><i
                                                     class="bi bi-cloud-upload" style="font-size: 1.1rem;"></i>Upload
                                                 New</button>
-                                            <button class="pt-btn active" style="flex:1; padding: 10px;"
-                                                onclick="document.getElementById('upload-area').style.display='none'; document.getElementById('account-files').style.display='block'; this.classList.add('active'); this.previousElementSibling.classList.remove('active');"><i
+                                            <button class="pt-btn" style="flex:1; padding: 10px;" id="selectFromAccountTab"
+                                                onclick="document.getElementById('upload-area').style.display='none'; document.getElementById('account-files').style.display='block'; this.classList.add('active'); document.getElementById('uploadNewTab').classList.remove('active');"><i
                                                     class="bi bi-folder2-open" style="font-size: 1.1rem;"></i>Select
                                                 from Account</button>
                                         </div>
 
-                                        <!-- Upload Area -->
+                                        <!-- Upload Area — shown by default -->
                                         <div id="upload-area"
-                                            style="display: none; border: 2px dashed var(--border); border-radius: 12px; padding: 20px; text-align: center; background: var(--off); cursor: pointer; transition: all .2s; min-height: 150px;"
+                                            style="display: block; border: 2px dashed var(--border); border-radius: 12px; padding: 20px; text-align: center; background: var(--off); cursor: pointer; transition: all .2s; min-height: 150px;"
+                                            onclick="document.getElementById('file-upload-input').click()"
                                             onmouseover="if(!this.classList.contains('dragover')) this.style.borderColor='var(--accent)';"
                                             onmouseout="if(!this.classList.contains('dragover')) this.style.borderColor='var(--border)';">
                                             <input type="file" id="file-upload-input" multiple style="display: none;"
@@ -4189,9 +4291,8 @@
                                                 style="font-size: 2rem; color: var(--accent); margin-bottom: 8px; display: block;"></i>
                                             <h5
                                                 style="font-size: .85rem; font-family: 'Sora', sans-serif; font-weight: 700; color: var(--navy); margin-bottom: 4px;">
-                                                Drag &amp; Drop or Browse</h5>
-                                            <p style="font-size: .7rem; color: var(--muted); margin: 0;">Supports PDF,
-                                                AI, PSD, PNG, JPG (Max 500MB)</p>
+                                                Drag &amp; Drop or Click to Browse</h5>
+                                            <p style="font-size: .7rem; color: var(--muted); margin: 0;">PDF, AI, PSD, PNG, JPG — Max 500MB</p>
                                         </div>
 
                                         <!-- Upload Preview Area -->
@@ -4205,7 +4306,7 @@
                                         </div>
 
                                         <!-- Account Files Area -->
-                                        <div id="account-files" style="display: block;">
+                                        <div id="account-files" style="display: none;">
                                             <div
                                                 style="font-size: .75rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 12px;">
                                                 Your Uploaded Files</div>
@@ -4225,46 +4326,59 @@
                             <div class="c-order-sidebar">
                                 <div class="summary-card">
                                     <div class="summary-title">PRODUCT SUMMARY</div>
-                                    <div class="summary-sub">Personalized Printing Solution</div>
-                                    <div class="summary-row"><span>Product</span><span id="sumProduct">Flyers</span>
-                                    </div>
-                                    <div class="summary-row"><span>Quantity</span><span id="sumQty">2,500</span></div>
+                                    <div class="summary-sub">Live price estimate — updates as you configure</div>
+
+                                    <div class="sum-section-title">Specifications</div>
+                                    <div class="summary-row"><span>Product</span><span id="sumProduct">Flyers</span></div>
+                                    <div class="summary-row"><span>Quantity</span><span id="sumQty">500</span></div>
                                     <div class="summary-row"><span>Size</span><span id="sumSize">4" × 6"</span></div>
-                                    <div class="summary-row"><span>Stock</span><span id="sumStock">100lb Gloss</span>
-                                    </div>
-                                    <div class="summary-row"><span>Finishing</span><span id="sumFinish">Matte UV</span>
-                                    </div>
-                                    <div class="summary-row"><span>Artwork</span><span id="sumArtwork">None</span></div>
+                                    <div class="summary-row"><span>Paper Stock</span><span id="sumStock">—</span></div>
+                                    <div class="summary-row"><span>Finishing</span><span id="sumFinish">—</span></div>
+                                    <div class="summary-row"><span>Bleed</span><span id="sumBleed">With Bleed</span></div>
+                                    <div class="summary-row"><span>Artwork</span><span id="sumArtwork" style="color:rgba(245,54,92,.8);">Not attached</span></div>
+
                                     <hr class="summary-divider">
+                                    <div class="sum-section-title">Timeline</div>
                                     <div class="delivery-box">
                                         <div class="delivery-lbl">Estimated Production</div>
-                                        <div class="delivery-val">3–5 Business Days</div>
+                                        <div class="delivery-val" id="sumProduction">3–5 Business Days</div>
                                     </div>
                                     <div class="delivery-box" style="margin-top:8px;">
                                         <div class="delivery-lbl">Estimated Arrival</div>
                                         <div class="delivery-val" style="display:flex;align-items:center;gap:6px;">
-                                            <i class="bi bi-calendar3"
-                                                style="color:rgba(255,255,255,.45);font-size:.8rem;"></i>
-                                            July 18th – 22nd
+                                            <i class="bi bi-calendar3" style="color:rgba(255,255,255,.45);font-size:.8rem;"></i>
+                                            <span id="sumArrival">—</span>
                                         </div>
                                     </div>
+
                                     <hr class="summary-divider">
-                                    <div class="summary-row"><span>Subtotal</span><span
-                                            id="sumSubtotal">₱3,200.00</span></div>
+                                    <div class="sum-section-title">Price Breakdown</div>
+                                    <div class="summary-row"><span>Base Price</span><span id="sumBasePrice">₱—</span></div>
+                                    <div class="summary-row"><span>Material</span><span id="sumMaterialFee">₱—</span></div>
+                                    <div class="summary-row"><span>Finishing Fee</span><span id="sumFinishFee">₱—</span></div>
+                                    <div class="summary-row"><span>Turnaround</span><span id="sumTurnaroundFee">₱—</span></div>
+                                    <div class="summary-row"><span>Subtotal</span><span id="sumSubtotal">₱—</span></div>
                                     <div class="summary-row" id="sumDiscountRow" style="display:none; color:#2dce89;">
-                                        <span>Discount</span><span id="sumDiscount">-₱0.00</span>
+                                        <span>Bulk Discount</span><span id="sumDiscount">-₱0.00</span>
                                     </div>
-                                    <div class="summary-row"><span>Shipping</span><span id="sumShipping">₱0.00</span>
-                                    </div>
-                                    <div class="summary-row"><span>Estimated Tax (12%)</span><span
-                                            id="sumTax">₱384.00</span></div>
-                                    <div class="summary-total">
+                                    <div class="summary-row"><span>Shipping</span><span id="sumShipping">₱0.00</span></div>
+                                    <div class="summary-row"><span>VAT (12%)</span><span id="sumTax">₱—</span></div>
+
+                                    <div class="summary-total" style="margin-top:12px;">
                                         <span class="summary-total-lbl">Total Estimate</span>
-                                        <span class="summary-total-val" id="summaryTotal">₱3,584.00</span>
+                                        <span class="summary-total-val" id="summaryTotal">₱—</span>
                                     </div>
 
-                                    <button class="btn-continue" id="placeOrderBtn" onclick="placeOrder()">Place Order
-                                        →</button>
+                                    <div id="walletWarning" style="display:none; margin-top:10px; padding:8px 12px; background:rgba(245,54,92,.12); border:1px solid rgba(245,54,92,.3); border-radius:8px; font-size:.75rem; color:#f5365c; font-weight:600;">
+                                        <i class="bi bi-exclamation-triangle-fill"></i> Insufficient credits
+                                    </div>
+
+                                    <button class="btn-continue" id="placeOrderBtn" onclick="placeOrder()" style="margin-top:14px;">
+                                        Place Order →
+                                    </button>
+                                    <div style="text-align:center; margin-top:8px; font-size:.7rem; color:rgba(255,255,255,.3);">
+                                        Credits will be deducted on confirmation
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -4651,7 +4765,7 @@
                                         <p style="font-size:.75rem;color:var(--muted);margin:0;">Manage payments and
                                             download invoices</p>
                                     </div>
-                                    <button
+                                    <button id="exportAllBtn" onclick="billingExportCSV()"
                                         style="background:var(--accent);color:#fff;border:none;padding:10px 20px;border-radius:8px;font-size:.82rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;box-shadow: 0 4px 10px rgba(29, 140, 248, .2);">
                                         <i class="bi bi-download"></i> Export All
                                     </button>
@@ -4660,7 +4774,7 @@
                                 <div class="stat-grid">
                                     <div class="stat-box">
                                         <div>
-                                            <div class="stat-val">₱0</div>
+                                            <div class="stat-val client-total-spend" id="billingTotalSpend">₱—</div>
                                             <div class="stat-lbl">Total Spend YTD</div>
                                         </div>
                                         <div class="stat-icon blue"><i class="bi bi-currency-php">₱</i></div>
@@ -4668,7 +4782,7 @@
 
                                     <div class="stat-box">
                                         <div>
-                                            <div class="stat-val">₱0</div>
+                                            <div class="stat-val client-paid-to-date" id="billingPaidToDate">₱—</div>
                                             <div class="stat-lbl">Paid to Date</div>
                                         </div>
                                         <div class="stat-icon green"><i class="bi bi-check-circle"></i></div>
@@ -4681,48 +4795,10 @@
                                         <span class="card-hdr-title">Monthly Spend</span>
                                         <span style="font-size:.72rem;color:var(--muted);">Last 6 months</span>
                                     </div>
-                                    <div class="spend-chart">
-                                        <div class="spend-bar-row">
-                                            <div class="spend-bar-label">May</div>
-                                            <div class="spend-bar-wrap">
-                                                <div class="spend-bar-fill" style="width:0%;"></div>
-                                            </div>
-                                            <div class="spend-bar-val">₱0</div>
-                                        </div>
-                                        <div class="spend-bar-row">
-                                            <div class="spend-bar-label">Jun</div>
-                                            <div class="spend-bar-wrap">
-                                                <div class="spend-bar-fill" style="width:0%;"></div>
-                                            </div>
-                                            <div class="spend-bar-val">₱0</div>
-                                        </div>
-                                        <div class="spend-bar-row">
-                                            <div class="spend-bar-label">Jul</div>
-                                            <div class="spend-bar-wrap">
-                                                <div class="spend-bar-fill" style="width:0%;"></div>
-                                            </div>
-                                            <div class="spend-bar-val">₱0</div>
-                                        </div>
-                                        <div class="spend-bar-row">
-                                            <div class="spend-bar-label">Aug</div>
-                                            <div class="spend-bar-wrap">
-                                                <div class="spend-bar-fill" style="width:0%;"></div>
-                                            </div>
-                                            <div class="spend-bar-val">₱0</div>
-                                        </div>
-                                        <div class="spend-bar-row">
-                                            <div class="spend-bar-label">Sep</div>
-                                            <div class="spend-bar-wrap">
-                                                <div class="spend-bar-fill" style="width:0%;"></div>
-                                            </div>
-                                            <div class="spend-bar-val">₱0</div>
-                                        </div>
-                                        <div class="spend-bar-row">
-                                            <div class="spend-bar-label">Oct</div>
-                                            <div class="spend-bar-wrap">
-                                                <div class="spend-bar-fill" style="width:0%;"></div>
-                                            </div>
-                                            <div class="spend-bar-val">₱0</div>
+                                    <div class="spend-chart" id="monthlySpendChart">
+                                        <div style="text-align:center;padding:30px;color:var(--muted);font-size:.8rem;">
+                                            <i class="bi bi-bar-chart" style="font-size:1.6rem;display:block;margin-bottom:8px;opacity:.2;"></i>
+                                            Loading spend data…
                                         </div>
                                     </div>
                                 </div>
@@ -4830,36 +4906,36 @@
                                     style="margin-bottom:14px; background: linear-gradient(135deg, #1a2340, #2a3558); color: #fff; border: none;">
                                     <div class="card-hdr" style="border-bottom: 1px solid rgba(255,255,255,.1);">
                                         <span class="card-hdr-title" style="color: #fff;">Active Subscription</span>
-                                        <span class="badge-status badge-active client-sub-status">Active</span>
+                                        <span class="badge-status badge-active client-sub-status" id="subStatusBadge">Active</span>
                                     </div>
                                     <div style="padding: 16px;">
                                         <div
                                             style="font-size: .75rem; color: rgba(255,255,255,.6); margin-bottom: 4px;">
                                             CURRENT PLAN</div>
-                                        <div class="client-sub-plan"
+                                        <div class="client-sub-plan" id="subPlanName"
                                             style="font-family: 'Sora', sans-serif; font-size: 1.2rem; font-weight: 800; margin-bottom: 12px;">
-                                            Free Plan</div>
+                                            Loading…</div>
 
                                         <div
                                             style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;">
                                             <div
                                                 style="display: flex; justify-content: space-between; font-size: .8rem;">
                                                 <span style="color: rgba(255,255,255,.6);">Billing Cycle</span>
-                                                <span style="font-weight: 600;">None</span>
+                                                <span id="subBillingCycle" style="font-weight: 600;">—</span>
                                             </div>
                                             <div
                                                 style="display: flex; justify-content: space-between; font-size: .8rem;">
                                                 <span style="color: rgba(255,255,255,.6);">Renews On</span>
-                                                <span class="client-sub-renews" style="font-weight: 600;">N/A</span>
+                                                <span class="client-sub-renews" id="subRenewsOn" style="font-weight: 600;">—</span>
                                             </div>
                                             <div
                                                 style="display: flex; justify-content: space-between; font-size: .8rem;">
                                                 <span style="color: rgba(255,255,255,.6);">Amount</span>
-                                                <span class="client-sub-amount" style="font-weight: 600;">₱0.00</span>
+                                                <span class="client-sub-amount" id="subAmount" style="font-weight: 600;">—</span>
                                             </div>
                                         </div>
 
-                                        <button
+                                        <button onclick="openPlanModal()"
                                             style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid rgba(255,255,255,.2); background: rgba(255,255,255,.1); color: #fff; font-size: .8rem; font-weight: 600; cursor: pointer; transition: background .2s;"
                                             onmouseover="this.style.background='rgba(255,255,255,.2)'"
                                             onmouseout="this.style.background='rgba(255,255,255,.1)'">Upgrade
@@ -4957,11 +5033,11 @@
                                                 <div
                                                     style="font-size: .72rem; color: rgba(255,255,255,.6); margin-bottom: 4px; text-transform:uppercase;">
                                                     Current Plan</div>
-                                                <div class="client-sub-plan"
+                                                <div class="client-sub-plan" id="acctPlanName"
                                                     style="font-family: 'Sora', sans-serif; font-size: 1.4rem; font-weight: 800;">
-                                                    Premium Plan</div>
+                                                    Loading…</div>
                                             </div>
-                                            <span class="badge-status badge-active client-sub-status">ACTIVE</span>
+                                            <span class="badge-status badge-active client-sub-status" id="acctSubStatus">ACTIVE</span>
                                         </div>
 
                                         <div
@@ -4969,14 +5045,13 @@
                                             <div
                                                 style="display: flex; justify-content: space-between; font-size: .85rem; margin-bottom:8px;">
                                                 <span style="color: rgba(255,255,255,.6);">Renews On</span>
-                                                <span class="client-sub-renews" style="font-weight: 600;">Nov 12,
-                                                    2024</span>
+                                                <span class="client-sub-renews" id="acctRenewsOn" style="font-weight: 600;">—</span>
                                             </div>
                                             <div
                                                 style="display: flex; justify-content: space-between; font-size: .85rem;">
                                                 <span style="color: rgba(255,255,255,.6);">Billing Amount</span>
-                                                <span class="client-sub-amount"
-                                                    style="font-weight: 600;">₱1,899.00</span>
+                                                <span class="client-sub-amount" id="acctBillingAmount"
+                                                    style="font-weight: 600;">—</span>
                                             </div>
                                         </div>
 
@@ -4986,7 +5061,7 @@
                                                 onclick="showClientPage('billing', null)">Manage Billing</button>
                                             <button class="btn btn-outline-light w-100"
                                                 style="font-size:.8rem; font-weight:600; border-color:rgba(255,255,255,.2);"
-                                                onclick="alert('Loading plans...')">Change Plan</button>
+                                                onclick="openPlanModal()">Change Plan</button>
                                         </div>
                                         <div style="margin-top:16px; text-align:center;">
                                             <a href="#"
@@ -5023,6 +5098,112 @@
             </div>
         </div>
     </div><!-- /client portal -->
+
+    <!-- Plan Upgrade Modal -->
+    <!-- Plan Upgrade Modal -->
+    <div id="planModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(8,14,36,0.92); backdrop-filter:blur(10px); z-index:10000; justify-content:center; align-items:center; opacity:0; transition:opacity 0.25s ease-in-out; padding:16px;">
+        <div style="width:95%; max-width:980px; transform:scale(0.93); transition:transform 0.25s ease-in-out;" id="planModalContent">
+
+            <!-- Header -->
+            <div style="text-align:center; margin-bottom:32px; position:relative;">
+                <div style="display:inline-block; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15); border-radius:20px; padding:4px 14px; font-size:.7rem; font-weight:700; color:rgba(255,255,255,.6); letter-spacing:.1em; text-transform:uppercase; margin-bottom:14px;">SIMPLE PRICING</div>
+                <h2 style="font-family:'Sora',sans-serif; font-weight:800; color:#fff; font-size:1.8rem; margin:0 0 10px;">Choose the plan that fits your shop.</h2>
+                <p style="color:rgba(255,255,255,.5); font-size:.88rem; margin:0;">No hidden fees. Cancel any time. Current plan: <strong id="planModalCurrentPlan" style="color:#1d8cf8;">—</strong></p>
+                <button onclick="closePlanModal()" style="position:absolute; top:0; right:0; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); border-radius:8px; color:rgba(255,255,255,.5); font-size:1.1rem; width:34px; height:34px; cursor:pointer; display:grid; place-items:center; transition:background .2s;" onmouseover="this.style.background='rgba(255,255,255,.15)'" onmouseout="this.style.background='rgba(255,255,255,.08)'">×</button>
+            </div>
+
+            <!-- Plan Cards -->
+            <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:20px;" id="planCardsGrid">
+
+                <!-- PRO -->
+                <div class="plan-card" data-plan="Pro" onclick="selectPlan(this)"
+                    style="background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); border-radius:18px; padding:28px 24px; cursor:pointer; transition:all .25s; position:relative; display:flex; flex-direction:column;">
+                    <div style="font-size:.7rem; font-weight:700; color:rgba(255,255,255,.4); text-transform:uppercase; letter-spacing:.1em; margin-bottom:10px;">PRO</div>
+                    <div style="display:flex; align-items:flex-end; gap:4px; margin-bottom:6px;">
+                        <span style="font-family:'Sora',sans-serif; font-size:2.4rem; font-weight:800; color:#fff; line-height:1;">₱999</span>
+                        <span style="color:rgba(255,255,255,.4); font-size:.82rem; margin-bottom:6px;">/mo</span>
+                    </div>
+                    <p style="color:rgba(255,255,255,.45); font-size:.78rem; margin:0 0 20px; line-height:1.5;">Perfect for small print shops just getting started with digital order management.</p>
+                    <ul style="list-style:none; padding:0; margin:0 0 24px; display:flex; flex-direction:column; gap:10px; flex:1;">
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> Up to <strong style="color:#fff;">200 jobs/month</strong></li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> All 6 product types</li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> Standard + Rush turnaround</li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> ₱25,000 monthly credits</li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> Real-time order tracking</li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> Proof review & approval</li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> 500MB file storage</li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> Basic analytics</li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> Email support</li>
+                    </ul>
+                    <button class="plan-select-btn" data-plan="Pro" onclick="selectPlan(this.closest('.plan-card'))"
+                        style="width:100%; padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.08); color:#fff; font-size:.85rem; font-weight:700; cursor:pointer; transition:all .2s; font-family:'DM Sans',sans-serif;"
+                        onmouseover="this.style.background='rgba(255,255,255,.15)'" onmouseout="this.style.background='rgba(255,255,255,.08)'">Get Started</button>
+                </div>
+
+                <!-- PREMIUM — highlighted -->
+                <div class="plan-card" data-plan="Premium" onclick="selectPlan(this)"
+                    style="background:linear-gradient(135deg,#1d8cf8,#0070e0); border:2px solid rgba(255,255,255,.25); border-radius:18px; padding:28px 24px; cursor:pointer; transition:all .25s; position:relative; display:flex; flex-direction:column; box-shadow:0 8px 40px rgba(29,140,248,.35); transform:translateY(-6px);">
+                    <div style="position:absolute; top:-14px; left:50%; transform:translateX(-50%); background:#2dce89; color:#fff; font-size:.65rem; font-weight:800; padding:4px 14px; border-radius:20px; letter-spacing:.08em; white-space:nowrap;">MOST POPULAR</div>
+                    <div style="font-size:.7rem; font-weight:700; color:rgba(255,255,255,.6); text-transform:uppercase; letter-spacing:.1em; margin-bottom:10px;">PREMIUM</div>
+                    <div style="display:flex; align-items:flex-end; gap:4px; margin-bottom:6px;">
+                        <span style="font-family:'Sora',sans-serif; font-size:2.4rem; font-weight:800; color:#fff; line-height:1;">₱1,899</span>
+                        <span style="color:rgba(255,255,255,.6); font-size:.82rem; margin-bottom:6px;">/mo</span>
+                    </div>
+                    <p style="color:rgba(255,255,255,.7); font-size:.78rem; margin:0 0 20px; line-height:1.5;">Designed for growing teams managing multiple customers and high-volume daily orders.</p>
+                    <ul style="list-style:none; padding:0; margin:0 0 24px; display:flex; flex-direction:column; gap:10px; flex:1;">
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:#fff;"><span style="color:#fff; font-size:.9rem;">✔</span> Up to <strong>2,000 jobs/month</strong></li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:#fff;"><span style="color:#fff; font-size:.9rem;">✔</span> Everything in Pro</li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:#fff;"><span style="color:#fff; font-size:.9rem;">✔</span> All product types + custom sizes</li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:#fff;"><span style="color:#fff; font-size:.9rem;">✔</span> ₱75,000 monthly credits</li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:#fff;"><span style="color:#fff; font-size:.9rem;">✔</span> <strong>5% discount</strong> on all orders</li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:#fff;"><span style="color:#fff; font-size:.9rem;">✔</span> Advanced analytics</li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:#fff;"><span style="color:#fff; font-size:.9rem;">✔</span> Global fulfillment options</li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:#fff;"><span style="color:#fff; font-size:.9rem;">✔</span> 2GB file storage</li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:#fff;"><span style="color:#fff; font-size:.9rem;">✔</span> Priority support (phone + email)</li>
+                    </ul>
+                    <button class="plan-select-btn" data-plan="Premium" onclick="selectPlan(this.closest('.plan-card'))"
+                        style="width:100%; padding:12px; border-radius:10px; border:none; background:#fff; color:#1d8cf8; font-size:.85rem; font-weight:800; cursor:pointer; transition:all .2s; font-family:'DM Sans',sans-serif;"
+                        onmouseover="this.style.background='rgba(255,255,255,.9)'" onmouseout="this.style.background='#fff'">Get Started</button>
+                </div>
+
+                <!-- PREMIUM+ -->
+                <div class="plan-card" data-plan="Premium+" onclick="selectPlan(this)"
+                    style="background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); border-radius:18px; padding:28px 24px; cursor:pointer; transition:all .25s; position:relative; display:flex; flex-direction:column;">
+                    <div style="font-size:.7rem; font-weight:700; color:rgba(255,255,255,.4); text-transform:uppercase; letter-spacing:.1em; margin-bottom:10px;">PREMIUM+</div>
+                    <div style="display:flex; align-items:flex-end; gap:4px; margin-bottom:6px;">
+                        <span style="font-family:'Sora',sans-serif; font-size:2.4rem; font-weight:800; color:#fff; line-height:1;">₱2,199</span>
+                        <span style="color:rgba(255,255,255,.4); font-size:.82rem; margin-bottom:6px;">/mo</span>
+                    </div>
+                    <p style="color:rgba(255,255,255,.45); font-size:.78rem; margin:0 0 20px; line-height:1.5;">For high-volume print operations with custom workflows and dedicated SLA guarantees.</p>
+                    <ul style="list-style:none; padding:0; margin:0 0 24px; display:flex; flex-direction:column; gap:10px; flex:1;">
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> <strong style="color:#fff;">Unlimited jobs</strong></li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> Everything in Premium</li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> <strong style="color:#fff;">Unlimited credits</strong></li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> <strong style="color:#fff;">10% discount</strong> on all orders</li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> 10GB file storage</li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> Custom integrations</li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> <strong style="color:#fff;">Dedicated account manager</strong></li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> 99.99% uptime SLA</li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> White-label options</li>
+                    </ul>
+                    <button class="plan-select-btn" data-plan="Premium+" onclick="selectPlan(this.closest('.plan-card'))"
+                        style="width:100%; padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.08); color:#fff; font-size:.85rem; font-weight:700; cursor:pointer; transition:all .2s; font-family:'DM Sans',sans-serif;"
+                        onmouseover="this.style.background='rgba(255,255,255,.15)'" onmouseout="this.style.background='rgba(255,255,255,.08)'">Contact Sales</button>
+                </div>
+
+            </div>
+
+            <!-- Footer note + confirm -->
+            <div style="text-align:center; margin-top:24px; display:flex; flex-direction:column; align-items:center; gap:12px;">
+                <span id="planModalMsg" style="font-size:.82rem; color:rgba(255,255,255,.5);"></span>
+                <button id="confirmPlanBtn" onclick="confirmPlanChange()" disabled
+                    style="padding:12px 40px; border:none; border-radius:10px; background:#1d8cf8; color:#fff; font-size:.88rem; font-weight:700; cursor:pointer; opacity:.4; transition:all .2s; font-family:'DM Sans',sans-serif;">
+                    Confirm Plan Change
+                </button>
+                <p style="color:rgba(255,255,255,.3); font-size:.75rem; margin:0;">Need a custom plan? <a href="mailto:support@printpro.com" style="color:rgba(255,255,255,.5); text-decoration:underline;">Talk to our team →</a></p>
+            </div>
+        </div>
+    </div>
 
     <!-- Proof Review Modal -->
     <div class="modal" id="proofModal"
@@ -5206,39 +5387,331 @@
                 const data = await res.json();
                 if (!data.success) throw new Error(data.error || 'Failed to load wallet');
 
-                // Update balance display
+                const balanceRaw = parseFloat(data.balance_raw || 0);
+                const fmt = (n) => '₱' + n.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+                // Update balance display (wallet card)
                 const balEl = document.getElementById('walletBalanceDisplay');
-                if (balEl) balEl.textContent = '₱' + parseFloat(data.balance_raw || 0).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                if (balEl) balEl.textContent = fmt(balanceRaw);
+
+                // Update Credits KPI card on dashboard
+                const kpiCredits = document.getElementById('kpiCredits');
+                if (kpiCredits) kpiCredits.textContent = fmt(balanceRaw);
 
                 // Calculate Spend and Paid to Date from transactions
                 let totalSpent = 0;
-                let totalPaid = 0;
+                let totalPaid  = 0;
+                const monthlyMap = {}; // 'YYYY-MM' → amount spent
+
                 if (data.transactions && data.transactions.length > 0) {
                     data.transactions.forEach(tx => {
-                        if (tx.type === 'deduct') {
-                            totalSpent += parseFloat(tx.amount_raw || 0);
-                        } else if (tx.type === 'add') {
-                            totalPaid += parseFloat(tx.amount_raw || 0);
+                        const amt = parseFloat(tx.amount || 0);
+                        if (tx.transaction_type === 'deduct') {
+                            totalSpent += amt;
+                            // bucket by month
+                            if (tx.created_at) {
+                                const d = new Date(tx.created_at);
+                                const key = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+                                monthlyMap[key] = (monthlyMap[key] || 0) + amt;
+                            }
+                        } else if (tx.transaction_type === 'add') {
+                            totalPaid += amt;
                         }
                     });
                 }
 
-                // Also update the top stat boxes
-                const spendEls = document.querySelectorAll('.client-total-spend');
-                const paidEls = document.querySelectorAll('.client-paid-to-date');
-                spendEls.forEach(el => {
-                    el.textContent = '₱' + totalSpent.toLocaleString('en-PH', { minimumFractionDigits: 2 });
-                });
-                paidEls.forEach(el => {
-                    el.textContent = '₱' + totalPaid.toLocaleString('en-PH', { minimumFractionDigits: 2 });
-                });
+                // ── Total Spend YTD ──
+                const spendEl = document.getElementById('billingTotalSpend');
+                if (spendEl) spendEl.textContent = fmt(totalSpent);
+                document.querySelectorAll('.client-total-spend').forEach(el => el.textContent = fmt(totalSpent));
 
+                // ── Paid to Date ──
+                const paidEl = document.getElementById('billingPaidToDate');
+                if (paidEl) paidEl.textContent = fmt(totalPaid);
+                document.querySelectorAll('.client-paid-to-date').forEach(el => el.textContent = fmt(totalPaid));
+
+                // ── Monthly Spend Chart (last 6 months) ──
+                const chartEl = document.getElementById('monthlySpendChart');
+                if (chartEl) {
+                    const months = [];
+                    const now = new Date();
+                    for (let i = 5; i >= 0; i--) {
+                        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                        const key   = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+                        const label = d.toLocaleDateString('en-US', { month: 'short' });
+                        months.push({ key, label, amount: monthlyMap[key] || 0 });
+                    }
+                    const maxAmt = Math.max(...months.map(m => m.amount), 1);
+                    chartEl.innerHTML = months.map(m => {
+                        const pct = Math.round((m.amount / maxAmt) * 100);
+                        return `
+                        <div class="spend-bar-row">
+                            <div class="spend-bar-label">${m.label}</div>
+                            <div class="spend-bar-wrap">
+                                <div class="spend-bar-fill" style="width:${pct}%;transition:width .6s ease;"></div>
+                            </div>
+                            <div class="spend-bar-val">${m.amount > 0 ? fmt(m.amount) : '₱0'}</div>
+                        </div>`;
+                    }).join('');
+                }
 
                 walletRenderTransactions(data.transactions || []);
+
+                // ── Load subscription info ──
+                billingLoadSubscription();
+
             } catch (err) {
                 const txList = document.getElementById('walletTxList');
                 if (txList) txList.innerHTML = `<div style="text-align:center;padding:20px;color:var(--muted);font-size:.8rem;"><i class="bi bi-exclamation-circle" style="display:block;font-size:1.4rem;margin-bottom:6px;opacity:.4;"></i>Could not load wallet data</div>`;
             }
+        }
+
+        async function billingLoadSubscription() {
+            try {
+                const res  = await fetch('api/get_profile.php');
+                const data = await res.json();
+                if (!data.success) return;
+
+                const rawPlan = data.data.subscription_plan || 'Pro';
+                const planNorm = { 'pro': 'Pro', 'premium': 'Premium', 'premium+': 'Premium+', 'premiumplus': 'Premium+' };
+                const plan = planNorm[rawPlan.toLowerCase()] || rawPlan;
+                _currentPlan = plan; // keep in sync for modal
+
+                const planPrices = {
+                    'Pro': '₱999.00', 'Premium': '₱1,899.00', 'Premium+': '₱2,199.00'
+                };
+
+                const planEl = document.getElementById('subPlanName');
+                if (planEl) planEl.textContent = plan;
+
+                const cycleEl = document.getElementById('subBillingCycle');
+                if (cycleEl) cycleEl.textContent = 'Monthly';
+
+                const renewsEl = document.getElementById('subRenewsOn');
+                if (renewsEl) {
+                    const next = new Date();
+                    next.setMonth(next.getMonth() + 1);
+                    renewsEl.textContent = next.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                }
+
+                const amtEl = document.getElementById('subAmount');
+                if (amtEl) amtEl.textContent = planPrices[plan] || '₱999.00';
+
+                // Also update dashboard plan name in hero banner
+                const dashPlan = document.getElementById('dashboardPlanName');
+                if (dashPlan) dashPlan.textContent = plan;
+
+                // Update account page card
+                const acctPlan = document.getElementById('acctPlanName');
+                if (acctPlan) acctPlan.textContent = plan;
+                const acctAmt = document.getElementById('acctBillingAmount');
+                if (acctAmt) acctAmt.textContent = planPrices[plan] || '₱999.00';
+                const acctRenews = document.getElementById('acctRenewsOn');
+                if (acctRenews) {
+                    const next = new Date();
+                    next.setMonth(next.getMonth() + 1);
+                    acctRenews.textContent = next.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                }
+
+                // Update status badge
+                const badge = document.getElementById('subStatusBadge');
+                if (badge) {
+                    badge.textContent = 'ACTIVE';
+                    badge.className = 'badge-status badge-active client-sub-status';
+                }
+
+            } catch (e) { /* silent fail */ }
+        }
+
+        // ══════════════════════════════════════════════════════
+        //  PLAN UPGRADE MODAL
+        // ══════════════════════════════════════════════════════
+
+        let _selectedPlan = null;
+        let _currentPlan  = null;
+
+        function openPlanModal() {
+            _selectedPlan = null;
+            const modal = document.getElementById('planModal');
+            modal.style.display = 'flex';
+            setTimeout(() => {
+                modal.style.opacity = '1';
+                document.getElementById('planModalContent').style.transform = 'scale(1)';
+            }, 10);
+
+            // Show current plan
+            const curEl = document.getElementById('planModalCurrentPlan');
+            if (curEl) curEl.textContent = _currentPlan || 'Pro';
+
+            // Reset card highlights to dark default
+            document.querySelectorAll('.plan-card').forEach(c => {
+                const isPremium = c.dataset.plan === 'Premium';
+                if (isPremium) {
+                    c.style.background = 'linear-gradient(135deg,#1d8cf8,#0070e0)';
+                    c.style.border = '2px solid rgba(255,255,255,.25)';
+                    c.style.boxShadow = '0 8px 40px rgba(29,140,248,.35)';
+                    c.style.transform = 'translateY(-6px)';
+                } else {
+                    c.style.background = 'rgba(255,255,255,.05)';
+                    c.style.border = '1px solid rgba(255,255,255,.1)';
+                    c.style.boxShadow = 'none';
+                    c.style.transform = 'none';
+                }
+            });
+
+            // Mark current plan with green border
+            document.querySelectorAll('.plan-card').forEach(c => {
+                if (c.dataset.plan === _currentPlan) {
+                    c.style.border = '2px solid #2dce89';
+                }
+            });
+
+            const btn = document.getElementById('confirmPlanBtn');
+            btn.disabled = true;
+            btn.style.opacity = '.5';
+            document.getElementById('planModalMsg').textContent = 'Select a plan to continue.';
+        }
+
+        function closePlanModal() {
+            const modal = document.getElementById('planModal');
+            modal.style.opacity = '0';
+            document.getElementById('planModalContent').style.transform = 'scale(0.92)';
+            setTimeout(() => { modal.style.display = 'none'; }, 200);
+        }
+
+        function selectPlan(card) {
+            _selectedPlan = card.dataset.plan;
+
+            // Reset all cards to default dark style
+            document.querySelectorAll('.plan-card').forEach(c => {
+                const isPremium = c.dataset.plan === 'Premium';
+                if (isPremium) {
+                    c.style.background = 'linear-gradient(135deg,#1d8cf8,#0070e0)';
+                    c.style.border = '2px solid rgba(255,255,255,.25)';
+                    c.style.boxShadow = '0 8px 40px rgba(29,140,248,.35)';
+                    c.style.transform = 'translateY(-6px)';
+                } else {
+                    c.style.background = 'rgba(255,255,255,.05)';
+                    c.style.border = '1px solid rgba(255,255,255,.1)';
+                    c.style.boxShadow = 'none';
+                    c.style.transform = 'none';
+                }
+            });
+
+            // Highlight selected card
+            if (card.dataset.plan === 'Premium') {
+                card.style.border = '2px solid #2dce89';
+                card.style.boxShadow = '0 8px 40px rgba(29,140,248,.5), 0 0 0 3px rgba(45,206,137,.4)';
+            } else {
+                card.style.background = 'rgba(29,140,248,.15)';
+                card.style.border = '2px solid #1d8cf8';
+                card.style.boxShadow = '0 4px 24px rgba(29,140,248,.25)';
+            }
+
+            const btn = document.getElementById('confirmPlanBtn');
+            const msg = document.getElementById('planModalMsg');
+
+            if (_selectedPlan === _currentPlan) {
+                btn.disabled = true;
+                btn.style.opacity = '.4';
+                msg.textContent = 'This is your current plan.';
+            } else {
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                msg.textContent = `Switch from ${_currentPlan || '—'} → ${_selectedPlan}`;
+                msg.style.color = '#1d8cf8';
+            }
+        }
+
+        async function confirmPlanChange() {
+            if (!_selectedPlan || _selectedPlan === _currentPlan) return;
+
+            const btn = document.getElementById('confirmPlanBtn');
+            btn.disabled = true;
+            btn.textContent = 'Updating…';
+
+            try {
+                const res  = await fetch('api/update_subscription.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ plan: _selectedPlan })
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    _currentPlan = _selectedPlan;
+                    closePlanModal();
+
+                    // Refresh all plan displays
+                    billingLoadSubscription();
+
+                    // Update account page plan display immediately
+                    const acctPlan = document.getElementById('acctPlanName');
+                    if (acctPlan) acctPlan.textContent = _selectedPlan;
+                    const planPrices = { 'Pro': '₱999.00', 'Premium': '₱1,899.00', 'Premium+': '₱2,199.00' };
+                    const acctAmt = document.getElementById('acctBillingAmount');
+                    if (acctAmt) acctAmt.textContent = planPrices[_selectedPlan] || '₱999.00';
+
+                    // Update all .client-sub-plan spans
+                    document.querySelectorAll('.client-sub-plan').forEach(el => el.textContent = _selectedPlan);
+
+                    // Update hero banner
+                    const dashPlan = document.getElementById('dashboardPlanName');
+                    if (dashPlan) dashPlan.textContent = _selectedPlan;
+
+                    // Show success toast
+                    showPlanToast('Plan updated to ' + _selectedPlan + ' ✓', true);
+                } else {
+                    showPlanToast(data.message || 'Failed to update plan.', false);
+                }
+            } catch (e) {
+                showPlanToast('Network error. Please try again.', false);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Confirm Plan';
+            }
+        }
+
+        function showPlanToast(msg, success) {
+            // Reuse walletShowNotif if on billing page, otherwise use alert
+            if (typeof walletShowNotif === 'function') {
+                walletShowNotif(msg, success);
+            } else {
+                alert(msg);
+            }
+        }
+
+        // Close modal on backdrop click
+        document.getElementById('planModal').addEventListener('click', function(e) {
+            if (e.target === this) closePlanModal();
+        });
+
+        function billingExportCSV() {
+            const txList = document.getElementById('walletTxList');
+            // Gather rows from the rendered transaction list
+            const rows = [['Date', 'Description', 'Type', 'Amount']];
+            document.querySelectorAll('#walletTxList .wallet-tx-item').forEach(item => {
+                const cols = item.querySelectorAll('div');
+                const label = cols[1]?.querySelector('div:first-child')?.textContent?.trim() || '';
+                const date  = cols[1]?.querySelector('div:last-child')?.textContent?.trim() || '';
+                const amt   = item.querySelector('.wallet-tx-amt')?.textContent?.trim() || '';
+                const type  = amt.startsWith('+') ? 'Credit Added' : 'Order Deducted';
+                rows.push([date, label, type, amt]);
+            });
+
+            if (rows.length <= 1) {
+                alert('No transactions to export.');
+                return;
+            }
+
+            const csv = rows.map(r => r.map(c => '"' + String(c).replace(/"/g, '""') + '"').join(',')).join('\n');
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url  = URL.createObjectURL(blob);
+            const a    = document.createElement('a');
+            a.href     = url;
+            a.download = 'printpro_transactions_' + new Date().toISOString().slice(0,10) + '.csv';
+            a.click();
+            URL.revokeObjectURL(url);
         }
 
         function walletRenderTransactions(txs) {
@@ -5407,12 +5880,12 @@
             };
 
             const amounts = {
-                'Free Plan': '₱0.00', 'Basic Plan': '₱899.00', 'Premium Plan': '₱1,899.00', 'Enterprise Plan': '₱4,500.00'
+                'Pro': '₱999.00', 'Premium': '₱1,899.00', 'Premium+': '₱2,199.00'
             };
 
             document.querySelectorAll('.client-sub-plan').forEach(el => el.textContent = data.plan || el.textContent);
             document.querySelectorAll('.client-sub-renews').forEach(el => el.textContent = formatDate(data.ends));
-            document.querySelectorAll('.client-sub-amount').forEach(el => el.textContent = amounts[data.plan] || '₱0.00');
+            document.querySelectorAll('.client-sub-amount').forEach(el => el.textContent = amounts[data.plan] || '₱999.00');
             document.querySelectorAll('.client-sub-status').forEach(el => {
                 const s = (data.status || '').trim();
                 el.textContent = s.toUpperCase();
@@ -5527,45 +6000,98 @@
                 if (data.success) {
                     const orders = data.data;
 
+                    // ── Update KPI: Active Orders ──
+                    const activeStatuses = ['Prepress','Printing','Finishing','Shipping','Proof Pending','Proof Pending Review'];
+                    const activeOrders  = orders.filter(o => activeStatuses.includes(o.status));
+                    const kpiActive = document.getElementById('kpiActiveOrders');
+                    if (kpiActive) kpiActive.textContent = activeOrders.length;
+
+                    // ── Update Hero Banner Subtitle ──
+                    const subtitle = document.getElementById('heroBannerSubtitle');
+                    if (subtitle) {
+                        if (orders.length === 0) {
+                            subtitle.textContent = 'You have no active orders yet. Start your first project by clicking the button below!';
+                        } else {
+                            const proofReady = orders.filter(o => o.status === 'Proof Pending Review' && o.proof_file);
+                            const shipping   = orders.filter(o => o.status === 'Shipping');
+                            const parts = [];
+                            if (proofReady.length > 0) parts.push(`${proofReady.length} proof${proofReady.length > 1 ? 's' : ''} ready for review`);
+                            if (shipping.length > 0)   parts.push(`${shipping.length} active shipment${shipping.length > 1 ? 's' : ''}`);
+                            if (activeOrders.length > 0 && parts.length === 0) parts.push(`${activeOrders.length} order${activeOrders.length > 1 ? 's' : ''} in progress`);
+                            subtitle.textContent = parts.length > 0 ? 'You have ' + parts.join(' and ') + '.' : 'All caught up! Place a new order anytime.';
+                        }
+                    }
+
+                    // ── Update clientGreeting with real name ──
+                    const greeting = document.getElementById('clientGreeting');
+                    if (greeting) {
+                        const session = sessionStorage.getItem('pp_user');
+                        if (session) {
+                            try {
+                                const user = JSON.parse(session);
+                                greeting.textContent = 'Welcome back, ' + (user.name || 'Client') + '!';
+                                // Also update plan name
+                                const planEl = document.getElementById('dashboardPlanName');
+                                if (planEl && user.subscription_plan) planEl.textContent = user.subscription_plan;
+                            } catch(e) {}
+                        }
+                    }
+
+                    // ── Load file count for Assets KPI ──
+                    fetch('api/user_files.php')
+                        .then(r => r.json())
+                        .then(fd => {
+                            const kpiAssets = document.getElementById('kpiAssets');
+                            if (kpiAssets) kpiAssets.textContent = (fd.success && Array.isArray(fd.data)) ? fd.data.length : 0;
+                        })
+                        .catch(() => { const el = document.getElementById('kpiAssets'); if (el) el.textContent = '0'; });
+
                     // 1. Dashboard "Recent Orders"
                     const dashTbody = document.querySelector('#c-dashboard .orders-table tbody');
                     if (dashTbody) {
-                        dashTbody.innerHTML = '';
-                        orders.slice(0, 5).forEach(o => {
-                            const tr = `<tr>
-                                <td style="font-weight:600;">${o.order_number || '#ORD-' + o.id}</td>
-                                <td>${o.job_name}</td>
-                                <td>${parseInt(o.quantity).toLocaleString()}</td>
-                                <td><span class="badge-status ${getStatusClass(o.status)}">${o.status}</span></td>
-                                <td>${new Date(o.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</td>
-                                <td style="font-weight:700;">₱${parseFloat(o.total_price).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-                            </tr>`;
-                            dashTbody.innerHTML += tr;
-                        });
+                        if (orders.length === 0) {
+                            dashTbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 40px; color: var(--muted);"><i class="bi bi-box-seam" style="font-size: 2rem; display: block; margin-bottom: 10px; opacity: 0.3;"></i>No orders yet</td></tr>`;
+                        } else {
+                            dashTbody.innerHTML = '';
+                            orders.slice(0, 5).forEach(o => {
+                                const tr = `<tr>
+                                    <td style="font-weight:600;">${o.order_number || '#ORD-' + o.id}</td>
+                                    <td>${o.job_name || o.product_type}</td>
+                                    <td>${parseInt(o.quantity).toLocaleString()}</td>
+                                    <td><span class="badge-status ${getStatusClass(o.status)}">${o.status}</span></td>
+                                    <td>${o.due_date ? new Date(o.due_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : '—'}</td>
+                                    <td style="font-weight:700;">₱${parseFloat(o.total_price || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                </tr>`;
+                                dashTbody.innerHTML += tr;
+                            });
+                        }
                     }
 
                     // 2. Orders Page "All Orders"
                     const ordersTbody = document.querySelector('#c-orders .orders-table tbody');
                     if (ordersTbody) {
                         ordersTbody.innerHTML = '';
-                        orders.forEach(o => {
-                            let actionCell = '—';
-                            if (o.status === 'Proof Pending Review' && o.proof_file) {
-                                actionCell = `<button class="btn btn-sm" style="padding:4px 10px; font-size:.78rem; border-radius:6px; background:var(--accent); color:#fff; border:none; display:inline-flex; align-items:center; gap:4px; font-weight:600;" onclick="openClientProofModal(${o.id})"><i class="bi bi-file-earmark-check"></i> Review Proof</button>`;
-                            }
-
-                            const tr = `<tr data-status="${o.status.toLowerCase()}">
-                                <td>${o.order_number || '#ORD-' + o.id}</td>
-                                <td>${o.job_name}</td>
-                                <td>${o.product_type || 'Product'}</td>
-                                <td>${parseInt(o.quantity).toLocaleString()}</td>
-                                <td><span class="badge-status ${getStatusClass(o.status)}">${o.status}</span></td>
-                                <td>${o.due_date ? new Date(o.due_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : '—'}</td>
-                                <td style="font-weight:700;">₱${parseFloat(o.total_price).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-                                <td>${actionCell}</td>
-                            </tr>`;
-                            ordersTbody.innerHTML += tr;
-                        });
+                        if (orders.length === 0) {
+                            ordersTbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 60px; color: var(--muted);"><i class="bi bi-box-seam" style="font-size: 3rem; display: block; margin-bottom: 15px; opacity: 0.2;"></i><p>No orders found</p></td></tr>`;
+                        } else {
+                            orders.forEach(o => {
+                                let actionCell = '—';
+                                if (o.status === 'Proof Pending Review' && o.proof_file) {
+                                    actionCell = `<button class="btn btn-sm" style="padding:4px 10px; font-size:.78rem; border-radius:6px; background:var(--accent); color:#fff; border:none; display:inline-flex; align-items:center; gap:4px; font-weight:600;" onclick="openClientProofModal(${o.id})"><i class="bi bi-file-earmark-check"></i> Review Proof</button>`;
+                                }
+                                const tr = `<tr data-status="${o.status.toLowerCase()}">
+                                    <td>${o.order_number || '#ORD-' + o.id}</td>
+                                    <td>${o.job_name || o.product_type}</td>
+                                    <td>${o.product_type || 'Product'}</td>
+                                    <td>${parseInt(o.quantity).toLocaleString()}</td>
+                                    <td><span class="badge-status ${getStatusClass(o.status)}">${o.status}</span></td>
+                                    <td>${o.due_date ? new Date(o.due_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : '—'}</td>
+                                    <td style="font-weight:700;">₱${parseFloat(o.total_price || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                    <td>${actionCell}</td>
+                                </tr>`;
+                                ordersTbody.innerHTML += tr;
+                            });
+                        }
                     }
                 }
             } catch (e) { console.error(e); }
@@ -5723,9 +6249,67 @@
             }
         }
 
-        let currentPricingData = null;
+        // ── PROGRESS BAR UPDATER ──
+        function updateProgressBar() {
+            const hasProduct = !!document.querySelector('.product-types .pt-btn.active');
+            const hasMaterial = !!document.getElementById('paperSelect').value;
+            const hasQty = parseInt(document.getElementById('qtyVal').value) >= 50;
+            const hasArtwork = (uploadedFiles && uploadedFiles.length > 0) || !!window.selectedSavedFileId;
 
-        // ── FRONTEND HARDCODED PRICING LOGIC ──
+            const steps = [
+                { el: document.getElementById('prog-step-1'), conn: document.getElementById('prog-conn-1'), done: hasProduct },
+                { el: document.getElementById('prog-step-2'), conn: document.getElementById('prog-conn-2'), done: hasMaterial },
+                { el: document.getElementById('prog-step-3'), conn: document.getElementById('prog-conn-3'), done: hasQty },
+                { el: document.getElementById('prog-step-4'), conn: null, done: hasArtwork },
+            ];
+
+            let currentStep = 0;
+            steps.forEach((s, i) => { if (s.done) currentStep = i + 1; });
+
+            steps.forEach((s, i) => {
+                if (!s.el) return;
+                s.el.classList.remove('active', 'done');
+                if (i < currentStep) {
+                    s.el.classList.add('done');
+                    s.el.querySelector('.prog-num').innerHTML = '<i class="bi bi-check-lg" style="font-size:.7rem;"></i>';
+                } else if (i === currentStep) {
+                    s.el.classList.add('active');
+                    s.el.querySelector('.prog-num').textContent = i + 1;
+                } else {
+                    s.el.querySelector('.prog-num').textContent = i + 1;
+                }
+                if (s.conn) {
+                    s.conn.classList.toggle('done', i < currentStep);
+                }
+            });
+        }
+
+        // ── ARRIVAL DATE CALCULATOR ──
+        function calcArrivalDate(turnaround, shipping) {
+            const prodDays = { standard: 5, rush: 2, priority: 1 };
+            const shipDays = { free: 5, express: 2, overnight: 1 };
+            const prod = prodDays[turnaround] || 5;
+            const ship = shipDays[shipping] || 5;
+            const total = prod + ship;
+
+            const start = new Date();
+            let added = 0;
+            while (added < total) {
+                start.setDate(start.getDate() + 1);
+                const day = start.getDay();
+                if (day !== 0 && day !== 6) added++;
+            }
+            const earliest = new Date(start);
+            earliest.setDate(earliest.getDate() - 1);
+
+            const fmt = (d) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            return fmt(earliest) + ' – ' + fmt(start);
+        }
+
+        function getProductionLabel(turnaround) {
+            const map = { standard: '3–5 Business Days', rush: '1–2 Business Days', priority: 'Same Day' };
+            return map[turnaround] || '3–5 Business Days';
+        }
         function calculatePriceFrontend(qty, paperText, sizeText, finishText, turnaround, shipping) {
             // Base Prices per Product (assuming Flyers for now)
             let unitBase = 2.50; // Base unit price
@@ -5856,6 +6440,20 @@
             const turnaround = document.getElementById('turnaroundSelect').value;
             const shipping = document.getElementById('shippingSelect').value;
 
+            // Update timeline in summary
+            const sumProd = document.getElementById('sumProduction');
+            if (sumProd) sumProd.textContent = getProductionLabel(turnaround);
+            const sumArr = document.getElementById('sumArrival');
+            if (sumArr) sumArr.textContent = calcArrivalDate(turnaround, shipping);
+
+            // Update bleed in summary
+            const bleedSel2 = document.getElementById('bleedSelect');
+            const sumBleed = document.getElementById('sumBleed');
+            if (sumBleed && bleedSel2) sumBleed.textContent = bleedSel2.options[bleedSel2.selectedIndex]?.text || '—';
+
+            // Update progress bar
+            updateProgressBar();
+
             const formData = new URLSearchParams();
             formData.append('product_id', resolvedProductId);
             formData.append('quantity', qty);
@@ -5881,7 +6479,6 @@
                 if (result.success) {
                     const d = result.breakdown;
                     currentPricingData = d;
-                    console.log('Pricing breakdown:', d);
 
                     // Update Summary UI
                     const summaryTotal = document.getElementById('summaryTotal');
@@ -5894,7 +6491,6 @@
                     if (d.discount_amount > 0) {
                         if (sumDiscount) sumDiscount.textContent = '-₱' + d.discount_amount.toLocaleString(undefined, { minimumFractionDigits: 2 });
                         if (sumDiscountRow) sumDiscountRow.style.display = 'flex';
-
                         if (badge) {
                             badge.textContent = d.discount_rate + '% BULK DISCOUNT';
                             badge.style.display = 'inline-block';
@@ -5912,6 +6508,17 @@
 
                     const sumShipping = document.getElementById('sumShipping');
                     if (sumShipping) sumShipping.textContent = '₱' + d.shipping_cost.toLocaleString(undefined, { minimumFractionDigits: 2 });
+
+                    // New breakdown fields
+                    const fmt2 = (n) => '₱' + (n || 0).toLocaleString(undefined, { minimumFractionDigits: 2 });
+                    const bp = document.getElementById('sumBasePrice');
+                    if (bp) bp.textContent = fmt2(d.base_price || d.subtotal_base);
+                    const mf = document.getElementById('sumMaterialFee');
+                    if (mf) mf.textContent = d.material_multiplier ? ('×' + parseFloat(d.material_multiplier).toFixed(2)) : '×1.00';
+                    const ff = document.getElementById('sumFinishFee');
+                    if (ff) ff.textContent = fmt2(d.finish_fee || d.finish_cost || 0);
+                    const tf = document.getElementById('sumTurnaroundFee');
+                    if (tf) tf.textContent = d.turnaround_surcharge > 0 ? fmt2(d.turnaround_surcharge) : 'Included';
 
                     orderWalletCheck();
                 }
@@ -6038,10 +6645,41 @@
             uploadedFiles = []; // Clear manual uploads if choosing from account
             document.getElementById('upload-preview').style.display = 'none';
             document.getElementById('upload-preview-list').innerHTML = '';
+            artworkAttached();
         }
 
         // Step 4: File Upload Handling
         let uploadedFiles = [];
+
+        // Helper: hide the required notice and reset step border when a file is attached
+        function artworkAttached() {
+            const notice = document.getElementById('artworkRequiredNotice');
+            if (notice) {
+                notice.style.background = 'rgba(45,206,137,.08)';
+                notice.style.border = '1px solid rgba(45,206,137,.3)';
+                notice.style.color = '#1aae6f';
+                notice.innerHTML = '<i class="bi bi-check-circle-fill"></i> Artwork file attached — ready to place order.';
+            }
+            const step = document.getElementById('artworkStep');
+            if (step) { step.style.border = ''; step.style.boxShadow = ''; }
+            // Update artwork summary text
+            const sumArt = document.getElementById('sumArtwork');
+            if (sumArt) { sumArt.textContent = 'Attached ✓'; sumArt.style.color = '#2dce89'; }
+            updateProgressBar();
+        }
+
+        function artworkRemoved() {
+            const notice = document.getElementById('artworkRequiredNotice');
+            if (notice) {
+                notice.style.background = 'rgba(245,54,92,.08)';
+                notice.style.border = '1px solid rgba(245,54,92,.2)';
+                notice.style.color = '#f5365c';
+                notice.innerHTML = '<i class="bi bi-exclamation-circle-fill"></i> You must attach your print-ready artwork file before placing an order. Accepted: PDF, AI, PSD, PNG, JPG (Max 500MB)';
+            }
+            const sumArt = document.getElementById('sumArtwork');
+            if (sumArt) { sumArt.textContent = 'Not attached'; sumArt.style.color = 'rgba(245,54,92,.8)'; }
+            updateProgressBar();
+        }
         let savedFiles = [];
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -6102,6 +6740,7 @@
                             previewList.appendChild(card);
                         });
                         document.getElementById('sumArtwork').textContent = uploadedFiles.length + ' file(s) selected';
+                        artworkAttached();
 
                         // Clear selection from account
                         document.querySelectorAll('#account-files .file-card').forEach(c => {
@@ -6137,6 +6776,7 @@
                             previewList.appendChild(card);
                         });
                         document.getElementById('sumArtwork').textContent = uploadedFiles.length + ' file(s) selected';
+                        artworkAttached();
 
                         // Clear selection from account
                         document.querySelectorAll('#account-files .file-card').forEach(c => {
@@ -6157,6 +6797,7 @@
             if (uploadedFiles.length === 0) {
                 document.getElementById('upload-preview').style.display = 'none';
                 document.getElementById('sumArtwork').textContent = 'None';
+                artworkRemoved();
             } else {
                 document.getElementById('sumArtwork').textContent = uploadedFiles.length + ' file(s) selected';
             }
@@ -6328,7 +6969,32 @@
 
             // Validate that a file is attached (either uploaded or selected from saved files)
             if ((!uploadedFiles || uploadedFiles.length === 0) && !window.selectedSavedFileId) {
-                alert('⚠️ Please attach an artwork file before placing your order.');
+                // Highlight the artwork step card
+                const artworkStep = document.getElementById('artworkStep');
+                if (artworkStep) {
+                    artworkStep.style.border = '2px solid #f5365c';
+                    artworkStep.style.boxShadow = '0 0 0 4px rgba(245,54,92,.15)';
+                    artworkStep.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    setTimeout(() => {
+                        artworkStep.style.border = '';
+                        artworkStep.style.boxShadow = '';
+                    }, 3000);
+                }
+                // Show the required notice in red
+                const notice = document.getElementById('artworkRequiredNotice');
+                if (notice) {
+                    notice.style.background = 'rgba(245,54,92,.15)';
+                    notice.style.border = '1px solid rgba(245,54,92,.5)';
+                    setTimeout(() => {
+                        notice.style.background = 'rgba(245,54,92,.08)';
+                        notice.style.border = '1px solid rgba(245,54,92,.2)';
+                    }, 3000);
+                }
+                // Make sure upload tab is visible
+                document.getElementById('upload-area').style.display = 'block';
+                document.getElementById('account-files').style.display = 'none';
+                document.getElementById('uploadNewTab').classList.add('active');
+                document.getElementById('selectFromAccountTab').classList.remove('active');
                 return;
             }
 
@@ -6959,9 +7625,9 @@
 
             // Helper to format plan name
             const formatPlan = (plan) => {
-                if (!plan) return 'Free Plan';
-                if (plan === 'premium+') return 'Premium Plus';
-                return plan.charAt(0).toUpperCase() + plan.slice(1) + ' Plan';
+                if (!plan) return 'Pro';
+                if (plan === 'Premium+') return 'Premium+';
+                return plan;
             };
 
             const renderData = (data) => {
