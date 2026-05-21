@@ -809,7 +809,7 @@
                             </div>
                             <div>
                                 <div class="kpi-lbl">Total Revenue</div>
-                                <div class="kpi-val">₱0.00</div>
+                                <div class="kpi-val" id="kpiRevenue">₱0.00</div>
                             </div>
                         </div>
                         <div class="kpi-card">
@@ -817,7 +817,7 @@
                             </div>
                             <div>
                                 <div class="kpi-lbl">Completed</div>
-                                <div class="kpi-val">0</div>
+                                <div class="kpi-val" id="kpiCompleted">0</div>
                             </div>
                         </div>
                         <div class="kpi-card">
@@ -825,14 +825,14 @@
                             </div>
                             <div>
                                 <div class="kpi-lbl">Pending</div>
-                                <div class="kpi-val">0</div>
+                                <div class="kpi-val" id="kpiPending">0</div>
                             </div>
                         </div>
                         <div class="kpi-card">
                             <div class="kpi-icon bg-info-subtle text-info"><i class="bi bi-person-plus"></i></div>
                             <div>
                                 <div class="kpi-lbl">New Users</div>
-                                <div class="kpi-val">0</div>
+                                <div class="kpi-val" id="kpiNewUsers">0</div>
                             </div>
                         </div>
                     </div>
@@ -999,6 +999,7 @@
                                         <th>User</th>
                                         <th>Business</th>
                                         <th>Role</th>
+                                        <th>Plan</th>
                                         <th>Status</th>
                                         <th>Joined</th>
                                         <th>Actions</th>
@@ -1336,12 +1337,61 @@
                                 <option value="suspended">Suspended</option>
                             </select>
                         </div>
+                        <div class="mb-3" id="editPlanRow">
+                            <label class="form-label small fw-bold">Subscription Plan</label>
+                            <select class="form-select" id="editUserPlan">
+                                <option value="">— No Change —</option>
+                                <option value="Pro">Pro (₱999/mo)</option>
+                                <option value="Premium">Premium (₱1,899/mo)</option>
+                                <option value="Premium+">Premium+ (₱2,199/mo)</option>
+                            </select>
+                            <div class="form-text">Only applies to client accounts.</div>
+                        </div>
                     </div>
                     <div class="modal-footer border-0 p-4 pt-0">
                         <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
                         <button type="submit" class="btn btn-primary px-4 fw-bold">Save Changes</button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Reject/Cancel Order Modal -->
+    <div class="modal fade" id="adminRejectModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow" style="border-radius:16px;">
+                <div class="modal-header border-0 px-4 pt-4">
+                    <h5 class="fw-bold m-0">Reject / Cancel Order</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <input type="hidden" id="adminRejectOrderId">
+                    <p class="text-muted small mb-3">Order <strong id="adminRejectOrderNum"></strong> — client will be refunded automatically.</p>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Reason</label>
+                        <select class="form-select mb-2" id="adminRejectReasonSelect" onchange="handleAdminRejectSelect(this)">
+                            <option value="">— Select a reason —</option>
+                            <option value="Artwork file does not meet print specifications">Artwork does not meet print specs</option>
+                            <option value="Incorrect file format submitted">Incorrect file format</option>
+                            <option value="Low resolution artwork">Low resolution artwork</option>
+                            <option value="Missing bleed or safe zone">Missing bleed or safe zone</option>
+                            <option value="Payment issue">Payment issue</option>
+                            <option value="Client requested cancellation">Client requested cancellation</option>
+                            <option value="Duplicate order">Duplicate order</option>
+                            <option value="Product temporarily unavailable">Product temporarily unavailable</option>
+                            <option value="Other">Other (type below)</option>
+                        </select>
+                        <textarea class="form-control" id="adminRejectReasonText" rows="3"
+                            placeholder="Add details or type a custom reason..."
+                            style="display:none; resize:vertical;"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger px-4 fw-bold" onclick="submitAdminReject()">Reject & Refund</button>
+                </div>
             </div>
         </div>
     </div>
@@ -1527,13 +1577,15 @@
                 const json = await res.json();
                 if (json.success) {
                     const d = json.data;
-                    const kpis = document.querySelectorAll('#dashboardKpis .kpi-val');
-                    if (kpis.length >= 4) {
-                        kpis[0].textContent = '₱' + parseFloat(d.total_revenue || 0).toLocaleString(undefined, { minimumFractionDigits: 2 });
-                        kpis[1].textContent = d.status_counts['Delivered'] || 0;
-                        kpis[2].textContent = (parseInt(d.status_counts['Prepress'] || 0)) + (parseInt(d.status_counts['Printing'] || 0)) + (parseInt(d.status_counts['Finishing'] || 0));
-                        kpis[3].textContent = d.new_users || 0;
-                    }
+                    // Use stable IDs instead of positional querySelectorAll
+                    const kpiRev = document.getElementById('kpiRevenue');
+                    const kpiComp = document.getElementById('kpiCompleted');
+                    const kpiPend = document.getElementById('kpiPending');
+                    const kpiNew = document.getElementById('kpiNewUsers');
+                    if (kpiRev) kpiRev.textContent = '₱' + parseFloat(d.total_revenue || 0).toLocaleString(undefined, { minimumFractionDigits: 2 });
+                    if (kpiComp) kpiComp.textContent = d.status_counts['Delivered'] || 0;
+                    if (kpiPend) kpiPend.textContent = (parseInt(d.status_counts['Prepress'] || 0)) + (parseInt(d.status_counts['Printing'] || 0)) + (parseInt(d.status_counts['Finishing'] || 0));
+                    if (kpiNew) kpiNew.textContent = d.new_users || 0;
 
                     // Update Charts
                     state.charts.status.data.datasets[0].data = [
@@ -1646,6 +1698,7 @@
                                 <button class="btn btn-light action-btn" onclick="viewOrderDetails(${o.id})" title="View Details"><i class="bi bi-eye"></i></button>
                                 <a href="api/generate_ticket.php?order_id=${o.id}" target="_blank" class="btn btn-light action-btn" title="Job Ticket"><i class="bi bi-ticket-perforated"></i></a>
                                 ${proofBtn}
+                                <button class="btn btn-danger action-btn" onclick="openAdminRejectModal(${o.id}, '${orderNum}')" title="Reject Order" style="background:#f5365c; border:none; color:#fff;"><i class="bi bi-x-circle"></i></button>
                             </div>
                         </td>
                     </tr>
@@ -1815,8 +1868,14 @@
         }
 
         function renderUsers(data = state.users) {
+            const planColors = { 'Pro': 'bg-info', 'Premium': 'bg-primary', 'Premium+': 'bg-danger' };
             const tbody = document.querySelector('#usersTable tbody');
-            tbody.innerHTML = data.map(u => `
+            tbody.innerHTML = data.map(u => {
+                const plan = u.subscription_plan || '—';
+                const planBadge = plan !== '—'
+                    ? `<span class="badge ${planColors[plan] || 'bg-secondary'} text-uppercase" style="font-size:.62rem;">${plan}</span>`
+                    : `<span class="text-muted small">—</span>`;
+                return `
                 <tr>
                     <td>
                         <div class="d-flex align-items-center gap-3">
@@ -1831,6 +1890,7 @@
                     </td>
                     <td>${u.business_name || '-'}</td>
                     <td><span class="badge bg-primary-subtle text-primary text-uppercase" style="font-size: .65rem;">${u.role}</span></td>
+                    <td>${u.role === 'client' ? planBadge : '<span class="text-muted small">N/A</span>'}</td>
                     <td><span class="badge-status ${(u.status || '').toLowerCase() === 'active' ? 'badge-success' : 'badge-danger'}">${u.status}</span></td>
                     <td class="text-muted small">${new Date(u.created_at).toLocaleDateString()}</td>
                     <td>
@@ -1839,8 +1899,8 @@
                             <button class="btn btn-sm btn-light text-danger" onclick="deleteUser(${u.id})"><i class="bi bi-trash3"></i></button>
                         </div>
                     </td>
-                </tr>
-            `).join('') || '<tr><td colspan="6" class="text-center p-4 text-muted">No users found.</td></tr>';
+                </tr>`;
+            }).join('') || '<tr><td colspan="7" class="text-center p-4 text-muted">No users found.</td></tr>';
         }
 
         function openUserEditModal(id) {
@@ -1850,6 +1910,18 @@
             document.getElementById('editUserName').value = u.name;
             document.getElementById('editUserRole').value = u.role;
             document.getElementById('editUserStatus').value = u.status;
+
+            // Plan field — only show for clients
+            const planRow = document.getElementById('editPlanRow');
+            const planSel = document.getElementById('editUserPlan');
+            if (u.role === 'client') {
+                planRow.style.display = 'block';
+                planSel.value = u.subscription_plan || '';
+            } else {
+                planRow.style.display = 'none';
+                planSel.value = '';
+            }
+
             new bootstrap.Modal(document.getElementById('userEditModal')).show();
         }
 
@@ -1868,6 +1940,9 @@
             formData.append('role', document.getElementById('editUserRole').value);
             formData.append('status', document.getElementById('editUserStatus').value);
 
+            const plan = document.getElementById('editUserPlan').value;
+            if (plan) formData.append('subscription_plan', plan);
+
             try {
                 const res = await fetch('api/update_user.php', { method: 'POST', body: formData });
                 const json = await res.json();
@@ -1875,6 +1950,7 @@
                     showToast('User updated successfully', 'success');
                     bootstrap.Modal.getInstance(document.getElementById('userEditModal')).hide();
                     loadUsers();
+                    loadSubscriptions();
                 } else {
                     showToast(json.message || 'Update failed', 'danger');
                 }
@@ -1921,31 +1997,77 @@
         }
 
         function renderSubscriptions(data = state.subscriptions) {
+            const planColors = { 'Pro': 'bg-info', 'Premium': 'bg-primary', 'Premium+': 'bg-danger' };
+            const planMap = { 'pro': 'Pro', 'premium': 'Premium', 'premium+': 'Premium+' };
             const tbody = document.querySelector('#subsTable tbody');
-            tbody.innerHTML = data.map(s => `
+            tbody.innerHTML = data.map(s => {
+                const rawPlan = s.active_plan || s.subscription_plan || '';
+                const plan = planMap[rawPlan.toLowerCase()] || rawPlan || '—';
+                const planBadge = plan !== '—'
+                    ? `<span class="badge ${planColors[plan] || 'bg-secondary'} text-uppercase" style="font-size:.62rem;">${plan}</span>`
+                    : `<span class="text-muted small">No Plan</span>`;
+                return `
                 <tr>
                     <td class="fw-bold">${s.name}</td>
                     <td>${s.email}</td>
                     <td>${s.business_name || 'N/A'}</td>
                     <td>
-                        <span class="badge bg-primary text-uppercase">${s.active_plan || s.base_plan}</span>
+                        <div class="d-flex align-items-center gap-2">
+                            ${planBadge}
+                            <select class="form-select form-select-sm" style="width:110px; font-size:.72rem;"
+                                onchange="adminChangePlan(${s.user_id}, this.value, this)">
+                                <option value="">Change…</option>
+                                <option value="Pro" ${plan === 'Pro' ? 'selected' : ''}>Pro</option>
+                                <option value="Premium" ${plan === 'Premium' ? 'selected' : ''}>Premium</option>
+                                <option value="Premium+" ${plan === 'Premium+' ? 'selected' : ''}>Premium+</option>
+                            </select>
+                        </div>
                     </td>
                     <td>
                         <span class="badge-status ${(s.sub_status || '').toLowerCase() === 'active' ? 'badge-success' :
-                    (s.sub_status || '').toLowerCase() === 'suspended' ? 'badge-danger' : 'badge-warning'
-                }">
-                            ${s.sub_status || 'Inactive'}
+                            (s.sub_status || '').toLowerCase() === 'suspended' ? 'badge-danger' : 'badge-warning'}">
+                            ${s.sub_status || 'Active'}
                         </span>
                     </td>
                     <td>${s.renews_on ? new Date(s.renews_on).toLocaleDateString() : '-'}</td>
                     <td>
-                        <button class="btn btn-sm ${(s.sub_status || '').toLowerCase() === 'suspended' ? 'btn-success' : 'btn-outline-danger'} px-3" 
+                        <button class="btn btn-sm ${(s.sub_status || '').toLowerCase() === 'suspended' ? 'btn-success' : 'btn-outline-danger'} px-3"
                                 onclick="toggleUserAccountStatus(${s.user_id}, '${s.sub_status}')">
                             ${(s.sub_status || '').toLowerCase() === 'suspended' ? 'Activate' : 'Suspend'}
                         </button>
                     </td>
-                </tr>
-            `).join('') || '<tr><td colspan="7" class="text-center p-4 text-muted">No matching subscriptions.</td></tr>';
+                </tr>`;
+            }).join('') || '<tr><td colspan="7" class="text-center p-4 text-muted">No matching subscriptions.</td></tr>';
+        }
+
+        async function adminChangePlan(userId, newPlan, selectEl) {
+            if (!newPlan) return;
+            const allowed = ['Pro', 'Premium', 'Premium+'];
+            if (!allowed.includes(newPlan)) return;
+
+            try {
+                const res = await fetch('api/update_subscription.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: userId, plan: newPlan })
+                });
+                const json = await res.json();
+                if (json.success) {
+                    showToast(`Plan updated to ${newPlan}`, 'success');
+                    // Update local state
+                    const sub = state.subscriptions.find(s => s.user_id == userId);
+                    if (sub) sub.active_plan = newPlan;
+                    const user = state.users.find(u => u.id == userId);
+                    if (user) user.subscription_plan = newPlan;
+                    loadSubscriptions();
+                } else {
+                    showToast(json.message || 'Failed to update plan', 'danger');
+                    selectEl.value = '';
+                }
+            } catch (e) {
+                showToast('Network error', 'danger');
+                selectEl.value = '';
+            }
         }
 
         function searchSubscriptions(q) {
@@ -2180,6 +2302,53 @@
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Upload Proof';
+            }
+        }
+
+        // ══════════════════════════════════════════════════════
+        //  ADMIN REJECT / CANCEL ORDER
+        // ══════════════════════════════════════════════════════
+        function openAdminRejectModal(orderId, orderNum) {
+            document.getElementById('adminRejectOrderId').value = orderId;
+            document.getElementById('adminRejectOrderNum').textContent = '#' + orderNum;
+            document.getElementById('adminRejectReasonSelect').value = '';
+            document.getElementById('adminRejectReasonText').value = '';
+            document.getElementById('adminRejectReasonText').style.display = 'none';
+            new bootstrap.Modal(document.getElementById('adminRejectModal')).show();
+        }
+
+        function handleAdminRejectSelect(sel) {
+            const textarea = document.getElementById('adminRejectReasonText');
+            textarea.style.display = sel.value === 'Other' ? 'block' : 'none';
+            if (sel.value !== 'Other') textarea.value = '';
+        }
+
+        async function submitAdminReject() {
+            const orderId = document.getElementById('adminRejectOrderId').value;
+            const select  = document.getElementById('adminRejectReasonSelect');
+            const textarea = document.getElementById('adminRejectReasonText');
+
+            let reason = select.value;
+            if (reason === 'Other') reason = textarea.value.trim();
+            if (!reason) { showToast('Please select or enter a rejection reason.', 'danger'); return; }
+
+            const formData = new FormData();
+            formData.append('order_id', orderId);
+            formData.append('rejection_reason', reason);
+
+            try {
+                const res  = await fetch('api/reject_order.php', { method: 'POST', body: formData });
+                const data = await res.json();
+                if (data.success) {
+                    bootstrap.Modal.getInstance(document.getElementById('adminRejectModal')).hide();
+                    showToast('Order rejected and client refunded.', 'success');
+                    loadOrders();
+                    updateDashboardData();
+                } else {
+                    showToast(data.message || 'Failed to reject order.', 'danger');
+                }
+            } catch (e) {
+                showToast('Network error.', 'danger');
             }
         }
 

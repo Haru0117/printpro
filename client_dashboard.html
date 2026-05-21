@@ -3834,6 +3834,9 @@
                     <div class="c-nav-item" onclick="showClientPage('files', this)">
                         <i class="bi bi-folder2"></i> <span>Files</span>
                     </div>
+                    <div class="c-nav-item" onclick="showClientPage('track', this)">
+                        <i class="bi bi-truck"></i> <span>Track Orders</span>
+                    </div>
                     <div class="c-nav-item" onclick="showClientPage('billing', this)">
                         <i class="bi bi-credit-card"></i> <span>Billing</span>
                     </div>
@@ -4300,8 +4303,7 @@
                                             <div
                                                 style="font-size: .75rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 12px;">
                                                 Files to Upload</div>
-                                            <div id="upload-preview-list" class="files-grid"
-                                                style="grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); margin-bottom: 0;">
+                                            <div id="upload-preview-list" style="display:flex; flex-direction:column; gap:6px; max-height:200px; overflow-y:auto;">
                                             </div>
                                         </div>
 
@@ -4310,10 +4312,9 @@
                                             <div
                                                 style="font-size: .75rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 12px;">
                                                 Your Uploaded Files</div>
-                                            <div class="files-grid" id="wizard-account-files"
-                                                style="grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); margin-bottom: 0;">
+                                            <div id="wizard-account-files" style="display:flex; flex-direction:column; max-height:240px; overflow-y:auto;">
                                                 <div
-                                                    style="grid-column: 1/-1; padding: 20px; text-align: center; color: var(--muted); font-size: .8rem; border: 1px dashed var(--border); border-radius: 8px;">
+                                                    style="padding: 20px; text-align: center; color: var(--muted); font-size: .8rem; border: 1px dashed var(--border); border-radius: 8px;">
                                                     No files uploaded yet
                                                 </div>
                                             </div>
@@ -4643,6 +4644,27 @@
                             </div>
                         </div>
                     </div><!-- /templates -->
+
+                    <!-- ══ TRACK ORDERS PAGE ══ -->
+                    <div class="c-page" id="c-track">
+                        <div class="c-track-wrap" style="padding:20px 24px;">
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+                                <div>
+                                    <h4 class="page-title" style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:var(--navy);margin:0;">Track Orders</h4>
+                                    <p style="font-size:.75rem;color:var(--muted);margin:0;">Real-time status of your active print jobs</p>
+                                </div>
+                                <button onclick="loadTrackOrders()" style="background:var(--accent);color:#fff;border:none;padding:7px 16px;border-radius:8px;font-size:.8rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;">
+                                    <i class="bi bi-arrow-clockwise"></i> Refresh
+                                </button>
+                            </div>
+                            <div id="trackOrdersList">
+                                <div style="text-align:center;padding:60px;color:var(--muted);">
+                                    <i class="bi bi-arrow-repeat" style="font-size:2rem;display:block;margin-bottom:12px;opacity:.3;"></i>
+                                    Loading your orders…
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- /track -->
 
                     <!-- ══ FILES PAGE ══ -->
                     <div class="c-page" id="c-files">
@@ -5007,10 +5029,10 @@
                                         <div class="settings-row">
                                             <div>
                                                 <div class="settings-row-label">Password</div>
-                                                <div class="settings-row-sub">Last changed 3 months ago</div>
+                                                <div class="settings-row-sub">Click to update your login password</div>
                                             </div>
                                             <button class="btn btn-sm border"
-                                                onclick="alert('Password reset link sent.')">Change</button>
+                                                onclick="openPasswordModal()">Change</button>
                                         </div>
                                         <div class="settings-row">
                                             <div>
@@ -5099,7 +5121,134 @@
         </div>
     </div><!-- /client portal -->
 
-    <!-- Plan Upgrade Modal -->
+    <!-- Order Confirmation Modal -->
+    <div id="orderConfirmModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(10,18,42,0.85); backdrop-filter:blur(8px); z-index:10002; justify-content:center; align-items:center; opacity:0; transition:opacity 0.2s;">
+        <div id="orderConfirmContent" style="background:#fff; border-radius:18px; width:95%; max-width:480px; padding:32px; box-shadow:0 20px 60px rgba(0,0,0,0.35); transform:scale(0.93); transition:transform 0.2s;">
+            <div style="text-align:center; margin-bottom:24px;">
+                <div style="width:56px; height:56px; background:rgba(29,140,248,.1); border-radius:50%; display:grid; place-items:center; margin:0 auto 14px; font-size:1.6rem; color:var(--accent);">🖨️</div>
+                <h4 style="font-family:'Sora',sans-serif; font-weight:800; color:#0d1b3e; margin:0 0 6px;">Confirm Your Order</h4>
+                <p style="color:#8898aa; font-size:.85rem; margin:0;">Please review your order details before placing.</p>
+            </div>
+
+            <!-- Order Summary -->
+            <div style="background:#f8f9ff; border-radius:12px; padding:16px; margin-bottom:20px; font-size:.82rem;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                    <span style="color:#8898aa; font-weight:600;">Product</span>
+                    <span style="font-weight:700; color:#0d1b3e;" id="confirmProduct">—</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                    <span style="color:#8898aa; font-weight:600;">Quantity</span>
+                    <span style="font-weight:700; color:#0d1b3e;" id="confirmQty">—</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                    <span style="color:#8898aa; font-weight:600;">Size</span>
+                    <span style="font-weight:700; color:#0d1b3e;" id="confirmSize">—</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                    <span style="color:#8898aa; font-weight:600;">Paper Stock</span>
+                    <span style="font-weight:700; color:#0d1b3e;" id="confirmPaper">—</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                    <span style="color:#8898aa; font-weight:600;">Finishing</span>
+                    <span style="font-weight:700; color:#0d1b3e;" id="confirmFinish">—</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                    <span style="color:#8898aa; font-weight:600;">Turnaround</span>
+                    <span style="font-weight:700; color:#0d1b3e;" id="confirmTurnaround">—</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                    <span style="color:#8898aa; font-weight:600;">Artwork</span>
+                    <span style="font-weight:700; color:#2dce89;" id="confirmArtwork">—</span>
+                </div>
+                <div style="border-top:1px solid #e8ecf4; margin:10px 0;"></div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="color:#8898aa; font-weight:600;">Total to Deduct</span>
+                    <span style="font-family:'Sora',sans-serif; font-size:1.3rem; font-weight:800; color:#1d8cf8;" id="confirmTotal">₱—</span>
+                </div>
+            </div>
+
+            <div style="display:flex; gap:10px;">
+                <button onclick="closeOrderConfirmModal()" style="flex:1; padding:11px; border:1px solid #dde3f0; border-radius:10px; background:#fff; color:#344767; font-size:.88rem; font-weight:600; cursor:pointer;">
+                    ← Go Back
+                </button>
+                <button id="confirmPlaceBtn" onclick="executePlaceOrder()" style="flex:2; padding:11px; border:none; border-radius:10px; background:linear-gradient(90deg,#1d8cf8,#00c6ff); color:#fff; font-size:.88rem; font-weight:700; cursor:pointer; font-family:'DM Sans',sans-serif;">
+                    ✓ Confirm & Place Order
+                </button>
+            </div>
+            <p style="text-align:center; font-size:.72rem; color:#aaa; margin:10px 0 0;">Credits will be deducted immediately upon confirmation.</p>
+        </div>
+    </div>
+
+    <!-- Cancel Order Modal (Client) -->
+    <div id="cancelOrderModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(10,18,42,0.85); backdrop-filter:blur(8px); z-index:10002; justify-content:center; align-items:center; opacity:0; transition:opacity 0.2s;">
+        <div id="cancelOrderContent" style="background:#fff; border-radius:18px; width:95%; max-width:440px; padding:28px; box-shadow:0 20px 60px rgba(0,0,0,0.35); transform:scale(0.93); transition:transform 0.2s;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h5 style="font-family:'Sora',sans-serif; font-weight:800; color:#0d1b3e; margin:0;">Cancel Order</h5>
+                <button onclick="closeCancelOrderModal()" style="background:none; border:none; font-size:1.3rem; color:#8898aa; cursor:pointer;">×</button>
+            </div>
+            <input type="hidden" id="cancelOrderId">
+            <p style="font-size:.83rem; color:#8898aa; margin-bottom:16px;">Order <strong id="cancelOrderNum" style="color:#0d1b3e;"></strong> — your credits will be fully refunded.</p>
+
+            <div style="margin-bottom:14px;">
+                <label style="font-size:.75rem; font-weight:700; color:#8898aa; text-transform:uppercase; letter-spacing:.05em; display:block; margin-bottom:6px;">Reason for Cancellation</label>
+                <select id="cancelReasonSelect" onchange="handleCancelReasonSelect(this)" style="width:100%; padding:9px 12px; border:1px solid #dde3f0; border-radius:8px; font-size:.85rem; font-family:'DM Sans',sans-serif; color:#344767; margin-bottom:8px;">
+                    <option value="">— Select a reason —</option>
+                    <option value="Changed my mind">Changed my mind</option>
+                    <option value="Ordered by mistake">Ordered by mistake</option>
+                    <option value="Found a better price elsewhere">Found a better price elsewhere</option>
+                    <option value="Need to change specifications">Need to change specifications</option>
+                    <option value="Delivery timeline too long">Delivery timeline too long</option>
+                    <option value="Budget constraints">Budget constraints</option>
+                    <option value="Other">Other (type below)</option>
+                </select>
+                <textarea id="cancelReasonText" placeholder="Add more details (optional)..." rows="3"
+                    style="width:100%; padding:9px 12px; border:1px solid #dde3f0; border-radius:8px; font-size:.82rem; font-family:'DM Sans',sans-serif; color:#344767; resize:vertical; box-sizing:border-box; display:none;"></textarea>
+            </div>
+
+            <div id="cancelModalMsg" style="font-size:.8rem; font-weight:600; min-height:16px; margin-bottom:10px;"></div>
+            <div style="display:flex; gap:10px;">
+                <button onclick="closeCancelOrderModal()" style="flex:1; padding:10px; border:1px solid #dde3f0; border-radius:8px; background:#fff; color:#344767; font-size:.85rem; font-weight:600; cursor:pointer;">Keep Order</button>
+                <button id="cancelSubmitBtn" onclick="submitCancelOrder()" style="flex:1; padding:10px; border:none; border-radius:8px; background:#f5365c; color:#fff; font-size:.85rem; font-weight:700; cursor:pointer;">Cancel Order</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Password Change Modal -->
+    <div id="passwordModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(10,18,42,0.8); backdrop-filter:blur(8px); z-index:10001; justify-content:center; align-items:center; opacity:0; transition:opacity 0.2s ease-in-out;">
+        <div id="passwordModalContent" style="background:#fff; border-radius:16px; width:95%; max-width:420px; padding:28px; box-shadow:0 20px 60px rgba(0,0,0,0.3); transform:scale(0.93); transition:transform 0.2s ease-in-out;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h5 style="margin:0; font-family:'Sora',sans-serif; font-weight:800; color:#0d1b3e;">Change Password</h5>
+                <button onclick="closePasswordModal()" style="background:none; border:none; font-size:1.3rem; color:#8898aa; cursor:pointer; line-height:1;">×</button>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:14px;">
+                <div>
+                    <label style="font-size:.75rem; font-weight:700; color:#8898aa; text-transform:uppercase; letter-spacing:.05em; display:block; margin-bottom:5px;">Current Password</label>
+                    <input type="password" id="pwCurrentInput" placeholder="Enter current password"
+                        style="width:100%; padding:9px 12px; border:1px solid #dde3f0; border-radius:8px; font-size:.85rem; font-family:'DM Sans',sans-serif; color:#344767; box-sizing:border-box;"
+                        onfocus="this.style.borderColor='#1d8cf8'" onblur="this.style.borderColor='#dde3f0'">
+                </div>
+                <div>
+                    <label style="font-size:.75rem; font-weight:700; color:#8898aa; text-transform:uppercase; letter-spacing:.05em; display:block; margin-bottom:5px;">New Password</label>
+                    <input type="password" id="pwNewInput" placeholder="Min. 6 characters"
+                        style="width:100%; padding:9px 12px; border:1px solid #dde3f0; border-radius:8px; font-size:.85rem; font-family:'DM Sans',sans-serif; color:#344767; box-sizing:border-box;"
+                        onfocus="this.style.borderColor='#1d8cf8'" onblur="this.style.borderColor='#dde3f0'">
+                </div>
+                <div>
+                    <label style="font-size:.75rem; font-weight:700; color:#8898aa; text-transform:uppercase; letter-spacing:.05em; display:block; margin-bottom:5px;">Confirm New Password</label>
+                    <input type="password" id="pwConfirmInput" placeholder="Repeat new password"
+                        style="width:100%; padding:9px 12px; border:1px solid #dde3f0; border-radius:8px; font-size:.85rem; font-family:'DM Sans',sans-serif; color:#344767; box-sizing:border-box;"
+                        onfocus="this.style.borderColor='#1d8cf8'" onblur="this.style.borderColor='#dde3f0'"
+                        onkeydown="if(event.key==='Enter') submitPasswordChange()">
+                </div>
+                <div id="pwModalMsg" style="font-size:.8rem; font-weight:600; min-height:18px;"></div>
+                <button id="pwSubmitBtn" onclick="submitPasswordChange()"
+                    style="width:100%; padding:11px; background:linear-gradient(90deg,#1d8cf8,#00c6ff); color:#fff; border:none; border-radius:9px; font-size:.88rem; font-weight:700; cursor:pointer; font-family:'DM Sans',sans-serif;">
+                    Change Password
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Plan Upgrade Modal -->
     <div id="planModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(8,14,36,0.92); backdrop-filter:blur(10px); z-index:10000; justify-content:center; align-items:center; opacity:0; transition:opacity 0.25s ease-in-out; padding:16px;">
         <div style="width:95%; max-width:980px; transform:scale(0.93); transition:transform 0.25s ease-in-out;" id="planModalContent">
@@ -5305,6 +5454,7 @@
             templates: 'nav-client-templates',
             billing: 'nav-client-billing',
             files: 'nav-client-files',
+            track: 'nav-client-track',
             account: 'nav-client-account'
         };
 
@@ -5325,9 +5475,8 @@
             }
 
             if (id === 'files' && typeof fmRender === 'function') fmRender();
-
-            // Auto-load wallet when billing tab opens
             if (id === 'billing' && typeof walletLoad === 'function') walletLoad();
+            if (id === 'track') loadTrackOrders();
         }
 
         // Load wallet on initial page render (in case billing is default page)
@@ -5955,10 +6104,13 @@
                     debouncedUpdatePricing();
                 });
 
-                // Input → slider (live as user types)
+                // Input → slider (live as user types — clamp immediately)
                 qtyInput.addEventListener('input', () => {
                     const raw = parseInt(qtyInput.value) || 50;
                     const clamped = Math.max(50, Math.min(10000, raw));
+                    // If user typed over the cap, correct it right away
+                    if (raw > 10000) qtyInput.value = 10000;
+                    if (raw < 50 && qtyInput.value.length > 0) qtyInput.value = 50;
                     qtySlider.value = clamped;
                     debouncedUpdatePricing();
                 });
@@ -5971,6 +6123,7 @@
                     updatePricing();
                 }
                 qtyInput.addEventListener('change', finalizeQty);
+                qtyInput.addEventListener('blur', finalizeQty);
                 qtyInput.addEventListener('keydown', (e) => {
                     if (e.key === 'Enter') { e.preventDefault(); qtyInput.blur(); }
                 });
@@ -6079,6 +6232,10 @@
                                 if (o.status === 'Proof Pending Review' && o.proof_file) {
                                     actionCell = `<button class="btn btn-sm" style="padding:4px 10px; font-size:.78rem; border-radius:6px; background:var(--accent); color:#fff; border:none; display:inline-flex; align-items:center; gap:4px; font-weight:600;" onclick="openClientProofModal(${o.id})"><i class="bi bi-file-earmark-check"></i> Review Proof</button>`;
                                 }
+                                const cancellable = ['Proof Pending','Proof Pending Review','Prepress'];
+                                const cancelBtn = cancellable.includes(o.status)
+                                    ? `<button style="padding:4px 10px; font-size:.75rem; border-radius:6px; background:rgba(245,54,92,.1); color:#f5365c; border:1px solid rgba(245,54,92,.2); font-weight:600; cursor:pointer; margin-left:4px;" onclick="openCancelOrderModal(${o.id},'${o.order_number || 'PPR-' + String(o.id).padStart(3,'0')}')">Cancel</button>`
+                                    : '';
                                 const tr = `<tr data-status="${o.status.toLowerCase()}">
                                     <td>${o.order_number || '#ORD-' + o.id}</td>
                                     <td>${o.job_name || o.product_type}</td>
@@ -6087,7 +6244,7 @@
                                     <td><span class="badge-status ${getStatusClass(o.status)}">${o.status}</span></td>
                                     <td>${o.due_date ? new Date(o.due_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : '—'}</td>
                                     <td style="font-weight:700;">₱${parseFloat(o.total_price || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-                                    <td>${actionCell}</td>
+                                    <td style="white-space:nowrap;">${actionCell}${cancelBtn}</td>
                                 </tr>`;
                                 ordersTbody.innerHTML += tr;
                             });
@@ -6096,6 +6253,295 @@
                 }
             } catch (e) { console.error(e); }
         }
+
+        // ══════════════════════════════════════════════════════
+        //  ORDER CONFIRMATION MODAL
+        // ══════════════════════════════════════════════════════
+        function openOrderConfirmModal() {
+            // Populate summary from current form state
+            const activeBtn = document.querySelector('.product-types .pt-btn.active');
+            const product   = activeBtn ? activeBtn.textContent.trim() : 'Flyers';
+            const qty       = document.getElementById('qtyVal').value || document.getElementById('qtySlider').value;
+            const w         = document.getElementById('customWidth').value;
+            const h         = document.getElementById('customHeight').value;
+            const paperSel  = document.getElementById('paperSelect');
+            const paper     = paperSel.options[paperSel.selectedIndex]?.text || '—';
+            const finishSel = document.getElementById('finishSelect');
+            const finish    = finishSel.options[finishSel.selectedIndex]?.text || '—';
+            const taSel     = document.getElementById('turnaroundSelect');
+            const ta        = taSel.options[taSel.selectedIndex]?.text || '—';
+            const artwork   = document.getElementById('sumArtwork')?.textContent || '—';
+            const total     = document.getElementById('summaryTotal')?.textContent || '₱—';
+
+            document.getElementById('confirmProduct').textContent    = product;
+            document.getElementById('confirmQty').textContent        = parseInt(qty).toLocaleString() + ' units';
+            document.getElementById('confirmSize').textContent       = w + '" × ' + h + '"';
+            document.getElementById('confirmPaper').textContent      = paper;
+            document.getElementById('confirmFinish').textContent     = finish;
+            document.getElementById('confirmTurnaround').textContent = ta;
+            document.getElementById('confirmArtwork').textContent    = artwork;
+            document.getElementById('confirmTotal').textContent      = total;
+
+            const modal = document.getElementById('orderConfirmModal');
+            modal.style.display = 'flex';
+            setTimeout(() => { modal.style.opacity = '1'; document.getElementById('orderConfirmContent').style.transform = 'scale(1)'; }, 10);
+        }
+
+        function closeOrderConfirmModal() {
+            const modal = document.getElementById('orderConfirmModal');
+            modal.style.opacity = '0';
+            document.getElementById('orderConfirmContent').style.transform = 'scale(0.93)';
+            setTimeout(() => { modal.style.display = 'none'; }, 200);
+        }
+
+        document.getElementById('orderConfirmModal').addEventListener('click', function(e) {
+            if (e.target === this) closeOrderConfirmModal();
+        });
+
+        // ══════════════════════════════════════════════════════
+        //  CANCEL ORDER MODAL (CLIENT)
+        // ══════════════════════════════════════════════════════
+        function openCancelOrderModal(orderId, orderNum) {
+            document.getElementById('cancelOrderId').value = orderId;
+            document.getElementById('cancelOrderNum').textContent = '#' + orderNum;
+            document.getElementById('cancelReasonSelect').value = '';
+            document.getElementById('cancelReasonText').value = '';
+            document.getElementById('cancelReasonText').style.display = 'none';
+            document.getElementById('cancelModalMsg').textContent = '';
+            const modal = document.getElementById('cancelOrderModal');
+            modal.style.display = 'flex';
+            setTimeout(() => { modal.style.opacity = '1'; document.getElementById('cancelOrderContent').style.transform = 'scale(1)'; }, 10);
+        }
+
+        function closeCancelOrderModal() {
+            const modal = document.getElementById('cancelOrderModal');
+            modal.style.opacity = '0';
+            document.getElementById('cancelOrderContent').style.transform = 'scale(0.93)';
+            setTimeout(() => { modal.style.display = 'none'; }, 200);
+        }
+
+        function handleCancelReasonSelect(sel) {
+            const textarea = document.getElementById('cancelReasonText');
+            textarea.style.display = sel.value === 'Other' ? 'block' : 'none';
+            if (sel.value !== 'Other') textarea.value = '';
+        }
+
+        async function submitCancelOrder() {
+            const orderId = document.getElementById('cancelOrderId').value;
+            const select  = document.getElementById('cancelReasonSelect');
+            const textarea = document.getElementById('cancelReasonText');
+            const msg     = document.getElementById('cancelModalMsg');
+            const btn     = document.getElementById('cancelSubmitBtn');
+
+            let reason = select.value;
+            if (reason === 'Other') reason = textarea.value.trim();
+            if (!reason) { msg.textContent = 'Please select or enter a reason.'; msg.style.color = '#f5365c'; return; }
+
+            btn.disabled = true; btn.textContent = 'Cancelling…';
+            const formData = new FormData();
+            formData.append('order_id', orderId);
+            formData.append('reason', reason);
+
+            try {
+                const res  = await fetch('api/cancel_order.php', { method: 'POST', body: formData });
+                const data = await res.json();
+                if (data.success) {
+                    closeCancelOrderModal();
+                    if (typeof walletLoad === 'function') walletLoad();
+                    if (typeof loadOrders === 'function') loadOrders();
+                    if (typeof loadTrackOrders === 'function') loadTrackOrders();
+                } else {
+                    msg.textContent = data.message || 'Failed to cancel order.';
+                    msg.style.color = '#f5365c';
+                }
+            } catch (e) {
+                msg.textContent = 'Network error. Please try again.';
+                msg.style.color = '#f5365c';
+            } finally {
+                btn.disabled = false; btn.textContent = 'Cancel Order';
+            }
+        }
+
+        document.getElementById('cancelOrderModal').addEventListener('click', function(e) {
+            if (e.target === this) closeCancelOrderModal();
+        });
+
+        // ══════════════════════════════════════════════════════
+        //  TRACK ORDERS
+        // ══════════════════════════════════════════════════════
+        async function loadTrackOrders() {
+            const container = document.getElementById('trackOrdersList');
+            if (!container) return;
+            container.innerHTML = `<div style="text-align:center;padding:40px;color:var(--muted);"><i class="bi bi-arrow-repeat" style="font-size:1.5rem;display:block;margin-bottom:8px;opacity:.3;"></i>Loading…</div>`;
+
+            try {
+                const res  = await fetch('api/get_orders.php');
+                const data = await res.json();
+                if (!data.success) throw new Error(data.message);
+
+                const orders = data.data;
+                const activeStatuses = ['Prepress','Printing','Finishing','Shipping','Proof Pending','Proof Pending Review'];
+                const active = orders.filter(o => activeStatuses.includes(o.status));
+
+                if (active.length === 0) {
+                    container.innerHTML = `
+                        <div style="text-align:center;padding:60px;color:var(--muted);">
+                            <i class="bi bi-check-circle" style="font-size:3rem;display:block;margin-bottom:12px;color:#2dce89;opacity:.5;"></i>
+                            <h5 style="font-weight:700;margin-bottom:6px;">All caught up!</h5>
+                            <p style="font-size:.85rem;">No active orders in production right now.</p>
+                            <button onclick="showClientPage('create',null)" style="margin-top:12px;background:var(--accent);color:#fff;border:none;padding:8px 20px;border-radius:8px;font-size:.82rem;font-weight:600;cursor:pointer;">+ Place New Order</button>
+                        </div>`;
+                    return;
+                }
+
+                const steps = ['Prepress','Printing','Finishing','Shipping','Delivered'];
+
+                container.innerHTML = active.map(o => {
+                    const orderNum = o.order_number || ('PPR-' + String(o.id).padStart(3,'0'));
+                    const jobName  = o.job_name || o.product_type || 'Print Job';
+                    const dueDate  = o.due_date ? new Date(o.due_date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—';
+                    const total    = parseFloat(o.total_price || o.total_amount || 0).toLocaleString('en-US',{minimumFractionDigits:2});
+
+                    // Map status to step index
+                    const statusMap = {
+                        'Proof Pending': -1, 'Proof Pending Review': -1,
+                        'Prepress': 0, 'Printing': 1, 'Finishing': 2, 'Shipping': 3, 'Delivered': 4
+                    };
+                    const currentIdx = statusMap[o.status] ?? 0;
+
+                    const stepsHtml = steps.map((step, i) => {
+                        let circleClass = 'pending', labelClass = '', icon = i + 1;
+                        if (i < currentIdx) { circleClass = 'done'; icon = '<i class="bi bi-check-lg"></i>'; labelClass = 'done'; }
+                        else if (i === currentIdx) { circleClass = 'current'; labelClass = 'current'; }
+                        const connector = i < steps.length - 1
+                            ? `<div class="step-connector ${i < currentIdx ? 'done' : 'pending'}"></div>`
+                            : '';
+                        return `
+                            <div class="track-step">
+                                <div class="step-circle ${circleClass}">${icon}</div>
+                                <div class="step-label ${labelClass}">${step}</div>
+                            </div>${connector}`;
+                    }).join('');
+
+                    // Proof pending special notice
+                    const proofNotice = (o.status === 'Proof Pending Review' && o.proof_file)
+                        ? `<div style="margin:0 20px 16px;padding:10px 14px;background:rgba(29,140,248,.08);border:1px solid rgba(29,140,248,.2);border-radius:8px;font-size:.78rem;color:var(--accent);font-weight:600;display:flex;align-items:center;gap:8px;">
+                               <i class="bi bi-file-earmark-check-fill"></i>
+                               Your proof is ready for review!
+                               <button onclick="openClientProofModal(${o.id})" style="margin-left:auto;background:var(--accent);color:#fff;border:none;padding:4px 12px;border-radius:6px;font-size:.75rem;font-weight:700;cursor:pointer;">Review Now</button>
+                           </div>`
+                        : '';
+
+                    return `
+                        <div class="track-card">
+                            <div class="track-card-hdr">
+                                <div>
+                                    <div class="track-order-id">#${orderNum}</div>
+                                    <div class="track-order-name">${escapeHtml(jobName)}</div>
+                                </div>
+                                <span class="badge-status ${getStatusClass(o.status)}">${o.status}</span>
+                            </div>
+                            ${proofNotice}
+                            <div class="progress-track">
+                                <div class="steps-row">${stepsHtml}</div>
+                            </div>
+                            <div class="track-details">
+                                <div class="track-detail">
+                                    <div class="track-detail-lbl">Product</div>
+                                    <div class="track-detail-val">${o.product_type || '—'}</div>
+                                </div>
+                                <div class="track-detail">
+                                    <div class="track-detail-lbl">Quantity</div>
+                                    <div class="track-detail-val">${parseInt(o.quantity).toLocaleString()} units</div>
+                                </div>
+                                <div class="track-detail">
+                                    <div class="track-detail-lbl">Due Date</div>
+                                    <div class="track-detail-val">${dueDate}</div>
+                                </div>
+                                <div class="track-detail">
+                                    <div class="track-detail-lbl">Total</div>
+                                    <div class="track-detail-val" style="color:var(--accent);font-weight:700;">₱${total}</div>
+                                </div>
+                            </div>
+                            ${['Proof Pending','Proof Pending Review','Prepress'].includes(o.status) ? `
+                            <div style="padding:12px 20px; border-top:1px solid var(--border); display:flex; justify-content:flex-end;">
+                                <button onclick="openCancelOrderModal(${o.id},'${orderNum}')" style="padding:6px 16px; font-size:.78rem; border-radius:6px; background:rgba(245,54,92,.08); color:#f5365c; border:1px solid rgba(245,54,92,.2); font-weight:600; cursor:pointer;">
+                                    Cancel Order
+                                </button>
+                            </div>` : ''}
+                        </div>`;
+                }).join('');
+
+            } catch (e) {
+                container.innerHTML = `<div style="text-align:center;padding:40px;color:var(--muted);">Could not load orders. Please try again.</div>`;
+            }
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        }
+
+        // ══════════════════════════════════════════════════════
+        //  PASSWORD CHANGE
+        // ══════════════════════════════════════════════════════
+        function openPasswordModal() {
+            document.getElementById('pwCurrentInput').value = '';
+            document.getElementById('pwNewInput').value = '';
+            document.getElementById('pwConfirmInput').value = '';
+            document.getElementById('pwModalMsg').textContent = '';
+            document.getElementById('pwModalMsg').style.color = '';
+            const modal = document.getElementById('passwordModal');
+            modal.style.display = 'flex';
+            setTimeout(() => { modal.style.opacity = '1'; document.getElementById('passwordModalContent').style.transform = 'scale(1)'; }, 10);
+        }
+
+        function closePasswordModal() {
+            const modal = document.getElementById('passwordModal');
+            modal.style.opacity = '0';
+            document.getElementById('passwordModalContent').style.transform = 'scale(0.93)';
+            setTimeout(() => { modal.style.display = 'none'; }, 200);
+        }
+
+        async function submitPasswordChange() {
+            const current = document.getElementById('pwCurrentInput').value.trim();
+            const newPw   = document.getElementById('pwNewInput').value.trim();
+            const confirm = document.getElementById('pwConfirmInput').value.trim();
+            const msg     = document.getElementById('pwModalMsg');
+            const btn     = document.getElementById('pwSubmitBtn');
+
+            if (!current || !newPw || !confirm) { msg.textContent = 'Please fill in all fields.'; msg.style.color = '#f5365c'; return; }
+            if (newPw.length < 6) { msg.textContent = 'New password must be at least 6 characters.'; msg.style.color = '#f5365c'; return; }
+            if (newPw !== confirm) { msg.textContent = 'New passwords do not match.'; msg.style.color = '#f5365c'; return; }
+
+            btn.disabled = true; btn.textContent = 'Saving…';
+
+            const formData = new FormData();
+            formData.append('current_password', current);
+            formData.append('new_password', newPw);
+
+            try {
+                const res  = await fetch('api/change_password.php', { method: 'POST', body: formData });
+                const data = await res.json();
+                if (data.success) {
+                    msg.textContent = '✓ Password changed successfully!';
+                    msg.style.color = '#2dce89';
+                    setTimeout(() => closePasswordModal(), 1500);
+                } else {
+                    msg.textContent = data.message || 'Failed to change password.';
+                    msg.style.color = '#f5365c';
+                }
+            } catch (e) {
+                msg.textContent = 'Network error. Please try again.';
+                msg.style.color = '#f5365c';
+            } finally {
+                btn.disabled = false; btn.textContent = 'Change Password';
+            }
+        }
+
+        document.getElementById('passwordModal').addEventListener('click', function(e) {
+            if (e.target === this) closePasswordModal();
+        });
 
         function getStatusClass(status) {
             status = status.toLowerCase();
@@ -6386,7 +6832,8 @@
             // Read quantity from the number input (source of truth); fall back to slider
             const qtyInput = document.getElementById('qtyVal');
             const qtySlider = document.getElementById('qtySlider');
-            const qty = qtyInput ? parseInt(qtyInput.value) || 50 : parseInt(qtySlider.value);
+            let qty = qtyInput ? parseInt(qtyInput.value) || 50 : parseInt(qtySlider.value);
+            qty = Math.max(50, Math.min(10000, qty)); // hard cap — never send > 10,000
 
             const paperId = document.getElementById('paperSelect').value;
             const sizeId = document.getElementById('sizeSelect').value;
@@ -6865,18 +7312,19 @@
             savedFiles.forEach(file => {
                 const card = document.createElement('div');
                 card.className = 'file-card';
-                card.style.padding = '12px';
-                card.style.marginBottom = '8px';
-                card.style.border = '1px solid var(--border)';
-                card.style.borderRadius = '8px';
-                card.style.cursor = 'pointer';
-                card.style.display = 'flex';
-                card.style.justifyContent = 'space-between';
-                card.style.alignItems = 'center';
-                card.style.transition = 'all 0.2s';
+                card.style.cssText = 'padding:10px 14px; margin-bottom:8px; border:1px solid var(--border); border-radius:8px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; transition:all 0.2s; gap:8px;';
+
+                // File icon based on extension
+                const ext = file.original_filename.split('.').pop().toLowerCase();
+                const iconMap = { pdf: '📄', png: '🖼️', jpg: '🖼️', jpeg: '🖼️', ai: '🎨', psd: '🎨' };
+                const icon = iconMap[ext] || '📎';
+
                 card.innerHTML = `
-                    <span style="font-size: 0.85rem;">${file.original_filename}</span>
-                    <button type="button" onclick="deleteSavedFile(${file.id})" style="background: none; border: none; color: #dc3545; cursor: pointer; font-size: 1.2rem;">&times;</button>
+                    <div style="display:flex; align-items:center; gap:8px; min-width:0; flex:1;">
+                        <span style="font-size:1.1rem; flex-shrink:0;">${icon}</span>
+                        <span style="font-size:.8rem; font-weight:500; color:var(--navy); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:200px;" title="${file.original_filename}">${file.original_filename}</span>
+                    </div>
+                    <button type="button" onclick="event.stopPropagation(); deleteSavedFile(${file.id})" style="background:none; border:none; color:#dc3545; cursor:pointer; font-size:1rem; flex-shrink:0; padding:2px 4px;" title="Delete">×</button>
                 `;
                 card.onclick = (e) => {
                     if (e.target.tagName !== 'BUTTON') {
@@ -6897,15 +7345,23 @@
             document.querySelectorAll('#wizard-account-files .file-card').forEach(c => {
                 c.classList.remove('active');
                 c.style.background = 'transparent';
+                c.style.borderColor = 'var(--border)';
             });
-            event.target.closest('.file-card').classList.add('active');
-            event.target.closest('.file-card').style.background = 'rgba(29, 140, 248, .04)';
+            const clicked = event.target.closest('.file-card');
+            if (clicked) {
+                clicked.classList.add('active');
+                clicked.style.background = 'rgba(29, 140, 248, .06)';
+                clicked.style.borderColor = 'var(--accent)';
+            }
 
             // Update summary
             document.getElementById('sumArtwork').textContent = filename;
 
             // Store selected file ID for order submission
             window.selectedSavedFileId = fileId;
+
+            // Mark artwork as attached — clears the red notice
+            artworkAttached();
         }
 
         async function deleteSavedFile(fileId) {
@@ -6967,30 +7423,21 @@
                 return;
             }
 
-            // Validate that a file is attached (either uploaded or selected from saved files)
+            // Validate artwork
             if ((!uploadedFiles || uploadedFiles.length === 0) && !window.selectedSavedFileId) {
-                // Highlight the artwork step card
                 const artworkStep = document.getElementById('artworkStep');
                 if (artworkStep) {
                     artworkStep.style.border = '2px solid #f5365c';
                     artworkStep.style.boxShadow = '0 0 0 4px rgba(245,54,92,.15)';
                     artworkStep.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    setTimeout(() => {
-                        artworkStep.style.border = '';
-                        artworkStep.style.boxShadow = '';
-                    }, 3000);
+                    setTimeout(() => { artworkStep.style.border = ''; artworkStep.style.boxShadow = ''; }, 3000);
                 }
-                // Show the required notice in red
                 const notice = document.getElementById('artworkRequiredNotice');
                 if (notice) {
                     notice.style.background = 'rgba(245,54,92,.15)';
                     notice.style.border = '1px solid rgba(245,54,92,.5)';
-                    setTimeout(() => {
-                        notice.style.background = 'rgba(245,54,92,.08)';
-                        notice.style.border = '1px solid rgba(245,54,92,.2)';
-                    }, 3000);
+                    setTimeout(() => { notice.style.background = 'rgba(245,54,92,.08)'; notice.style.border = '1px solid rgba(245,54,92,.2)'; }, 3000);
                 }
-                // Make sure upload tab is visible
                 document.getElementById('upload-area').style.display = 'block';
                 document.getElementById('account-files').style.display = 'none';
                 document.getElementById('uploadNewTab').classList.add('active');
@@ -6999,17 +7446,20 @@
             }
 
             const totalCost = currentPricingData.grand_total ?? currentPricingData.breakdown?.grand_total ?? 0;
-
             if (_orderWalletBalance !== null && _orderWalletBalance < totalCost) {
                 const shortfall = (totalCost - _orderWalletBalance).toLocaleString('en-PH', { minimumFractionDigits: 2 });
-                alert('⚠️ Insufficient Credits\n\nYour wallet balance is too low to place this order.\nPlease add ₱' + shortfall + ' or more before continuing.');
+                alert('⚠️ Insufficient Credits\n\nPlease add ₱' + shortfall + ' or more before continuing.');
                 showClientPage('billing', null);
                 return;
             }
 
-            const btn = document.getElementById('placeOrderBtn');
-            btn.disabled = true;
-            btn.textContent = 'Processing...';
+            // Show confirmation modal instead of placing immediately
+            openOrderConfirmModal();
+        }
+
+        async function executePlaceOrder() {
+            const btn = document.getElementById('confirmPlaceBtn');
+            btn.disabled = true; btn.textContent = 'Placing Order…';
 
             const activeProductBtn = document.querySelector('.product-types .pt-btn.active');
             const productType = activeProductBtn ? activeProductBtn.textContent.trim() : 'Flyers';
@@ -7052,21 +7502,17 @@
                 const res = await fetch(getApiUrl('api/place_order.php'), { method: 'POST', body: formData });
                 const data = await res.json();
                 if (data.success) {
+                    closeOrderConfirmModal();
                     if (typeof walletLoad === 'function') walletLoad();
-                    // show success toast instead of alert if possible, or just alert
                     if (typeof showToast === 'function') {
                         showToast('Order ' + data.order_number + ' placed successfully!');
-                    } else {
-                        alert('✅ Order ' + data.order_number + ' placed successfully!\nEstimated due: ' + data.due_date);
                     }
-
-                    // Call loadOrders or refresh wallet if exists
                     if (typeof orderWalletCheck === 'function') orderWalletCheck();
                     if (typeof loadOrders === 'function') loadOrders();
-
                     showClientPage('orders', null);
                 } else {
                     if (data.message && data.message.toLowerCase().includes('insufficient')) {
+                        closeOrderConfirmModal();
                         alert('⚠️ Insufficient Credits\n\n' + data.message + '\n\nPlease top up your wallet in the Billing section.');
                         showClientPage('billing', null);
                     } else {
@@ -7077,7 +7523,7 @@
                 alert('Network error. Make sure you are connected and try again.');
             } finally {
                 btn.disabled = false;
-                btn.textContent = 'Place Order →';
+                btn.textContent = '✓ Confirm & Place Order';
             }
         }
 
