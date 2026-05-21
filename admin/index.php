@@ -1658,7 +1658,9 @@ $userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
 
         async function updateDashboardData(period = '6months') {
             try {
-                const res = await fetch(`../api/get_dashboard_stats.php?period=${period}&_=${Date.now()}`);
+                const res = await fetch(`../api/get_dashboard_stats.php?period=${period}&_=${Date.now()}`, {
+                    credentials: 'include'
+                });
                 const json = await res.json();
                 if (json.success) {
                     const d = json.data;
@@ -1721,7 +1723,9 @@ $userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
 
         async function loadOrders() {
             try {
-                const res = await fetch('../api/get_orders.php?_=' + Date.now());
+                const res = await fetch('../api/get_orders.php?_=' + Date.now(), {
+                    credentials: 'include'
+                });
                 const json = await res.json();
                 if (json.success) {
                     state.orders = json.data;
@@ -1781,6 +1785,7 @@ $userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
                                 <button class="btn btn-light action-btn" onclick="viewOrderDetails(${o.id})" title="View Details"><i class="bi bi-eye"></i></button>
                                 <a href="../api/generate_ticket.php?order_id=${o.id}" target="_blank" class="btn btn-light action-btn" title="Job Ticket"><i class="bi bi-ticket-perforated"></i></a>
                                 ${proofBtn}
+                                <button class="btn btn-danger action-btn" onclick="openRejectModal(${o.id})" title="Reject Order"><i class="bi bi-x-circle"></i></button>
                             </div>
                         </td>
                     </tr>
@@ -2433,6 +2438,73 @@ $userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
             }
         }
 
+    </script>
+
+    <!-- Reject Order Modal -->
+    <div class="modal fade" id="rejectOrderModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Reject Order</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="rejectionReason" class="form-label">Rejection Reason <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="rejectionReason" rows="4" placeholder="Please explain why this order is being rejected..." required></textarea>
+                    </div>
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <strong>Warning:</strong> Rejecting this order will refund the full amount to the client's wallet.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" onclick="confirmRejectOrder()">Reject Order</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let rejectOrderId = null;
+
+        function openRejectModal(orderId) {
+            rejectOrderId = orderId;
+            document.getElementById('rejectionReason').value = '';
+            const modal = new bootstrap.Modal(document.getElementById('rejectOrderModal'));
+            modal.show();
+        }
+
+        async function confirmRejectOrder() {
+            const reason = document.getElementById('rejectionReason').value.trim();
+            if (!reason) {
+                alert('Please provide a rejection reason.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('order_id', rejectOrderId);
+            formData.append('rejection_reason', reason);
+
+            try {
+                const res = await fetch('../api/reject_order.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    alert('Order rejected successfully. Credits refunded to client.');
+                    bootstrap.Modal.getInstance(document.getElementById('rejectOrderModal')).hide();
+                    loadOrders(); // Reload orders to show updated status
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            } catch (e) {
+                alert('Network error. Please try again.');
+            }
+        }
     </script>
 </body>
 </html>
