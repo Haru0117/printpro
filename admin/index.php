@@ -621,19 +621,32 @@ $userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
 
         .progress-bar-wrap {
             width: 100%;
-            height: 6px;
+            height: 24px;
             background: var(--off);
-            border-radius: 3px;
+            border-radius: 4px;
             overflow: hidden;
+            position: relative;
+            border: 1px solid rgba(0, 0, 0, 0.1);
         }
 
         [data-theme="dark"] .progress-bar-wrap {
             background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .progress-bar-fill {
             height: 100%;
             transition: width 0.5s ease;
+            display: block;
+            position: relative;
+            min-width: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: white;
+            font-weight: 600;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
         }
 
         .status-select {
@@ -1624,36 +1637,95 @@ $userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
 
         // Charts
         function initCharts() {
-            const statusCtx = document.getElementById('statusChart').getContext('2d');
-            state.charts.status = new Chart(statusCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Prepress', 'Printing', 'Finishing', 'Delivered'],
-                    datasets: [{
-                        data: [0, 0, 0, 0],
-                        backgroundColor: ['#fb6340', '#1171ef', '#7c4dff', '#2dce89'],
-                        borderWidth: 0
-                    }]
-                },
-                options: { maintainAspectRatio: false, cutout: '80%', plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, font: { size: 10 } } } } }
-            });
+            try {
+                const statusCtx = document.getElementById('statusChart');
+                if (!statusCtx) {
+                    console.warn('statusChart canvas not found');
+                    return;
+                }
 
-            const revCtx = document.getElementById('revenueChart').getContext('2d');
-            state.charts.revenue = new Chart(revCtx, {
-                type: 'line',
-                data: {
-                    labels: [],
-                    datasets: [{
-                        label: 'Revenue',
-                        data: [],
-                        borderColor: '#1d8cf8',
-                        backgroundColor: 'rgba(29, 140, 248, 0.1)',
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } }, x: { grid: { display: false } } } }
-            });
+                state.charts.status = new Chart(statusCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Prepress', 'Printing', 'Finishing', 'Delivered'],
+                        datasets: [{
+                            data: [0, 0, 0, 0],
+                            backgroundColor: ['#fb6340', '#1171ef', '#7c4dff', '#2dce89'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: { 
+                        maintainAspectRatio: false, 
+                        cutout: '80%', 
+                        responsive: true,
+                        plugins: { 
+                            legend: { 
+                                position: 'bottom', 
+                                labels: { 
+                                    usePointStyle: true, 
+                                    font: { size: 10 },
+                                    padding: 15
+                                } 
+                            } 
+                        } 
+                    }
+                });
+
+                const revCtx = document.getElementById('revenueChart');
+                if (!revCtx) {
+                    console.warn('revenueChart canvas not found');
+                    return;
+                }
+
+                state.charts.revenue = new Chart(revCtx, {
+                    type: 'line',
+                    data: {
+                        labels: [],
+                        datasets: [{
+                            label: 'Revenue (₱)',
+                            data: [],
+                            borderColor: '#1d8cf8',
+                            backgroundColor: 'rgba(29, 140, 248, 0.1)',
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 4,
+                            pointBackgroundColor: '#1d8cf8',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2
+                        }]
+                    },
+                    options: { 
+                        maintainAspectRatio: false,
+                        responsive: true,
+                        plugins: { 
+                            legend: { 
+                                display: true,
+                                position: 'top'
+                            } 
+                        }, 
+                        scales: { 
+                            y: { 
+                                beginAtZero: true, 
+                                grid: { 
+                                    color: 'rgba(0,0,0,0.05)' 
+                                },
+                                ticks: {
+                                    callback: function(value) {
+                                        return '₱' + value.toLocaleString();
+                                    }
+                                }
+                            }, 
+                            x: { 
+                                grid: { 
+                                    display: false 
+                                } 
+                            } 
+                        } 
+                    }
+                });
+            } catch (e) {
+                console.error('Error initializing charts:', e);
+            }
         }
 
         async function updateDashboardData(period = '6months') {
@@ -1664,46 +1736,63 @@ $userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
                 const json = await res.json();
                 if (json.success) {
                     const d = json.data;
+                    
+                    // Update KPIs
                     const kpis = document.querySelectorAll('#dashboardKpis .kpi-val');
                     if (kpis.length >= 4) {
                         kpis[0].textContent = '₱' + parseFloat(d.total_revenue || 0).toLocaleString(undefined, { minimumFractionDigits: 2 });
-                        kpis[1].textContent = d.status_counts['Delivered'] || 0;
-                        kpis[2].textContent = (parseInt(d.status_counts['Prepress'] || 0)) + (parseInt(d.status_counts['Printing'] || 0)) + (parseInt(d.status_counts['Finishing'] || 0));
+                        kpis[1].textContent = d.status_counts?.['Delivered'] || 0;
+                        kpis[2].textContent = (parseInt(d.status_counts?.['Prepress'] || 0)) + (parseInt(d.status_counts?.['Printing'] || 0)) + (parseInt(d.status_counts?.['Finishing'] || 0));
                         kpis[3].textContent = d.new_users || 0;
                     }
 
-                    // Update Charts
-                    state.charts.status.data.datasets[0].data = [
-                        parseInt(d.status_counts['Prepress'] || 0),
-                        parseInt(d.status_counts['Printing'] || 0),
-                        parseInt(d.status_counts['Finishing'] || 0),
-                        parseInt(d.status_counts['Delivered'] || 0)
-                    ];
-                    state.charts.status.update();
+                    // Update Status Chart
+                    if (state.charts.status && d.status_counts) {
+                        state.charts.status.data.datasets[0].data = [
+                            parseInt(d.status_counts['Prepress'] || 0),
+                            parseInt(d.status_counts['Printing'] || 0),
+                            parseInt(d.status_counts['Finishing'] || 0),
+                            parseInt(d.status_counts['Delivered'] || 0)
+                        ];
+                        state.charts.status.update();
+                    }
 
-                    if (d.revenue_chart) {
-                        state.charts.revenue.data.labels = d.revenue_chart.map(r => r.label);
+                    // Update Revenue Chart
+                    if (state.charts.revenue && d.revenue_chart && d.revenue_chart.length > 0) {
+                        state.charts.revenue.data.labels = d.revenue_chart.map(r => r.label || '');
                         state.charts.revenue.data.datasets[0].data = d.revenue_chart.map(r => parseFloat(r.value) || 0);
+                        state.charts.revenue.update();
+                    } else if (state.charts.revenue) {
+                        // Show placeholder message when no data
+                        state.charts.revenue.data.labels = ['No Data'];
+                        state.charts.revenue.data.datasets[0].data = [0];
                         state.charts.revenue.update();
                     }
 
-                    // Fix chart colors for dark mode
-                    if (state.theme === 'dark') {
+                    // Adjust chart colors for dark mode
+                    if (state.theme === 'dark' && state.charts.revenue) {
                         Chart.defaults.color = '#a0aec0';
-                        state.charts.revenue.options.scales.x.grid.color = 'rgba(255,255,255,0.05)';
-                        state.charts.revenue.options.scales.y.grid.color = 'rgba(255,255,255,0.05)';
-                    } else {
+                        if (state.charts.revenue.options.scales) {
+                            state.charts.revenue.options.scales.x.grid.color = 'rgba(255,255,255,0.05)';
+                            state.charts.revenue.options.scales.y.grid.color = 'rgba(255,255,255,0.05)';
+                        }
+                    } else if (state.charts.revenue) {
                         Chart.defaults.color = '#666';
-                        state.charts.revenue.options.scales.x.grid.color = 'rgba(0,0,0,0.05)';
-                        state.charts.revenue.options.scales.y.grid.color = 'rgba(0,0,0,0.05)';
+                        if (state.charts.revenue.options.scales) {
+                            state.charts.revenue.options.scales.x.grid.color = 'rgba(0,0,0,0.05)';
+                            state.charts.revenue.options.scales.y.grid.color = 'rgba(0,0,0,0.05)';
+                        }
                     }
 
-                    state.charts.revenue.update();
+                    if (state.charts.revenue) {
+                        state.charts.revenue.update();
+                    }
                 } else {
+                    console.error('Dashboard API error:', json.message);
                     showToast(json.message || 'Failed to load stats', 'danger');
                 }
             } catch (e) { 
-                console.error(e);
+                console.error('Dashboard update error:', e);
                 showToast('Network error loading dashboard stats', 'danger'); 
             }
         }
@@ -1768,9 +1857,9 @@ $userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
                         <td>${o.business_name || o.client_name || 'Walk-in'}</td>
                         <td>${o.product_type || 'Custom'}</td>
                         <td>${parseInt(o.quantity).toLocaleString()}</td>
-                        <td style="width:120px;">
+                        <td style="width:140px;">
                             <div class="progress-bar-wrap">
-                                <div class="progress-bar-fill" style="width:${progress}%; background:${sColor};"></div>
+                                <div class="progress-bar-fill" style="width:${progress}%; background:${sColor};">${progress}%</div>
                             </div>
                         </td>
                         <td>
@@ -1783,7 +1872,7 @@ $userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
                         <td>
                             <div class="d-flex gap-2">
                                 <button class="btn btn-light action-btn" onclick="viewOrderDetails(${o.id})" title="View Details"><i class="bi bi-eye"></i></button>
-                                <a href="../api/generate_ticket.php?order_id=${o.id}" target="_blank" class="btn btn-light action-btn" title="Job Ticket"><i class="bi bi-ticket-perforated"></i></a>
+                                <a href="../job_ticket.php?order_id=${o.id}" target="_blank" class="btn btn-light action-btn" title="View Job Ticket" style="font-size:16px;">🎫</a>
                                 ${proofBtn}
                                 <button class="btn btn-danger action-btn" onclick="openRejectModal(${o.id})" title="Reject Order"><i class="bi bi-x-circle"></i></button>
                             </div>
