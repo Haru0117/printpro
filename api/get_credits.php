@@ -30,7 +30,7 @@ try {
         LEFT JOIN orders o ON ct.order_id = o.id
         WHERE c.user_id = ?
         ORDER BY ct.created_at DESC
-        LIMIT 10
+        LIMIT 50
     ");
     $stmt->execute([$_SESSION['user_id']]);
     $transactions = $stmt->fetchAll(PDO::FETCH_ASSOC);

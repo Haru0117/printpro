@@ -697,6 +697,18 @@
             color: #fff !important;
         }
 
+        /* Purple - Finishing */
+        .badge-purple {
+            background: #7c4dff !important;
+            color: #fff !important;
+        }
+
+        /* Grey - Cancelled */
+        .badge-cancelled {
+            background: #8898aa !important;
+            color: #fff !important;
+        }
+
         /* Orders Page Badges (b-* syntax) */
         .badge {
             display: inline-block;
@@ -4059,11 +4071,16 @@
                                     <div style="display:flex;gap:8px;">
                                         <select class="form-ctrl" style="font-size:.75rem;padding:4px 8px;width:auto;"
                                             onchange="filterOrdersBySelect(this)">
-                                            <option>All Status</option>
-                                            <option>Active</option>
-                                            <option>Pending</option>
-                                            <option>Done</option>
-                                            <option>Delivered</option>
+                                            <option value="all">All Status</option>
+                                            <option value="proof pending">Proof Pending</option>
+                                            <option value="proof pending review">Proof Pending Review</option>
+                                            <option value="prepress">Prepress</option>
+                                            <option value="printing">Printing</option>
+                                            <option value="finishing">Finishing</option>
+                                            <option value="shipping">Shipping</option>
+                                            <option value="delivered">Delivered</option>
+                                            <option value="cancelled">Cancelled</option>
+                                            <option value="reprint">Reprint</option>
                                         </select>
                                     </div>
                                 </div>
@@ -5125,7 +5142,9 @@
     <div id="orderConfirmModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(10,18,42,0.85); backdrop-filter:blur(8px); z-index:10002; justify-content:center; align-items:center; opacity:0; transition:opacity 0.2s;">
         <div id="orderConfirmContent" style="background:#fff; border-radius:18px; width:95%; max-width:480px; padding:32px; box-shadow:0 20px 60px rgba(0,0,0,0.35); transform:scale(0.93); transition:transform 0.2s;">
             <div style="text-align:center; margin-bottom:24px;">
-                <div style="width:56px; height:56px; background:rgba(29,140,248,.1); border-radius:50%; display:grid; place-items:center; margin:0 auto 14px; font-size:1.6rem; color:var(--accent);">🖨️</div>
+                <div style="width:64px; height:64px; background:#fff; border:2px solid #e8ecf4; border-radius:50%; display:grid; place-items:center; margin:0 auto 14px; box-shadow:0 4px 12px rgba(0,0,0,.08);">
+                    <img src="favicon.png" alt="PrintPro" style="width:38px; height:38px; object-fit:contain;">
+                </div>
                 <h4 style="font-family:'Sora',sans-serif; font-weight:800; color:#0d1b3e; margin:0 0 6px;">Confirm Your Order</h4>
                 <p style="color:#8898aa; font-size:.85rem; margin:0;">Please review your order details before placing.</p>
             </div>
@@ -6054,11 +6073,10 @@
             });
         }
 
-        // Bug #9 Fix: Define filterOrdersBySelect() which is wired to the Orders page status filter <select>
         function filterOrdersBySelect(sel) {
             const val = sel.value.toLowerCase();
             document.querySelectorAll('#c-orders .orders-table tbody tr').forEach(row => {
-                if (val === 'all status' || val === 'all') {
+                if (val === 'all' || val === 'all status') {
                     row.style.display = '';
                 } else {
                     const status = (row.getAttribute('data-status') || '').toLowerCase();
@@ -6144,6 +6162,9 @@
 
             loadOrderSpecs();
             loadOrders();
+            // Load credits and subscription on every page load
+            if (typeof walletLoad === 'function') walletLoad();
+            if (typeof billingLoadSubscription === 'function') billingLoadSubscription();
         });
 
         async function loadOrders() {
@@ -6241,7 +6262,15 @@
                                     <td>${o.job_name || o.product_type}</td>
                                     <td>${o.product_type || 'Product'}</td>
                                     <td>${parseInt(o.quantity).toLocaleString()}</td>
-                                    <td><span class="badge-status ${getStatusClass(o.status)}">${o.status}</span></td>
+                                    <td>
+                                        ${o.status === 'Cancelled'
+                                            ? `<div>
+                                                <span class="badge-status badge-danger">Cancelled</span>
+                                                ${o.rejection_reason ? `<div style="font-size:.68rem;color:#8898aa;margin-top:3px;max-width:160px;white-space:normal;line-height:1.3;">↩ Refunded · ${o.rejection_reason.length > 40 ? o.rejection_reason.substring(0,40)+'…' : o.rejection_reason}</div>` : '<div style="font-size:.68rem;color:#2dce89;margin-top:2px;">↩ Credits refunded</div>'}
+                                               </div>`
+                                            : `<span class="badge-status ${getStatusClass(o.status)}">${o.status}</span>`
+                                        }
+                                    </td>
                                     <td>${o.due_date ? new Date(o.due_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : '—'}</td>
                                     <td style="font-weight:700;">₱${parseFloat(o.total_price || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
                                     <td style="white-space:nowrap;">${actionCell}${cancelBtn}</td>
@@ -6252,6 +6281,31 @@
                     }
                 }
             } catch (e) { console.error(e); }
+        }
+
+        // ══════════════════════════════════════════════════════
+        //  GLOBAL TOAST (reuses fm-toast element)
+        // ══════════════════════════════════════════════════════
+        let _toastTimer = null;
+        function showToast(msg, type) {
+            const toast = document.getElementById('fm-toast');
+            const textEl = document.getElementById('fm-toast-text');
+            if (!toast || !textEl) return;
+
+            textEl.textContent = msg;
+
+            // Color by type
+            if (type === 'success') {
+                toast.style.background = '#1aae6f';
+            } else if (type === 'danger' || type === 'error') {
+                toast.style.background = '#f5365c';
+            } else {
+                toast.style.background = '#1a2340';
+            }
+
+            toast.classList.add('show');
+            clearTimeout(_toastTimer);
+            _toastTimer = setTimeout(() => toast.classList.remove('show'), 3500);
         }
 
         // ══════════════════════════════════════════════════════
@@ -6347,6 +6401,10 @@
                 const data = await res.json();
                 if (data.success) {
                     closeCancelOrderModal();
+                    // Show refund confirmation
+                    if (typeof showToast === 'function') {
+                        showToast(data.message || 'Order cancelled. Credits refunded to your wallet.', 'success');
+                    }
                     if (typeof walletLoad === 'function') walletLoad();
                     if (typeof loadOrders === 'function') loadOrders();
                     if (typeof loadTrackOrders === 'function') loadTrackOrders();
@@ -6545,19 +6603,13 @@
 
         function getStatusClass(status) {
             status = status.toLowerCase();
-            // GREEN - Success/Paid/Delivered
-            if (status === 'delivered' || status === 'done' || status === 'paid' || status === 'active') return 'badge-success';
-            // CYAN - Prepress/Printing
+            if (status === 'delivered' || status === 'done' || status === 'paid') return 'badge-success';
             if (status === 'prepress' || status === 'printing') return 'badge-info';
-            // PURPLE - Finishing/Processing
             if (status === 'finishing' || status === 'processing') return 'badge-purple';
-            // DEEP BLUE - Shipping
             if (status === 'shipping' || status === 'shipped' || status === 'proof pending review') return 'badge-primary';
-            // ORANGE - Pending/Due/Reprint
             if (status === 'pending' || status === 'due' || status === 'reprint' || status === 'proof pending') return 'badge-warning';
-            // RED - Danger/Cancelled
             if (status === 'cancelled' || status === 'rejected') return 'badge-danger';
-
+            if (status === 'refunded') return 'badge-success';
             return 'badge-success';
         }
 
@@ -7258,7 +7310,7 @@
 
                 try {
                     console.log('Uploading file:', file.name);
-                    const response = await fetch('../api/user_files.php', {
+                    const response = await fetch('api/user_files.php', {
                         method: 'POST',
                         body: formData
                     });
@@ -7280,7 +7332,7 @@
         async function loadSavedFiles() {
             console.log('Loading saved files...');
             try {
-                const response = await fetch('../api/user_files.php');
+                const response = await fetch('api/user_files.php');
                 const result = await response.json();
                 console.log('Load saved files response:', result);
                 if (result.success) {
@@ -7368,7 +7420,7 @@
             if (!confirm('Are you sure you want to delete this file?')) return;
 
             try {
-                const response = await fetch(`../api/user_files.php?id=${fileId}`, {
+                const response = await fetch(`api/user_files.php?id=${fileId}`, {
                     method: 'DELETE'
                 });
                 const result = await response.json();
@@ -7463,35 +7515,47 @@
 
             const activeProductBtn = document.querySelector('.product-types .pt-btn.active');
             const productType = activeProductBtn ? activeProductBtn.textContent.trim() : 'Flyers';
-            const sizeWidth = parseFloat(document.getElementById('customWidth').value) || 4.0;
-            const sizeHeight = parseFloat(document.getElementById('customHeight').value) || 6.0;
-            const paperSel = document.getElementById('paperSelect');
+            const sizeWidth   = parseFloat(document.getElementById('customWidth').value) || 4.0;
+            const sizeHeight  = parseFloat(document.getElementById('customHeight').value) || 6.0;
+            const paperSel    = document.getElementById('paperSelect');
             const paperWeight = paperSel.options[paperSel.selectedIndex]?.text || '';
-            const finishSel = document.getElementById('finishSelect');
-            const finish = finishSel.options[finishSel.selectedIndex]?.text || 'None';
-            const bleedSel = document.getElementById('bleedSelect');
-            const bleed = bleedSel.options[bleedSel.selectedIndex]?.text || 'With Bleed';
-            const turnaround = document.getElementById('turnaroundSelect').value || 'standard';
-            const shipping = document.getElementById('shippingSelect').value || 'free';
-            const notes = document.getElementById('orderNotes').value || '';
+            const finishSel   = document.getElementById('finishSelect');
+            const finish      = finishSel.options[finishSel.selectedIndex]?.text || 'None';
+            const bleedSel    = document.getElementById('bleedSelect');
+            const bleed       = bleedSel.options[bleedSel.selectedIndex]?.text || 'With Bleed';
+            const turnaround  = document.getElementById('turnaroundSelect').value || 'standard';
+            const shipping    = document.getElementById('shippingSelect').value || 'free';
+            const notes       = document.getElementById('orderNotes')?.value || '';
+            const jobName     = (productType + ' Project');
+
+            // Get total from currentPricingData (the authoritative source)
+            const totalCost = currentPricingData
+                ? (currentPricingData.grand_total ?? currentPricingData.breakdown?.grand_total ?? 0)
+                : 0;
+
+            if (!totalCost || totalCost <= 0) {
+                alert('Price calculation error. Please go back and recalculate.');
+                btn.disabled = false; btn.textContent = '✓ Confirm & Place Order';
+                return;
+            }
+
+            const _qtyInput = document.getElementById('qtyVal');
+            const _qty = Math.max(50, Math.min(10000, parseInt(_qtyInput?.value || document.getElementById('qtySlider').value) || 50));
 
             const formData = new FormData();
             formData.append('product_type', productType);
+            formData.append('job_name',     jobName);
             formData.append('paper_weight', paperWeight);
-            formData.append('finish', finish);
-            formData.append('bleed', bleed);
-            formData.append('size_width', sizeWidth);
-            formData.append('size_height', sizeHeight);
-            // Use the editable input as the authoritative quantity (falls back to slider)
-            const _qtyInput = document.getElementById('qtyVal');
-            const _qty = _qtyInput ? (parseInt(_qtyInput.value) || parseInt(document.getElementById('qtySlider').value)) : document.getElementById('qtySlider').value;
-            formData.append('quantity', _qty);
-            formData.append('turnaround', turnaround);
-            formData.append('shipping', shipping);
-            formData.append('total_price', totalCost);
-            formData.append('notes', notes);
+            formData.append('finish',       finish);
+            formData.append('bleed',        bleed);
+            formData.append('size_width',   sizeWidth);
+            formData.append('size_height',  sizeHeight);
+            formData.append('quantity',     _qty);
+            formData.append('turnaround',   turnaround);
+            formData.append('shipping',     shipping);
+            formData.append('total_price',  totalCost);
+            formData.append('notes',        notes);
 
-            // Add artwork file if selected (either uploaded or saved)
             if (uploadedFiles && uploadedFiles.length > 0) {
                 formData.append('artwork_file', uploadedFiles[0]);
             } else if (window.selectedSavedFileId) {
@@ -7499,14 +7563,12 @@
             }
 
             try {
-                const res = await fetch(getApiUrl('api/place_order.php'), { method: 'POST', body: formData });
+                const res  = await fetch('api/place_order.php', { method: 'POST', body: formData });
                 const data = await res.json();
                 if (data.success) {
                     closeOrderConfirmModal();
+                    showToast('Order ' + data.order_number + ' placed successfully!', 'success');
                     if (typeof walletLoad === 'function') walletLoad();
-                    if (typeof showToast === 'function') {
-                        showToast('Order ' + data.order_number + ' placed successfully!');
-                    }
                     if (typeof orderWalletCheck === 'function') orderWalletCheck();
                     if (typeof loadOrders === 'function') loadOrders();
                     showClientPage('orders', null);
@@ -7520,6 +7582,7 @@
                     }
                 }
             } catch (e) {
+                console.error('Place order error:', e);
                 alert('Network error. Make sure you are connected and try again.');
             } finally {
                 btn.disabled = false;

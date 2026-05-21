@@ -54,19 +54,25 @@ try {
     $stmt = $pdo->prepare("UPDATE orders SET status = 'Cancelled', rejection_reason = ?, updated_at = NOW() WHERE id = ?");
     $stmt->execute([$reason, $order_id]);
 
-    // Refund credits
+    // Refund credits — use 'add' so walletLoad() picks it up
+    $orderNum    = 'PPR-' . str_pad($order_id, 3, '0', STR_PAD_LEFT);
+    $description = "Refund for cancelled order #{$orderNum}: {$reason}";
+
     $stmt = $pdo->prepare("
         INSERT INTO credit_transactions (client_id, transaction_type, amount, description, order_id)
         VALUES (?, 'add', ?, ?, ?)
     ");
-    $stmt->execute([$order['client_id'], $order['total_amount'], 'Order cancelled — refund', $order_id]);
+    $stmt->execute([$order['client_id'], $order['total_amount'], $description, $order_id]);
 
     $stmt = $pdo->prepare("UPDATE client_credits SET balance = balance + ?, updated_at = NOW() WHERE client_id = ?");
     $stmt->execute([$order['total_amount'], $order['client_id']]);
 
     $pdo->commit();
 
-    echo json_encode(['success' => true, 'message' => 'Order cancelled and credits refunded.']);
+    echo json_encode([
+        'success' => true,
+        'message' => 'Order cancelled. ₱' . number_format($order['total_amount'], 2) . ' refunded to your wallet.'
+    ]);
 
 } catch (PDOException $e) {
     if ($pdo->inTransaction()) $pdo->rollBack();

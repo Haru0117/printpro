@@ -916,6 +916,10 @@
                                 </li>
                                 <li class="nav-item">
                                     <button class="nav-link py-3 border-0 fw-bold small text-uppercase"
+                                        onclick="filterOrdersByStatus('Proof Pending')">Proof Pending</button>
+                                </li>
+                                <li class="nav-item">
+                                    <button class="nav-link py-3 border-0 fw-bold small text-uppercase"
                                         onclick="filterOrdersByStatus('Prepress')">Prepress</button>
                                 </li>
                                 <li class="nav-item">
@@ -933,6 +937,14 @@
                                 <li class="nav-item">
                                     <button class="nav-link py-3 border-0 fw-bold small text-uppercase"
                                         onclick="filterOrdersByStatus('Delivered')">Delivered</button>
+                                </li>
+                                <li class="nav-item">
+                                    <button class="nav-link py-3 border-0 fw-bold small text-uppercase"
+                                        onclick="filterOrdersByStatus('Cancelled')">Cancelled</button>
+                                </li>
+                                <li class="nav-item">
+                                    <button class="nav-link py-3 border-0 fw-bold small text-uppercase"
+                                        onclick="filterOrdersByStatus('Reprint')">Reprint</button>
                                 </li>
                             </ul>
                         </div>
@@ -1687,9 +1699,15 @@
                             </div>
                         </td>
                         <td>
-                            <select class="status-select" style="color:${sColor}; border-color:${sColor}; font-size: .73rem; padding: 2px 6px;" onchange="updateOrderStatus(${o.id}, this.value)">
-                                ${['Proof Pending', 'Proof Pending Review', 'Prepress', 'Printing', 'Finishing', 'Shipping', 'Delivered', 'Reprint'].map(s => `<option value="${s}" ${o.status === s ? 'selected' : ''}>${s}</option>`).join('')}
-                            </select>
+                            ${o.status === 'Cancelled'
+                                ? `<div>
+                                    <span class="badge-status" style="background:#8898aa20;color:#8898aa;border:1px solid #8898aa40;font-size:.65rem;font-weight:800;padding:4px 10px;border-radius:6px;text-transform:uppercase;">Cancelled</span>
+                                    ${o.rejection_reason ? `<div style="font-size:.65rem;color:#8898aa;margin-top:4px;max-width:160px;white-space:normal;line-height:1.3;" title="${o.rejection_reason}">↩ Refunded · ${o.rejection_reason.length > 40 ? o.rejection_reason.substring(0,40)+'…' : o.rejection_reason}</div>` : ''}
+                                   </div>`
+                                : `<select class="status-select" style="color:${sColor}; border-color:${sColor}; font-size: .73rem; padding: 2px 6px;" onchange="updateOrderStatus(${o.id}, this.value)">
+                                    ${['Proof Pending', 'Proof Pending Review', 'Prepress', 'Printing', 'Finishing', 'Shipping', 'Delivered', 'Reprint'].map(s => `<option value="${s}" ${o.status === s ? 'selected' : ''}>${s}</option>`).join('')}
+                                   </select>`
+                            }
                         </td>
                         <td class="text-muted small">${o.due_date ? new Date(o.due_date).toLocaleDateString() : '-'}</td>
                         <td class="fw-bold">₱${parseFloat(o.total_amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
@@ -1698,7 +1716,7 @@
                                 <button class="btn btn-light action-btn" onclick="viewOrderDetails(${o.id})" title="View Details"><i class="bi bi-eye"></i></button>
                                 <a href="api/generate_ticket.php?order_id=${o.id}" target="_blank" class="btn btn-light action-btn" title="Job Ticket"><i class="bi bi-ticket-perforated"></i></a>
                                 ${proofBtn}
-                                <button class="btn btn-danger action-btn" onclick="openAdminRejectModal(${o.id}, '${orderNum}')" title="Reject Order" style="background:#f5365c; border:none; color:#fff;"><i class="bi bi-x-circle"></i></button>
+                                ${o.status !== 'Cancelled' ? `<button class="btn btn-danger action-btn" onclick="openAdminRejectModal(${o.id}, '${orderNum}')" title="Reject Order" style="background:#f5365c; border:none; color:#fff;"><i class="bi bi-x-circle"></i></button>` : ''}
                             </div>
                         </td>
                     </tr>
@@ -1735,12 +1753,11 @@
         }
 
         function filterOrdersByStatus(status) {
-            // Update UI tabs
             document.querySelectorAll('#orderTabs .nav-link').forEach(btn => {
                 btn.classList.remove('active');
-                if (btn.textContent.trim() === status || (status === 'All' && btn.textContent.trim() === 'All Orders')) {
-                    btn.classList.add('active');
-                }
+                const btnText = btn.textContent.trim();
+                if (status === 'All' && btnText === 'All Orders') btn.classList.add('active');
+                else if (btnText === status) btn.classList.add('active');
             });
 
             document.getElementById('orderListTitle').textContent = status === 'All' ? 'All Orders' : status + ' Orders';
@@ -1748,8 +1765,7 @@
             if (status === 'All') {
                 renderOrders(state.orders);
             } else {
-                const filtered = state.orders.filter(o => o.status === status);
-                renderOrders(filtered);
+                renderOrders(state.orders.filter(o => o.status === status));
             }
         }
 
@@ -2216,7 +2232,9 @@
                 'Printing': 40,
                 'Finishing': 60,
                 'Shipping': 80,
-                'Delivered': 100
+                'Delivered': 100,
+                'Cancelled': 0,
+                'Reprint': 0
             }[status] || 0;
         }
 
@@ -2229,7 +2247,9 @@
                 'Finishing': '#8c09ff',
                 'Shipping': '#2dce89',
                 'Delivered': '#2dce89',
-                'Reprint': '#f5365c'
+                'Reprint': '#f5365c',
+                'Cancelled': '#8898aa',
+                'Refunded': '#2dce89'
             }[status] || '#8898aa';
         }
 
@@ -2341,7 +2361,7 @@
                 const data = await res.json();
                 if (data.success) {
                     bootstrap.Modal.getInstance(document.getElementById('adminRejectModal')).hide();
-                    showToast('Order rejected and client refunded.', 'success');
+                    showToast(data.message || 'Order cancelled and client refunded.', 'success');
                     loadOrders();
                     updateDashboardData();
                 } else {
