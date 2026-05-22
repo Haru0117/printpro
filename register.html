@@ -414,9 +414,11 @@
                 flex-direction: column;
                 max-width: 440px;
             }
+
             .left-panel {
                 display: none;
             }
+
             .right-panel {
                 width: 100%;
                 padding: 40px 28px;
@@ -435,7 +437,8 @@
             <!-- ── LEFT PANEL ── -->
             <div class="left-panel">
                 <div class="left-brand">
-                    <img src="assets/img/logo.png" alt="PrintPro" onerror="this.src='https://via.placeholder.com/150x44?text=PrintPro'">
+                    <img src="assets/img/logo.png" alt="PrintPro"
+                        onerror="this.src='https://via.placeholder.com/150x44?text=PrintPro'">
                 </div>
 
                 <div class="left-content">
@@ -443,7 +446,8 @@
                         Join the future of<br>print<br><span>management.</span>
                     </h1>
                     <p class="left-desc">
-                        Create an account to place orders, track shipments, and streamline your entire printing workflow.
+                        Create an account to place orders, track shipments, and streamline your entire printing
+                        workflow.
                     </p>
                     <div class="left-feature">
                         <div class="left-feature-dot"></div>
@@ -492,7 +496,8 @@
                         <label class="field-label" for="emailInput">Business Email</label>
                         <div class="field-wrap">
                             <i class="bi bi-envelope field-icon"></i>
-                            <input type="email" id="emailInput" class="field-input" placeholder="you@yourcompany.com" required>
+                            <input type="email" id="emailInput" class="field-input" placeholder="you@yourcompany.com"
+                                required>
                         </div>
                     </div>
 
@@ -505,12 +510,27 @@
                         </div>
                     </div>
 
+                    <!-- Industry -->
+                    <div class="field-group">
+                        <label class="field-label" for="industryInput">Industry</label>
+                        <div class="field-wrap">
+                            <i class="bi bi-grid-3x3-gap field-icon"></i>
+                            <select id="industryInput" class="field-input" required>
+                                <option value="" disabled selected>Select industry</option>
+                                <option value="Creative Agency">Creative Agency</option>
+                                <option value="Corporate">Corporate</option>
+                                <option value="Education">Education</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <!-- Password -->
                     <div class="field-group">
                         <label class="field-label" for="passInput">Password</label>
                         <div class="field-wrap">
                             <i class="bi bi-lock field-icon"></i>
-                            <input type="password" id="passInput" class="field-input" placeholder="Create a password" required>
+                            <input type="password" id="passInput" class="field-input" placeholder="Create a password"
+                                required>
                             <button type="button" class="toggle-pass" onclick="togglePassword()">
                                 <i class="bi bi-eye" id="eyeIcon"></i>
                             </button>
@@ -519,9 +539,12 @@
 
                     <!-- Terms -->
                     <div style="margin-bottom:18px;">
-                        <label style="display:flex;align-items:flex-start;gap:7px;font-size:.82rem;color:var(--muted);cursor:pointer;line-height:1.4;">
-                            <input type="checkbox" id="termsInput" style="accent-color:var(--accent);width:14px;height:14px;margin-top:2px;" required>
-                            <span>I agree to the <a href="#" style="color:var(--accent);">Terms of Service</a> and <a href="#" style="color:var(--accent);">Privacy Policy</a></span>
+                        <label
+                            style="display:flex;align-items:flex-start;gap:7px;font-size:.82rem;color:var(--muted);cursor:pointer;line-height:1.4;">
+                            <input type="checkbox" id="termsInput"
+                                style="accent-color:var(--accent);width:14px;height:14px;margin-top:2px;" required>
+                            <span>I agree to the <a href="#" style="color:var(--accent);">Terms of Service</a> and <a
+                                    href="#" style="color:var(--accent);">Privacy Policy</a></span>
                         </label>
                     </div>
 
@@ -574,10 +597,11 @@
             const name = document.getElementById('nameInput').value.trim();
             const email = document.getElementById('emailInput').value.trim();
             const business = document.getElementById('businessInput').value.trim();
+            const industry = document.getElementById('industryInput').value;
             const password = document.getElementById('passInput').value;
             const terms = document.getElementById('termsInput').checked;
 
-            if (!name || !email || !business || !password) {
+            if (!name || !email || !business || !industry || !password) {
                 showAlert('Please fill in all fields.');
                 return;
             }
@@ -594,6 +618,7 @@
                 formData.append('name', name);
                 formData.append('email', email);
                 formData.append('business_name', business);
+                formData.append('industry', industry);
                 formData.append('password', password);
                 formData.append('terms', '1');
 
@@ -608,7 +633,7 @@
                 if (result.success) {
                     // Store user session data
                     sessionStorage.setItem('pp_user', JSON.stringify(result));
-                    
+
                     showAlert('Account created! Redirecting...', true);
                     setTimeout(() => {
                         window.location.href = result.redirect;

@@ -33,7 +33,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->execute([$email]);
     $user = $stmt->fetch();
 
-    if ($user && (password_verify($password, $user['password_hash']) || $password === $user['password_hash'])) {
+    $isValidPassword = false;
+    $needsRehash = false;
+    if ($user) {
+        $storedHash = $user['password_hash'] ?? '';
+        $storedPlain = $user['password'] ?? '';
+
+        if (!empty($storedHash) && password_verify($password, $storedHash)) {
+            $isValidPassword = true;
+            if (password_needs_rehash($storedHash, PASSWORD_DEFAULT)) {
+                $needsRehash = true;
+            }
+        } elseif ($password === $storedHash || $password === $storedPlain) {
+            // Legacy fallback for plaintext passwords stored in either column
+            $isValidPassword = true;
+            $needsRehash = true;
+        }
+    }
+
+    if ($isValidPassword) {
+        if ($needsRehash) {
+            $newHash = password_hash($password, PASSWORD_DEFAULT);
+            $updateStmt = $pdo->prepare("UPDATE users SET password_hash = ?, password = ? WHERE id = ?");
+            $updateStmt->execute([$newHash, $newHash, $user['id']]);
+        }
+
         // Task: Check if account is suspended
         if (isset($user['status']) && strtolower($user['status']) === 'suspended') {
             echo json_encode(['success' => false, 'message' => 'Your account has been suspended. Please contact support.']);
@@ -60,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $redirect = 'admin/';
             $portal = 'admin';
         } else {
-            $redirect = 'client/';
+            $redirect = 'client_dashboard.html';
             $portal = 'client';
         }
 
@@ -83,4 +107,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 } else {
     echo json_encode(['success' => false, 'message' => 'Invalid request method.']);
 }
-?>

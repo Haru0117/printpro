@@ -23,6 +23,9 @@ try {
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($user) {
+        if (empty($user['industry'])) {
+            $user['industry'] = 'Other';
+        }
         // Normalize subscription_plan to correct casing
         $planMap = [
             'pro'       => 'Pro',
@@ -46,4 +49,3 @@ try {
 } catch (PDOException $e) {
     echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
 }
-?>

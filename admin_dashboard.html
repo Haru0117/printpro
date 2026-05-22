@@ -576,22 +576,60 @@
             color: #a0aec0 !important;
         }
 
-        /* Special styling for Cancelled tab */
+        .order-tab-group-right {
+            margin-left: auto;
+            position: relative;
+        }
+
+        .order-tab-group-right:first-of-type {
+            border-left: 1px solid rgba(33, 37, 41, 0.08);
+            padding-left: 16px;
+            margin-right: 8px;
+        }
+
+        .nav-tabs .nav-link[onclick*="Rejected"],
         .nav-tabs .nav-link[onclick*="Cancelled"] {
+            white-space: nowrap;
+        }
+
+        .nav-tabs .nav-link[onclick*="Rejected"] {
             color: #dc3545 !important;
             font-weight: 700 !important;
             position: relative;
         }
 
-        .nav-tabs .nav-link[onclick*="Cancelled"]:hover {
+        .nav-tabs .nav-link[onclick*="Rejected"]:hover {
             color: #c82333 !important;
             background: rgba(220, 53, 69, 0.1) !important;
         }
 
-        .nav-tabs .nav-link[onclick*="Cancelled"].active {
+        .nav-tabs .nav-link[onclick*="Rejected"].active {
             color: #dc3545 !important;
             border-bottom: 3px solid #dc3545 !important;
             background: rgba(220, 53, 69, 0.05) !important;
+        }
+
+        .nav-tabs .nav-link[onclick*="Rejected"]::after {
+            content: " ❌";
+            font-size: 0.9em;
+        }
+
+        /* Special styling for Cancelled tab */
+        .nav-tabs .nav-link[onclick*="Cancelled"] {
+            color: #6c757d !important;
+            font-weight: 700 !important;
+            position: relative;
+        }
+
+        .nav-tabs .nav-link[onclick*="Cancelled"]:hover {
+            color: #5a6268 !important;
+            background: rgba(108, 117, 125, 0.1) !important;
+        }
+
+        .nav-tabs .nav-link[onclick*="Cancelled"].active {
+            color: #6c757d !important;
+            border-bottom: 3px solid #6c757d !important;
+            background: rgba(108, 117, 125, 0.05) !important;
         }
 
         .nav-tabs .nav-link[onclick*="Cancelled"]::after {
@@ -650,7 +688,7 @@
 
         .status-select:hover {
             transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
         }
 
         .status-select option {
@@ -825,9 +863,20 @@
             }
 
             @keyframes pulse {
-                0% { transform: scale(1); box-shadow: 0 0 10px rgba(255, 0, 0, 0.5); }
-                50% { transform: scale(1.05); box-shadow: 0 0 20px rgba(255, 0, 0, 0.8); }
-                100% { transform: scale(1); box-shadow: 0 0 10px rgba(255, 0, 0, 0.5); }
+                0% {
+                    transform: scale(1);
+                    box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+                }
+
+                50% {
+                    transform: scale(1.05);
+                    box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+                }
+
+                100% {
+                    transform: scale(1);
+                    box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+                }
             }
         }
     </style>
@@ -877,7 +926,8 @@
                     <button class="btn btn-light d-lg-none action-btn" onclick="toggleSidebar()">
                         <i class="bi bi-list fs-4"></i>
                     </button>
-                    <h5 class="m-0 fw-bold" id="pageTitle" style="color: red; background: yellow; padding: 5px;">🚫 CANCELLED TAB TEST - Dashboard</h5>
+                    <h5 class="m-0 fw-bold" id="pageTitle" style="color: red; background: yellow; padding: 5px;">🚫
+                        CANCELLED TAB TEST - Dashboard</h5>
                 </div>
                 <div class="d-flex align-items-center gap-3">
                     <button class="btn border-0 p-0 text-muted fs-5" onclick="toggleTheme()">
@@ -1035,10 +1085,13 @@
                                     <button class="nav-link py-3 border-0 fw-bold small text-uppercase"
                                         onclick="filterOrdersByStatus('Delivered')">Delivered</button>
                                 </li>
-                                <li class="nav-item">
-                                    <button class="nav-link py-3 border-0 fw-bold small text-uppercase" 
-                                        style="background: #ff0000 !important; color: white !important; border: 2px solid #ff0000 !important;"
-                                        onclick="filterOrdersByStatus('Cancelled')">🚫 CANCELLED</button>
+                                <li class="nav-item order-tab-group-right">
+                                    <button class="nav-link py-3 border-0 fw-bold small text-uppercase"
+                                        onclick="filterOrdersByStatus('Rejected')">Rejected</button>
+                                </li>
+                                <li class="nav-item order-tab-group-right">
+                                    <button class="nav-link py-3 border-0 fw-bold small text-uppercase"
+                                        onclick="filterOrdersByStatus('Cancelled')">Cancelled</button>
                                 </li>
                             </ul>
                         </div>
@@ -1076,15 +1129,18 @@
 
                 <div class="a-page" id="page-users">
                     <div class="card border-0 shadow-sm overflow-hidden" style="border-radius:16px;">
-                        <div class="p-4 border-bottom d-flex flex-wrap justify-content-between align-items-center bg-light-subtle gap-3">
+                        <div
+                            class="p-4 border-bottom d-flex flex-wrap justify-content-between align-items-center bg-light-subtle gap-3">
                             <h6 class="fw-bold m-0">User Management</h6>
                             <div class="d-flex flex-wrap gap-2 align-items-center">
-                                <select class="form-select form-select-sm" id="userRoleFilter" style="width: 130px;" onchange="filterAndSortUsers()">
+                                <select class="form-select form-select-sm" id="userRoleFilter" style="width: 130px;"
+                                    onchange="filterAndSortUsers()">
                                     <option value="all">All Roles</option>
                                     <option value="client">Client</option>
                                     <option value="admin">Admin</option>
                                 </select>
-                                <select class="form-select form-select-sm" id="userSortSelect" style="width: 165px;" onchange="filterAndSortUsers()">
+                                <select class="form-select form-select-sm" id="userSortSelect" style="width: 165px;"
+                                    onchange="filterAndSortUsers()">
                                     <option value="newest">Newest Joined</option>
                                     <option value="oldest">Oldest Joined</option>
                                     <option value="name_asc">Name (A-Z)</option>
@@ -1092,8 +1148,9 @@
                                     <option value="role_admin">Role (Admin first)</option>
                                     <option value="role_client">Role (Client first)</option>
                                 </select>
-                                <input type="text" class="form-control form-control-sm" id="userSearchInput" placeholder="Search name, email, role..."
-                                    style="width:250px;" oninput="filterAndSortUsers()">
+                                <input type="text" class="form-control form-control-sm" id="userSearchInput"
+                                    placeholder="Search name, email, role..." style="width:250px;"
+                                    oninput="filterAndSortUsers()">
                                 <button class="btn btn-primary btn-sm" onclick="loadUsers()" title="Refresh"><i
                                         class="bi bi-arrow-clockwise"></i></button>
                             </div>
@@ -1174,10 +1231,14 @@
                 <div class="a-page" id="page-analytics">
                     <!-- Date range filter -->
                     <div class="d-flex gap-2 mb-4 flex-wrap">
-                        <button class="btn btn-sm btn-primary" onclick="loadAnalytics('month')" id="aFilter-month">This Month</button>
-                        <button class="btn btn-sm btn-light" onclick="loadAnalytics('3months')" id="aFilter-3months">Last 3 Months</button>
-                        <button class="btn btn-sm btn-light" onclick="loadAnalytics('6months')" id="aFilter-6months">Last 6 Months</button>
-                        <button class="btn btn-sm btn-light" onclick="loadAnalytics('year')" id="aFilter-year">This Year</button>
+                        <button class="btn btn-sm btn-primary" onclick="loadAnalytics('month')" id="aFilter-month">This
+                            Month</button>
+                        <button class="btn btn-sm btn-light" onclick="loadAnalytics('3months')"
+                            id="aFilter-3months">Last 3 Months</button>
+                        <button class="btn btn-sm btn-light" onclick="loadAnalytics('6months')"
+                            id="aFilter-6months">Last 6 Months</button>
+                        <button class="btn btn-sm btn-light" onclick="loadAnalytics('year')" id="aFilter-year">This
+                            Year</button>
                     </div>
 
                     <!-- KPI Cards -->
@@ -1284,8 +1345,10 @@
                                                 <input type="email" class="form-control" name="email" id="setAdminEmail"
                                                     required>
                                             </div>
-                                            <div class="col-12 mt-4 d-flex flex-column flex-sm-row justify-content-between gap-3">
-                                                <button type="submit" class="btn btn-primary px-4 fw-bold">Update Account</button>
+                                            <div
+                                                class="col-12 mt-4 d-flex flex-column flex-sm-row justify-content-between gap-3">
+                                                <button type="submit" class="btn btn-primary px-4 fw-bold">Update
+                                                    Account</button>
                                                 <button type="button" class="btn btn-outline-danger px-4 fw-bold"
                                                     onclick="handleLogout(event)">
                                                     <i class="bi bi-box-arrow-left me-2"></i>Logout from Session
@@ -1401,7 +1464,8 @@
                             <div class="mb-4">
                                 <h6 class="fw-bold small text-uppercase text-muted mb-3">Client Information</h6>
                                 <div class="d-flex align-items-center gap-3 p-3 bg-light rounded-3">
-                                    <div class="rounded-circle bg-white shadow-sm d-flex align-items-center justify-content-center fw-bold text-primary" style="width:45px; height:45px;">
+                                    <div class="rounded-circle bg-white shadow-sm d-flex align-items-center justify-content-center fw-bold text-primary"
+                                        style="width:45px; height:45px;">
                                         <i class="bi bi-person"></i>
                                     </div>
                                     <div>
@@ -1430,7 +1494,8 @@
                                 </div>
                                 <div class="d-flex justify-content-between mb-2">
                                     <span>Status:</span>
-                                    <span class="badge bg-white text-primary rounded-pill small" id="detailStatus">Loading...</span>
+                                    <span class="badge bg-white text-primary rounded-pill small"
+                                        id="detailStatus">Loading...</span>
                                 </div>
                                 <div class="mt-auto pt-4 border-top border-white-50">
                                     <div class="d-flex justify-content-between align-items-center">
@@ -1464,8 +1529,10 @@
                             <div class="small text-muted mb-1">Specification Details</div>
                             <div class="fs-5 fw-bold text-white mb-2" id="displaySpecName">100lb Cover</div>
                             <div class="d-flex gap-2 flex-wrap">
-                                <span class="badge bg-primary-subtle text-primary border border-primary-subtle" id="displaySpecType">Material (Paper)</span>
-                                <span class="badge bg-success-subtle text-success border border-success-subtle" id="displaySpecPrice">₱1.35</span>
+                                <span class="badge bg-primary-subtle text-primary border border-primary-subtle"
+                                    id="displaySpecType">Material (Paper)</span>
+                                <span class="badge bg-success-subtle text-success border border-success-subtle"
+                                    id="displaySpecPrice">₱1.35</span>
                             </div>
                         </div>
 
@@ -1479,7 +1546,8 @@
                     </div>
                     <div class="modal-footer border-0 p-4 pt-0">
                         <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary px-4 fw-bold" id="specSubmitBtn">Save Status</button>
+                        <button type="submit" class="btn btn-primary px-4 fw-bold" id="specSubmitBtn">Save
+                            Status</button>
                     </div>
                 </form>
             </div>
@@ -1544,13 +1612,16 @@
                 </div>
                 <div class="modal-body p-4">
                     <input type="hidden" id="adminRejectOrderId">
-                    <p class="text-muted small mb-3">Order <strong id="adminRejectOrderNum"></strong> — client will be refunded automatically.</p>
+                    <p class="text-muted small mb-3">Order <strong id="adminRejectOrderNum"></strong> — client will be
+                        refunded automatically.</p>
 
                     <div class="mb-3">
                         <label class="form-label small fw-bold">Reason</label>
-                        <select class="form-select mb-2" id="adminRejectReasonSelect" onchange="handleAdminRejectSelect(this)">
+                        <select class="form-select mb-2" id="adminRejectReasonSelect"
+                            onchange="handleAdminRejectSelect(this)">
                             <option value="">— Select a reason —</option>
-                            <option value="Artwork file does not meet print specifications">Artwork does not meet print specs</option>
+                            <option value="Artwork file does not meet print specifications">Artwork does not meet print
+                                specs</option>
                             <option value="Incorrect file format submitted">Incorrect file format</option>
                             <option value="Low resolution artwork">Low resolution artwork</option>
                             <option value="Missing bleed or safe zone">Missing bleed or safe zone</option>
@@ -1567,7 +1638,8 @@
                 </div>
                 <div class="modal-footer border-0 p-4 pt-0">
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-danger px-4 fw-bold" onclick="submitAdminReject()">Reject & Refund</button>
+                    <button type="button" class="btn btn-danger px-4 fw-bold" onclick="submitAdminReject()">Reject &
+                        Refund</button>
                 </div>
             </div>
         </div>
@@ -1591,13 +1663,16 @@
                             <div><strong>Qty:</strong> <span id="adminProofQty">100</span></div>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label small fw-bold">Select Print Proof File (PDF, Images, AI, PSD up to 500MB)</label>
-                            <input type="file" class="form-control" id="adminProofFileInput" accept=".pdf,.png,.jpg,.jpeg,.ai,.psd" required>
+                            <label class="form-label small fw-bold">Select Print Proof File (PDF, Images, AI, PSD up to
+                                500MB)</label>
+                            <input type="file" class="form-control" id="adminProofFileInput"
+                                accept=".pdf,.png,.jpg,.jpeg,.ai,.psd" required>
                         </div>
                     </div>
                     <div class="modal-footer border-0 p-4 pt-0">
                         <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary px-4 fw-bold" id="adminProofSubmitBtn">Upload Proof</button>
+                        <button type="submit" class="btn btn-primary px-4 fw-bold" id="adminProofSubmitBtn">Upload
+                            Proof</button>
                     </div>
                 </form>
             </div>
@@ -1614,7 +1689,7 @@
         console.log('🔧 PrintPro Admin Dashboard Loaded - CANCELLED Tab Version 2.0');
         console.log('📅 File updated:', new Date().toISOString());
         alert('CANCELLED TAB TEST VERSION LOADED - Check browser title!');
-        
+
         // Global State
         const state = {
             user: JSON.parse(sessionStorage.getItem('pp_user') || '{}'),
@@ -1728,10 +1803,10 @@
             state.charts.status = new Chart(statusCtx, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Prepress', 'Printing', 'Finishing', 'Delivered', 'Cancelled'],
+                    labels: ['Prepress', 'Printing', 'Finishing', 'Delivered', 'Rejected', 'Cancelled'],
                     datasets: [{
-                        data: [0, 0, 0, 0, 0],
-                        backgroundColor: ['#fb6340', '#1171ef', '#7c4dff', '#2dce89', '#6c757d'],
+                        data: [0, 0, 0, 0, 0, 0],
+                        backgroundColor: ['#fb6340', '#1171ef', '#7c4dff', '#2dce89', '#c82333', '#6c757d'],
                         borderWidth: 0
                     }]
                 },
@@ -1778,6 +1853,7 @@
                         parseInt(d.status_counts['Printing'] || 0),
                         parseInt(d.status_counts['Finishing'] || 0),
                         parseInt(d.status_counts['Delivered'] || 0),
+                        parseInt(d.status_counts['Rejected'] || 0),
                         parseInt(d.status_counts['Cancelled'] || 0)
                     ];
                     state.charts.status.update();
@@ -1803,9 +1879,9 @@
                 } else {
                     showToast(json.message || 'Failed to load stats', 'danger');
                 }
-            } catch (e) { 
+            } catch (e) {
                 console.error(e);
-                showToast('Network error loading dashboard stats', 'danger'); 
+                showToast('Network error loading dashboard stats', 'danger');
             }
         }
 
@@ -1832,11 +1908,11 @@
                         // If one is cancelled and the other isn't, cancelled goes to bottom
                         if (a.status === 'Cancelled' && b.status !== 'Cancelled') return 1;
                         if (b.status === 'Cancelled' && a.status !== 'Cancelled') return -1;
-                        
+
                         // Otherwise sort by created_at (newest first)
                         return new Date(b.created_at) - new Date(a.created_at);
                     });
-                    
+
                     renderOrders();
                     renderRecentOrders();
                     renderActivityFeed();
@@ -1852,11 +1928,13 @@
                 const progress = getProgress(o.status);
                 const sColor = getStatusColor(o.status);
                 const orderNum = o.order_number || ('PPR-' + String(o.id).padStart(3, '0'));
-                
-                // Highlight rows that are Proof Pending, Proof Pending Review, or Cancelled
+
+                // Highlight rows that are Proof Pending, Proof Pending Review, Cancelled, or Rejected
                 let rowStyle = '';
                 if (o.status === 'Cancelled') {
                     rowStyle = 'style="background: rgba(108, 117, 125, 0.08); border-left: 4px solid #6c757d;"';
+                } else if (o.status === 'Rejected') {
+                    rowStyle = 'style="background: rgba(220, 53, 69, 0.07); border-left: 4px solid #c82333;"';
                 } else if (o.status === 'Proof Pending') {
                     rowStyle = 'style="background: rgba(251, 99, 64, 0.05);"';
                 } else if (o.status === 'Proof Pending Review') {
@@ -1884,18 +1962,18 @@
                             </div>
                         </td>
                         <td>
-                            ${o.status === 'Cancelled'
-                                ? `<div>
-                                    <span class="badge-status" style="background:#8898aa20;color:#8898aa;border:1px solid #8898aa40;font-size:.65rem;font-weight:800;padding:4px 10px;border-radius:6px;text-transform:uppercase;">Cancelled</span>
-                                    ${o.rejection_reason ? `<div style="font-size:.65rem;color:#8898aa;margin-top:4px;max-width:160px;white-space:normal;line-height:1.3;" title="${o.rejection_reason}">↩ Refunded · ${o.rejection_reason.length > 40 ? o.rejection_reason.substring(0,40)+'…' : o.rejection_reason}</div>` : ''}
+                            ${o.status === 'Cancelled' || o.status === 'Rejected'
+                        ? `<div>
+                                    <span class="badge-status" style="background:${o.status === 'Cancelled' ? '#8898aa20' : '#f8d7da'};color:${o.status === 'Cancelled' ? '#8898aa' : '#842029'};border:1px solid ${o.status === 'Cancelled' ? '#8898aa40' : '#f5c2c7'};font-size:.65rem;font-weight:800;padding:4px 10px;border-radius:6px;text-transform:uppercase;">${o.status}</span>
+                                    ${o.rejection_reason ? `<div style="font-size:.65rem;color:${o.status === 'Cancelled' ? '#8898aa' : '#842029'};margin-top:4px;max-width:160px;white-space:normal;line-height:1.3;" title="${o.rejection_reason}">↩ Refunded · ${o.rejection_reason.length > 40 ? o.rejection_reason.substring(0, 40) + '…' : o.rejection_reason}</div>` : ''}
                                    </div>`
-                                : `<select class="status-select" style="color:${sColor}; border-color:${sColor}; background-color:${sColor}15; font-size: .73rem; padding: 2px 6px;" onchange="updateOrderStatus(${o.id}, this.value)">
-                                    ${['Proof Pending', 'Proof Pending Review', 'Prepress', 'Printing', 'Finishing', 'Shipping', 'Delivered', 'Reprint', 'Cancelled'].map(s => {
-                                        const optionColor = getStatusColor(s);
-                                        return `<option value="${s}" ${o.status === s ? 'selected' : ''} style="background-color:${optionColor}20; color:${optionColor};">${s}</option>`;
-                                    }).join('')}
+                        : `<select class="status-select" style="color:${sColor}; border-color:${sColor}; background-color:${sColor}15; font-size: .73rem; padding: 2px 6px;" onchange="updateOrderStatus(${o.id}, this.value)">
+                                    ${['Proof Pending', 'Proof Pending Review', 'Prepress', 'Printing', 'Finishing', 'Shipping', 'Delivered', 'Reprint', 'Cancelled', 'Rejected'].map(s => {
+                            const optionColor = getStatusColor(s);
+                            return `<option value="${s}" ${o.status === s ? 'selected' : ''} style="background-color:${optionColor}20; color:${optionColor};">${s}</option>`;
+                        }).join('')}
                                    </select>`
-                            }
+                    }
                         </td>
                         <td class="text-muted small">${o.due_date ? new Date(o.due_date).toLocaleDateString() : '-'}</td>
                         <td class="fw-bold">₱${parseFloat(o.total_amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
@@ -1942,7 +2020,7 @@
 
         function filterOrdersByStatus(status) {
             console.log('🔍 Filtering by status:', status);
-            
+
             document.querySelectorAll('#orderTabs .nav-link').forEach(btn => {
                 btn.classList.remove('active');
                 const btnText = btn.textContent.trim();
@@ -1967,8 +2045,8 @@
             // Debug: Log status counts for cancelled orders
             if (status === 'Cancelled') {
                 console.log('🔍 Cancelled orders found:', filtered);
-                console.log('📊 All order statuses:', state.orders.map(o => ({id: o.id, status: o.status, rejection_reason: o.rejection_reason})));
-                
+                console.log('📊 All order statuses:', state.orders.map(o => ({ id: o.id, status: o.status, rejection_reason: o.rejection_reason })));
+
                 // Show alert if no cancelled orders found
                 if (filtered.length === 0) {
                     showToast('No cancelled orders found. Try rejecting an order first to test this feature.', 'info');
@@ -2252,7 +2330,7 @@
                     </td>
                     <td>
                         <span class="badge-status ${(s.sub_status || '').toLowerCase() === 'active' ? 'badge-success' :
-                            (s.sub_status || '').toLowerCase() === 'suspended' ? 'badge-danger' : 'badge-warning'}">
+                        (s.sub_status || '').toLowerCase() === 'suspended' ? 'badge-danger' : 'badge-warning'}">
                             ${s.sub_status || 'Active'}
                         </span>
                     </td>
@@ -2445,6 +2523,7 @@
                 'Shipping': 80,
                 'Delivered': 100,
                 'Cancelled': 0,
+                'Rejected': 0,
                 'Reprint': 0
             }[status] || 0;
         }
@@ -2459,7 +2538,8 @@
                 'Shipping': '#2dce89',
                 'Delivered': '#2dce89',
                 'Reprint': '#f5365c',
-                'Cancelled': '#6c757d'
+                'Cancelled': '#6c757d',
+                'Rejected': '#c82333'
             }[status] || '#8898aa';
         }
 
@@ -2484,7 +2564,7 @@
             document.getElementById('adminProofClientName').textContent = o.business_name || o.client_name || 'Client';
             document.getElementById('adminProofProduct').textContent = o.product_type || 'Custom';
             document.getElementById('adminProofQty').textContent = parseInt(o.quantity).toLocaleString();
-            
+
             document.getElementById('adminProofFileInput').value = '';
 
             const modal = new bootstrap.Modal(document.getElementById('adminProofModal'));
@@ -2495,7 +2575,7 @@
             e.preventDefault();
             const orderId = document.getElementById('adminProofOrderId').value;
             const fileInput = document.getElementById('adminProofFileInput');
-            
+
             if (!orderId || !fileInput.files.length) {
                 showToast('Please select a proof file.', 'warning');
                 return;
@@ -2517,11 +2597,11 @@
                 const json = await res.json();
                 if (json.success) {
                     showToast('Print proof uploaded successfully!', 'success');
-                    
+
                     const modalEl = document.getElementById('adminProofModal');
                     const modalInst = bootstrap.Modal.getInstance(modalEl);
                     if (modalInst) modalInst.hide();
-                    
+
                     loadOrders();
                     updateDashboardData();
                 } else {
@@ -2555,7 +2635,7 @@
 
         async function submitAdminReject() {
             const orderId = document.getElementById('adminRejectOrderId').value;
-            const select  = document.getElementById('adminRejectReasonSelect');
+            const select = document.getElementById('adminRejectReasonSelect');
             const textarea = document.getElementById('adminRejectReasonText');
 
             let reason = select.value;
@@ -2567,7 +2647,7 @@
             formData.append('rejection_reason', reason);
 
             try {
-                const res  = await fetch('api/reject_order.php', { method: 'POST', body: formData });
+                const res = await fetch('api/reject_order.php', { method: 'POST', body: formData });
                 const data = await res.json();
                 if (data.success) {
                     bootstrap.Modal.getInstance(document.getElementById('adminRejectModal')).hide();
@@ -2593,20 +2673,20 @@
             if (activeBtn) activeBtn.className = 'btn btn-sm btn-primary';
 
             try {
-                const res  = await fetch('api/get_analytics.php?range=' + range + '&_=' + Date.now());
+                const res = await fetch('api/get_analytics.php?range=' + range + '&_=' + Date.now());
                 const json = await res.json();
                 if (!json.success) { showToast('Failed to load analytics', 'danger'); return; }
                 const d = json.data;
 
-                document.getElementById('aKpiOrders').textContent  = parseInt(d.kpis.total_orders).toLocaleString();
+                document.getElementById('aKpiOrders').textContent = parseInt(d.kpis.total_orders).toLocaleString();
                 document.getElementById('aKpiRevenue').textContent = '₱' + parseFloat(d.kpis.total_revenue).toLocaleString(undefined, { minimumFractionDigits: 2 });
-                document.getElementById('aKpiProofs').textContent  = d.kpis.pending_proofs;
+                document.getElementById('aKpiProofs').textContent = d.kpis.pending_proofs;
                 document.getElementById('aKpiClients').textContent = d.kpis.active_clients;
 
                 const pieCtx = document.getElementById('categoryPieChart');
                 if (pieCtx) {
                     if (analyticsCharts.pie) analyticsCharts.pie.destroy();
-                    const pieColors = ['#1d8cf8','#2dce89','#fb6340','#7c4dff','#f5365c','#11cdef','#ffd600'];
+                    const pieColors = ['#1d8cf8', '#2dce89', '#fb6340', '#7c4dff', '#f5365c', '#11cdef', '#ffd600'];
                     analyticsCharts.pie = new Chart(pieCtx.getContext('2d'), {
                         type: 'doughnut',
                         data: { labels: d.by_product.map(r => r.product_type || 'Unknown'), datasets: [{ data: d.by_product.map(r => parseInt(r.count)), backgroundColor: pieColors, borderWidth: 2, borderColor: '#fff' }] },
@@ -2623,7 +2703,7 @@
                         options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { callback: v => '₱' + v.toLocaleString() } }, x: { grid: { display: false } } } }
                     });
                 }
-            } catch(e) {
+            } catch (e) {
                 console.error('Analytics error:', e);
                 showToast('Failed to load analytics', 'danger');
             }
@@ -2639,10 +2719,10 @@
                 statusCounts[o.status] = (statusCounts[o.status] || 0) + 1;
             });
             console.table(statusCounts);
-            
+
             const cancelledOrders = state.orders.filter(o => o.status === 'Cancelled');
             console.log(`🚫 Found ${cancelledOrders.length} cancelled orders:`, cancelledOrders);
-            
+
             if (cancelledOrders.length === 0) {
                 showToast('No cancelled orders found. Use the reject button (🚫) on any order to create a cancelled order for testing.', 'info');
             }
@@ -2653,4 +2733,5 @@
 
     </script>
 </body>
+
 </html>

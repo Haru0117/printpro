@@ -108,7 +108,10 @@ try {
     // Compatibility fix for adding industry column
     $checkColumn = $pdo->query("SHOW COLUMNS FROM clients LIKE 'industry'")->fetch();
     if (!$checkColumn) {
-        $pdo->exec("ALTER TABLE clients ADD industry VARCHAR(100) AFTER business_name");
+        $pdo->exec("ALTER TABLE clients ADD industry VARCHAR(100) NOT NULL DEFAULT 'Other' AFTER business_name");
+    } else {
+        $pdo->exec("UPDATE clients SET industry = 'Other' WHERE industry IS NULL OR industry = ''");
+        $pdo->exec("ALTER TABLE clients MODIFY industry VARCHAR(100) NOT NULL DEFAULT 'Other'");
     }
 
     // Create triggers for credits system
@@ -152,8 +155,6 @@ try {
     $pdo->exec("INSERT IGNORE INTO client_credits (client_id, balance) SELECT id, 10000.00 FROM clients");
 
     echo "Migration completed successfully! All required columns and tables are present.";
-
 } catch (\Exception $e) {
     echo "Migration error: " . $e->getMessage();
 }
-?>

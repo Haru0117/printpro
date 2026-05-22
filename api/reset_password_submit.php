@@ -50,16 +50,15 @@ try {
     $email = $resetData['email'];
 
     // 2. Hash and update password
-    $newHash = password_hash($password, PASSWORD_BCRYPT);
-    
-    $stmt = $pdo->prepare("UPDATE users SET password_hash = ?, updated_at = NOW() WHERE email = ?");
-    $stmt->execute([$newHash, $email]);
+    $newHash = password_hash($password, PASSWORD_DEFAULT);
+
+    $stmt = $pdo->prepare("UPDATE users SET password_hash = ?, password = ?, updated_at = NOW() WHERE email = ?");
+    $stmt->execute([$newHash, $newHash, $email]);
 
     // 3. Delete the used token (Single-use security)
     $pdo->prepare("DELETE FROM password_reset_tokens WHERE email = ?")->execute([$email]);
 
     echo json_encode(['success' => true, 'message' => 'Password updated successfully! Redirecting...']);
-
 } catch (\Exception $e) {
     echo json_encode(['success' => false, 'message' => 'Failed to reset password.']);
 }

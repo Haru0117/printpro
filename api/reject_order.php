@@ -1,7 +1,7 @@
 <?php
 // ─────────────────────────────────────────────────────────────
-//  PrintPro — Admin Reject / Cancel Order
-//  Sets status = 'Cancelled', logs reason, refunds credits
+//  PrintPro — Admin Reject Order
+//  Sets status = 'Rejected', logs reason, refunds credits
 // ─────────────────────────────────────────────────────────────
 session_start();
 require_once '../includes/db.php';
@@ -45,10 +45,10 @@ try {
 
     $pdo->beginTransaction();
 
-    // 1. Set status to Cancelled and store reason
+    // 1. Set status to Rejected and store reason
     $stmt = $pdo->prepare("
         UPDATE orders
-        SET status = 'Cancelled',
+        SET status = 'Rejected',
             rejection_reason = ?,
             updated_at = NOW()
         WHERE id = ?
@@ -78,13 +78,11 @@ try {
 
     echo json_encode([
         'success'        => true,
-        'message'        => "Order #{$orderNum} cancelled. ₱" . number_format($refundAmt, 2) . " refunded to client.",
+        'message'        => "Order #{$orderNum} rejected. ₱" . number_format($refundAmt, 2) . " refunded to client.",
         'refund_amount'  => $refundAmt,
         'order_number'   => $orderNum
     ]);
-
 } catch (PDOException $e) {
     if ($pdo->inTransaction()) $pdo->rollBack();
     echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
 }
-?>

@@ -15,12 +15,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $_POST['name'] ?? '';
     $email = $_POST['email'] ?? '';
     $company_name = $_POST['business_name'] ?? '';
+    $industry = $_POST['industry'] ?? '';
     $password = $_POST['password'] ?? '';
     $terms = $_POST['terms'] ?? '';
     $plan = strtolower($_POST['plan'] ?? 'pro');
 
-    if (empty($name) || empty($email) || empty($password) || empty($terms)) {
+    if (empty($name) || empty($email) || empty($company_name) || empty($industry) || empty($password) || empty($terms)) {
         echo json_encode(['success' => false, 'message' => 'Please fill in all required fields.']);
+        exit;
+    }
+
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        echo json_encode(['success' => false, 'message' => 'Please provide a valid email address.']);
         exit;
     }
 
@@ -36,15 +42,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
 
-        // We are storing passwords in both columns as requested
-        $stmt = $pdo->prepare("INSERT INTO users (name, username, email, password, password_hash, role, subscription_plan) VALUES (?, ?, ?, ?, ?, 'client', ?)");
+        // Hash the password and store it safely in both columns for compatibility
+        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
-        $stmt->execute([$name, $username, $email, $password, $password, $plan]);
+        $stmt = $pdo->prepare("INSERT INTO users (name, username, email, password, password_hash, role, subscription_plan) VALUES (?, ?, ?, ?, ?, 'client', ?)");
+        $stmt->execute([$name, $username, $email, $passwordHash, $passwordHash, $plan]);
         $user_id = $pdo->lastInsertId();
 
         // Insert into clients table
-        $stmt_client = $pdo->prepare("INSERT INTO clients (user_id, business_name) VALUES (?, ?)");
-        $stmt_client->execute([$user_id, $company_name]);
+        $stmt_client = $pdo->prepare("INSERT INTO clients (user_id, business_name, industry) VALUES (?, ?, ?)");
+        $stmt_client->execute([$user_id, $company_name, $industry]);
         $client_id = $pdo->lastInsertId();
 
 
@@ -55,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['name'] = $name;
 
         echo json_encode([
-            'success' => true, 
+            'success' => true,
             'id' => $user_id,
             'role' => 'client',
             'name' => $name,
@@ -72,8 +79,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo json_encode(['success' => false, 'message' => 'Registration failed: ' . $e->getMessage()]);
         }
     }
-
 } else {
     echo json_encode(['success' => false, 'message' => 'Invalid request method.']);
 }
-?>

@@ -17,8 +17,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $industry = $_POST['industry'] ?? '';
     $user_id = $_SESSION['user_id'];
 
-    if (empty($name) || empty($email)) {
-        echo json_encode(['success' => false, 'message' => 'Name and email are required']);
+    if (empty($name) || empty($email) || empty($business_name) || empty($industry)) {
+        echo json_encode(['success' => false, 'message' => 'Name, email, business name, and industry are required']);
         exit;
     }
 
@@ -42,10 +42,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['industry'] = $industry;
 
         echo json_encode([
-            'success' => true, 
+            'success' => true,
             'message' => 'Profile updated successfully',
             'data' => [
-                'name' => $name, 
+                'name' => $name,
                 'email' => $email,
                 'business_name' => $business_name,
                 'industry' => $industry
@@ -62,4 +62,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 } else {
     echo json_encode(['success' => false, 'message' => 'Invalid request method']);
 }
-?>

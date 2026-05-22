@@ -250,7 +250,7 @@
             content: '';
             position: absolute;
             inset: 0;
-            background: 
+            background:
                 radial-gradient(ellipse 60% 70% at 80% 50%, rgba(79, 126, 247, .1) 0%, transparent 70%),
                 linear-gradient(180deg, var(--off-white) 0%, rgba(244, 246, 251, 0) 15%, rgba(244, 246, 251, 0) 85%, var(--off-white) 100%);
             z-index: -1;
@@ -259,7 +259,7 @@
         }
 
         html[data-theme="dark"] #hero::after {
-            background: 
+            background:
                 radial-gradient(ellipse 60% 70% at 80% 50%, rgba(79, 126, 247, .06) 0%, transparent 70%),
                 linear-gradient(180deg, #0a1628 0%, rgba(10, 22, 40, 0) 15%, rgba(10, 22, 40, 0) 85%, #0a1628 100%);
         }
@@ -739,6 +739,7 @@
             accent-color: var(--accent);
             transition: transform 0.2s ease;
         }
+
         .pp-checkbox:active {
             transform: scale(1.2);
         }
@@ -746,6 +747,7 @@
         #rSubmitBtn {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
+
         #rSubmitBtn:disabled {
             background: #dde3f0 !important;
             color: #8a96b0 !important;
@@ -753,9 +755,10 @@
             transform: none !important;
             box-shadow: none !important;
         }
+
         html[data-theme="dark"] #rSubmitBtn:disabled {
-            background: rgba(255,255,255,0.05) !important;
-            color: rgba(255,255,255,0.2) !important;
+            background: rgba(255, 255, 255, 0.05) !important;
+            color: rgba(255, 255, 255, 0.2) !important;
         }
 
         /* ── POLICY MODAL ENHANCEMENTS ── */
@@ -768,6 +771,7 @@
             justify-content: center;
             padding: 20px;
         }
+
         .policy-backdrop {
             position: absolute;
             inset: 0;
@@ -776,6 +780,7 @@
             -webkit-backdrop-filter: blur(8px);
             cursor: pointer;
         }
+
         .policy-card {
             position: relative;
             z-index: 2;
@@ -784,16 +789,18 @@
             max-width: 650px;
             max-height: 85vh;
             border-radius: 24px;
-            box-shadow: 0 40px 100px rgba(0,0,0,0.35);
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.35);
             display: flex;
             flex-direction: column;
             overflow: hidden;
             animation: policyIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
+
         html[data-theme="dark"] .policy-card {
             background: #111e40;
-            border: 1px solid rgba(255,255,255,0.08);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
+
         .policy-header {
             padding: 20px 28px;
             border-bottom: 1px solid var(--border);
@@ -805,26 +812,32 @@
             top: 0;
             z-index: 10;
         }
+
         html[data-theme="dark"] .policy-header {
             background: #111e40;
-            border-bottom-color: rgba(255,255,255,0.08);
+            border-bottom-color: rgba(255, 255, 255, 0.08);
         }
+
         .policy-body {
             padding: 32px;
             overflow-y: auto;
             scrollbar-width: thin;
             scrollbar-color: var(--accent) transparent;
         }
+
         .policy-body::-webkit-scrollbar {
             width: 6px;
         }
+
         .policy-body::-webkit-scrollbar-thumb {
             background-color: var(--accent);
             border-radius: 10px;
         }
+
         .policy-section {
             margin-bottom: 28px;
         }
+
         .policy-section h6 {
             color: var(--navy);
             font-family: 'Sora', sans-serif;
@@ -835,48 +848,65 @@
             align-items: center;
             gap: 10px;
         }
+
         html[data-theme="dark"] .policy-section h6 {
             color: #fff;
         }
+
         .policy-section p {
             font-size: 0.9rem;
             line-height: 1.7;
             color: var(--muted);
             margin-bottom: 10px;
         }
+
         .policy-link {
             color: var(--accent);
             text-decoration: none;
             font-weight: 600;
             transition: color 0.2s;
         }
+
         .policy-link:hover {
             color: var(--teal);
             text-decoration: underline;
         }
+
         .policy-footer {
             padding: 20px 28px;
             border-top: 1px solid var(--border);
             background: var(--off-white);
         }
+
         html[data-theme="dark"] .policy-footer {
-            background: rgba(255,255,255,0.02);
-            border-top-color: rgba(255,255,255,0.08);
+            background: rgba(255, 255, 255, 0.02);
+            border-top-color: rgba(255, 255, 255, 0.08);
         }
+
         @keyframes policyIn {
-            from { opacity: 0; transform: scale(0.95) translateY(20px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
         }
+
         /* ── FORGOT/RESET PASSWORD MODALS ── */
         .auth-modal-wrap {
             display: none;
             position: fixed;
             inset: 0;
-            z-index: 10002; /* Above everything */
+            z-index: 10002;
+            /* Above everything */
             align-items: center;
             justify-content: center;
             padding: 20px;
         }
+
         .auth-backdrop {
             position: absolute;
             inset: 0;
@@ -884,7 +914,7 @@
             backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
         }
-        
+
         /* Strength Indicator */
         .strength-meter {
             height: 4px;
@@ -894,19 +924,33 @@
             overflow: hidden;
             display: flex;
         }
+
         .strength-bar {
             height: 100%;
             transition: width 0.3s, background 0.3s;
             width: 0%;
         }
+
         .strength-text {
             font-size: 0.7rem;
             margin-top: 4px;
             font-weight: 600;
         }
-        .strength-weak { background: #f5365c; width: 33%; }
-        .strength-medium { background: #ff9d0a; width: 66%; }
-        .strength-strong { background: #22c55e; width: 100%; }
+
+        .strength-weak {
+            background: #f5365c;
+            width: 33%;
+        }
+
+        .strength-medium {
+            background: #ff9d0a;
+            width: 66%;
+        }
+
+        .strength-strong {
+            background: #22c55e;
+            width: 100%;
+        }
 
         .pass-toggle {
             position: absolute;
@@ -921,124 +965,840 @@
             font-size: 0.9rem;
             z-index: 5;
         }
+
         /* ══ QUOTATION WIZARD — LIGHT MODE (DEFAULT) ══ */
-        #quotation { background-color: var(--off-white); border-top:1px solid var(--border); transition:background-color 0.3s,border-color 0.3s; }
-        .qw-card,.qw-progress,.qw-summary-card { background:#fff; border:1px solid var(--border); border-radius:16px; box-shadow:0 4px 24px rgba(26,35,64,0.08); transition:background-color 0.3s,border-color 0.3s; }
-        .qw-card { padding:40px; }
-        .qw-progress { display:flex; align-items:center; justify-content:space-between; padding:16px 28px; margin-bottom:28px; position:relative; }
-        .qw-summary-card { padding:40px; margin-bottom:24px; }
-        .qw-progress-line { position:absolute; top:50%; left:48px; right:48px; height:2px; background:var(--border); z-index:0; transform:translateY(-50%); }
-        .qw-step { display:flex; align-items:center; gap:10px; z-index:1; }
-        .qw-step-num { width:32px; height:32px; border-radius:50%; background:var(--off-white); border:1.5px solid var(--border); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; color:var(--muted); transition:all 0.3s; flex-shrink:0; }
-        .qw-step-label { font-size:13px; font-weight:600; color:#4b5563; transition:all 0.3s; }
-        .qw-step.active .qw-step-num { background:#f97316; border-color:#f97316; color:#fff; box-shadow:0 0 14px rgba(249,115,22,0.35); }
-        .qw-step.active .qw-step-label { color:var(--navy); }
-        .qw-step.done .qw-step-num { background:#22c55e; border-color:#22c55e; color:#fff; }
-        .qw-pane { display:none; animation:qwFadeIn 0.3s ease; }
-        .qw-pane.active { display:block; }
-        @keyframes qwFadeIn { from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);} }
-        .qw-title { font-size:20px; font-weight:700; color:var(--navy); border-bottom:1px solid var(--border); padding-bottom:16px; margin-bottom:24px; display:flex; align-items:center; justify-content:space-between; }
-        .qw-title small { font-size:13px; font-weight:500; color:#6b7a99; }
-        .qw-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
-        .qw-group { display:flex; flex-direction:column; gap:8px; }
-        .qw-group.span2 { grid-column:span 2; }
-        .qw-label { font-size:13px; font-weight:700; color:var(--navy); }
-        .qw-input { width:100%; padding:12px 15px; background:#fff; border:1.5px solid var(--border); border-radius:10px; color:var(--navy); font-size:14px; outline:none; transition:all 0.2s; font-family:inherit; }
-        .qw-input:focus { border-color:#f97316; box-shadow:0 0 0 3px rgba(249,115,22,0.15); }
-        .qw-input::placeholder { color:var(--slate); }
-        textarea.qw-input { resize:vertical; min-height:90px; }
-        .qw-product-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
-        .qw-product-card { background:var(--off-white); border:2px solid var(--border); border-radius:14px; padding:22px 12px; text-align:center; cursor:pointer; transition:all 0.2s; display:flex; flex-direction:column; align-items:center; gap:12px; }
-        .qw-product-card:hover { border-color:var(--muted); transform:translateY(-2px); }
-        .qw-product-card.selected { border-color:#f97316; background:rgba(249,115,22,0.06); box-shadow:0 6px 20px rgba(249,115,22,0.12); }
-        .qw-product-icon { font-size:32px; }
-        .qw-product-name { font-size:14px; font-weight:700; color:var(--navy); }
-        .qw-slider-box { background:var(--off-white); border:1.5px solid var(--border); border-radius:14px; padding:20px; margin-bottom:24px; }
-        .qw-slider-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
-        .qw-qty-badge { font-size:22px; font-weight:800; color:#f97316; background:rgba(249,115,22,0.1); border:1px solid rgba(249,115,22,0.25); padding:6px 18px; border-radius:10px; }
-        input[type=range].qw-range { -webkit-appearance:none; width:100%; height:7px; background:var(--border); border:none; border-radius:4px; outline:none; padding:0; }
-        input[type=range].qw-range::-webkit-slider-thumb { -webkit-appearance:none; width:22px; height:22px; border-radius:50%; background:#f97316; cursor:pointer; box-shadow:0 0 8px rgba(249,115,22,0.4); }
-        .qw-ticks { display:flex; justify-content:space-between; font-size:11px; font-weight:600; color:var(--muted); margin-top:8px; }
-        .qw-error { display:none; background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.25); color:#dc2626; padding:12px 18px; border-radius:10px; margin-bottom:20px; font-size:13px; font-weight:600; align-items:center; gap:8px; animation:qwFadeIn 0.3s; }
-        .qw-actions { display:flex; align-items:center; justify-content:space-between; margin-top:32px; padding-top:20px; border-top:1px solid var(--border); }
-        .qw-btn-prev { background:transparent; color:#3b82f6; border:1.5px solid #3b82f6; padding:12px 24px; border-radius:10px; font-size:15px; font-weight:700; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; gap:8px; }
-        .qw-btn-prev:hover { background:rgba(59,130,246,0.08); }
-        .qw-btn-next,.qw-btn-submit { background:#f97316; color:#fff; border:none; padding:12px 28px; border-radius:10px; font-size:15px; font-weight:700; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; gap:8px; box-shadow:0 6px 20px rgba(249,115,22,0.25); }
-        .qw-btn-next:hover,.qw-btn-submit:hover { background:#ea580c; }
-        .qw-quote-header { display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border); padding-bottom:20px; margin-bottom:28px; }
-        .qw-quote-id { background:rgba(59,130,246,0.1); border:1px solid rgba(59,130,246,0.3); color:#3b82f6; padding:8px 16px; border-radius:10px; font-size:17px; font-weight:800; letter-spacing:1px; }
-        .qw-quote-status { background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.3); color:#16a34a; padding:8px 16px; border-radius:10px; font-size:14px; font-weight:700; display:flex; align-items:center; gap:8px; }
-        .qw-sum-section { margin-bottom:28px; }
-        .qw-sum-label { font-size:12px; font-weight:700; color:#f97316; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:14px; }
-        .qw-sum-table { width:100%; border-collapse:separate; border-spacing:0; border:1px solid var(--border); border-radius:12px; overflow:hidden; background:#fff; }
-        .qw-sum-table td { padding:13px 18px; border-bottom:1px solid var(--border); font-size:14px; }
-        .qw-sum-table tr:last-child td { border-bottom:none; }
-        .qw-sum-table td.lbl { width:36%; font-weight:700; color:#374151; background:var(--off-white); border-right:1px solid var(--border); }
-        .qw-sum-table td.val { font-weight:700; color:var(--navy); }
-        .qw-price-block { background:linear-gradient(135deg,rgba(249,115,22,0.06) 0%,rgba(244,246,251,0.8) 100%); border:2px solid rgba(249,115,22,0.25); border-radius:18px; padding:28px; margin-top:28px; }
-        .qw-price-title { font-size:18px; font-weight:800; color:#f97316; margin-bottom:20px; display:flex; align-items:center; gap:8px; }
-        .qw-price-lines { margin-bottom:20px; border-bottom:1px solid var(--border); padding-bottom:20px; display:flex; flex-direction:column; gap:14px; }
-        .qw-price-line { display:flex; justify-content:space-between; font-size:14px; }
-        .qw-price-line .pl { color:#374151; font-weight:600; }
-        .qw-price-line .pv { font-weight:700; color:var(--navy); }
-        .qw-total-row { display:flex; align-items:center; justify-content:space-between; margin-top:16px; }
-        .qw-total-label { font-size:20px; font-weight:800; color:var(--navy); }
-        .qw-total-value { font-size:32px; font-weight:900; color:#f97316; }
-        .qw-price-note { text-align:center; font-size:12px; color:var(--muted); margin-top:20px; padding-top:16px; border-top:1px solid var(--border); }
-        .qw-sum-actions { display:flex; gap:16px; margin:28px 0; }
-        .qw-act-btn { flex:1; padding:14px; border-radius:12px; font-size:15px; font-weight:700; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; justify-content:center; gap:8px; border:1.5px solid var(--border); background:#fff; color:var(--navy); }
-        .qw-act-btn.blue { background:#3b82f6; border-color:#3b82f6; color:#fff; box-shadow:0 6px 20px rgba(59,130,246,0.25); }
-        .qw-act-btn:hover { transform:translateY(-2px); background:var(--off-white); }
-        .qw-act-btn.blue:hover { background:#2563eb; }
-        .qw-cta-box { background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 100%); border:1px solid rgba(255,255,255,0.08); border-radius:20px; padding:40px; text-align:center; }
-        .qw-cta-box h3 { font-size:24px; font-weight:800; color:#fff; margin-bottom:10px; }
-        .qw-cta-box p { color:rgba(255,255,255,0.65); font-size:15px; max-width:500px; margin:0 auto 28px; line-height:1.7; }
-        .qw-cta-btns { display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
-        .qw-cta-primary { background:#f97316; color:#fff; padding:14px 28px; border-radius:10px; font-size:15px; font-weight:700; text-decoration:none; transition:all 0.2s; box-shadow:0 6px 20px rgba(249,115,22,0.3); }
-        .qw-cta-primary:hover { background:#ea580c; color:#fff; }
-        .qw-cta-sec { background:transparent; color:rgba(255,255,255,0.65); border:1px solid rgba(255,255,255,0.2); padding:14px 28px; border-radius:10px; font-size:15px; font-weight:700; text-decoration:none; transition:all 0.2s; }
-        .qw-cta-sec:hover { color:#fff; border-color:rgba(255,255,255,0.5); }
-        @media(max-width:768px){ .qw-card{padding:20px;} .qw-grid{grid-template-columns:1fr;} .qw-group.span2{grid-column:span 1;} .qw-product-grid{grid-template-columns:1fr 1fr;} .qw-progress{padding:14px 16px;} .qw-step-label{display:none;} .qw-progress-line{left:28px;right:28px;} .qw-sum-actions{flex-direction:column;} .qw-cta-btns{flex-direction:column;} }
-        @media print{ #quotation .qw-progress,#quotation .qw-card,#quotation .qw-sum-actions,#quotation .qw-cta-box,nav,footer{display:none!important;} #quotation .qw-summary-card{display:block!important;border:none;padding:0;box-shadow:none;background:#fff;color:#000;} }
+        #quotation {
+            background-color: var(--off-white);
+            border-top: 1px solid var(--border);
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        .qw-card,
+        .qw-progress,
+        .qw-summary-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(26, 35, 64, 0.08);
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        .qw-card {
+            padding: 40px;
+        }
+
+        .qw-progress {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 28px;
+            margin-bottom: 28px;
+            position: relative;
+        }
+
+        .qw-summary-card {
+            padding: 40px;
+            margin-bottom: 24px;
+        }
+
+        .qw-progress-line {
+            position: absolute;
+            top: 50%;
+            left: 48px;
+            right: 48px;
+            height: 2px;
+            background: var(--border);
+            z-index: 0;
+            transform: translateY(-50%);
+        }
+
+        .qw-step {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1;
+        }
+
+        .qw-step-num {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--off-white);
+            border: 1.5px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--muted);
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+
+        .qw-step-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #4b5563;
+            transition: all 0.3s;
+        }
+
+        .qw-step.active .qw-step-num {
+            background: #f97316;
+            border-color: #f97316;
+            color: #fff;
+            box-shadow: 0 0 14px rgba(249, 115, 22, 0.35);
+        }
+
+        .qw-step.active .qw-step-label {
+            color: var(--navy);
+        }
+
+        .qw-step.done .qw-step-num {
+            background: #22c55e;
+            border-color: #22c55e;
+            color: #fff;
+        }
+
+        .qw-pane {
+            display: none;
+            animation: qwFadeIn 0.3s ease;
+        }
+
+        .qw-pane.active {
+            display: block;
+        }
+
+        @keyframes qwFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .qw-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--navy);
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .qw-title small {
+            font-size: 13px;
+            font-weight: 500;
+            color: #6b7a99;
+        }
+
+        .qw-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .qw-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .qw-group.span2 {
+            grid-column: span 2;
+        }
+
+        .qw-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        .qw-input {
+            width: 100%;
+            padding: 12px 15px;
+            background: #fff;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            color: var(--navy);
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .qw-input:focus {
+            border-color: #f97316;
+            box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
+        }
+
+        .qw-input::placeholder {
+            color: var(--slate);
+        }
+
+        textarea.qw-input {
+            resize: vertical;
+            min-height: 90px;
+        }
+
+        .qw-product-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .qw-product-card {
+            background: var(--off-white);
+            border: 2px solid var(--border);
+            border-radius: 14px;
+            padding: 22px 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .qw-product-card:hover {
+            border-color: var(--muted);
+            transform: translateY(-2px);
+        }
+
+        .qw-product-card.selected {
+            border-color: #f97316;
+            background: rgba(249, 115, 22, 0.06);
+            box-shadow: 0 6px 20px rgba(249, 115, 22, 0.12);
+        }
+
+        .qw-product-icon {
+            font-size: 32px;
+        }
+
+        .qw-product-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        .qw-slider-box {
+            background: var(--off-white);
+            border: 1.5px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .qw-slider-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .qw-qty-badge {
+            font-size: 22px;
+            font-weight: 800;
+            color: #f97316;
+            background: rgba(249, 115, 22, 0.1);
+            border: 1px solid rgba(249, 115, 22, 0.25);
+            padding: 6px 18px;
+            border-radius: 10px;
+        }
+
+        input[type=range].qw-range {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 7px;
+            background: var(--border);
+            border: none;
+            border-radius: 4px;
+            outline: none;
+            padding: 0;
+        }
+
+        input[type=range].qw-range::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #f97316;
+            cursor: pointer;
+            box-shadow: 0 0 8px rgba(249, 115, 22, 0.4);
+        }
+
+        .qw-ticks {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--muted);
+            margin-top: 8px;
+        }
+
+        .qw-error {
+            display: none;
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.25);
+            color: #dc2626;
+            padding: 12px 18px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            align-items: center;
+            gap: 8px;
+            animation: qwFadeIn 0.3s;
+        }
+
+        .qw-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 32px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .qw-btn-prev {
+            background: transparent;
+            color: #3b82f6;
+            border: 1.5px solid #3b82f6;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .qw-btn-prev:hover {
+            background: rgba(59, 130, 246, 0.08);
+        }
+
+        .qw-btn-next,
+        .qw-btn-submit {
+            background: #f97316;
+            color: #fff;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 6px 20px rgba(249, 115, 22, 0.25);
+        }
+
+        .qw-btn-next:hover,
+        .qw-btn-submit:hover {
+            background: #ea580c;
+        }
+
+        .qw-quote-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 20px;
+            margin-bottom: 28px;
+        }
+
+        .qw-quote-id {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #3b82f6;
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 17px;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .qw-quote-status {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: #16a34a;
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .qw-sum-section {
+            margin-bottom: 28px;
+        }
+
+        .qw-sum-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #f97316;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 14px;
+        }
+
+        .qw-sum-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            background: #fff;
+        }
+
+        .qw-sum-table td {
+            padding: 13px 18px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        .qw-sum-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .qw-sum-table td.lbl {
+            width: 36%;
+            font-weight: 700;
+            color: #374151;
+            background: var(--off-white);
+            border-right: 1px solid var(--border);
+        }
+
+        .qw-sum-table td.val {
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        .qw-price-block {
+            background: linear-gradient(135deg, rgba(249, 115, 22, 0.06) 0%, rgba(244, 246, 251, 0.8) 100%);
+            border: 2px solid rgba(249, 115, 22, 0.25);
+            border-radius: 18px;
+            padding: 28px;
+            margin-top: 28px;
+        }
+
+        .qw-price-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: #f97316;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .qw-price-lines {
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .qw-price-line {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+        }
+
+        .qw-price-line .pl {
+            color: #374151;
+            font-weight: 600;
+        }
+
+        .qw-price-line .pv {
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        .qw-total-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 16px;
+        }
+
+        .qw-total-label {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--navy);
+        }
+
+        .qw-total-value {
+            font-size: 32px;
+            font-weight: 900;
+            color: #f97316;
+        }
+
+        .qw-price-note {
+            text-align: center;
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .qw-sum-actions {
+            display: flex;
+            gap: 16px;
+            margin: 28px 0;
+        }
+
+        .qw-act-btn {
+            flex: 1;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border: 1.5px solid var(--border);
+            background: #fff;
+            color: var(--navy);
+        }
+
+        .qw-act-btn.blue {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: #fff;
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.25);
+        }
+
+        .qw-act-btn:hover {
+            transform: translateY(-2px);
+            background: var(--off-white);
+        }
+
+        .qw-act-btn.blue:hover {
+            background: #2563eb;
+        }
+
+        .qw-cta-box {
+            background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .qw-cta-box h3 {
+            font-size: 24px;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .qw-cta-box p {
+            color: rgba(255, 255, 255, 0.65);
+            font-size: 15px;
+            max-width: 500px;
+            margin: 0 auto 28px;
+            line-height: 1.7;
+        }
+
+        .qw-cta-btns {
+            display: flex;
+            gap: 14px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .qw-cta-primary {
+            background: #f97316;
+            color: #fff;
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.2s;
+            box-shadow: 0 6px 20px rgba(249, 115, 22, 0.3);
+        }
+
+        .qw-cta-primary:hover {
+            background: #ea580c;
+            color: #fff;
+        }
+
+        .qw-cta-sec {
+            background: transparent;
+            color: rgba(255, 255, 255, 0.65);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .qw-cta-sec:hover {
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        @media(max-width:768px) {
+            .qw-card {
+                padding: 20px;
+            }
+
+            .qw-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .qw-group.span2 {
+                grid-column: span 1;
+            }
+
+            .qw-product-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .qw-progress {
+                padding: 14px 16px;
+            }
+
+            .qw-step-label {
+                display: none;
+            }
+
+            .qw-progress-line {
+                left: 28px;
+                right: 28px;
+            }
+
+            .qw-sum-actions {
+                flex-direction: column;
+            }
+
+            .qw-cta-btns {
+                flex-direction: column;
+            }
+        }
+
+        @media print {
+
+            #quotation .qw-progress,
+            #quotation .qw-card,
+            #quotation .qw-sum-actions,
+            #quotation .qw-cta-box,
+            nav,
+            footer {
+                display: none !important;
+            }
+
+            #quotation .qw-summary-card {
+                display: block !important;
+                border: none;
+                padding: 0;
+                box-shadow: none;
+                background: #fff;
+                color: #000;
+            }
+        }
+
         /* ══ QUOTATION WIZARD — DARK MODE OVERRIDES ══ */
-        html[data-theme="dark"] #quotation { background-color:#0a1628; border-top-color:rgba(255,255,255,0.08); }
-        html[data-theme="dark"] .qw-card,html[data-theme="dark"] .qw-progress,html[data-theme="dark"] .qw-summary-card { background:#111e40; border-color:rgba(255,255,255,0.08); box-shadow:0 8px 32px rgba(0,0,0,0.3); }
-        html[data-theme="dark"] .qw-progress-line { background:rgba(255,255,255,0.08); }
-        html[data-theme="dark"] .qw-step-num { background:rgba(255,255,255,0.06); border-color:rgba(255,255,255,0.15); color:#8a96b0; }
-        html[data-theme="dark"] .qw-step-label { color:#8a96b0; }
-        html[data-theme="dark"] .qw-step.active .qw-step-label { color:#e0e6ed; }
-        html[data-theme="dark"] .qw-title { color:#e0e6ed; border-bottom-color:rgba(255,255,255,0.08); }
-        html[data-theme="dark"] .qw-title small { color:#64748b; }
-        html[data-theme="dark"] .qw-label { color:#8a96b0; }
-        html[data-theme="dark"] .qw-input { background:#0a1628; border-color:rgba(255,255,255,0.1); color:#e0e6ed; }
-        html[data-theme="dark"] .qw-input::placeholder { color:#475569; }
-        html[data-theme="dark"] .qw-input option { background:#111e40; }
-        html[data-theme="dark"] .qw-product-card { background:#0a1628; border-color:rgba(255,255,255,0.1); }
-        html[data-theme="dark"] .qw-product-card:hover { border-color:rgba(255,255,255,0.3); }
-        html[data-theme="dark"] .qw-product-card.selected { border-color:#f97316; background:rgba(249,115,22,0.15); box-shadow:0 6px 20px rgba(249,115,22,0.2); }
-        html[data-theme="dark"] .qw-product-name { color:#e0e6ed; }
-        html[data-theme="dark"] .qw-slider-box { background:#0a1628; border-color:rgba(255,255,255,0.1); }
-        html[data-theme="dark"] input[type=range].qw-range { background:rgba(255,255,255,0.1); }
-        html[data-theme="dark"] .qw-ticks { color:#64748b; }
-        html[data-theme="dark"] .qw-error { background:rgba(239,68,68,0.14); border-color:rgba(239,68,68,0.3); color:#f87171; }
-        html[data-theme="dark"] .qw-actions { border-top-color:rgba(255,255,255,0.08); }
-        html[data-theme="dark"] .qw-quote-header { border-bottom-color:rgba(255,255,255,0.08); }
-        html[data-theme="dark"] .qw-sum-label { color:#f97316; opacity:0.9; }
-        html[data-theme="dark"] .qw-sum-table { background:#0a1628; border-color:rgba(255,255,255,0.08); }
-        html[data-theme="dark"] .qw-sum-table td { border-bottom-color:rgba(255,255,255,0.06); }
-        html[data-theme="dark"] .qw-sum-table td.lbl { color:#8a96b0; background:rgba(255,255,255,0.02); border-right-color:rgba(255,255,255,0.06); }
-        html[data-theme="dark"] .qw-sum-table td.val { color:#e0e6ed; }
-        html[data-theme="dark"] .qw-price-block { background:linear-gradient(135deg,rgba(249,115,22,0.08) 0%,rgba(17,30,64,0.6) 100%); border-color:rgba(249,115,22,0.3); }
-        html[data-theme="dark"] .qw-price-lines { border-bottom-color:rgba(255,255,255,0.08); }
-        html[data-theme="dark"] .qw-price-line .pl { color:#8a96b0; }
-        html[data-theme="dark"] .qw-price-line .pv { color:#e0e6ed; }
-        html[data-theme="dark"] .qw-total-label { color:#e0e6ed; }
-        html[data-theme="dark"] .qw-total-value { text-shadow:0 4px 14px rgba(249,115,22,0.4); }
-        html[data-theme="dark"] .qw-price-note { color:#64748b; border-top-color:rgba(255,255,255,0.06); }
-        html[data-theme="dark"] .qw-act-btn { background:#111e40; border-color:rgba(255,255,255,0.1); color:#e0e6ed; }
-        html[data-theme="dark"] .qw-act-btn:hover { background:#0a1628; }
-        html[data-theme="dark"] .qw-act-btn.blue { background:#3b82f6; border-color:#3b82f6; color:#fff; }
-        html[data-theme="dark"] .qw-act-btn.blue:hover { background:#2563eb; }
+        html[data-theme="dark"] #quotation {
+            background-color: #0a1628;
+            border-top-color: rgba(255, 255, 255, 0.08);
+        }
+
+        html[data-theme="dark"] .qw-card,
+        html[data-theme="dark"] .qw-progress,
+        html[data-theme="dark"] .qw-summary-card {
+            background: #111e40;
+            border-color: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        html[data-theme="dark"] .qw-progress-line {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        html[data-theme="dark"] .qw-step-num {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.15);
+            color: #8a96b0;
+        }
+
+        html[data-theme="dark"] .qw-step-label {
+            color: #8a96b0;
+        }
+
+        html[data-theme="dark"] .qw-step.active .qw-step-label {
+            color: #e0e6ed;
+        }
+
+        html[data-theme="dark"] .qw-title {
+            color: #e0e6ed;
+            border-bottom-color: rgba(255, 255, 255, 0.08);
+        }
+
+        html[data-theme="dark"] .qw-title small {
+            color: #64748b;
+        }
+
+        html[data-theme="dark"] .qw-label {
+            color: #8a96b0;
+        }
+
+        html[data-theme="dark"] .qw-input {
+            background: #0a1628;
+            border-color: rgba(255, 255, 255, 0.1);
+            color: #e0e6ed;
+        }
+
+        html[data-theme="dark"] .qw-input::placeholder {
+            color: #475569;
+        }
+
+        html[data-theme="dark"] .qw-input option {
+            background: #111e40;
+        }
+
+        html[data-theme="dark"] .qw-product-card {
+            background: #0a1628;
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        html[data-theme="dark"] .qw-product-card:hover {
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        html[data-theme="dark"] .qw-product-card.selected {
+            border-color: #f97316;
+            background: rgba(249, 115, 22, 0.15);
+            box-shadow: 0 6px 20px rgba(249, 115, 22, 0.2);
+        }
+
+        html[data-theme="dark"] .qw-product-name {
+            color: #e0e6ed;
+        }
+
+        html[data-theme="dark"] .qw-slider-box {
+            background: #0a1628;
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        html[data-theme="dark"] input[type=range].qw-range {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        html[data-theme="dark"] .qw-ticks {
+            color: #64748b;
+        }
+
+        html[data-theme="dark"] .qw-error {
+            background: rgba(239, 68, 68, 0.14);
+            border-color: rgba(239, 68, 68, 0.3);
+            color: #f87171;
+        }
+
+        html[data-theme="dark"] .qw-actions {
+            border-top-color: rgba(255, 255, 255, 0.08);
+        }
+
+        html[data-theme="dark"] .qw-quote-header {
+            border-bottom-color: rgba(255, 255, 255, 0.08);
+        }
+
+        html[data-theme="dark"] .qw-sum-label {
+            color: #f97316;
+            opacity: 0.9;
+        }
+
+        html[data-theme="dark"] .qw-sum-table {
+            background: #0a1628;
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        html[data-theme="dark"] .qw-sum-table td {
+            border-bottom-color: rgba(255, 255, 255, 0.06);
+        }
+
+        html[data-theme="dark"] .qw-sum-table td.lbl {
+            color: #8a96b0;
+            background: rgba(255, 255, 255, 0.02);
+            border-right-color: rgba(255, 255, 255, 0.06);
+        }
+
+        html[data-theme="dark"] .qw-sum-table td.val {
+            color: #e0e6ed;
+        }
+
+        html[data-theme="dark"] .qw-price-block {
+            background: linear-gradient(135deg, rgba(249, 115, 22, 0.08) 0%, rgba(17, 30, 64, 0.6) 100%);
+            border-color: rgba(249, 115, 22, 0.3);
+        }
+
+        html[data-theme="dark"] .qw-price-lines {
+            border-bottom-color: rgba(255, 255, 255, 0.08);
+        }
+
+        html[data-theme="dark"] .qw-price-line .pl {
+            color: #8a96b0;
+        }
+
+        html[data-theme="dark"] .qw-price-line .pv {
+            color: #e0e6ed;
+        }
+
+        html[data-theme="dark"] .qw-total-label {
+            color: #e0e6ed;
+        }
+
+        html[data-theme="dark"] .qw-total-value {
+            text-shadow: 0 4px 14px rgba(249, 115, 22, 0.4);
+        }
+
+        html[data-theme="dark"] .qw-price-note {
+            color: #64748b;
+            border-top-color: rgba(255, 255, 255, 0.06);
+        }
+
+        html[data-theme="dark"] .qw-act-btn {
+            background: #111e40;
+            border-color: rgba(255, 255, 255, 0.1);
+            color: #e0e6ed;
+        }
+
+        html[data-theme="dark"] .qw-act-btn:hover {
+            background: #0a1628;
+        }
+
+        html[data-theme="dark"] .qw-act-btn.blue {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: #fff;
+        }
+
+        html[data-theme="dark"] .qw-act-btn.blue:hover {
+            background: #2563eb;
+        }
     </style>
 </head>
 
@@ -1375,17 +2135,32 @@
         <div class="container-xl py-lg-4">
             <div class="text-center mb-5">
                 <span class="eyebrow mb-3 d-inline-block">Custom Projects</span>
-                <h2 class="section-title mb-3" style="font-size:clamp(1.8rem,3vw,2.4rem);font-weight:800;color:var(--navy);">Request a Custom Quotation</h2>
-                <p class="text-muted-pp mx-auto mb-0" style="max-width:540px;line-height:1.75;">Complete the 4-step wizard below to get an instant tiered price estimate in Philippine Peso (₱).</p>
+                <h2 class="section-title mb-3"
+                    style="font-size:clamp(1.8rem,3vw,2.4rem);font-weight:800;color:var(--navy);">Request a Custom
+                    Quotation</h2>
+                <p class="text-muted-pp mx-auto mb-0" style="max-width:540px;line-height:1.75;">Complete the 4-step
+                    wizard below to get an instant tiered price estimate in Philippine Peso (₱).</p>
             </div>
             <!-- Wizard Form -->
             <div id="qwFormSection">
                 <div class="qw-progress">
                     <div class="qw-progress-line"></div>
-                    <div class="qw-step active" id="qwInd1"><div class="qw-step-num">1</div><div class="qw-step-label">Contact Info</div></div>
-                    <div class="qw-step" id="qwInd2"><div class="qw-step-num">2</div><div class="qw-step-label">Product Type</div></div>
-                    <div class="qw-step" id="qwInd3"><div class="qw-step-num">3</div><div class="qw-step-label">Dimensions</div></div>
-                    <div class="qw-step" id="qwInd4"><div class="qw-step-num">4</div><div class="qw-step-label">Quantity</div></div>
+                    <div class="qw-step active" id="qwInd1">
+                        <div class="qw-step-num">1</div>
+                        <div class="qw-step-label">Contact Info</div>
+                    </div>
+                    <div class="qw-step" id="qwInd2">
+                        <div class="qw-step-num">2</div>
+                        <div class="qw-step-label">Product Type</div>
+                    </div>
+                    <div class="qw-step" id="qwInd3">
+                        <div class="qw-step-num">3</div>
+                        <div class="qw-step-label">Dimensions</div>
+                    </div>
+                    <div class="qw-step" id="qwInd4">
+                        <div class="qw-step-num">4</div>
+                        <div class="qw-step-label">Quantity</div>
+                    </div>
                 </div>
                 <div class="qw-card">
                     <div class="qw-error" id="qwError"></div>
@@ -1393,26 +2168,50 @@
                     <div class="qw-pane active" id="qwPane1">
                         <div class="qw-title">Contact Information <small>Step 1 of 4</small></div>
                         <div class="qw-grid">
-                            <div class="qw-group"><label class="qw-label">First Name *</label><input type="text" id="qwFName" class="qw-input" placeholder="John"></div>
-                            <div class="qw-group"><label class="qw-label">Last Name *</label><input type="text" id="qwLName" class="qw-input" placeholder="Doe"></div>
-                            <div class="qw-group"><label class="qw-label">Business Email *</label><input type="email" id="qwEmail" class="qw-input" placeholder="john@company.com"></div>
-                            <div class="qw-group"><label class="qw-label">Phone (Optional)</label><input type="tel" id="qwPhone" class="qw-input" placeholder="+63 (917) 000-0000"></div>
+                            <div class="qw-group"><label class="qw-label">First Name *</label><input type="text"
+                                    id="qwFName" class="qw-input" placeholder="John"></div>
+                            <div class="qw-group"><label class="qw-label">Last Name *</label><input type="text"
+                                    id="qwLName" class="qw-input" placeholder="Doe"></div>
+                            <div class="qw-group"><label class="qw-label">Business Email *</label><input type="email"
+                                    id="qwEmail" class="qw-input" placeholder="john@company.com"></div>
+                            <div class="qw-group"><label class="qw-label">Phone (Optional)</label><input type="tel"
+                                    id="qwPhone" class="qw-input" placeholder="+63 (917) 000-0000"></div>
                         </div>
-                        <div class="qw-actions" style="justify-content:flex-end;"><button class="qw-btn-next" onclick="qwNext(2)">Next: Product Type →</button></div>
+                        <div class="qw-actions" style="justify-content:flex-end;"><button class="qw-btn-next"
+                                onclick="qwNext(2)">Next: Product Type →</button></div>
                     </div>
                     <!-- Step 2 -->
                     <div class="qw-pane" id="qwPane2">
                         <div class="qw-title">Select Product Type <small>Step 2 of 4</small></div>
                         <input type="hidden" id="qwProduct">
                         <div class="qw-product-grid">
-                            <div class="qw-product-card" onclick="qwSelectProduct('Flyers',this)"><div class="qw-product-icon">📄</div><div class="qw-product-name">Flyers</div></div>
-                            <div class="qw-product-card" onclick="qwSelectProduct('Brochures',this)"><div class="qw-product-icon">🗺️</div><div class="qw-product-name">Brochures</div></div>
-                            <div class="qw-product-card" onclick="qwSelectProduct('Booklets',this)"><div class="qw-product-icon">📖</div><div class="qw-product-name">Booklets</div></div>
-                            <div class="qw-product-card" onclick="qwSelectProduct('Posters',this)"><div class="qw-product-icon">🖼️</div><div class="qw-product-name">Posters</div></div>
-                            <div class="qw-product-card" onclick="qwSelectProduct('Mailers',this)"><div class="qw-product-icon">✉️</div><div class="qw-product-name">Mailers</div></div>
-                            <div class="qw-product-card" onclick="qwSelectProduct('Cards',this)"><div class="qw-product-icon">🪪</div><div class="qw-product-name">Cards</div></div>
+                            <div class="qw-product-card" onclick="qwSelectProduct('Flyers',this)">
+                                <div class="qw-product-icon">📄</div>
+                                <div class="qw-product-name">Flyers</div>
+                            </div>
+                            <div class="qw-product-card" onclick="qwSelectProduct('Brochures',this)">
+                                <div class="qw-product-icon">🗺️</div>
+                                <div class="qw-product-name">Brochures</div>
+                            </div>
+                            <div class="qw-product-card" onclick="qwSelectProduct('Booklets',this)">
+                                <div class="qw-product-icon">📖</div>
+                                <div class="qw-product-name">Booklets</div>
+                            </div>
+                            <div class="qw-product-card" onclick="qwSelectProduct('Posters',this)">
+                                <div class="qw-product-icon">🖼️</div>
+                                <div class="qw-product-name">Posters</div>
+                            </div>
+                            <div class="qw-product-card" onclick="qwSelectProduct('Mailers',this)">
+                                <div class="qw-product-icon">✉️</div>
+                                <div class="qw-product-name">Mailers</div>
+                            </div>
+                            <div class="qw-product-card" onclick="qwSelectProduct('Cards',this)">
+                                <div class="qw-product-icon">🪪</div>
+                                <div class="qw-product-name">Cards</div>
+                            </div>
                         </div>
-                        <div class="qw-actions"><button class="qw-btn-prev" onclick="qwPrev(1)">← Back</button><button class="qw-btn-next" onclick="qwNext(3)">Next: Dimensions →</button></div>
+                        <div class="qw-actions"><button class="qw-btn-prev" onclick="qwPrev(1)">← Back</button><button
+                                class="qw-btn-next" onclick="qwNext(3)">Next: Dimensions →</button></div>
                     </div>
                     <!-- Step 3 -->
                     <div class="qw-pane" id="qwPane3">
@@ -1420,24 +2219,44 @@
                         <div class="qw-grid">
                             <div class="qw-group span2"><label class="qw-label">Standard Size</label>
                                 <select id="qwStdSize" class="qw-input" onchange="qwSizeChange()">
-                                    <option value="4x6">4" × 6"</option><option value="5x7">5" × 7"</option>
-                                    <option value="5.5x8.5">5.5" × 8.5" (Half-Letter)</option><option value="8.5x11">8.5" × 11" (Letter)</option>
-                                    <option value="8.27x11.69">A4 (8.27" × 11.69")</option><option value="11x17">11" × 17" (Tabloid)</option><option value="custom">Custom</option>
+                                    <option value="4x6">4" × 6"</option>
+                                    <option value="5x7">5" × 7"</option>
+                                    <option value="5.5x8.5">5.5" × 8.5" (Half-Letter)</option>
+                                    <option value="8.5x11">8.5" × 11" (Letter)</option>
+                                    <option value="8.27x11.69">A4 (8.27" × 11.69")</option>
+                                    <option value="11x17">11" × 17" (Tabloid)</option>
+                                    <option value="custom">Custom</option>
                                 </select>
                             </div>
-                            <div class="qw-group"><label class="qw-label">Width (in)</label><input type="number" id="qwW" class="qw-input" value="4" min="1" max="60" step="0.1"></div>
-                            <div class="qw-group"><label class="qw-label">Height (in)</label><input type="number" id="qwH" class="qw-input" value="6" min="1" max="60" step="0.1"></div>
+                            <div class="qw-group"><label class="qw-label">Width (in)</label><input type="number"
+                                    id="qwW" class="qw-input" value="4" min="1" max="60" step="0.1"></div>
+                            <div class="qw-group"><label class="qw-label">Height (in)</label><input type="number"
+                                    id="qwH" class="qw-input" value="6" min="1" max="60" step="0.1"></div>
                             <div class="qw-group"><label class="qw-label">Paper Weight</label>
-                                <select id="qwPaper" class="qw-input"><option>80lb Text</option><option selected>100lb Text (Standard)</option><option>14pt Cardstock</option></select>
+                                <select id="qwPaper" class="qw-input">
+                                    <option>80lb Text</option>
+                                    <option selected>100lb Text (Standard)</option>
+                                    <option>14pt Cardstock</option>
+                                </select>
                             </div>
                             <div class="qw-group"><label class="qw-label">Finishing Option</label>
-                                <select id="qwFinish" class="qw-input"><option>Uncoated</option><option>Matte AQ</option><option>Gloss AQ</option><option>UV Coating</option></select>
+                                <select id="qwFinish" class="qw-input">
+                                    <option>Uncoated</option>
+                                    <option>Matte AQ</option>
+                                    <option>Gloss AQ</option>
+                                    <option>UV Coating</option>
+                                </select>
                             </div>
                             <div class="qw-group span2"><label class="qw-label">Bleed Option</label>
-                                <select id="qwBleed" class="qw-input"><option>With Bleed (0.125")</option><option>No Bleed (Exact Size)</option><option>Custom Bleed (0.25")</option></select>
+                                <select id="qwBleed" class="qw-input">
+                                    <option>With Bleed (0.125")</option>
+                                    <option>No Bleed (Exact Size)</option>
+                                    <option>Custom Bleed (0.25")</option>
+                                </select>
                             </div>
                         </div>
-                        <div class="qw-actions"><button class="qw-btn-prev" onclick="qwPrev(2)">← Back</button><button class="qw-btn-next" onclick="qwNext(4)">Next: Quantity →</button></div>
+                        <div class="qw-actions"><button class="qw-btn-prev" onclick="qwPrev(2)">← Back</button><button
+                                class="qw-btn-next" onclick="qwNext(4)">Next: Quantity →</button></div>
                     </div>
                     <!-- Step 4 -->
                     <div class="qw-pane" id="qwPane4">
@@ -1447,8 +2266,11 @@
                                 <label class="qw-label" style="font-size:15px;">Print Quantity</label>
                                 <div class="qw-qty-badge"><span id="qwQtyDisplay">2,500</span> units</div>
                             </div>
-                            <input type="range" id="qwQty" class="qw-range" min="250" max="10000" step="250" value="2500" oninput="qwQtyUpdate()">
-                            <div class="qw-ticks"><span>250</span><span>2,500</span><span>5,000</span><span>7,500</span><span>10,000</span></div>
+                            <input type="range" id="qwQty" class="qw-range" min="250" max="10000" step="250"
+                                value="2500" oninput="qwQtyUpdate()">
+                            <div class="qw-ticks">
+                                <span>250</span><span>2,500</span><span>5,000</span><span>7,500</span><span>10,000</span>
+                            </div>
                         </div>
                         <div class="qw-grid">
                             <div class="qw-group"><label class="qw-label">Turnaround Time</label>
@@ -1467,10 +2289,12 @@
                                 </select>
                             </div>
                             <div class="qw-group span2"><label class="qw-label">Additional Notes (Optional)</label>
-                                <textarea id="qwNotes" class="qw-input" placeholder="Special instructions, packaging, delivery notes..."></textarea>
+                                <textarea id="qwNotes" class="qw-input"
+                                    placeholder="Special instructions, packaging, delivery notes..."></textarea>
                             </div>
                         </div>
-                        <div class="qw-actions"><button class="qw-btn-prev" onclick="qwPrev(3)">← Back</button><button class="qw-btn-submit" onclick="qwSubmit()">Generate Quotation →</button></div>
+                        <div class="qw-actions"><button class="qw-btn-prev" onclick="qwPrev(3)">← Back</button><button
+                                class="qw-btn-submit" onclick="qwSubmit()">Generate Quotation →</button></div>
                     </div>
                 </div>
             </div>
@@ -1479,39 +2303,80 @@
                 <div class="qw-summary-card" id="qwPrintArea">
                     <div class="qw-quote-header">
                         <div class="qw-quote-id" id="qwSumId">QT-XXXXXX</div>
-                        <div class="qw-quote-status"><span style="width:9px;height:9px;border-radius:50%;background:#22c55e;display:inline-block;"></span> Quotation Ready</div>
+                        <div class="qw-quote-status"><span
+                                style="width:9px;height:9px;border-radius:50%;background:#22c55e;display:inline-block;"></span>
+                            Quotation Ready</div>
                     </div>
-                    <div class="qw-sum-section"><div class="qw-sum-label">Client Details</div>
+                    <div class="qw-sum-section">
+                        <div class="qw-sum-label">Client Details</div>
                         <table class="qw-sum-table">
-                            <tr><td class="lbl">Full Name</td><td class="val" id="qwSumName"></td></tr>
-                            <tr><td class="lbl">Email</td><td class="val" id="qwSumEmail"></td></tr>
-                            <tr><td class="lbl">Phone</td><td class="val" id="qwSumPhone"></td></tr>
+                            <tr>
+                                <td class="lbl">Full Name</td>
+                                <td class="val" id="qwSumName"></td>
+                            </tr>
+                            <tr>
+                                <td class="lbl">Email</td>
+                                <td class="val" id="qwSumEmail"></td>
+                            </tr>
+                            <tr>
+                                <td class="lbl">Phone</td>
+                                <td class="val" id="qwSumPhone"></td>
+                            </tr>
                         </table>
                     </div>
-                    <div class="qw-sum-section"><div class="qw-sum-label">Project Specifications</div>
+                    <div class="qw-sum-section">
+                        <div class="qw-sum-label">Project Specifications</div>
                         <table class="qw-sum-table">
-                            <tr><td class="lbl">Product</td><td class="val" id="qwSumProduct"></td></tr>
-                            <tr><td class="lbl">Dimensions</td><td class="val" id="qwSumSize"></td></tr>
-                            <tr><td class="lbl">Paper Weight</td><td class="val" id="qwSumPaper"></td></tr>
-                            <tr><td class="lbl">Finishing</td><td class="val" id="qwSumFinish"></td></tr>
-                            <tr><td class="lbl">Bleed</td><td class="val" id="qwSumBleed"></td></tr>
-                            <tr><td class="lbl">Quantity</td><td class="val" id="qwSumQty"></td></tr>
-                            <tr><td class="lbl">Turnaround</td><td class="val" id="qwSumTA"></td></tr>
-                            <tr><td class="lbl">Shipping</td><td class="val" id="qwSumShip"></td></tr>
+                            <tr>
+                                <td class="lbl">Product</td>
+                                <td class="val" id="qwSumProduct"></td>
+                            </tr>
+                            <tr>
+                                <td class="lbl">Dimensions</td>
+                                <td class="val" id="qwSumSize"></td>
+                            </tr>
+                            <tr>
+                                <td class="lbl">Paper Weight</td>
+                                <td class="val" id="qwSumPaper"></td>
+                            </tr>
+                            <tr>
+                                <td class="lbl">Finishing</td>
+                                <td class="val" id="qwSumFinish"></td>
+                            </tr>
+                            <tr>
+                                <td class="lbl">Bleed</td>
+                                <td class="val" id="qwSumBleed"></td>
+                            </tr>
+                            <tr>
+                                <td class="lbl">Quantity</td>
+                                <td class="val" id="qwSumQty"></td>
+                            </tr>
+                            <tr>
+                                <td class="lbl">Turnaround</td>
+                                <td class="val" id="qwSumTA"></td>
+                            </tr>
+                            <tr>
+                                <td class="lbl">Shipping</td>
+                                <td class="val" id="qwSumShip"></td>
+                            </tr>
                         </table>
                     </div>
                     <div class="qw-price-block">
                         <div class="qw-price-title">🏷️ Price Estimate Breakdown</div>
                         <div class="qw-price-lines">
-                            <div class="qw-price-line"><span class="pl" id="qwLblBase"></span><span class="pv" id="qwValBase"></span></div>
-                            <div class="qw-price-line"><span class="pl" id="qwLblFinish"></span><span class="pv" id="qwValFinish"></span></div>
-                            <div class="qw-price-line"><span class="pl" id="qwLblShip"></span><span class="pv" id="qwValShip"></span></div>
+                            <div class="qw-price-line"><span class="pl" id="qwLblBase"></span><span class="pv"
+                                    id="qwValBase"></span></div>
+                            <div class="qw-price-line"><span class="pl" id="qwLblFinish"></span><span class="pv"
+                                    id="qwValFinish"></span></div>
+                            <div class="qw-price-line"><span class="pl" id="qwLblShip"></span><span class="pv"
+                                    id="qwValShip"></span></div>
                         </div>
                         <div class="qw-total-row">
                             <div class="qw-total-label">Estimated Total</div>
                             <div class="qw-total-value" id="qwValTotal"></div>
                         </div>
-                        <div class="qw-price-note">All prices in Philippine Peso (₱) • Final invoice may vary • VAT not included</div>
+                        <div class="qw-price-note">All prices in Philippine Peso (₱) • Final invoice may vary • VAT not
+                            included</div>
                     </div>
                 </div>
                 <div class="qw-sum-actions">
@@ -1521,9 +2386,11 @@
                 </div>
                 <div class="qw-cta-box">
                     <h3>Ready to place your order?</h3>
-                    <p>Create a free PrintPro account to upload your artwork, track orders in real-time, and access exclusive client pricing.</p>
+                    <p>Create a free PrintPro account to upload your artwork, track orders in real-time, and access
+                        exclusive client pricing.</p>
                     <div class="qw-cta-btns">
-                        <a href="#" onclick="openRegisterModal();return false;" class="qw-cta-primary">Get Started — Sign Up Free</a>
+                        <a href="#" onclick="openRegisterModal();return false;" class="qw-cta-primary">Get Started —
+                            Sign Up Free</a>
                         <a href="#pricing" class="qw-cta-sec">View Pricing Plans</a>
                     </div>
                 </div>
@@ -1756,7 +2623,8 @@
                             style="display:flex;align-items:center;gap:6px;font-size:.8rem;color:#6b7a99;cursor:pointer;">
                             <input type="checkbox" style="accent-color:#1d8cf8;"> Remember me
                         </label>
-                        <a href="#" onclick="openForgotModal(); return false;" style="font-size:.8rem;color:#1d8cf8;font-weight:600;text-decoration:none;">Forgot
+                        <a href="#" onclick="openForgotModal(); return false;"
+                            style="font-size:.8rem;color:#1d8cf8;font-weight:600;text-decoration:none;">Forgot
                             password?</a>
                     </div>
 
@@ -1862,6 +2730,19 @@
                                 onfocus="this.style.borderColor='#1d8cf8';this.style.boxShadow='0 0 0 3px rgba(29,140,248,.12)'"
                                 onblur="this.style.borderColor='#dde3f0';this.style.boxShadow='none'">
                         </div>
+                        <div class="col-sm-6">
+                            <label
+                                style="display:block;font-size:.78rem;font-weight:600;color:#1a2340;margin-bottom:6px;">Industry</label>
+                            <select id="rIndustry" required
+                                style="width:100%;padding:11px 14px;border:1.5px solid #dde3f0;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.88rem;color:#1a2340;outline:none;transition:border-color .2s,box-shadow .2s;"
+                                onfocus="this.style.borderColor='#1d8cf8';this.style.boxShadow='0 0 0 3px rgba(29,140,248,.12)'"
+                                onblur="this.style.borderColor='#dde3f0';this.style.boxShadow='none'">
+                                <option value="" disabled selected>Select industry</option>
+                                <option value="Creative Agency">Creative Agency</option>
+                                <option value="Corporate">Corporate</option>
+                                <option value="Education">Education</option>
+                            </select>
+                        </div>
                     </div>
 
                     <!-- Email -->
@@ -1904,10 +2785,13 @@
                     <div style="margin-bottom:24px;">
                         <label
                             style="display:flex;align-items:flex-start;gap:10px;font-size:.82rem;color:#6b7a99;cursor:pointer;">
-                            <input type="checkbox" id="rTerms" class="pp-checkbox" style="margin-top:2px;" onchange="updateRegisterButtonState()">
+                            <input type="checkbox" id="rTerms" class="pp-checkbox" style="margin-top:2px;"
+                                onchange="updateRegisterButtonState()">
                             <span>
-                                I agree to the <a href="#" onclick="openPolicyModal('terms'); return false;" style="color:#1d8cf8;font-weight:600;text-decoration:none;">Terms & Conditions</a> 
-                                and <a href="#" onclick="openPolicyModal('privacy'); return false;" style="color:#1d8cf8;font-weight:600;text-decoration:none;">Privacy Policy</a>.
+                                I agree to the <a href="#" onclick="openPolicyModal('terms'); return false;"
+                                    style="color:#1d8cf8;font-weight:600;text-decoration:none;">Terms & Conditions</a>
+                                and <a href="#" onclick="openPolicyModal('privacy'); return false;"
+                                    style="color:#1d8cf8;font-weight:600;text-decoration:none;">Privacy Policy</a>.
                             </span>
                         </label>
                     </div>
@@ -2207,10 +3091,10 @@
             const btn = document.getElementById('fSubmitBtn');
             const alertBox = document.getElementById('fAlert');
             const successBox = document.getElementById('fSuccess');
-            
+
             alertBox.style.display = 'none';
             successBox.style.display = 'none';
-            
+
             if (!isValidEmail(email)) {
                 document.getElementById('fAlertMsg').innerText = "Please enter a valid email address.";
                 alertBox.style.display = 'flex';
@@ -2333,7 +3217,7 @@
                 if (data.success) {
                     document.getElementById('resetModal').style.display = 'none';
                     document.getElementById('successModal').style.display = 'flex';
-                    
+
                     let seconds = 3;
                     const timer = setInterval(() => {
                         seconds--;
@@ -2387,7 +3271,7 @@
                 // Switch to client/admin tab accordingly if custom action/tab parameter is added
                 const tab = urlParams.get('tab') || 'client';
                 openLoginModal(tab);
-                
+
                 // Clear the query string/hash from history so refreshing doesn't keep opening the modal
                 const cleanUrl = window.location.pathname + (window.location.hash ? '' : '');
                 window.history.replaceState({}, document.title, cleanUrl);
@@ -2423,7 +3307,7 @@
             document.getElementById('rBusiness').value = '';
             document.getElementById('rEmail').value = '';
             document.getElementById('rPass').value = '';
-            
+
             // Remember checkbox state
             const termsChecked = sessionStorage.getItem('pp_terms_agreed') === 'true';
             document.getElementById('rTerms').checked = termsChecked;
@@ -2447,7 +3331,7 @@
             const checkbox = document.getElementById('rTerms');
             const btn = document.getElementById('rSubmitBtn');
             btn.disabled = !checkbox.checked;
-            
+
             // Persist state in session
             sessionStorage.setItem('pp_terms_agreed', checkbox.checked);
         }
@@ -2595,6 +3479,7 @@
             const formData = new FormData();
             formData.append('name', document.getElementById('rName').value);
             formData.append('business_name', document.getElementById('rBusiness').value);
+            formData.append('industry', document.getElementById('rIndustry').value);
             formData.append('email', document.getElementById('rEmail').value);
             formData.append('password', document.getElementById('rPass').value);
             formData.append('plan', document.getElementById('rPlan').value);
@@ -2670,7 +3555,8 @@
         <div class="policy-card">
             <div class="policy-header">
                 <h5 class="m-0 font-sora fw-bold" id="policyModalTitle">Terms & Conditions</h5>
-                <button onclick="closePolicyModal()" class="btn-close" aria-label="Close" style="font-size: 0.8rem;"></button>
+                <button onclick="closePolicyModal()" class="btn-close" aria-label="Close"
+                    style="font-size: 0.8rem;"></button>
             </div>
             <div class="policy-body" id="policyModalBody">
                 <!-- Content injected via JS -->
@@ -2688,33 +3574,48 @@
     ════════════════════════════ -->
     <div id="forgotModal" class="auth-modal-wrap">
         <div class="auth-backdrop" onclick="closeForgotModal()"></div>
-        <div class="login-card" style="position:relative;z-index:1;background:#fff;border-radius:20px;width:100%;max-width:420px;box-shadow:0 32px 80px rgba(10,18,40,.28);overflow:hidden;animation:modalIn .25s cubic-bezier(.34,1.56,.64,1);">
-            <div class="login-header" style="background:linear-gradient(135deg,#1a2340 0%,#0f2057 100%);padding:28px 32px 24px;position:relative;">
-                <h2 style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:#fff;margin:0 0 4px;">Reset Password</h2>
-                <p style="font-size:.8rem;color:rgba(255,255,255,.5);margin:0;">Enter your email to receive a reset link.</p>
-                <button onclick="closeForgotModal()" style="position:absolute;top:18px;right:18px;background:rgba(255,255,255,.12);border:none;border-radius:8px;width:30px;height:30px;cursor:pointer;color:#fff;"><i class="bi bi-x"></i></button>
+        <div class="login-card"
+            style="position:relative;z-index:1;background:#fff;border-radius:20px;width:100%;max-width:420px;box-shadow:0 32px 80px rgba(10,18,40,.28);overflow:hidden;animation:modalIn .25s cubic-bezier(.34,1.56,.64,1);">
+            <div class="login-header"
+                style="background:linear-gradient(135deg,#1a2340 0%,#0f2057 100%);padding:28px 32px 24px;position:relative;">
+                <h2 style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:#fff;margin:0 0 4px;">
+                    Reset Password</h2>
+                <p style="font-size:.8rem;color:rgba(255,255,255,.5);margin:0;">Enter your email to receive a reset
+                    link.</p>
+                <button onclick="closeForgotModal()"
+                    style="position:absolute;top:18px;right:18px;background:rgba(255,255,255,.12);border:none;border-radius:8px;width:30px;height:30px;cursor:pointer;color:#fff;"><i
+                        class="bi bi-x"></i></button>
             </div>
             <div class="login-body" style="padding:28px 32px 32px;">
-                <div id="fAlert" style="display:none;background:rgba(245,54,92,.08);border:1px solid rgba(245,54,92,.2);border-radius:10px;padding:10px 13px;font-size:.82rem;color:#f5365c;margin-bottom:16px;">
+                <div id="fAlert"
+                    style="display:none;background:rgba(245,54,92,.08);border:1px solid rgba(245,54,92,.2);border-radius:10px;padding:10px 13px;font-size:.82rem;color:#f5365c;margin-bottom:16px;">
                     <i class="bi bi-exclamation-circle-fill"></i> <span id="fAlertMsg"></span>
                 </div>
-                <div id="fSuccess" style="display:none;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);border-radius:10px;padding:10px 13px;font-size:.82rem;color:#22c55e;margin-bottom:16px;">
+                <div id="fSuccess"
+                    style="display:none;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);border-radius:10px;padding:10px 13px;font-size:.82rem;color:#22c55e;margin-bottom:16px;">
                     <i class="bi bi-check-circle-fill"></i> <span id="fSuccessMsg"></span>
                 </div>
                 <form onsubmit="handleForgotSubmit(event)">
                     <div style="margin-bottom:20px;">
-                        <label style="display:block;font-size:.78rem;font-weight:600;color:#1a2340;margin-bottom:6px;">Business Email</label>
-                        <input type="email" id="fEmail" required placeholder="you@yourcompany.com" style="width:100%;padding:11px 14px;border:1.5px solid #dde3f0;border-radius:10px;font-size:.88rem;outline:none;">
+                        <label
+                            style="display:block;font-size:.78rem;font-weight:600;color:#1a2340;margin-bottom:6px;">Business
+                            Email</label>
+                        <input type="email" id="fEmail" required placeholder="you@yourcompany.com"
+                            style="width:100%;padding:11px 14px;border:1.5px solid #dde3f0;border-radius:10px;font-size:.88rem;outline:none;">
                     </div>
-                    <button type="submit" id="fSubmitBtn" class="btn btn-accent w-100 py-2 fw-bold d-flex align-items-center justify-content-center gap-2">
+                    <button type="submit" id="fSubmitBtn"
+                        class="btn btn-accent w-100 py-2 fw-bold d-flex align-items-center justify-content-center gap-2">
                         <span id="fBtnText">Send Reset Link</span>
-                        <svg id="fSpinner" style="display:none;width:18px;height:18px;animation:spin .6s linear infinite;" viewBox="0 0 24 24" fill="none">
+                        <svg id="fSpinner"
+                            style="display:none;width:18px;height:18px;animation:spin .6s linear infinite;"
+                            viewBox="0 0 24 24" fill="none">
                             <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,.3)" stroke-width="3" />
                             <path d="M12 2a10 10 0 0 1 10 10" stroke="#fff" stroke-width="3" stroke-linecap="round" />
                         </svg>
                     </button>
                     <p style="text-align:center;font-size:.82rem;color:#6b7a99;margin-top:20px;margin-bottom:0;">
-                        Wait, I remembered it! <a href="#" onclick="closeForgotModal(); openLoginModal(); return false;" style="color:#1d8cf8;font-weight:600;text-decoration:none;">Back to Login</a>
+                        Wait, I remembered it! <a href="#" onclick="closeForgotModal(); openLoginModal(); return false;"
+                            style="color:#1d8cf8;font-weight:600;text-decoration:none;">Back to Login</a>
                     </p>
                 </form>
             </div>
@@ -2726,40 +3627,58 @@
     ════════════════════════════ -->
     <div id="resetModal" class="auth-modal-wrap">
         <div class="auth-backdrop"></div> <!-- No click-to-close on reset for security -->
-        <div class="login-card" style="position:relative;z-index:1;background:#fff;border-radius:20px;width:100%;max-width:420px;box-shadow:0 32px 80px rgba(10,18,40,.28);overflow:hidden;animation:modalIn .25s cubic-bezier(.34,1.56,.64,1);">
-            <div class="login-header" style="background:linear-gradient(135deg,#1a2340 0%,#0f2057 100%);padding:28px 32px 24px;position:relative;">
-                <h2 style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:#fff;margin:0 0 4px;">Set New Password</h2>
+        <div class="login-card"
+            style="position:relative;z-index:1;background:#fff;border-radius:20px;width:100%;max-width:420px;box-shadow:0 32px 80px rgba(10,18,40,.28);overflow:hidden;animation:modalIn .25s cubic-bezier(.34,1.56,.64,1);">
+            <div class="login-header"
+                style="background:linear-gradient(135deg,#1a2340 0%,#0f2057 100%);padding:28px 32px 24px;position:relative;">
+                <h2 style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:#fff;margin:0 0 4px;">
+                    Set New Password</h2>
                 <p style="font-size:.8rem;color:rgba(255,255,255,.5);margin:0;">Choose a strong, secure password.</p>
             </div>
             <div class="login-body" style="padding:28px 32px 32px;">
-                <div id="rsAlert" style="display:none;background:rgba(245,54,92,.08);border:1px solid rgba(245,54,92,.2);border-radius:10px;padding:10px 13px;font-size:.82rem;color:#f5365c;margin-bottom:16px;">
+                <div id="rsAlert"
+                    style="display:none;background:rgba(245,54,92,.08);border:1px solid rgba(245,54,92,.2);border-radius:10px;padding:10px 13px;font-size:.82rem;color:#f5365c;margin-bottom:16px;">
                     <i class="bi bi-exclamation-circle-fill"></i> <span id="rsAlertMsg"></span>
                 </div>
                 <form onsubmit="handleResetSubmit(event)">
                     <input type="hidden" id="rsToken">
                     <div style="margin-bottom:16px;">
-                        <label style="display:block;font-size:.78rem;font-weight:600;color:#1a2340;margin-bottom:6px;">New Password</label>
+                        <label
+                            style="display:block;font-size:.78rem;font-weight:600;color:#1a2340;margin-bottom:6px;">New
+                            Password</label>
                         <div style="position:relative;">
-                            <input type="password" id="rsPass" required placeholder="Min 8 characters" style="width:100%;padding:11px 38px 11px 14px;border:1.5px solid #dde3f0;border-radius:10px;font-size:.88rem;outline:none;" oninput="updateStrengthMeter(this.value)">
-                            <button type="button" class="pass-toggle" onclick="togglePassVisibility('rsPass', 'rsEye1')">
+                            <input type="password" id="rsPass" required placeholder="Min 8 characters"
+                                style="width:100%;padding:11px 38px 11px 14px;border:1.5px solid #dde3f0;border-radius:10px;font-size:.88rem;outline:none;"
+                                oninput="updateStrengthMeter(this.value)">
+                            <button type="button" class="pass-toggle"
+                                onclick="togglePassVisibility('rsPass', 'rsEye1')">
                                 <i class="bi bi-eye" id="rsEye1"></i>
                             </button>
                         </div>
-                        <div class="strength-meter"><div id="strengthBar" class="strength-bar"></div></div>
+                        <div class="strength-meter">
+                            <div id="strengthBar" class="strength-bar"></div>
+                        </div>
                         <div id="strengthText" class="strength-text" style="color:#6b7a99;">Strength: Unknown</div>
                     </div>
                     <div style="margin-bottom:24px;">
-                        <label style="display:block;font-size:.78rem;font-weight:600;color:#1a2340;margin-bottom:6px;">Confirm Password</label>
+                        <label
+                            style="display:block;font-size:.78rem;font-weight:600;color:#1a2340;margin-bottom:6px;">Confirm
+                            Password</label>
                         <div style="position:relative;">
-                            <input type="password" id="rsConfirm" required placeholder="Repeat new password" style="width:100%;padding:11px 38px 11px 14px;border:1.5px solid #dde3f0;border-radius:10px;font-size:.88rem;outline:none;">
-                            <button type="button" class="pass-toggle" onclick="togglePassVisibility('rsConfirm', 'rsEye2')">
+                            <input type="password" id="rsConfirm" required placeholder="Repeat new password"
+                                style="width:100%;padding:11px 38px 11px 14px;border:1.5px solid #dde3f0;border-radius:10px;font-size:.88rem;outline:none;">
+                            <button type="button" class="pass-toggle"
+                                onclick="togglePassVisibility('rsConfirm', 'rsEye2')">
                                 <i class="bi bi-eye" id="rsEye2"></i>
                             </button>
                         </div>
                     </div>
-                    <button type="submit" id="rsSubmitBtn" class="btn btn-accent w-100 py-2 fw-bold d-flex align-items-center justify-content-center gap-2">
+                    <button type="submit" id="rsSubmitBtn"
+                        class="btn btn-accent w-100 py-2 fw-bold d-flex align-items-center justify-content-center gap-2">
                         <span id="rsBtnText">Update Password</span>
-                        <svg id="rsSpinner" style="display:none;width:18px;height:18px;animation:spin .6s linear infinite;" viewBox="0 0 24 24" fill="none">
+                        <svg id="rsSpinner"
+                            style="display:none;width:18px;height:18px;animation:spin .6s linear infinite;"
+                            viewBox="0 0 24 24" fill="none">
                             <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,.3)" stroke-width="3" />
                             <path d="M12 2a10 10 0 0 1 10 10" stroke="#fff" stroke-width="3" stroke-linecap="round" />
                         </svg>
@@ -2774,13 +3693,19 @@
     ════════════════════════════ -->
     <div id="successModal" class="auth-modal-wrap">
         <div class="auth-backdrop"></div>
-        <div class="login-card" style="position:relative;z-index:1;background:#fff;border-radius:24px;width:100%;max-width:380px;padding:40px 32px;text-align:center;animation:modalIn .25s cubic-bezier(.34,1.56,.64,1);">
-            <div style="width:64px;height:64px;background:#22c55e;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;color:white;font-size:2rem;box-shadow:0 10px 20px rgba(34,197,94,0.3);">
+        <div class="login-card"
+            style="position:relative;z-index:1;background:#fff;border-radius:24px;width:100%;max-width:380px;padding:40px 32px;text-align:center;animation:modalIn .25s cubic-bezier(.34,1.56,.64,1);">
+            <div
+                style="width:64px;height:64px;background:#22c55e;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;color:white;font-size:2rem;box-shadow:0 10px 20px rgba(34,197,94,0.3);">
                 <i class="bi bi-check-lg"></i>
             </div>
-            <h2 style="font-family:'Sora',sans-serif;font-size:1.3rem;font-weight:800;color:#1a2340;margin-bottom:12px;">Success!</h2>
-            <p style="font-size:.9rem;color:#6b7a99;margin-bottom:24px;">Your password has been updated. You can now log in with your new credentials.</p>
-            <div id="redirectTimer" style="font-size:0.8rem;color:var(--accent);font-weight:600;">Redirecting to login in 3s...</div>
+            <h2
+                style="font-family:'Sora',sans-serif;font-size:1.3rem;font-weight:800;color:#1a2340;margin-bottom:12px;">
+                Success!</h2>
+            <p style="font-size:.9rem;color:#6b7a99;margin-bottom:24px;">Your password has been updated. You can now log
+                in with your new credentials.</p>
+            <div id="redirectTimer" style="font-size:0.8rem;color:var(--accent);font-weight:600;">Redirecting to login
+                in 3s...</div>
         </div>
     </div>
 
@@ -2835,7 +3760,7 @@
             document.querySelectorAll('.qw-product-card').forEach(c => c.classList.remove('selected'));
             el.classList.add('selected');
             document.getElementById('qwProduct').value = name;
-            
+
             // Auto-select standard dimensions based on product type
             const defaults = {
                 'Flyers': '4x6',
@@ -2845,7 +3770,7 @@
                 'Mailers': '5x7',
                 'Cards': '4x6'
             };
-            
+
             if (defaults[name]) {
                 const stdSize = document.getElementById('qwStdSize');
                 if (stdSize) {
@@ -2856,7 +3781,7 @@
         }
 
         function qwSizeChange() {
-            const map = { '4x6':{w:4,h:6}, '5x7':{w:5,h:7}, '5.5x8.5':{w:5.5,h:8.5}, '8.5x11':{w:8.5,h:11}, '8.27x11.69':{w:8.27,h:11.69}, '11x17':{w:11,h:17} };
+            const map = { '4x6': { w: 4, h: 6 }, '5x7': { w: 5, h: 7 }, '5.5x8.5': { w: 5.5, h: 8.5 }, '8.5x11': { w: 8.5, h: 11 }, '8.27x11.69': { w: 8.27, h: 11.69 }, '11x17': { w: 11, h: 17 } };
             const v = document.getElementById('qwStdSize').value;
             if (map[v]) { document.getElementById('qwW').value = map[v].w; document.getElementById('qwH').value = map[v].h; }
         }
@@ -2962,7 +3887,7 @@
 
         async function qwExportPDF() {
             const q = qwQuoteData; if (!q) return;
-            
+
             // Show loading state on button
             const btn = document.querySelector('button[onclick="qwExportPDF()"]');
             const originalText = btn.innerHTML;
@@ -2971,7 +3896,7 @@
             btn.style.opacity = '0.7';
 
             const base = location.href.replace(/[^\/]*$/, '');
-            const fmtP = n => '&#8369;' + n.toLocaleString('en-PH', {minimumFractionDigits:2, maximumFractionDigits:2});
+            const fmtP = n => '&#8369;' + n.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
             // Create hidden container
             const container = document.createElement('div');
@@ -2981,7 +3906,7 @@
             container.style.top = '0';
             container.style.background = '#ffffff';
             container.style.zIndex = '-1';
-            
+
             container.innerHTML = `
             <style>
                 .pdf-body { font-family: Arial, sans-serif; color: #1a2340; background: #fff; position: relative; padding: 40px; }
@@ -3050,7 +3975,7 @@
                 </div>
             </div>
             `;
-            
+
             document.body.appendChild(container);
 
             try {
@@ -3066,15 +3991,15 @@
 
                 const imgData = canvas.toDataURL('image/png');
                 const { jsPDF } = window.jspdf;
-                
+
                 const pdf = new jsPDF({
                     orientation: 'p',
                     unit: 'px',
                     format: [canvas.width / 2, canvas.height / 2]
                 });
-                
+
                 pdf.addImage(imgData, 'PNG', 0, 0, canvas.width / 2, canvas.height / 2);
-                
+
                 const filename = `PrintPro_Quotation_${q.id}.pdf`;
                 const pdfBlob = pdf.output('blob');
 
@@ -3130,7 +4055,7 @@
         function qwPrint() {
             const q = qwQuoteData; if (!q) return;
             const base = location.href.replace(/[^\/]*$/, '');
-            const fmtP = n => '&#8369;' + n.toLocaleString('en-PH', {minimumFractionDigits:2, maximumFractionDigits:2});
+            const fmtP = n => '&#8369;' + n.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             const w = window.open('', '_blank', 'width=860,height=1000');
             w.document.write(`<!DOCTYPE html><html><head><title>PrintPro Quotation ${q.id}</title><style>
 *{box-sizing:border-box;margin:0;padding:0;}body{font-family:Arial,sans-serif;color:#1a2340;background:#fff;position:relative;min-height:100vh;}

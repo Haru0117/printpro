@@ -20,22 +20,23 @@ try {
                 'Shipping',
                 'Delivered',
                 'Reprint',
+                'Rejected',
                 'Cancelled'
              ) NOT NULL DEFAULT 'Proof Pending'";
-    
+
     $pdo->exec($sql1);
-    echo "<p>✅ Added 'Cancelled' status to orders table</p>";
+    echo "<p>✅ Added 'Cancelled' and 'Rejected' statuses to orders table</p>";
 
     echo "<p><strong>✅ Migration completed successfully!</strong></p>";
-    echo "<p>Rejected orders will now appear in the 'Canceled' tab.</p>";
-
+    echo "<p>Rejected orders will now appear in the 'Rejected' tab.</p>";
 } catch (PDOException $e) {
-    if (strpos($e->getMessage(), 'Duplicate column name') !== false || 
-        strpos($e->getMessage(), 'already exists') !== false) {
+    if (
+        strpos($e->getMessage(), 'Duplicate column name') !== false ||
+        strpos($e->getMessage(), 'already exists') !== false
+    ) {
         echo "<p>ℹ️ Status ENUM already includes 'Cancelled'</p>";
         echo "<p><strong>✅ Migration completed successfully!</strong></p>";
     } else {
         echo "<p><strong>❌ Migration failed:</strong> " . $e->getMessage() . "</p>";
     }
 }
-?>

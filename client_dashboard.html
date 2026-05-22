@@ -823,6 +823,7 @@
                 grid-template-columns: 1fr;
                 padding: 16px;
             }
+
             .c-order-sidebar {
                 position: static;
                 width: 100%;
@@ -887,10 +888,23 @@
             transition: color .2s;
         }
 
-        .order-progress-step.active .prog-num { background: var(--accent); color: #fff; }
-        .order-progress-step.active .prog-label { color: var(--accent); }
-        .order-progress-step.done .prog-num { background: #2dce89; color: #fff; }
-        .order-progress-step.done .prog-label { color: #2dce89; }
+        .order-progress-step.active .prog-num {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .order-progress-step.active .prog-label {
+            color: var(--accent);
+        }
+
+        .order-progress-step.done .prog-num {
+            background: #2dce89;
+            color: #fff;
+        }
+
+        .order-progress-step.done .prog-label {
+            color: #2dce89;
+        }
 
         .order-progress-connector {
             flex: 1;
@@ -900,9 +914,14 @@
             min-width: 20px;
             transition: background .3s;
         }
-        .order-progress-connector.done { background: #2dce89; }
 
-        [data-theme="dark"] .order-progress { background: var(--dark-card); }
+        .order-progress-connector.done {
+            background: #2dce89;
+        }
+
+        [data-theme="dark"] .order-progress {
+            background: var(--dark-card);
+        }
 
         /* Mobile responsiveness for wizard navigation */
         @media (max-width: 768px) {
@@ -915,26 +934,26 @@
                 padding: 16px;
                 z-index: 10;
             }
-            
+
             html[data-theme="dark"] .wizard-navigation {
                 background: var(--dark-card);
                 border-top-color: var(--border);
             }
-            
+
             .nav-btn {
                 padding: 12px 16px;
                 font-size: .9rem;
             }
-            
+
             .order-progress {
                 padding: 12px 16px;
                 margin-bottom: 16px;
             }
-            
+
             .order-progress-step .prog-label {
                 display: none;
             }
-            
+
             .order-progress-connector {
                 margin: 0 4px;
                 min-width: 12px;
@@ -945,13 +964,23 @@
         .sum-section-title {
             font-size: .65rem;
             font-weight: 700;
-            color: rgba(255,255,255,.35);
+            color: rgba(255, 255, 255, .35);
             text-transform: uppercase;
             letter-spacing: .1em;
             margin: 14px 0 8px;
         }
-        .delivery-lbl { font-size: .7rem; color: rgba(255,255,255,.45); margin-bottom: 3px; }
-        .delivery-val { font-size: .82rem; font-weight: 600; color: rgba(255,255,255,.85); }
+
+        .delivery-lbl {
+            font-size: .7rem;
+            color: rgba(255, 255, 255, .45);
+            margin-bottom: 3px;
+        }
+
+        .delivery-val {
+            font-size: .82rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, .85);
+        }
 
         .wizard-card {
             background: #fff;
@@ -4406,27 +4435,35 @@
                                 <div class="wizard-card" id="wizard-step-4">
                                     <div class="wizard-hdr">
                                         <div class="step-num">4</div>
-                                        <div class="step-title">Artwork &amp; Files <span id="requiredBadge" style="display:none;background:#f5365c;color:#fff;font-size:.6rem;font-weight:800;padding:2px 7px;border-radius:10px;vertical-align:middle;letter-spacing:.04em;">REQUIRED</span></div>
+                                        <div class="step-title">Artwork &amp; Files <span id="requiredBadge"
+                                                style="display:none;background:#f5365c;color:#fff;font-size:.6rem;font-weight:800;padding:2px 7px;border-radius:10px;vertical-align:middle;letter-spacing:.04em;">REQUIRED</span>
+                                        </div>
                                     </div>
                                     <div class="wizard-body">
                                         <!-- Required notice (only shown when user tries to order without files) -->
-                                        <div id="artworkRequiredNotice" style="display:none;align-items:center;gap:8px;background:rgba(245,54,92,.08);border:1px solid rgba(245,54,92,.2);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:.78rem;color:#f5365c;font-weight:600;">
+                                        <div id="artworkRequiredNotice"
+                                            style="display:none;align-items:center;gap:8px;background:rgba(245,54,92,.08);border:1px solid rgba(245,54,92,.2);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:.78rem;color:#f5365c;font-weight:600;">
                                             <i class="bi bi-exclamation-circle-fill"></i>
-                                            You must attach your print-ready artwork file before placing an order. Accepted: PDF, AI, PSD, PNG, JPG (Max 500MB)
+                                            You must attach your print-ready artwork file before placing an order.
+                                            Accepted: PDF, AI, PSD, PNG, JPG (Max 500MB)
                                         </div>
 
                                         <!-- File attached confirmation (hidden by default) -->
-                                        <div id="artworkAttachedNotice" style="display:none;align-items:center;gap:8px;background:rgba(45,206,137,.08);border:1px solid rgba(45,206,137,.2);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:.78rem;color:#2dce89;font-weight:600;">
+                                        <div id="artworkAttachedNotice"
+                                            style="display:none;align-items:center;gap:8px;background:rgba(45,206,137,.08);border:1px solid rgba(45,206,137,.2);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:.78rem;color:#2dce89;font-weight:600;">
                                             <i class="bi bi-check-circle-fill"></i>
-                                            <span id="attachedFileCount">1 file</span> attached successfully. You can upload additional files or proceed to place your order.
+                                            <span id="attachedFileCount">1 file</span> attached successfully. You can
+                                            upload additional files or proceed to place your order.
                                         </div>
 
                                         <div style="display:flex; gap: 12px; margin-bottom: 16px;">
-                                            <button class="pt-btn active" style="flex:1; padding: 10px;" id="uploadNewTab"
+                                            <button class="pt-btn active" style="flex:1; padding: 10px;"
+                                                id="uploadNewTab"
                                                 onclick="document.getElementById('upload-area').style.display='block'; document.getElementById('account-files').style.display='none'; this.classList.add('active'); document.getElementById('selectFromAccountTab').classList.remove('active');"><i
                                                     class="bi bi-cloud-upload" style="font-size: 1.1rem;"></i>Upload
                                                 New</button>
-                                            <button class="pt-btn" style="flex:1; padding: 10px;" id="selectFromAccountTab"
+                                            <button class="pt-btn" style="flex:1; padding: 10px;"
+                                                id="selectFromAccountTab"
                                                 onclick="document.getElementById('upload-area').style.display='none'; document.getElementById('account-files').style.display='block'; this.classList.add('active'); document.getElementById('uploadNewTab').classList.remove('active');"><i
                                                     class="bi bi-folder2-open" style="font-size: 1.1rem;"></i>Select
                                                 from Account</button>
@@ -4445,7 +4482,8 @@
                                             <h5
                                                 style="font-size: .85rem; font-family: 'Sora', sans-serif; font-weight: 700; color: var(--navy); margin-bottom: 4px;">
                                                 Drag &amp; Drop or Click to Browse</h5>
-                                            <p style="font-size: .7rem; color: var(--muted); margin: 0;">PDF, AI, PSD, PNG, JPG — Max 500MB</p>
+                                            <p style="font-size: .7rem; color: var(--muted); margin: 0;">PDF, AI, PSD,
+                                                PNG, JPG — Max 500MB</p>
                                         </div>
 
                                         <!-- Upload Preview Area -->
@@ -4453,7 +4491,8 @@
                                             <div
                                                 style="font-size: .75rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 12px;">
                                                 Files to Upload</div>
-                                            <div id="upload-preview-list" style="display:flex; flex-direction:column; gap:6px; max-height:200px; overflow-y:auto;">
+                                            <div id="upload-preview-list"
+                                                style="display:flex; flex-direction:column; gap:6px; max-height:200px; overflow-y:auto;">
                                             </div>
                                         </div>
 
@@ -4462,20 +4501,24 @@
                                             <div
                                                 style="font-size: .75rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 12px;">
                                                 Your Uploaded Files</div>
-                                            <div id="wizard-account-files" style="display:flex; flex-direction:column; max-height:240px; overflow-y:auto;">
+                                            <div id="wizard-account-files"
+                                                style="display:flex; flex-direction:column; max-height:240px; overflow-y:auto;">
                                                 <div
                                                     style="padding: 20px; text-align: center; color: var(--muted); font-size: .8rem; border: 1px dashed var(--border); border-radius: 8px;">
                                                     No files uploaded yet
                                                 </div>
                                             </div>
                                         </div>
-                                        
+
                                         <!-- Special Instructions (Optional) -->
-                                        <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border);">
+                                        <div
+                                            style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border);">
                                             <div class="form-label-sm">Special Instructions (Optional)</div>
-                                            <textarea class="form-control-sm-pp" id="orderNotes" rows="3" placeholder="Any special instructions for your order..." style="margin-top: 8px;"></textarea>
+                                            <textarea class="form-control-sm-pp" id="orderNotes" rows="3"
+                                                placeholder="Any special instructions for your order..."
+                                                style="margin-top: 8px;"></textarea>
                                         </div>
-                                        
+
                                         <div class="step-validation-error" id="step-4-error">
                                             <i class="bi bi-exclamation-circle-fill"></i>
                                             Please upload or select artwork files to continue.
@@ -4504,13 +4547,16 @@
                                     <div class="summary-sub">Live price estimate — updates as you configure</div>
 
                                     <div class="sum-section-title">Specifications</div>
-                                    <div class="summary-row"><span>Product</span><span id="sumProduct">Flyers</span></div>
+                                    <div class="summary-row"><span>Product</span><span id="sumProduct">Flyers</span>
+                                    </div>
                                     <div class="summary-row"><span>Quantity</span><span id="sumQty">500</span></div>
                                     <div class="summary-row"><span>Size</span><span id="sumSize">4" × 6"</span></div>
                                     <div class="summary-row"><span>Paper Stock</span><span id="sumStock">—</span></div>
                                     <div class="summary-row"><span>Finishing</span><span id="sumFinish">—</span></div>
-                                    <div class="summary-row"><span>Bleed</span><span id="sumBleed">With Bleed</span></div>
-                                    <div class="summary-row"><span>Artwork</span><span id="sumArtwork" style="color:rgba(245,54,92,.8);">Not attached</span></div>
+                                    <div class="summary-row"><span>Bleed</span><span id="sumBleed">With Bleed</span>
+                                    </div>
+                                    <div class="summary-row"><span>Artwork</span><span id="sumArtwork"
+                                            style="color:rgba(245,54,92,.8);">Not attached</span></div>
 
                                     <hr class="summary-divider">
                                     <div class="sum-section-title">Timeline</div>
@@ -4521,22 +4567,28 @@
                                     <div class="delivery-box" style="margin-top:8px;">
                                         <div class="delivery-lbl">Estimated Arrival</div>
                                         <div class="delivery-val" style="display:flex;align-items:center;gap:6px;">
-                                            <i class="bi bi-calendar3" style="color:rgba(255,255,255,.45);font-size:.8rem;"></i>
+                                            <i class="bi bi-calendar3"
+                                                style="color:rgba(255,255,255,.45);font-size:.8rem;"></i>
                                             <span id="sumArrival">—</span>
                                         </div>
                                     </div>
 
                                     <hr class="summary-divider">
                                     <div class="sum-section-title">Price Breakdown</div>
-                                    <div class="summary-row"><span>Base Price</span><span id="sumBasePrice">₱—</span></div>
-                                    <div class="summary-row"><span>Material</span><span id="sumMaterialFee">₱—</span></div>
-                                    <div class="summary-row"><span>Finishing Fee</span><span id="sumFinishFee">₱—</span></div>
-                                    <div class="summary-row"><span>Turnaround</span><span id="sumTurnaroundFee">₱—</span></div>
+                                    <div class="summary-row"><span>Base Price</span><span id="sumBasePrice">₱—</span>
+                                    </div>
+                                    <div class="summary-row"><span>Material</span><span id="sumMaterialFee">₱—</span>
+                                    </div>
+                                    <div class="summary-row"><span>Finishing Fee</span><span id="sumFinishFee">₱—</span>
+                                    </div>
+                                    <div class="summary-row"><span>Turnaround</span><span
+                                            id="sumTurnaroundFee">₱—</span></div>
                                     <div class="summary-row"><span>Subtotal</span><span id="sumSubtotal">₱—</span></div>
                                     <div class="summary-row" id="sumDiscountRow" style="display:none; color:#2dce89;">
                                         <span>Bulk Discount</span><span id="sumDiscount">-₱0.00</span>
                                     </div>
-                                    <div class="summary-row"><span>Shipping</span><span id="sumShipping">₱0.00</span></div>
+                                    <div class="summary-row"><span>Shipping</span><span id="sumShipping">₱0.00</span>
+                                    </div>
                                     <div class="summary-row"><span>VAT (12%)</span><span id="sumTax">₱—</span></div>
 
                                     <div class="summary-total" style="margin-top:12px;">
@@ -4544,14 +4596,17 @@
                                         <span class="summary-total-val" id="summaryTotal">₱—</span>
                                     </div>
 
-                                    <div id="walletWarning" style="display:none; margin-top:10px; padding:8px 12px; background:rgba(245,54,92,.12); border:1px solid rgba(245,54,92,.3); border-radius:8px; font-size:.75rem; color:#f5365c; font-weight:600;">
+                                    <div id="walletWarning"
+                                        style="display:none; margin-top:10px; padding:8px 12px; background:rgba(245,54,92,.12); border:1px solid rgba(245,54,92,.3); border-radius:8px; font-size:.75rem; color:#f5365c; font-weight:600;">
                                         <i class="bi bi-exclamation-triangle-fill"></i> Insufficient credits
                                     </div>
 
-                                    <button class="btn-continue" id="placeOrderBtn" onclick="placeOrder()" style="margin-top:14px;">
+                                    <button class="btn-continue" id="placeOrderBtn" onclick="placeOrder()"
+                                        style="margin-top:14px;">
                                         Place Order →
                                     </button>
-                                    <div style="text-align:center; margin-top:8px; font-size:.7rem; color:rgba(255,255,255,.3);">
+                                    <div
+                                        style="text-align:center; margin-top:8px; font-size:.7rem; color:rgba(255,255,255,.3);">
                                         Credits will be deducted on confirmation
                                     </div>
                                 </div>
@@ -4822,18 +4877,24 @@
                     <!-- ══ TRACK ORDERS PAGE ══ -->
                     <div class="c-page" id="c-track">
                         <div class="c-track-wrap" style="padding:20px 24px;">
-                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+                            <div
+                                style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
                                 <div>
-                                    <h4 class="page-title" style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:var(--navy);margin:0;">Track Orders</h4>
-                                    <p style="font-size:.75rem;color:var(--muted);margin:0;">Real-time status of your active print jobs</p>
+                                    <h4 class="page-title"
+                                        style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:var(--navy);margin:0;">
+                                        Track Orders</h4>
+                                    <p style="font-size:.75rem;color:var(--muted);margin:0;">Real-time status of your
+                                        active print jobs</p>
                                 </div>
-                                <button onclick="loadTrackOrders()" style="background:var(--accent);color:#fff;border:none;padding:7px 16px;border-radius:8px;font-size:.8rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;">
+                                <button onclick="loadTrackOrders()"
+                                    style="background:var(--accent);color:#fff;border:none;padding:7px 16px;border-radius:8px;font-size:.8rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;">
                                     <i class="bi bi-arrow-clockwise"></i> Refresh
                                 </button>
                             </div>
                             <div id="trackOrdersList">
                                 <div style="text-align:center;padding:60px;color:var(--muted);">
-                                    <i class="bi bi-arrow-repeat" style="font-size:2rem;display:block;margin-bottom:12px;opacity:.3;"></i>
+                                    <i class="bi bi-arrow-repeat"
+                                        style="font-size:2rem;display:block;margin-bottom:12px;opacity:.3;"></i>
                                     Loading your orders…
                                 </div>
                             </div>
@@ -4993,7 +5054,8 @@
                                     </div>
                                     <div class="spend-chart" id="monthlySpendChart">
                                         <div style="text-align:center;padding:30px;color:var(--muted);font-size:.8rem;">
-                                            <i class="bi bi-bar-chart" style="font-size:1.6rem;display:block;margin-bottom:8px;opacity:.2;"></i>
+                                            <i class="bi bi-bar-chart"
+                                                style="font-size:1.6rem;display:block;margin-bottom:8px;opacity:.2;"></i>
                                             Loading spend data…
                                         </div>
                                     </div>
@@ -5102,7 +5164,8 @@
                                     style="margin-bottom:14px; background: linear-gradient(135deg, #1a2340, #2a3558); color: #fff; border: none;">
                                     <div class="card-hdr" style="border-bottom: 1px solid rgba(255,255,255,.1);">
                                         <span class="card-hdr-title" style="color: #fff;">Active Subscription</span>
-                                        <span class="badge-status badge-active client-sub-status" id="subStatusBadge">Active</span>
+                                        <span class="badge-status badge-active client-sub-status"
+                                            id="subStatusBadge">Active</span>
                                     </div>
                                     <div style="padding: 16px;">
                                         <div
@@ -5122,12 +5185,14 @@
                                             <div
                                                 style="display: flex; justify-content: space-between; font-size: .8rem;">
                                                 <span style="color: rgba(255,255,255,.6);">Renews On</span>
-                                                <span class="client-sub-renews" id="subRenewsOn" style="font-weight: 600;">—</span>
+                                                <span class="client-sub-renews" id="subRenewsOn"
+                                                    style="font-weight: 600;">—</span>
                                             </div>
                                             <div
                                                 style="display: flex; justify-content: space-between; font-size: .8rem;">
                                                 <span style="color: rgba(255,255,255,.6);">Amount</span>
-                                                <span class="client-sub-amount" id="subAmount" style="font-weight: 600;">—</span>
+                                                <span class="client-sub-amount" id="subAmount"
+                                                    style="font-weight: 600;">—</span>
                                             </div>
                                         </div>
 
@@ -5233,7 +5298,8 @@
                                                     style="font-family: 'Sora', sans-serif; font-size: 1.4rem; font-weight: 800;">
                                                     Loading…</div>
                                             </div>
-                                            <span class="badge-status badge-active client-sub-status" id="acctSubStatus">ACTIVE</span>
+                                            <span class="badge-status badge-active client-sub-status"
+                                                id="acctSubStatus">ACTIVE</span>
                                         </div>
 
                                         <div
@@ -5241,7 +5307,8 @@
                                             <div
                                                 style="display: flex; justify-content: space-between; font-size: .85rem; margin-bottom:8px;">
                                                 <span style="color: rgba(255,255,255,.6);">Renews On</span>
-                                                <span class="client-sub-renews" id="acctRenewsOn" style="font-weight: 600;">—</span>
+                                                <span class="client-sub-renews" id="acctRenewsOn"
+                                                    style="font-weight: 600;">—</span>
                                             </div>
                                             <div
                                                 style="display: flex; justify-content: space-between; font-size: .85rem;">
@@ -5296,14 +5363,40 @@
     </div><!-- /client portal -->
 
     <!-- Order Confirmation Modal -->
-    <div id="orderConfirmModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(10,18,42,0.85); backdrop-filter:blur(8px); z-index:10002; justify-content:center; align-items:center; opacity:0; transition:opacity 0.2s;">
-        <div id="orderConfirmContent" style="background:#fff; border-radius:18px; width:95%; max-width:480px; padding:32px; box-shadow:0 20px 60px rgba(0,0,0,0.35); transform:scale(0.93); transition:transform 0.2s;">
+    <style>
+        /* Ensure this modal stays light and readable when site-wide dark theme is active */
+        #orderConfirmContent {
+            background: #fff !important;
+            color: #0d1b3e !important;
+        }
+
+        #orderConfirmContent,
+        #orderConfirmContent * {
+            color: inherit !important;
+        }
+
+        /* Keep highlighted values visible */
+        #confirmArtwork {
+            color: #2dce89 !important;
+        }
+
+        #confirmTotal {
+            color: #1d8cf8 !important;
+        }
+    </style>
+    <div id="orderConfirmModal"
+        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(10,18,42,0.85); backdrop-filter:blur(8px); z-index:10002; justify-content:center; align-items:center; opacity:0; transition:opacity 0.2s;">
+        <div id="orderConfirmContent"
+            style="background:#fff !important; color:#0d1b3e !important; border-radius:18px; width:95%; max-width:480px; padding:32px; box-shadow:0 20px 60px rgba(0,0,0,0.35); transform:scale(0.93); transition:transform 0.2s;">
             <div style="text-align:center; margin-bottom:24px;">
-                <div style="width:64px; height:64px; background:#fff; border:2px solid #e8ecf4; border-radius:50%; display:grid; place-items:center; margin:0 auto 14px; box-shadow:0 4px 12px rgba(0,0,0,.08);">
+                <div
+                    style="width:64px; height:64px; background:#fff; border:2px solid #e8ecf4; border-radius:50%; display:grid; place-items:center; margin:0 auto 14px; box-shadow:0 4px 12px rgba(0,0,0,.08);">
                     <img src="favicon.png" alt="PrintPro" style="width:38px; height:38px; object-fit:contain;">
                 </div>
-                <h4 style="font-family:'Sora',sans-serif; font-weight:800; color:#0d1b3e; margin:0 0 6px;">Confirm Your Order</h4>
-                <p style="color:#8898aa; font-size:.85rem; margin:0;">Please review your order details before placing.</p>
+                <h4 style="font-family:'Sora',sans-serif; font-weight:800; color:#0d1b3e; margin:0 0 6px;">Confirm Your
+                    Order</h4>
+                <p style="color:#8898aa; font-size:.85rem; margin:0;">Please review your order details before placing.
+                </p>
             </div>
 
             <!-- Order Summary -->
@@ -5339,35 +5432,46 @@
                 <div style="border-top:1px solid #e8ecf4; margin:10px 0;"></div>
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <span style="color:#8898aa; font-weight:600;">Total to Deduct</span>
-                    <span style="font-family:'Sora',sans-serif; font-size:1.3rem; font-weight:800; color:#1d8cf8;" id="confirmTotal">₱—</span>
+                    <span style="font-family:'Sora',sans-serif; font-size:1.3rem; font-weight:800; color:#1d8cf8;"
+                        id="confirmTotal">₱—</span>
                 </div>
             </div>
 
             <div style="display:flex; gap:10px;">
-                <button onclick="closeOrderConfirmModal()" style="flex:1; padding:11px; border:1px solid #dde3f0; border-radius:10px; background:#fff; color:#344767; font-size:.88rem; font-weight:600; cursor:pointer;">
+                <button onclick="closeOrderConfirmModal()"
+                    style="flex:1; padding:11px; border:1px solid #dde3f0; border-radius:10px; background:#fff; color:#344767; font-size:.88rem; font-weight:600; cursor:pointer;">
                     ← Go Back
                 </button>
-                <button id="confirmPlaceBtn" onclick="executePlaceOrder()" style="flex:2; padding:11px; border:none; border-radius:10px; background:linear-gradient(90deg,#1d8cf8,#00c6ff); color:#fff; font-size:.88rem; font-weight:700; cursor:pointer; font-family:'DM Sans',sans-serif;">
+                <button id="confirmPlaceBtn" onclick="executePlaceOrder()"
+                    style="flex:2; padding:11px; border:none; border-radius:10px; background:linear-gradient(90deg,#1d8cf8,#00c6ff); color:#fff; font-size:.88rem; font-weight:700; cursor:pointer; font-family:'DM Sans',sans-serif;">
                     ✓ Confirm & Place Order
                 </button>
             </div>
-            <p style="text-align:center; font-size:.72rem; color:#aaa; margin:10px 0 0;">Credits will be deducted immediately upon confirmation.</p>
+            <p style="text-align:center; font-size:.72rem; color:#aaa; margin:10px 0 0;">Credits will be deducted
+                immediately upon confirmation.</p>
         </div>
     </div>
 
     <!-- Cancel Order Modal (Client) -->
-    <div id="cancelOrderModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(10,18,42,0.85); backdrop-filter:blur(8px); z-index:10002; justify-content:center; align-items:center; opacity:0; transition:opacity 0.2s;">
-        <div id="cancelOrderContent" style="background:#fff; border-radius:18px; width:95%; max-width:440px; padding:28px; box-shadow:0 20px 60px rgba(0,0,0,0.35); transform:scale(0.93); transition:transform 0.2s;">
+    <div id="cancelOrderModal"
+        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(10,18,42,0.85); backdrop-filter:blur(8px); z-index:10002; justify-content:center; align-items:center; opacity:0; transition:opacity 0.2s;">
+        <div id="cancelOrderContent"
+            style="background:#fff; border-radius:18px; width:95%; max-width:440px; padding:28px; box-shadow:0 20px 60px rgba(0,0,0,0.35); transform:scale(0.93); transition:transform 0.2s;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
                 <h5 style="font-family:'Sora',sans-serif; font-weight:800; color:#0d1b3e; margin:0;">Cancel Order</h5>
-                <button onclick="closeCancelOrderModal()" style="background:none; border:none; font-size:1.3rem; color:#8898aa; cursor:pointer;">×</button>
+                <button onclick="closeCancelOrderModal()"
+                    style="background:none; border:none; font-size:1.3rem; color:#8898aa; cursor:pointer;">×</button>
             </div>
             <input type="hidden" id="cancelOrderId">
-            <p style="font-size:.83rem; color:#8898aa; margin-bottom:16px;">Order <strong id="cancelOrderNum" style="color:#0d1b3e;"></strong> — your credits will be fully refunded.</p>
+            <p style="font-size:.83rem; color:#8898aa; margin-bottom:16px;">Order <strong id="cancelOrderNum"
+                    style="color:#0d1b3e;"></strong> — your credits will be fully refunded.</p>
 
             <div style="margin-bottom:14px;">
-                <label style="font-size:.75rem; font-weight:700; color:#8898aa; text-transform:uppercase; letter-spacing:.05em; display:block; margin-bottom:6px;">Reason for Cancellation</label>
-                <select id="cancelReasonSelect" onchange="handleCancelReasonSelect(this)" style="width:100%; padding:9px 12px; border:1px solid #dde3f0; border-radius:8px; font-size:.85rem; font-family:'DM Sans',sans-serif; color:#344767; margin-bottom:8px;">
+                <label
+                    style="font-size:.75rem; font-weight:700; color:#8898aa; text-transform:uppercase; letter-spacing:.05em; display:block; margin-bottom:6px;">Reason
+                    for Cancellation</label>
+                <select id="cancelReasonSelect" onchange="handleCancelReasonSelect(this)"
+                    style="width:100%; padding:9px 12px; border:1px solid #dde3f0; border-radius:8px; font-size:.85rem; font-family:'DM Sans',sans-serif; color:#344767; margin-bottom:8px;">
                     <option value="">— Select a reason —</option>
                     <option value="Changed my mind">Changed my mind</option>
                     <option value="Ordered by mistake">Ordered by mistake</option>
@@ -5381,36 +5485,51 @@
                     style="width:100%; padding:9px 12px; border:1px solid #dde3f0; border-radius:8px; font-size:.82rem; font-family:'DM Sans',sans-serif; color:#344767; resize:vertical; box-sizing:border-box; display:none;"></textarea>
             </div>
 
-            <div id="cancelModalMsg" style="font-size:.8rem; font-weight:600; min-height:16px; margin-bottom:10px;"></div>
+            <div id="cancelModalMsg" style="font-size:.8rem; font-weight:600; min-height:16px; margin-bottom:10px;">
+            </div>
             <div style="display:flex; gap:10px;">
-                <button onclick="closeCancelOrderModal()" style="flex:1; padding:10px; border:1px solid #dde3f0; border-radius:8px; background:#fff; color:#344767; font-size:.85rem; font-weight:600; cursor:pointer;">Keep Order</button>
-                <button id="cancelSubmitBtn" onclick="submitCancelOrder()" style="flex:1; padding:10px; border:none; border-radius:8px; background:#f5365c; color:#fff; font-size:.85rem; font-weight:700; cursor:pointer;">Cancel Order</button>
+                <button onclick="closeCancelOrderModal()"
+                    style="flex:1; padding:10px; border:1px solid #dde3f0; border-radius:8px; background:#fff; color:#344767; font-size:.85rem; font-weight:600; cursor:pointer;">Keep
+                    Order</button>
+                <button id="cancelSubmitBtn" onclick="submitCancelOrder()"
+                    style="flex:1; padding:10px; border:none; border-radius:8px; background:#f5365c; color:#fff; font-size:.85rem; font-weight:700; cursor:pointer;">Cancel
+                    Order</button>
             </div>
         </div>
     </div>
 
     <!-- Password Change Modal -->
-    <div id="passwordModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(10,18,42,0.8); backdrop-filter:blur(8px); z-index:10001; justify-content:center; align-items:center; opacity:0; transition:opacity 0.2s ease-in-out;">
-        <div id="passwordModalContent" style="background:#fff; border-radius:16px; width:95%; max-width:420px; padding:28px; box-shadow:0 20px 60px rgba(0,0,0,0.3); transform:scale(0.93); transition:transform 0.2s ease-in-out;">
+    <div id="passwordModal"
+        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(10,18,42,0.8); backdrop-filter:blur(8px); z-index:10001; justify-content:center; align-items:center; opacity:0; transition:opacity 0.2s ease-in-out;">
+        <div id="passwordModalContent"
+            style="background:#fff; border-radius:16px; width:95%; max-width:420px; padding:28px; box-shadow:0 20px 60px rgba(0,0,0,0.3); transform:scale(0.93); transition:transform 0.2s ease-in-out;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                <h5 style="margin:0; font-family:'Sora',sans-serif; font-weight:800; color:#0d1b3e;">Change Password</h5>
-                <button onclick="closePasswordModal()" style="background:none; border:none; font-size:1.3rem; color:#8898aa; cursor:pointer; line-height:1;">×</button>
+                <h5 style="margin:0; font-family:'Sora',sans-serif; font-weight:800; color:#0d1b3e;">Change Password
+                </h5>
+                <button onclick="closePasswordModal()"
+                    style="background:none; border:none; font-size:1.3rem; color:#8898aa; cursor:pointer; line-height:1;">×</button>
             </div>
             <div style="display:flex; flex-direction:column; gap:14px;">
                 <div>
-                    <label style="font-size:.75rem; font-weight:700; color:#8898aa; text-transform:uppercase; letter-spacing:.05em; display:block; margin-bottom:5px;">Current Password</label>
+                    <label
+                        style="font-size:.75rem; font-weight:700; color:#8898aa; text-transform:uppercase; letter-spacing:.05em; display:block; margin-bottom:5px;">Current
+                        Password</label>
                     <input type="password" id="pwCurrentInput" placeholder="Enter current password"
                         style="width:100%; padding:9px 12px; border:1px solid #dde3f0; border-radius:8px; font-size:.85rem; font-family:'DM Sans',sans-serif; color:#344767; box-sizing:border-box;"
                         onfocus="this.style.borderColor='#1d8cf8'" onblur="this.style.borderColor='#dde3f0'">
                 </div>
                 <div>
-                    <label style="font-size:.75rem; font-weight:700; color:#8898aa; text-transform:uppercase; letter-spacing:.05em; display:block; margin-bottom:5px;">New Password</label>
+                    <label
+                        style="font-size:.75rem; font-weight:700; color:#8898aa; text-transform:uppercase; letter-spacing:.05em; display:block; margin-bottom:5px;">New
+                        Password</label>
                     <input type="password" id="pwNewInput" placeholder="Min. 6 characters"
                         style="width:100%; padding:9px 12px; border:1px solid #dde3f0; border-radius:8px; font-size:.85rem; font-family:'DM Sans',sans-serif; color:#344767; box-sizing:border-box;"
                         onfocus="this.style.borderColor='#1d8cf8'" onblur="this.style.borderColor='#dde3f0'">
                 </div>
                 <div>
-                    <label style="font-size:.75rem; font-weight:700; color:#8898aa; text-transform:uppercase; letter-spacing:.05em; display:block; margin-bottom:5px;">Confirm New Password</label>
+                    <label
+                        style="font-size:.75rem; font-weight:700; color:#8898aa; text-transform:uppercase; letter-spacing:.05em; display:block; margin-bottom:5px;">Confirm
+                        New Password</label>
                     <input type="password" id="pwConfirmInput" placeholder="Repeat new password"
                         style="width:100%; padding:9px 12px; border:1px solid #dde3f0; border-radius:8px; font-size:.85rem; font-family:'DM Sans',sans-serif; color:#344767; box-sizing:border-box;"
                         onfocus="this.style.borderColor='#1d8cf8'" onblur="this.style.borderColor='#dde3f0'"
@@ -5426,15 +5545,25 @@
     </div>
 
     <!-- Plan Upgrade Modal -->
-    <div id="planModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(8,14,36,0.92); backdrop-filter:blur(10px); z-index:10000; justify-content:center; align-items:center; opacity:0; transition:opacity 0.25s ease-in-out; padding:16px;">
-        <div style="width:95%; max-width:980px; transform:scale(0.93); transition:transform 0.25s ease-in-out;" id="planModalContent">
+    <div id="planModal"
+        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(8,14,36,0.92); backdrop-filter:blur(10px); z-index:10000; justify-content:center; align-items:center; opacity:0; transition:opacity 0.25s ease-in-out; padding:16px;">
+        <div style="width:95%; max-width:980px; transform:scale(0.93); transition:transform 0.25s ease-in-out;"
+            id="planModalContent">
 
             <!-- Header -->
             <div style="text-align:center; margin-bottom:32px; position:relative;">
-                <div style="display:inline-block; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15); border-radius:20px; padding:4px 14px; font-size:.7rem; font-weight:700; color:rgba(255,255,255,.6); letter-spacing:.1em; text-transform:uppercase; margin-bottom:14px;">SIMPLE PRICING</div>
-                <h2 style="font-family:'Sora',sans-serif; font-weight:800; color:#fff; font-size:1.8rem; margin:0 0 10px;">Choose the plan that fits your shop.</h2>
-                <p style="color:rgba(255,255,255,.5); font-size:.88rem; margin:0;">No hidden fees. Cancel any time. Current plan: <strong id="planModalCurrentPlan" style="color:#1d8cf8;">—</strong></p>
-                <button onclick="closePlanModal()" style="position:absolute; top:0; right:0; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); border-radius:8px; color:rgba(255,255,255,.5); font-size:1.1rem; width:34px; height:34px; cursor:pointer; display:grid; place-items:center; transition:background .2s;" onmouseover="this.style.background='rgba(255,255,255,.15)'" onmouseout="this.style.background='rgba(255,255,255,.08)'">×</button>
+                <div
+                    style="display:inline-block; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15); border-radius:20px; padding:4px 14px; font-size:.7rem; font-weight:700; color:rgba(255,255,255,.6); letter-spacing:.1em; text-transform:uppercase; margin-bottom:14px;">
+                    SIMPLE PRICING</div>
+                <h2
+                    style="font-family:'Sora',sans-serif; font-weight:800; color:#fff; font-size:1.8rem; margin:0 0 10px;">
+                    Choose the plan that fits your shop.</h2>
+                <p style="color:rgba(255,255,255,.5); font-size:.88rem; margin:0;">No hidden fees. Cancel any time.
+                    Current plan: <strong id="planModalCurrentPlan" style="color:#1d8cf8;">—</strong></p>
+                <button onclick="closePlanModal()"
+                    style="position:absolute; top:0; right:0; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); border-radius:8px; color:rgba(255,255,255,.5); font-size:1.1rem; width:34px; height:34px; cursor:pointer; display:grid; place-items:center; transition:background .2s;"
+                    onmouseover="this.style.background='rgba(255,255,255,.15)'"
+                    onmouseout="this.style.background='rgba(255,255,255,.08)'">×</button>
             </div>
 
             <!-- Plan Cards -->
@@ -5443,89 +5572,165 @@
                 <!-- PRO -->
                 <div class="plan-card" data-plan="Pro" onclick="selectPlan(this)"
                     style="background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); border-radius:18px; padding:28px 24px; cursor:pointer; transition:all .25s; position:relative; display:flex; flex-direction:column;">
-                    <div style="font-size:.7rem; font-weight:700; color:rgba(255,255,255,.4); text-transform:uppercase; letter-spacing:.1em; margin-bottom:10px;">PRO</div>
+                    <div
+                        style="font-size:.7rem; font-weight:700; color:rgba(255,255,255,.4); text-transform:uppercase; letter-spacing:.1em; margin-bottom:10px;">
+                        PRO</div>
                     <div style="display:flex; align-items:flex-end; gap:4px; margin-bottom:6px;">
-                        <span style="font-family:'Sora',sans-serif; font-size:2.4rem; font-weight:800; color:#fff; line-height:1;">₱999</span>
+                        <span
+                            style="font-family:'Sora',sans-serif; font-size:2.4rem; font-weight:800; color:#fff; line-height:1;">₱999</span>
                         <span style="color:rgba(255,255,255,.4); font-size:.82rem; margin-bottom:6px;">/mo</span>
                     </div>
-                    <p style="color:rgba(255,255,255,.45); font-size:.78rem; margin:0 0 20px; line-height:1.5;">Perfect for small print shops just getting started with digital order management.</p>
-                    <ul style="list-style:none; padding:0; margin:0 0 24px; display:flex; flex-direction:column; gap:10px; flex:1;">
-                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> Up to <strong style="color:#fff;">200 jobs/month</strong></li>
-                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> All 6 product types</li>
-                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> Standard + Rush turnaround</li>
-                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> ₱25,000 monthly credits</li>
-                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> Real-time order tracking</li>
-                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> Proof review & approval</li>
-                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> 500MB file storage</li>
-                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> Basic analytics</li>
-                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> Email support</li>
+                    <p style="color:rgba(255,255,255,.45); font-size:.78rem; margin:0 0 20px; line-height:1.5;">Perfect
+                        for small print shops just getting started with digital order management.</p>
+                    <ul
+                        style="list-style:none; padding:0; margin:0 0 24px; display:flex; flex-direction:column; gap:10px; flex:1;">
+                        <li
+                            style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);">
+                            <span style="color:#2dce89; font-size:.9rem;">✔</span> Up to <strong style="color:#fff;">200
+                                jobs/month</strong></li>
+                        <li
+                            style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);">
+                            <span style="color:#2dce89; font-size:.9rem;">✔</span> All 6 product types</li>
+                        <li
+                            style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);">
+                            <span style="color:#2dce89; font-size:.9rem;">✔</span> Standard + Rush turnaround</li>
+                        <li
+                            style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);">
+                            <span style="color:#2dce89; font-size:.9rem;">✔</span> ₱25,000 monthly credits</li>
+                        <li
+                            style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);">
+                            <span style="color:#2dce89; font-size:.9rem;">✔</span> Real-time order tracking</li>
+                        <li
+                            style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);">
+                            <span style="color:#2dce89; font-size:.9rem;">✔</span> Proof review & approval</li>
+                        <li
+                            style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);">
+                            <span style="color:#2dce89; font-size:.9rem;">✔</span> 500MB file storage</li>
+                        <li
+                            style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);">
+                            <span style="color:#2dce89; font-size:.9rem;">✔</span> Basic analytics</li>
+                        <li
+                            style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);">
+                            <span style="color:#2dce89; font-size:.9rem;">✔</span> Email support</li>
                     </ul>
                     <button class="plan-select-btn" data-plan="Pro" onclick="selectPlan(this.closest('.plan-card'))"
                         style="width:100%; padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.08); color:#fff; font-size:.85rem; font-weight:700; cursor:pointer; transition:all .2s; font-family:'DM Sans',sans-serif;"
-                        onmouseover="this.style.background='rgba(255,255,255,.15)'" onmouseout="this.style.background='rgba(255,255,255,.08)'">Get Started</button>
+                        onmouseover="this.style.background='rgba(255,255,255,.15)'"
+                        onmouseout="this.style.background='rgba(255,255,255,.08)'">Get Started</button>
                 </div>
 
                 <!-- PREMIUM — highlighted -->
                 <div class="plan-card" data-plan="Premium" onclick="selectPlan(this)"
                     style="background:linear-gradient(135deg,#1d8cf8,#0070e0); border:2px solid rgba(255,255,255,.25); border-radius:18px; padding:28px 24px; cursor:pointer; transition:all .25s; position:relative; display:flex; flex-direction:column; box-shadow:0 8px 40px rgba(29,140,248,.35); transform:translateY(-6px);">
-                    <div style="position:absolute; top:-14px; left:50%; transform:translateX(-50%); background:#2dce89; color:#fff; font-size:.65rem; font-weight:800; padding:4px 14px; border-radius:20px; letter-spacing:.08em; white-space:nowrap;">MOST POPULAR</div>
-                    <div style="font-size:.7rem; font-weight:700; color:rgba(255,255,255,.6); text-transform:uppercase; letter-spacing:.1em; margin-bottom:10px;">PREMIUM</div>
+                    <div
+                        style="position:absolute; top:-14px; left:50%; transform:translateX(-50%); background:#2dce89; color:#fff; font-size:.65rem; font-weight:800; padding:4px 14px; border-radius:20px; letter-spacing:.08em; white-space:nowrap;">
+                        MOST POPULAR</div>
+                    <div
+                        style="font-size:.7rem; font-weight:700; color:rgba(255,255,255,.6); text-transform:uppercase; letter-spacing:.1em; margin-bottom:10px;">
+                        PREMIUM</div>
                     <div style="display:flex; align-items:flex-end; gap:4px; margin-bottom:6px;">
-                        <span style="font-family:'Sora',sans-serif; font-size:2.4rem; font-weight:800; color:#fff; line-height:1;">₱1,899</span>
+                        <span
+                            style="font-family:'Sora',sans-serif; font-size:2.4rem; font-weight:800; color:#fff; line-height:1;">₱1,899</span>
                         <span style="color:rgba(255,255,255,.6); font-size:.82rem; margin-bottom:6px;">/mo</span>
                     </div>
-                    <p style="color:rgba(255,255,255,.7); font-size:.78rem; margin:0 0 20px; line-height:1.5;">Designed for growing teams managing multiple customers and high-volume daily orders.</p>
-                    <ul style="list-style:none; padding:0; margin:0 0 24px; display:flex; flex-direction:column; gap:10px; flex:1;">
-                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:#fff;"><span style="color:#fff; font-size:.9rem;">✔</span> Up to <strong>2,000 jobs/month</strong></li>
-                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:#fff;"><span style="color:#fff; font-size:.9rem;">✔</span> Everything in Pro</li>
-                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:#fff;"><span style="color:#fff; font-size:.9rem;">✔</span> All product types + custom sizes</li>
-                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:#fff;"><span style="color:#fff; font-size:.9rem;">✔</span> ₱75,000 monthly credits</li>
-                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:#fff;"><span style="color:#fff; font-size:.9rem;">✔</span> <strong>5% discount</strong> on all orders</li>
-                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:#fff;"><span style="color:#fff; font-size:.9rem;">✔</span> Advanced analytics</li>
-                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:#fff;"><span style="color:#fff; font-size:.9rem;">✔</span> Global fulfillment options</li>
-                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:#fff;"><span style="color:#fff; font-size:.9rem;">✔</span> 2GB file storage</li>
-                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:#fff;"><span style="color:#fff; font-size:.9rem;">✔</span> Priority support (phone + email)</li>
+                    <p style="color:rgba(255,255,255,.7); font-size:.78rem; margin:0 0 20px; line-height:1.5;">Designed
+                        for growing teams managing multiple customers and high-volume daily orders.</p>
+                    <ul
+                        style="list-style:none; padding:0; margin:0 0 24px; display:flex; flex-direction:column; gap:10px; flex:1;">
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:#fff;"><span
+                                style="color:#fff; font-size:.9rem;">✔</span> Up to <strong>2,000 jobs/month</strong>
+                        </li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:#fff;"><span
+                                style="color:#fff; font-size:.9rem;">✔</span> Everything in Pro</li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:#fff;"><span
+                                style="color:#fff; font-size:.9rem;">✔</span> All product types + custom sizes</li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:#fff;"><span
+                                style="color:#fff; font-size:.9rem;">✔</span> ₱75,000 monthly credits</li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:#fff;"><span
+                                style="color:#fff; font-size:.9rem;">✔</span> <strong>5% discount</strong> on all orders
+                        </li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:#fff;"><span
+                                style="color:#fff; font-size:.9rem;">✔</span> Advanced analytics</li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:#fff;"><span
+                                style="color:#fff; font-size:.9rem;">✔</span> Global fulfillment options</li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:#fff;"><span
+                                style="color:#fff; font-size:.9rem;">✔</span> 2GB file storage</li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:#fff;"><span
+                                style="color:#fff; font-size:.9rem;">✔</span> Priority support (phone + email)</li>
                     </ul>
                     <button class="plan-select-btn" data-plan="Premium" onclick="selectPlan(this.closest('.plan-card'))"
                         style="width:100%; padding:12px; border-radius:10px; border:none; background:#fff; color:#1d8cf8; font-size:.85rem; font-weight:800; cursor:pointer; transition:all .2s; font-family:'DM Sans',sans-serif;"
-                        onmouseover="this.style.background='rgba(255,255,255,.9)'" onmouseout="this.style.background='#fff'">Get Started</button>
+                        onmouseover="this.style.background='rgba(255,255,255,.9)'"
+                        onmouseout="this.style.background='#fff'">Get Started</button>
                 </div>
 
                 <!-- PREMIUM+ -->
                 <div class="plan-card" data-plan="Premium+" onclick="selectPlan(this)"
                     style="background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); border-radius:18px; padding:28px 24px; cursor:pointer; transition:all .25s; position:relative; display:flex; flex-direction:column;">
-                    <div style="font-size:.7rem; font-weight:700; color:rgba(255,255,255,.4); text-transform:uppercase; letter-spacing:.1em; margin-bottom:10px;">PREMIUM+</div>
+                    <div
+                        style="font-size:.7rem; font-weight:700; color:rgba(255,255,255,.4); text-transform:uppercase; letter-spacing:.1em; margin-bottom:10px;">
+                        PREMIUM+</div>
                     <div style="display:flex; align-items:flex-end; gap:4px; margin-bottom:6px;">
-                        <span style="font-family:'Sora',sans-serif; font-size:2.4rem; font-weight:800; color:#fff; line-height:1;">₱2,199</span>
+                        <span
+                            style="font-family:'Sora',sans-serif; font-size:2.4rem; font-weight:800; color:#fff; line-height:1;">₱2,199</span>
                         <span style="color:rgba(255,255,255,.4); font-size:.82rem; margin-bottom:6px;">/mo</span>
                     </div>
-                    <p style="color:rgba(255,255,255,.45); font-size:.78rem; margin:0 0 20px; line-height:1.5;">For high-volume print operations with custom workflows and dedicated SLA guarantees.</p>
-                    <ul style="list-style:none; padding:0; margin:0 0 24px; display:flex; flex-direction:column; gap:10px; flex:1;">
-                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> <strong style="color:#fff;">Unlimited jobs</strong></li>
-                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> Everything in Premium</li>
-                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> <strong style="color:#fff;">Unlimited credits</strong></li>
-                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> <strong style="color:#fff;">10% discount</strong> on all orders</li>
-                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> 10GB file storage</li>
-                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> Custom integrations</li>
-                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> <strong style="color:#fff;">Dedicated account manager</strong></li>
-                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> 99.99% uptime SLA</li>
-                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> White-label options</li>
+                    <p style="color:rgba(255,255,255,.45); font-size:.78rem; margin:0 0 20px; line-height:1.5;">For
+                        high-volume print operations with custom workflows and dedicated SLA guarantees.</p>
+                    <ul
+                        style="list-style:none; padding:0; margin:0 0 24px; display:flex; flex-direction:column; gap:10px; flex:1;">
+                        <li
+                            style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);">
+                            <span style="color:#2dce89; font-size:.9rem;">✔</span> <strong style="color:#fff;">Unlimited
+                                jobs</strong></li>
+                        <li
+                            style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);">
+                            <span style="color:#2dce89; font-size:.9rem;">✔</span> Everything in Premium</li>
+                        <li
+                            style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);">
+                            <span style="color:#2dce89; font-size:.9rem;">✔</span> <strong style="color:#fff;">Unlimited
+                                credits</strong></li>
+                        <li
+                            style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);">
+                            <span style="color:#2dce89; font-size:.9rem;">✔</span> <strong style="color:#fff;">10%
+                                discount</strong> on all orders</li>
+                        <li
+                            style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);">
+                            <span style="color:#2dce89; font-size:.9rem;">✔</span> 10GB file storage</li>
+                        <li
+                            style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);">
+                            <span style="color:#2dce89; font-size:.9rem;">✔</span> Custom integrations</li>
+                        <li
+                            style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);">
+                            <span style="color:#2dce89; font-size:.9rem;">✔</span> <strong style="color:#fff;">Dedicated
+                                account manager</strong></li>
+                        <li
+                            style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);">
+                            <span style="color:#2dce89; font-size:.9rem;">✔</span> 99.99% uptime SLA</li>
+                        <li
+                            style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);">
+                            <span style="color:#2dce89; font-size:.9rem;">✔</span> White-label options</li>
                     </ul>
-                    <button class="plan-select-btn" data-plan="Premium+" onclick="selectPlan(this.closest('.plan-card'))"
+                    <button class="plan-select-btn" data-plan="Premium+"
+                        onclick="selectPlan(this.closest('.plan-card'))"
                         style="width:100%; padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.08); color:#fff; font-size:.85rem; font-weight:700; cursor:pointer; transition:all .2s; font-family:'DM Sans',sans-serif;"
-                        onmouseover="this.style.background='rgba(255,255,255,.15)'" onmouseout="this.style.background='rgba(255,255,255,.08)'">Contact Sales</button>
+                        onmouseover="this.style.background='rgba(255,255,255,.15)'"
+                        onmouseout="this.style.background='rgba(255,255,255,.08)'">Contact Sales</button>
                 </div>
 
             </div>
 
             <!-- Footer note + confirm -->
-            <div style="text-align:center; margin-top:24px; display:flex; flex-direction:column; align-items:center; gap:12px;">
+            <div
+                style="text-align:center; margin-top:24px; display:flex; flex-direction:column; align-items:center; gap:12px;">
                 <span id="planModalMsg" style="font-size:.82rem; color:rgba(255,255,255,.5);"></span>
                 <button id="confirmPlanBtn" onclick="confirmPlanChange()" disabled
                     style="padding:12px 40px; border:none; border-radius:10px; background:#1d8cf8; color:#fff; font-size:.88rem; font-weight:700; cursor:pointer; opacity:.4; transition:all .2s; font-family:'DM Sans',sans-serif;">
                     Confirm Plan Change
                 </button>
-                <p style="color:rgba(255,255,255,.3); font-size:.75rem; margin:0;">Need a custom plan? <a href="mailto:support@printpro.com" style="color:rgba(255,255,255,.5); text-decoration:underline;">Talk to our team →</a></p>
+                <p style="color:rgba(255,255,255,.3); font-size:.75rem; margin:0;">Need a custom plan? <a
+                        href="mailto:support@printpro.com"
+                        style="color:rgba(255,255,255,.5); text-decoration:underline;">Talk to our team →</a></p>
             </div>
         </div>
     </div>
@@ -5733,7 +5938,7 @@
 
                 // Calculate Spend and Paid to Date from transactions
                 let totalSpent = 0;
-                let totalPaid  = 0;
+                let totalPaid = 0;
                 const monthlyMap = {}; // 'YYYY-MM' → amount spent
 
                 if (data.transactions && data.transactions.length > 0) {
@@ -5770,7 +5975,7 @@
                     const now = new Date();
                     for (let i = 5; i >= 0; i--) {
                         const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-                        const key   = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+                        const key = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
                         const label = d.toLocaleDateString('en-US', { month: 'short' });
                         months.push({ key, label, amount: monthlyMap[key] || 0 });
                     }
@@ -5801,7 +6006,7 @@
 
         async function billingLoadSubscription() {
             try {
-                const res  = await fetch('api/get_profile.php');
+                const res = await fetch('api/get_profile.php');
                 const data = await res.json();
                 if (!data.success) return;
 
@@ -5861,7 +6066,7 @@
         // ══════════════════════════════════════════════════════
 
         let _selectedPlan = null;
-        let _currentPlan  = null;
+        let _currentPlan = null;
 
         function openPlanModal() {
             _selectedPlan = null;
@@ -5968,10 +6173,10 @@
             try {
                 const sess = JSON.parse(sessionStorage.getItem('pp_user') || '{}');
                 userId = sess.id || sess.user_id || null;
-            } catch(e) {}
+            } catch (e) { }
 
             try {
-                const res  = await fetch('api/update_subscription.php', {
+                const res = await fetch('api/update_subscription.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ plan: _selectedPlan, user_id: userId })
@@ -6022,7 +6227,7 @@
         }
 
         // Close modal on backdrop click
-        document.getElementById('planModal').addEventListener('click', function(e) {
+        document.getElementById('planModal').addEventListener('click', function (e) {
             if (e.target === this) closePlanModal();
         });
 
@@ -6033,9 +6238,9 @@
             document.querySelectorAll('#walletTxList .wallet-tx-item').forEach(item => {
                 const cols = item.querySelectorAll('div');
                 const label = cols[1]?.querySelector('div:first-child')?.textContent?.trim() || '';
-                const date  = cols[1]?.querySelector('div:last-child')?.textContent?.trim() || '';
-                const amt   = item.querySelector('.wallet-tx-amt')?.textContent?.trim() || '';
-                const type  = amt.startsWith('+') ? 'Credit Added' : 'Order Deducted';
+                const date = cols[1]?.querySelector('div:last-child')?.textContent?.trim() || '';
+                const amt = item.querySelector('.wallet-tx-amt')?.textContent?.trim() || '';
+                const type = amt.startsWith('+') ? 'Credit Added' : 'Order Deducted';
                 rows.push([date, label, type, amt]);
             });
 
@@ -6046,10 +6251,10 @@
 
             const csv = rows.map(r => r.map(c => '"' + String(c).replace(/"/g, '""') + '"').join(',')).join('\n');
             const blob = new Blob([csv], { type: 'text/csv' });
-            const url  = URL.createObjectURL(blob);
-            const a    = document.createElement('a');
-            a.href     = url;
-            a.download = 'printpro_transactions_' + new Date().toISOString().slice(0,10) + '.csv';
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'printpro_transactions_' + new Date().toISOString().slice(0, 10) + '.csv';
             a.click();
             URL.revokeObjectURL(url);
         }
@@ -6347,8 +6552,8 @@
                     const orders = data.data;
 
                     // ── Update KPI: Active Orders ──
-                    const activeStatuses = ['Prepress','Printing','Finishing','Shipping','Proof Pending','Proof Pending Review'];
-                    const activeOrders  = orders.filter(o => activeStatuses.includes(o.status));
+                    const activeStatuses = ['Prepress', 'Printing', 'Finishing', 'Shipping', 'Proof Pending', 'Proof Pending Review'];
+                    const activeOrders = orders.filter(o => activeStatuses.includes(o.status));
                     const kpiActive = document.getElementById('kpiActiveOrders');
                     if (kpiActive) kpiActive.textContent = activeOrders.length;
 
@@ -6359,10 +6564,10 @@
                             subtitle.textContent = 'You have no active orders yet. Start your first project by clicking the button below!';
                         } else {
                             const proofReady = orders.filter(o => o.status === 'Proof Pending Review' && o.proof_file);
-                            const shipping   = orders.filter(o => o.status === 'Shipping');
+                            const shipping = orders.filter(o => o.status === 'Shipping');
                             const parts = [];
                             if (proofReady.length > 0) parts.push(`${proofReady.length} proof${proofReady.length > 1 ? 's' : ''} ready for review`);
-                            if (shipping.length > 0)   parts.push(`${shipping.length} active shipment${shipping.length > 1 ? 's' : ''}`);
+                            if (shipping.length > 0) parts.push(`${shipping.length} active shipment${shipping.length > 1 ? 's' : ''}`);
                             if (activeOrders.length > 0 && parts.length === 0) parts.push(`${activeOrders.length} order${activeOrders.length > 1 ? 's' : ''} in progress`);
                             subtitle.textContent = parts.length > 0 ? 'You have ' + parts.join(' and ') + '.' : 'All caught up! Place a new order anytime.';
                         }
@@ -6379,7 +6584,7 @@
                                 // Also update plan name
                                 const planEl = document.getElementById('dashboardPlanName');
                                 if (planEl && user.subscription_plan) planEl.textContent = user.subscription_plan;
-                            } catch(e) {}
+                            } catch (e) { }
                         }
                     }
 
@@ -6420,32 +6625,32 @@
                         if (orders.length === 0) {
                             ordersTbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 60px; color: var(--muted);"><i class="bi bi-box-seam" style="font-size: 3rem; display: block; margin-bottom: 15px; opacity: 0.2;"></i><p>No orders found</p></td></tr>`;
                         } else {
-                                orders.forEach(o => {
-                                    let actionCell = '—';
-                                    if (o.status === 'Proof Pending Review' && o.proof_file) {
-                                        actionCell = `<button class="btn btn-sm" style="padding:4px 10px; font-size:.78rem; border-radius:6px; background:var(--accent); color:#fff; border:none; display:inline-flex; align-items:center; gap:4px; font-weight:600;" onclick="openClientProofModal(${o.id})"><i class="bi bi-file-earmark-check"></i> Review Proof</button>`;
-                                    }
-                                    const cancellable = ['Proof Pending','Proof Pending Review','Prepress'];
-                                    const cancelBtn = cancellable.includes(o.status)
-                                        ? `<button style="padding:4px 10px; font-size:.75rem; border-radius:6px; background:rgba(245,54,92,.1); color:#f5365c; border:1px solid rgba(245,54,92,.2); font-weight:600; cursor:pointer; margin-left:4px;" onclick="openCancelOrderModal(${o.id},'${o.order_number || 'PPR-' + String(o.id).padStart(3,'0')}')">Cancel</button>`
-                                        : '';
+                            orders.forEach(o => {
+                                let actionCell = '—';
+                                if (o.status === 'Proof Pending Review' && o.proof_file) {
+                                    actionCell = `<button class="btn btn-sm" style="padding:4px 10px; font-size:.78rem; border-radius:6px; background:var(--accent); color:#fff; border:none; display:inline-flex; align-items:center; gap:4px; font-weight:600;" onclick="openClientProofModal(${o.id})"><i class="bi bi-file-earmark-check"></i> Review Proof</button>`;
+                                }
+                                const cancellable = ['Proof Pending', 'Proof Pending Review', 'Prepress'];
+                                const cancelBtn = cancellable.includes(o.status)
+                                    ? `<button style="padding:4px 10px; font-size:.75rem; border-radius:6px; background:rgba(245,54,92,.1); color:#f5365c; border:1px solid rgba(245,54,92,.2); font-weight:600; cursor:pointer; margin-left:4px;" onclick="openCancelOrderModal(${o.id},'${o.order_number || 'PPR-' + String(o.id).padStart(3, '0')}')">Cancel</button>`
+                                    : '';
 
-                                    let statusCell = '';
-                                    if (o.status === 'Cancelled') {
-                                        const reason = o.rejection_reason || '';
-                                        const reasonHtml = reason
-                                            ? `<div style="font-size:.68rem;color:#8898aa;margin-top:3px;max-width:160px;white-space:normal;line-height:1.3;">↩ Refunded · ${reason.length > 40 ? reason.substring(0,40)+'…' : reason}</div>`
-                                            : `<div style="font-size:.68rem;color:#2dce89;margin-top:2px;">↩ Credits refunded</div>`;
-                                        statusCell = `<div><span class="badge-status badge-danger">Cancelled</span>${reasonHtml}</div>`;
-                                    } else {
-                                        const displayStatus = o.status || 'Proof Pending';
-                                        statusCell = `<span class="badge-status ${getStatusClass(displayStatus)}">${displayStatus}</span>`;
-                                    }
+                                let statusCell = '';
+                                if (o.status === 'Cancelled') {
+                                    const reason = o.rejection_reason || '';
+                                    const reasonHtml = reason
+                                        ? `<div style="font-size:.68rem;color:#8898aa;margin-top:3px;max-width:160px;white-space:normal;line-height:1.3;">↩ Refunded · ${reason.length > 40 ? reason.substring(0, 40) + '…' : reason}</div>`
+                                        : `<div style="font-size:.68rem;color:#2dce89;margin-top:2px;">↩ Credits refunded</div>`;
+                                    statusCell = `<div><span class="badge-status badge-danger">Cancelled</span>${reasonHtml}</div>`;
+                                } else {
+                                    const displayStatus = o.status || 'Proof Pending';
+                                    statusCell = `<span class="badge-status ${getStatusClass(displayStatus)}">${displayStatus}</span>`;
+                                }
 
-                                    const dueStr = o.due_date ? new Date(o.due_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : '—';
-                                    const totalStr = parseFloat(o.total_price || 0).toLocaleString(undefined, { minimumFractionDigits: 2 });
+                                const dueStr = o.due_date ? new Date(o.due_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : '—';
+                                const totalStr = parseFloat(o.total_price || 0).toLocaleString(undefined, { minimumFractionDigits: 2 });
 
-                                    const tr = `<tr data-status="${(o.status || '').toLowerCase()}">
+                                const tr = `<tr data-status="${(o.status || '').toLowerCase()}">
                                         <td style="font-weight:600;">${o.order_number || '#ORD-' + o.id}</td>
                                         <td>${o.job_name || o.product_type || '—'}</td>
                                         <td>${o.product_type || '—'}</td>
@@ -6455,8 +6660,8 @@
                                         <td style="font-weight:700;">₱${totalStr}</td>
                                         <td style="white-space:nowrap;">${actionCell}${cancelBtn}</td>
                                     </tr>`;
-                                    ordersTbody.innerHTML += tr;
-                                });
+                                ordersTbody.innerHTML += tr;
+                            });
                         }
                     }
                 }
@@ -6494,27 +6699,27 @@
         function openOrderConfirmModal() {
             // Populate summary from current form state
             const activeBtn = document.querySelector('.product-types .pt-btn.active');
-            const product   = activeBtn ? activeBtn.textContent.trim() : 'Flyers';
-            const qty       = document.getElementById('qtyVal').value || document.getElementById('qtySlider').value;
-            const w         = document.getElementById('customWidth').value;
-            const h         = document.getElementById('customHeight').value;
-            const paperSel  = document.getElementById('paperSelect');
-            const paper     = paperSel.options[paperSel.selectedIndex]?.text || '—';
+            const product = activeBtn ? activeBtn.textContent.trim() : 'Flyers';
+            const qty = document.getElementById('qtyVal').value || document.getElementById('qtySlider').value;
+            const w = document.getElementById('customWidth').value;
+            const h = document.getElementById('customHeight').value;
+            const paperSel = document.getElementById('paperSelect');
+            const paper = paperSel.options[paperSel.selectedIndex]?.text || '—';
             const finishSel = document.getElementById('finishSelect');
-            const finish    = finishSel.options[finishSel.selectedIndex]?.text || '—';
-            const taSel     = document.getElementById('turnaroundSelect');
-            const ta        = taSel.options[taSel.selectedIndex]?.text || '—';
-            const artwork   = document.getElementById('sumArtwork')?.textContent || '—';
-            const total     = document.getElementById('summaryTotal')?.textContent || '₱—';
+            const finish = finishSel.options[finishSel.selectedIndex]?.text || '—';
+            const taSel = document.getElementById('turnaroundSelect');
+            const ta = taSel.options[taSel.selectedIndex]?.text || '—';
+            const artwork = document.getElementById('sumArtwork')?.textContent || '—';
+            const total = document.getElementById('summaryTotal')?.textContent || '₱—';
 
-            document.getElementById('confirmProduct').textContent    = product;
-            document.getElementById('confirmQty').textContent        = parseInt(qty).toLocaleString() + ' units';
-            document.getElementById('confirmSize').textContent       = w + '" × ' + h + '"';
-            document.getElementById('confirmPaper').textContent      = paper;
-            document.getElementById('confirmFinish').textContent     = finish;
+            document.getElementById('confirmProduct').textContent = product;
+            document.getElementById('confirmQty').textContent = parseInt(qty).toLocaleString() + ' units';
+            document.getElementById('confirmSize').textContent = w + '" × ' + h + '"';
+            document.getElementById('confirmPaper').textContent = paper;
+            document.getElementById('confirmFinish').textContent = finish;
             document.getElementById('confirmTurnaround').textContent = ta;
-            document.getElementById('confirmArtwork').textContent    = artwork;
-            document.getElementById('confirmTotal').textContent      = total;
+            document.getElementById('confirmArtwork').textContent = artwork;
+            document.getElementById('confirmTotal').textContent = total;
 
             const modal = document.getElementById('orderConfirmModal');
             modal.style.display = 'flex';
@@ -6528,7 +6733,7 @@
             setTimeout(() => { modal.style.display = 'none'; }, 200);
         }
 
-        document.getElementById('orderConfirmModal').addEventListener('click', function(e) {
+        document.getElementById('orderConfirmModal').addEventListener('click', function (e) {
             if (e.target === this) closeOrderConfirmModal();
         });
 
@@ -6562,10 +6767,10 @@
 
         async function submitCancelOrder() {
             const orderId = document.getElementById('cancelOrderId').value;
-            const select  = document.getElementById('cancelReasonSelect');
+            const select = document.getElementById('cancelReasonSelect');
             const textarea = document.getElementById('cancelReasonText');
-            const msg     = document.getElementById('cancelModalMsg');
-            const btn     = document.getElementById('cancelSubmitBtn');
+            const msg = document.getElementById('cancelModalMsg');
+            const btn = document.getElementById('cancelSubmitBtn');
 
             let reason = select.value;
             if (reason === 'Other') reason = textarea.value.trim();
@@ -6577,7 +6782,7 @@
             formData.append('reason', reason);
 
             try {
-                const res  = await fetch('api/cancel_order.php', { method: 'POST', body: formData });
+                const res = await fetch('api/cancel_order.php', { method: 'POST', body: formData });
                 const data = await res.json();
                 if (data.success) {
                     closeCancelOrderModal();
@@ -6600,7 +6805,7 @@
             }
         }
 
-        document.getElementById('cancelOrderModal').addEventListener('click', function(e) {
+        document.getElementById('cancelOrderModal').addEventListener('click', function (e) {
             if (e.target === this) closeCancelOrderModal();
         });
 
@@ -6613,12 +6818,12 @@
             container.innerHTML = `<div style="text-align:center;padding:40px;color:var(--muted);"><i class="bi bi-arrow-repeat" style="font-size:1.5rem;display:block;margin-bottom:8px;opacity:.3;"></i>Loading…</div>`;
 
             try {
-                const res  = await fetch('api/get_orders.php');
+                const res = await fetch('api/get_orders.php');
                 const data = await res.json();
                 if (!data.success) throw new Error(data.message);
 
                 const orders = data.data;
-                const activeStatuses = ['Prepress','Printing','Finishing','Shipping','Proof Pending','Proof Pending Review'];
+                const activeStatuses = ['Prepress', 'Printing', 'Finishing', 'Shipping', 'Proof Pending', 'Proof Pending Review'];
                 const active = orders.filter(o => activeStatuses.includes(o.status));
 
                 if (active.length === 0) {
@@ -6632,13 +6837,13 @@
                     return;
                 }
 
-                const steps = ['Prepress','Printing','Finishing','Shipping','Delivered'];
+                const steps = ['Prepress', 'Printing', 'Finishing', 'Shipping', 'Delivered'];
 
                 container.innerHTML = active.map(o => {
-                    const orderNum = o.order_number || ('PPR-' + String(o.id).padStart(3,'0'));
-                    const jobName  = o.job_name || o.product_type || 'Print Job';
-                    const dueDate  = o.due_date ? new Date(o.due_date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—';
-                    const total    = parseFloat(o.total_price || o.total_amount || 0).toLocaleString('en-US',{minimumFractionDigits:2});
+                    const orderNum = o.order_number || ('PPR-' + String(o.id).padStart(3, '0'));
+                    const jobName = o.job_name || o.product_type || 'Print Job';
+                    const dueDate = o.due_date ? new Date(o.due_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—';
+                    const total = parseFloat(o.total_price || o.total_amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2 });
 
                     // Map status to step index
                     const statusMap = {
@@ -6701,7 +6906,7 @@
                                     <div class="track-detail-val" style="color:var(--accent);font-weight:700;">₱${total}</div>
                                 </div>
                             </div>
-                            ${['Proof Pending','Proof Pending Review','Prepress'].includes(o.status) ? `
+                            ${['Proof Pending', 'Proof Pending Review', 'Prepress'].includes(o.status) ? `
                             <div style="padding:12px 20px; border-top:1px solid var(--border); display:flex; justify-content:flex-end;">
                                 <button onclick="openCancelOrderModal(${o.id},'${orderNum}')" style="padding:6px 16px; font-size:.78rem; border-radius:6px; background:rgba(245,54,92,.08); color:#f5365c; border:1px solid rgba(245,54,92,.2); font-weight:600; cursor:pointer;">
                                     Cancel Order
@@ -6717,7 +6922,7 @@
 
         function escapeHtml(text) {
             if (!text) return '';
-            return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+            return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
         }
 
         // ══════════════════════════════════════════════════════
@@ -6743,10 +6948,10 @@
 
         async function submitPasswordChange() {
             const current = document.getElementById('pwCurrentInput').value.trim();
-            const newPw   = document.getElementById('pwNewInput').value.trim();
+            const newPw = document.getElementById('pwNewInput').value.trim();
             const confirm = document.getElementById('pwConfirmInput').value.trim();
-            const msg     = document.getElementById('pwModalMsg');
-            const btn     = document.getElementById('pwSubmitBtn');
+            const msg = document.getElementById('pwModalMsg');
+            const btn = document.getElementById('pwSubmitBtn');
 
             if (!current || !newPw || !confirm) { msg.textContent = 'Please fill in all fields.'; msg.style.color = '#f5365c'; return; }
             if (newPw.length < 6) { msg.textContent = 'New password must be at least 6 characters.'; msg.style.color = '#f5365c'; return; }
@@ -6759,7 +6964,7 @@
             formData.append('new_password', newPw);
 
             try {
-                const res  = await fetch('api/change_password.php', { method: 'POST', body: formData });
+                const res = await fetch('api/change_password.php', { method: 'POST', body: formData });
                 const data = await res.json();
                 if (data.success) {
                     msg.textContent = '✓ Password changed successfully!';
@@ -6777,7 +6982,7 @@
             }
         }
 
-        document.getElementById('passwordModal').addEventListener('click', function(e) {
+        document.getElementById('passwordModal').addEventListener('click', function (e) {
             if (e.target === this) closePasswordModal();
         });
 
@@ -6970,7 +7175,7 @@
 
             // Update current step
             currentWizardStep = stepNumber;
-            
+
             // Update UI
             updateWizardUI();
             hideAllStepErrors();
@@ -7023,12 +7228,12 @@
         function updateWizardUI() {
             // Update progress bar
             updateInteractiveProgressBar();
-            
+
             // Update navigation buttons
             const prevBtn = document.getElementById('prevBtn');
             const nextBtn = document.getElementById('nextBtn');
             const stepNum = document.getElementById('currentStepNum');
-            
+
             if (prevBtn) prevBtn.disabled = currentWizardStep === 1;
             if (nextBtn) {
                 if (currentWizardStep === totalSteps) {
@@ -7045,12 +7250,12 @@
             for (let i = 1; i <= totalSteps; i++) {
                 const stepElement = document.getElementById(`prog-step-${i}`);
                 const connElement = document.getElementById(`prog-conn-${i}`);
-                
+
                 if (!stepElement) continue;
-                
+
                 // Remove all classes
                 stepElement.classList.remove('active', 'done', 'disabled');
-                
+
                 // Determine step state
                 if (i < currentWizardStep) {
                     // Completed step
@@ -7068,7 +7273,7 @@
                     }
                     stepElement.querySelector('.prog-num').textContent = i;
                 }
-                
+
                 // Update connector
                 if (connElement) {
                     connElement.classList.toggle('done', i < currentWizardStep);
@@ -7080,7 +7285,7 @@
         function selectProductTypeEnhanced(button) {
             // Call original function
             selectProductType(button);
-            
+
             // Update wizard UI
             setTimeout(() => {
                 updateWizardUI();
@@ -7098,26 +7303,26 @@
             const hasFiles = (uploadedFiles && uploadedFiles.length > 0) || !!window.selectedSavedFileId;
             const attachedNotice = document.getElementById('artworkAttachedNotice');
             const fileCountSpan = document.getElementById('attachedFileCount');
-            
+
             if (hasFiles) {
                 // Show success notice
                 if (attachedNotice) {
                     attachedNotice.style.display = 'flex';
-                    
+
                     // Update file count
                     if (fileCountSpan) {
                         const fileCount = uploadedFiles ? uploadedFiles.length : 1;
                         fileCountSpan.textContent = fileCount === 1 ? '1 file' : `${fileCount} files`;
                     }
                 }
-                
+
                 // Hide any error messages
                 hideAllStepErrors();
             } else {
                 // Hide success notice
                 if (attachedNotice) attachedNotice.style.display = 'none';
             }
-            
+
             // Update wizard UI
             updateWizardUI();
         }
@@ -7126,7 +7331,7 @@
         function showFileRequiredWarning() {
             const requiredBadge = document.getElementById('requiredBadge');
             const requiredNotice = document.getElementById('artworkRequiredNotice');
-            
+
             if (requiredBadge) requiredBadge.style.display = 'inline';
             if (requiredNotice) requiredNotice.style.display = 'flex';
         }
@@ -7135,7 +7340,7 @@
         function hideFileRequiredWarning() {
             const requiredBadge = document.getElementById('requiredBadge');
             const requiredNotice = document.getElementById('artworkRequiredNotice');
-            
+
             if (requiredBadge) requiredBadge.style.display = 'none';
             if (requiredNotice) requiredNotice.style.display = 'none';
         }
@@ -7171,7 +7376,7 @@
             const qtyVal = document.getElementById('qtyVal');
             const qtySlider = document.getElementById('qtySlider');
             const fileInput = document.getElementById('file-upload-input');
-            
+
             if (paperSelect) {
                 paperSelect.addEventListener('change', () => {
                     handleFormChange();
@@ -7180,18 +7385,18 @@
                     }
                 });
             }
-            
+
             if (qtyVal) {
                 qtyVal.addEventListener('input', handleFormChange);
             }
-            
+
             if (qtySlider) {
                 qtySlider.addEventListener('input', handleFormChange);
             }
 
             // Set up file upload listener
             if (fileInput) {
-                fileInput.addEventListener('change', function(e) {
+                fileInput.addEventListener('change', function (e) {
                     if (e.target.files && e.target.files.length > 0) {
                         // Simulate file upload (you'll need to integrate with existing upload logic)
                         uploadedFiles = Array.from(e.target.files);
@@ -7205,10 +7410,10 @@
             productButtons.forEach(btn => {
                 btn.setAttribute('onclick', 'selectProductTypeEnhanced(this)');
             });
-            
+
             // Initial file attachment status check
             updateFileAttachmentStatus();
-            
+
             // Initial UI update
             updateWizardUI();
         }
@@ -7255,11 +7460,11 @@
         }
 
         // Add keyboard navigation support
-        document.addEventListener('keydown', function(e) {
+        document.addEventListener('keydown', function (e) {
             // Only handle keyboard navigation when on create order page
             const createPage = document.getElementById('c-create');
             if (!createPage || !createPage.classList.contains('active')) return;
-            
+
             if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
                 e.preventDefault();
                 nextStep();
@@ -8013,18 +8218,18 @@
 
             const activeProductBtn = document.querySelector('.product-types .pt-btn.active');
             const productType = activeProductBtn ? activeProductBtn.textContent.trim() : 'Flyers';
-            const sizeWidth   = parseFloat(document.getElementById('customWidth').value) || 4.0;
-            const sizeHeight  = parseFloat(document.getElementById('customHeight').value) || 6.0;
-            const paperSel    = document.getElementById('paperSelect');
+            const sizeWidth = parseFloat(document.getElementById('customWidth').value) || 4.0;
+            const sizeHeight = parseFloat(document.getElementById('customHeight').value) || 6.0;
+            const paperSel = document.getElementById('paperSelect');
             const paperWeight = paperSel.options[paperSel.selectedIndex]?.text || '';
-            const finishSel   = document.getElementById('finishSelect');
-            const finish      = finishSel.options[finishSel.selectedIndex]?.text || 'None';
-            const bleedSel    = document.getElementById('bleedSelect');
-            const bleed       = bleedSel.options[bleedSel.selectedIndex]?.text || 'With Bleed';
-            const turnaround  = document.getElementById('turnaroundSelect').value || 'standard';
-            const shipping    = document.getElementById('shippingSelect').value || 'free';
-            const notes       = document.getElementById('orderNotes')?.value || '';
-            const jobName     = (productType + ' Project');
+            const finishSel = document.getElementById('finishSelect');
+            const finish = finishSel.options[finishSel.selectedIndex]?.text || 'None';
+            const bleedSel = document.getElementById('bleedSelect');
+            const bleed = bleedSel.options[bleedSel.selectedIndex]?.text || 'With Bleed';
+            const turnaround = document.getElementById('turnaroundSelect').value || 'standard';
+            const shipping = document.getElementById('shippingSelect').value || 'free';
+            const notes = document.getElementById('orderNotes')?.value || '';
+            const jobName = (productType + ' Project');
 
             // Get total from currentPricingData (the authoritative source)
             const totalCost = currentPricingData
@@ -8042,17 +8247,17 @@
 
             const formData = new FormData();
             formData.append('product_type', productType);
-            formData.append('job_name',     jobName);
+            formData.append('job_name', jobName);
             formData.append('paper_weight', paperWeight);
-            formData.append('finish',       finish);
-            formData.append('bleed',        bleed);
-            formData.append('size_width',   sizeWidth);
-            formData.append('size_height',  sizeHeight);
-            formData.append('quantity',     _qty);
-            formData.append('turnaround',   turnaround);
-            formData.append('shipping',     shipping);
-            formData.append('total_price',  totalCost);
-            formData.append('notes',        notes);
+            formData.append('finish', finish);
+            formData.append('bleed', bleed);
+            formData.append('size_width', sizeWidth);
+            formData.append('size_height', sizeHeight);
+            formData.append('quantity', _qty);
+            formData.append('turnaround', turnaround);
+            formData.append('shipping', shipping);
+            formData.append('total_price', totalCost);
+            formData.append('notes', notes);
 
             if (uploadedFiles && uploadedFiles.length > 0) {
                 formData.append('artwork_file', uploadedFiles[0]);
@@ -8061,7 +8266,7 @@
             }
 
             try {
-                const res  = await fetch('api/place_order.php', { method: 'POST', body: formData });
+                const res = await fetch('api/place_order.php', { method: 'POST', body: formData });
                 const data = await res.json();
                 if (data.success) {
                     closeOrderConfirmModal();

@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     try {
         // Fetch current password hash
-        $stmt = $pdo->prepare("SELECT password_hash FROM users WHERE id = ?");
+        $stmt = $pdo->prepare("SELECT password_hash, password FROM users WHERE id = ?");
         $stmt->execute([$user_id]);
         $user = $stmt->fetch();
 
@@ -31,14 +31,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
 
-        // Verify current password (using password_verify)
-        // Note: In your schema sample data, passwords are plain text like 'admin123'. 
-        // Real apps should use password_hash(). I'll check if it's hashed.
+        $storedHash = $user['password_hash'] ?? '';
+        $storedPlain = $user['password'] ?? '';
         $is_correct = false;
-        if (password_verify($current_password, $user['password_hash'])) {
+
+        if (!empty($storedHash) && password_verify($current_password, $storedHash)) {
             $is_correct = true;
-        } else if ($current_password === $user['password_hash']) {
-            // Fallback for plain text passwords in sample data
+        } elseif ($current_password === $storedHash || $current_password === $storedPlain) {
             $is_correct = true;
         }
 
@@ -49,8 +48,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Update password (hash it!)
         $new_hash = password_hash($new_password, PASSWORD_DEFAULT);
-        $stmt = $pdo->prepare("UPDATE users SET password_hash = ? WHERE id = ?");
-        $stmt->execute([$new_hash, $user_id]);
+        $stmt = $pdo->prepare("UPDATE users SET password_hash = ?, password = ? WHERE id = ?");
+        $stmt->execute([$new_hash, $new_hash, $user_id]);
 
         echo json_encode(['success' => true, 'message' => 'Password changed successfully']);
     } catch (PDOException $e) {
@@ -59,4 +58,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 } else {
     echo json_encode(['success' => false, 'message' => 'Invalid request method']);
 }
-?>

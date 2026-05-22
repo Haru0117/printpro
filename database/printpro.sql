@@ -41,7 +41,7 @@ CREATE TABLE clients (
   id             INT UNSIGNED NOT NULL AUTO_INCREMENT,
   user_id        INT UNSIGNED NOT NULL,
   business_name  VARCHAR(160) NOT NULL,
-  industry       VARCHAR(100)     NULL,
+  industry       VARCHAR(100) NOT NULL DEFAULT 'Other',
   phone          VARCHAR(30)      NULL,
   address        TEXT             NULL,
   created_at     TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
