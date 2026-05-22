@@ -846,6 +846,23 @@
             align-items: center;
             gap: 8px;
             flex-shrink: 0;
+            cursor: pointer;
+            transition: all .2s;
+            padding: 4px 8px;
+            border-radius: 8px;
+        }
+
+        .order-progress-step:hover {
+            background: rgba(29, 140, 248, .05);
+        }
+
+        .order-progress-step.disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .order-progress-step.disabled:hover {
+            background: transparent;
         }
 
         .order-progress-step .prog-num {
@@ -887,6 +904,43 @@
 
         [data-theme="dark"] .order-progress { background: var(--dark-card); }
 
+        /* Mobile responsiveness for wizard navigation */
+        @media (max-width: 768px) {
+            .wizard-navigation {
+                position: sticky;
+                bottom: 0;
+                background: #fff;
+                border-top: 1px solid var(--border);
+                margin: 20px -16px -16px;
+                padding: 16px;
+                z-index: 10;
+            }
+            
+            html[data-theme="dark"] .wizard-navigation {
+                background: var(--dark-card);
+                border-top-color: var(--border);
+            }
+            
+            .nav-btn {
+                padding: 12px 16px;
+                font-size: .9rem;
+            }
+            
+            .order-progress {
+                padding: 12px 16px;
+                margin-bottom: 16px;
+            }
+            
+            .order-progress-step .prog-label {
+                display: none;
+            }
+            
+            .order-progress-connector {
+                margin: 0 4px;
+                min-width: 12px;
+            }
+        }
+
         /* ── SUMMARY CARD EXTRAS ── */
         .sum-section-title {
             font-size: .65rem;
@@ -904,6 +958,75 @@
             border-radius: 12px;
             border: 1px solid var(--border);
             overflow: hidden;
+            display: none;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all .3s ease;
+        }
+
+        .wizard-card.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .wizard-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding: 0 4px;
+        }
+
+        .nav-btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: .85rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all .2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .nav-btn-prev {
+            background: var(--off);
+            color: var(--muted);
+            border: 1px solid var(--border);
+        }
+
+        .nav-btn-prev:hover:not(:disabled) {
+            background: var(--border);
+            color: var(--navy);
+        }
+
+        .nav-btn-next {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .nav-btn-next:hover:not(:disabled) {
+            background: #1171ef;
+            transform: translateY(-1px);
+        }
+
+        .step-validation-error {
+            background: rgba(245, 54, 92, .08);
+            border: 1px solid rgba(245, 54, 92, .2);
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin-top: 12px;
+            font-size: .78rem;
+            color: #f5365c;
+            font-weight: 600;
+            display: none;
         }
 
         .wizard-hdr {
@@ -967,7 +1090,9 @@
         .pt-btn.active {
             border-color: var(--accent);
             color: var(--accent);
-            background: rgba(29, 140, 248, .06);
+            background: rgba(29, 140, 248, .15);
+            box-shadow: 0 0 0 2px rgba(29, 140, 248, .2);
+            font-weight: 600;
         }
 
         .pt-btn:hover:not(.active) {
@@ -4121,29 +4246,29 @@
 
                                 <!-- Step Progress Bar -->
                                 <div class="order-progress" id="orderProgressBar">
-                                    <div class="order-progress-step active" id="prog-step-1">
+                                    <div class="order-progress-step active" id="prog-step-1" onclick="goToStep(1)">
                                         <div class="prog-num">1</div>
                                         <div class="prog-label">Product</div>
                                     </div>
                                     <div class="order-progress-connector" id="prog-conn-1"></div>
-                                    <div class="order-progress-step" id="prog-step-2">
+                                    <div class="order-progress-step disabled" id="prog-step-2" onclick="goToStep(2)">
                                         <div class="prog-num">2</div>
                                         <div class="prog-label">Material & Size</div>
                                     </div>
                                     <div class="order-progress-connector" id="prog-conn-2"></div>
-                                    <div class="order-progress-step" id="prog-step-3">
+                                    <div class="order-progress-step disabled" id="prog-step-3" onclick="goToStep(3)">
                                         <div class="prog-num">3</div>
                                         <div class="prog-label">Quantity & Production</div>
                                     </div>
                                     <div class="order-progress-connector" id="prog-conn-3"></div>
-                                    <div class="order-progress-step" id="prog-step-4">
+                                    <div class="order-progress-step disabled" id="prog-step-4" onclick="goToStep(4)">
                                         <div class="prog-num">4</div>
                                         <div class="prog-label">Artwork</div>
                                     </div>
                                 </div>
 
                                 <!-- Step 1: Product Type -->
-                                <div class="wizard-card">
+                                <div class="wizard-card active" id="wizard-step-1">
                                     <div class="wizard-hdr">
                                         <div class="step-num">1</div>
                                         <div class="step-title">Product Type</div>
@@ -4162,12 +4287,18 @@
                                                     class="bi bi-envelope-open"></i>Mailers</button>
                                             <button class="pt-btn" onclick="selectProductType(this)"><i
                                                     class="bi bi-badge-cc"></i>Cards</button>
+                                            <button class="pt-btn" onclick="selectProductType(this)"><i
+                                                    class="bi bi-rulers"></i>Custom</button>
+                                        </div>
+                                        <div class="step-validation-error" id="step-1-error">
+                                            <i class="bi bi-exclamation-circle-fill"></i>
+                                            Please select a product type to continue.
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- Step 2: Dimensions & Material -->
-                                <div class="wizard-card">
+                                <div class="wizard-card" id="wizard-step-2">
                                     <div class="wizard-hdr">
                                         <div class="step-num">2</div>
                                         <div class="step-title">Dimensions &amp; Material</div>
@@ -4217,10 +4348,14 @@
                                                 </select>
                                             </div>
                                         </div>
+                                        <div class="step-validation-error" id="step-2-error">
+                                            <i class="bi bi-exclamation-circle-fill"></i>
+                                            Please select a paper type to continue.
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div class="wizard-card">
+                                <div class="wizard-card" id="wizard-step-3">
                                     <div class="wizard-hdr">
                                         <div class="step-num">3</div>
                                         <div class="step-title">Quantity &amp; Production</div>
@@ -4260,32 +4395,30 @@
                                                 </select>
                                             </div>
                                         </div>
+                                        <div class="step-validation-error" id="step-3-error">
+                                            <i class="bi bi-exclamation-circle-fill"></i>
+                                            Please ensure quantity is at least 50 units.
+                                        </div>
                                     </div>
                                 </div>
 
-                                <!-- Step 4: Special Instructions -->
-                                <div class="wizard-card">
+                                <!-- Step 4: Artwork & Files -->
+                                <div class="wizard-card" id="wizard-step-4">
                                     <div class="wizard-hdr">
                                         <div class="step-num">4</div>
-                                        <div class="step-title">Special Instructions</div>
+                                        <div class="step-title">Artwork &amp; Files <span id="requiredBadge" style="display:none;background:#f5365c;color:#fff;font-size:.6rem;font-weight:800;padding:2px 7px;border-radius:10px;vertical-align:middle;letter-spacing:.04em;">REQUIRED</span></div>
                                     </div>
                                     <div class="wizard-body">
-                                        <div class="form-label-sm">Notes (Optional)</div>
-                                        <textarea class="form-control-sm-pp" id="orderNotes" rows="3" placeholder="Any special instructions for your order..."></textarea>
-                                    </div>
-                                </div>
-
-                                <!-- Step 5: Artwork & Files -->
-                                <div class="wizard-card" id="artworkStep">
-                                    <div class="wizard-hdr">
-                                        <div class="step-num">5</div>
-                                        <div class="step-title">Artwork &amp; Files <span style="background:#f5365c;color:#fff;font-size:.6rem;font-weight:800;padding:2px 7px;border-radius:10px;vertical-align:middle;letter-spacing:.04em;">REQUIRED</span></div>
-                                    </div>
-                                    <div class="wizard-body">
-                                        <!-- Required notice -->
-                                        <div id="artworkRequiredNotice" style="display:flex;align-items:center;gap:8px;background:rgba(245,54,92,.08);border:1px solid rgba(245,54,92,.2);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:.78rem;color:#f5365c;font-weight:600;">
+                                        <!-- Required notice (only shown when user tries to order without files) -->
+                                        <div id="artworkRequiredNotice" style="display:none;align-items:center;gap:8px;background:rgba(245,54,92,.08);border:1px solid rgba(245,54,92,.2);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:.78rem;color:#f5365c;font-weight:600;">
                                             <i class="bi bi-exclamation-circle-fill"></i>
                                             You must attach your print-ready artwork file before placing an order. Accepted: PDF, AI, PSD, PNG, JPG (Max 500MB)
+                                        </div>
+
+                                        <!-- File attached confirmation (hidden by default) -->
+                                        <div id="artworkAttachedNotice" style="display:none;align-items:center;gap:8px;background:rgba(45,206,137,.08);border:1px solid rgba(45,206,137,.2);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:.78rem;color:#2dce89;font-weight:600;">
+                                            <i class="bi bi-check-circle-fill"></i>
+                                            <span id="attachedFileCount">1 file</span> attached successfully. You can upload additional files or proceed to place your order.
                                         </div>
 
                                         <div style="display:flex; gap: 12px; margin-bottom: 16px;">
@@ -4336,7 +4469,31 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        
+                                        <!-- Special Instructions (Optional) -->
+                                        <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border);">
+                                            <div class="form-label-sm">Special Instructions (Optional)</div>
+                                            <textarea class="form-control-sm-pp" id="orderNotes" rows="3" placeholder="Any special instructions for your order..." style="margin-top: 8px;"></textarea>
+                                        </div>
+                                        
+                                        <div class="step-validation-error" id="step-4-error">
+                                            <i class="bi bi-exclamation-circle-fill"></i>
+                                            Please upload or select artwork files to continue.
+                                        </div>
                                     </div>
+                                </div>
+
+                                <!-- Navigation Buttons -->
+                                <div class="wizard-navigation">
+                                    <button class="nav-btn nav-btn-prev" id="prevBtn" onclick="previousStep()" disabled>
+                                        <i class="bi bi-arrow-left"></i> Previous
+                                    </button>
+                                    <div style="font-size: .8rem; color: var(--muted);">
+                                        Step <span id="currentStepNum">1</span> of 4
+                                    </div>
+                                    <button class="nav-btn nav-btn-next" id="nextBtn" onclick="nextStep()">
+                                        Next <i class="bi bi-arrow-right"></i>
+                                    </button>
                                 </div>
                             </div>
 
@@ -5496,6 +5653,14 @@
             if (id === 'files' && typeof fmRender === 'function') fmRender();
             if (id === 'billing' && typeof walletLoad === 'function') walletLoad();
             if (id === 'track') loadTrackOrders();
+            if (id === 'create') {
+                // Initialize the interactive wizard
+                setTimeout(() => {
+                    if (typeof initializeWizard === 'function') {
+                        initializeWizard();
+                    }
+                }, 100);
+            }
         }
 
         // Load wallet on initial page render (in case billing is default page)
@@ -6763,40 +6928,349 @@
             }
         }
 
+        // ── INTERACTIVE WIZARD NAVIGATION ──
+        let currentWizardStep = 1;
+        const totalSteps = 4;
+
+        // Step validation functions
+        const stepValidations = {
+            1: () => !!document.querySelector('.product-types .pt-btn.active'),
+            2: () => !!document.getElementById('paperSelect').value,
+            3: () => parseInt(document.getElementById('qtyVal').value) >= 50,
+            4: () => (uploadedFiles && uploadedFiles.length > 0) || !!window.selectedSavedFileId
+        };
+
+        // Navigate to specific step
+        function goToStep(stepNumber) {
+            // Prevent navigation to disabled steps
+            const stepElement = document.getElementById(`prog-step-${stepNumber}`);
+            if (stepElement && stepElement.classList.contains('disabled')) {
+                return;
+            }
+
+            // Validate current step before moving forward
+            if (stepNumber > currentWizardStep && !validateCurrentStep()) {
+                showStepError(currentWizardStep);
+                return;
+            }
+
+            // Hide current step
+            const currentCard = document.getElementById(`wizard-step-${currentWizardStep}`);
+            if (currentCard) {
+                currentCard.classList.remove('active');
+            }
+
+            // Show target step
+            const targetCard = document.getElementById(`wizard-step-${stepNumber}`);
+            if (targetCard) {
+                setTimeout(() => {
+                    targetCard.classList.add('active');
+                }, 150);
+            }
+
+            // Update current step
+            currentWizardStep = stepNumber;
+            
+            // Update UI
+            updateWizardUI();
+            hideAllStepErrors();
+        }
+
+        // Navigate to next step
+        function nextStep() {
+            if (currentWizardStep < totalSteps) {
+                if (validateCurrentStep()) {
+                    goToStep(currentWizardStep + 1);
+                } else {
+                    showStepError(currentWizardStep);
+                }
+            }
+        }
+
+        // Navigate to previous step
+        function previousStep() {
+            if (currentWizardStep > 1) {
+                goToStep(currentWizardStep - 1);
+            }
+        }
+
+        // Validate current step
+        function validateCurrentStep() {
+            const validation = stepValidations[currentWizardStep];
+            return validation ? validation() : true;
+        }
+
+        // Show step validation error
+        function showStepError(stepNumber) {
+            hideAllStepErrors();
+            const errorElement = document.getElementById(`step-${stepNumber}-error`);
+            if (errorElement) {
+                errorElement.style.display = 'flex';
+            }
+        }
+
+        // Hide all step errors
+        function hideAllStepErrors() {
+            for (let i = 1; i <= totalSteps; i++) {
+                const errorElement = document.getElementById(`step-${i}-error`);
+                if (errorElement) {
+                    errorElement.style.display = 'none';
+                }
+            }
+        }
+
+        // Update wizard UI (progress bar, navigation buttons)
+        function updateWizardUI() {
+            // Update progress bar
+            updateInteractiveProgressBar();
+            
+            // Update navigation buttons
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const stepNum = document.getElementById('currentStepNum');
+            
+            if (prevBtn) prevBtn.disabled = currentWizardStep === 1;
+            if (nextBtn) {
+                if (currentWizardStep === totalSteps) {
+                    nextBtn.style.display = 'none';
+                } else {
+                    nextBtn.style.display = 'flex';
+                }
+            }
+            if (stepNum) stepNum.textContent = currentWizardStep;
+        }
+
+        // Update interactive progress bar
+        function updateInteractiveProgressBar() {
+            for (let i = 1; i <= totalSteps; i++) {
+                const stepElement = document.getElementById(`prog-step-${i}`);
+                const connElement = document.getElementById(`prog-conn-${i}`);
+                
+                if (!stepElement) continue;
+                
+                // Remove all classes
+                stepElement.classList.remove('active', 'done', 'disabled');
+                
+                // Determine step state
+                if (i < currentWizardStep) {
+                    // Completed step
+                    stepElement.classList.add('done');
+                    stepElement.querySelector('.prog-num').innerHTML = '<i class="bi bi-check-lg" style="font-size:.7rem;"></i>';
+                } else if (i === currentWizardStep) {
+                    // Current step
+                    stepElement.classList.add('active');
+                    stepElement.querySelector('.prog-num').textContent = i;
+                } else {
+                    // Future step - check if accessible
+                    const canAccess = stepValidations[i - 1] ? stepValidations[i - 1]() : false;
+                    if (!canAccess) {
+                        stepElement.classList.add('disabled');
+                    }
+                    stepElement.querySelector('.prog-num').textContent = i;
+                }
+                
+                // Update connector
+                if (connElement) {
+                    connElement.classList.toggle('done', i < currentWizardStep);
+                }
+            }
+        }
+
+        // Enhanced product type selection (without auto-advance)
+        function selectProductTypeEnhanced(button) {
+            // Call original function
+            selectProductType(button);
+            
+            // Update wizard UI
+            setTimeout(() => {
+                updateWizardUI();
+            }, 100);
+        }
+
+        // Enhanced form change handlers
+        function handleFormChange() {
+            updateWizardUI();
+            hideAllStepErrors();
+        }
+
+        // Handle file attachment status
+        function updateFileAttachmentStatus() {
+            const hasFiles = (uploadedFiles && uploadedFiles.length > 0) || !!window.selectedSavedFileId;
+            const attachedNotice = document.getElementById('artworkAttachedNotice');
+            const fileCountSpan = document.getElementById('attachedFileCount');
+            
+            if (hasFiles) {
+                // Show success notice
+                if (attachedNotice) {
+                    attachedNotice.style.display = 'flex';
+                    
+                    // Update file count
+                    if (fileCountSpan) {
+                        const fileCount = uploadedFiles ? uploadedFiles.length : 1;
+                        fileCountSpan.textContent = fileCount === 1 ? '1 file' : `${fileCount} files`;
+                    }
+                }
+                
+                // Hide any error messages
+                hideAllStepErrors();
+            } else {
+                // Hide success notice
+                if (attachedNotice) attachedNotice.style.display = 'none';
+            }
+            
+            // Update wizard UI
+            updateWizardUI();
+        }
+
+        // Show required warnings when user tries to order without files
+        function showFileRequiredWarning() {
+            const requiredBadge = document.getElementById('requiredBadge');
+            const requiredNotice = document.getElementById('artworkRequiredNotice');
+            
+            if (requiredBadge) requiredBadge.style.display = 'inline';
+            if (requiredNotice) requiredNotice.style.display = 'flex';
+        }
+
+        // Hide required warnings
+        function hideFileRequiredWarning() {
+            const requiredBadge = document.getElementById('requiredBadge');
+            const requiredNotice = document.getElementById('artworkRequiredNotice');
+            
+            if (requiredBadge) requiredBadge.style.display = 'none';
+            if (requiredNotice) requiredNotice.style.display = 'none';
+        }
+
+        // Enhanced step validation
+        function validateCurrentStep() {
+            const validation = stepValidations[currentWizardStep];
+            return validation ? validation() : true;
+        }
+
+        // Override file upload handlers to update status
+        function handleFileUpload() {
+            // Call original file upload logic here
+            // Then update the attachment status
+            setTimeout(() => {
+                updateFileAttachmentStatus();
+            }, 100);
+        }
+
+        // Override file selection from account
+        function handleFileSelection() {
+            // Call original file selection logic here
+            // Then update the attachment status
+            setTimeout(() => {
+                updateFileAttachmentStatus();
+            }, 100);
+        }
+
+        // Initialize wizard on page load
+        function initializeWizard() {
+            // Set up event listeners for form changes
+            const paperSelect = document.getElementById('paperSelect');
+            const qtyVal = document.getElementById('qtyVal');
+            const qtySlider = document.getElementById('qtySlider');
+            const fileInput = document.getElementById('file-upload-input');
+            
+            if (paperSelect) {
+                paperSelect.addEventListener('change', () => {
+                    handleFormChange();
+                    if (currentWizardStep === 2 && validateCurrentStep()) {
+                        setTimeout(() => nextStep(), 500);
+                    }
+                });
+            }
+            
+            if (qtyVal) {
+                qtyVal.addEventListener('input', handleFormChange);
+            }
+            
+            if (qtySlider) {
+                qtySlider.addEventListener('input', handleFormChange);
+            }
+
+            // Set up file upload listener
+            if (fileInput) {
+                fileInput.addEventListener('change', function(e) {
+                    if (e.target.files && e.target.files.length > 0) {
+                        // Simulate file upload (you'll need to integrate with existing upload logic)
+                        uploadedFiles = Array.from(e.target.files);
+                        updateFileAttachmentStatus();
+                    }
+                });
+            }
+
+            // Replace product type buttons with enhanced version
+            const productButtons = document.querySelectorAll('.product-types .pt-btn');
+            productButtons.forEach(btn => {
+                btn.setAttribute('onclick', 'selectProductTypeEnhanced(this)');
+            });
+            
+            // Initial file attachment status check
+            updateFileAttachmentStatus();
+            
+            // Initial UI update
+            updateWizardUI();
+        }
+
         // ── PROGRESS BAR UPDATER ──
         function updateProgressBar() {
-            const hasProduct = !!document.querySelector('.product-types .pt-btn.active');
-            const hasMaterial = !!document.getElementById('paperSelect').value;
-            const hasQty = parseInt(document.getElementById('qtyVal').value) >= 50;
-            const hasArtwork = (uploadedFiles && uploadedFiles.length > 0) || !!window.selectedSavedFileId;
+            // Use the new interactive progress bar update
+            if (typeof updateInteractiveProgressBar === 'function') {
+                updateInteractiveProgressBar();
+            } else {
+                // Fallback to original logic
+                const hasProduct = !!document.querySelector('.product-types .pt-btn.active');
+                const hasMaterial = !!document.getElementById('paperSelect').value;
+                const hasQty = parseInt(document.getElementById('qtyVal').value) >= 50;
+                const hasArtwork = (uploadedFiles && uploadedFiles.length > 0) || !!window.selectedSavedFileId;
 
-            const steps = [
-                { el: document.getElementById('prog-step-1'), conn: document.getElementById('prog-conn-1'), done: hasProduct },
-                { el: document.getElementById('prog-step-2'), conn: document.getElementById('prog-conn-2'), done: hasMaterial },
-                { el: document.getElementById('prog-step-3'), conn: document.getElementById('prog-conn-3'), done: hasQty },
-                { el: document.getElementById('prog-step-4'), conn: null, done: hasArtwork },
-            ];
+                const steps = [
+                    { el: document.getElementById('prog-step-1'), conn: document.getElementById('prog-conn-1'), done: hasProduct },
+                    { el: document.getElementById('prog-step-2'), conn: document.getElementById('prog-conn-2'), done: hasMaterial },
+                    { el: document.getElementById('prog-step-3'), conn: document.getElementById('prog-conn-3'), done: hasQty },
+                    { el: document.getElementById('prog-step-4'), conn: null, done: hasArtwork },
+                ];
 
-            let currentStep = 0;
-            steps.forEach((s, i) => { if (s.done) currentStep = i + 1; });
+                let currentStep = 0;
+                steps.forEach((s, i) => { if (s.done) currentStep = i + 1; });
 
-            steps.forEach((s, i) => {
-                if (!s.el) return;
-                s.el.classList.remove('active', 'done');
-                if (i < currentStep) {
-                    s.el.classList.add('done');
-                    s.el.querySelector('.prog-num').innerHTML = '<i class="bi bi-check-lg" style="font-size:.7rem;"></i>';
-                } else if (i === currentStep) {
-                    s.el.classList.add('active');
-                    s.el.querySelector('.prog-num').textContent = i + 1;
-                } else {
-                    s.el.querySelector('.prog-num').textContent = i + 1;
-                }
-                if (s.conn) {
-                    s.conn.classList.toggle('done', i < currentStep);
-                }
-            });
+                steps.forEach((s, i) => {
+                    if (!s.el) return;
+                    s.el.classList.remove('active', 'done');
+                    if (i < currentStep) {
+                        s.el.classList.add('done');
+                        s.el.querySelector('.prog-num').innerHTML = '<i class="bi bi-check-lg" style="font-size:.7rem;"></i>';
+                    } else if (i === currentStep) {
+                        s.el.classList.add('active');
+                        s.el.querySelector('.prog-num').textContent = i + 1;
+                    } else {
+                        s.el.querySelector('.prog-num').textContent = i + 1;
+                    }
+                    if (s.conn) {
+                        s.conn.classList.toggle('done', i < currentStep);
+                    }
+                });
+            }
         }
+
+        // Add keyboard navigation support
+        document.addEventListener('keydown', function(e) {
+            // Only handle keyboard navigation when on create order page
+            const createPage = document.getElementById('c-create');
+            if (!createPage || !createPage.classList.contains('active')) return;
+            
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                e.preventDefault();
+                nextStep();
+            } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                e.preventDefault();
+                previousStep();
+            } else if (e.key >= '1' && e.key <= '4') {
+                e.preventDefault();
+                goToStep(parseInt(e.key));
+            }
+        });
 
         // ── ARRIVAL DATE CALCULATOR ──
         function calcArrivalDate(turnaround, shipping) {
@@ -7491,27 +7965,35 @@
                 return;
             }
 
-            // Validate artwork
+            // Validate artwork — show warnings only here
             if ((!uploadedFiles || uploadedFiles.length === 0) && !window.selectedSavedFileId) {
-                const artworkStep = document.getElementById('artworkStep');
-                if (artworkStep) {
-                    artworkStep.style.border = '2px solid #f5365c';
-                    artworkStep.style.boxShadow = '0 0 0 4px rgba(245,54,92,.15)';
-                    artworkStep.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    setTimeout(() => { artworkStep.style.border = ''; artworkStep.style.boxShadow = ''; }, 3000);
-                }
+                // Show required badge and notice
+                const requiredBadge = document.getElementById('requiredBadge');
                 const notice = document.getElementById('artworkRequiredNotice');
+                if (requiredBadge) requiredBadge.style.display = 'inline';
                 if (notice) {
+                    notice.style.display = 'flex';
                     notice.style.background = 'rgba(245,54,92,.15)';
                     notice.style.border = '1px solid rgba(245,54,92,.5)';
-                    setTimeout(() => { notice.style.background = 'rgba(245,54,92,.08)'; notice.style.border = '1px solid rgba(245,54,92,.2)'; }, 3000);
+                    setTimeout(() => {
+                        notice.style.background = 'rgba(245,54,92,.08)';
+                        notice.style.border = '1px solid rgba(245,54,92,.2)';
+                    }, 3000);
                 }
+                // Navigate to step 4 so user sees the warning
+                goToStep(4);
                 document.getElementById('upload-area').style.display = 'block';
                 document.getElementById('account-files').style.display = 'none';
                 document.getElementById('uploadNewTab').classList.add('active');
                 document.getElementById('selectFromAccountTab').classList.remove('active');
                 return;
             }
+
+            // Hide warnings if files are present
+            const requiredBadge = document.getElementById('requiredBadge');
+            const notice = document.getElementById('artworkRequiredNotice');
+            if (requiredBadge) requiredBadge.style.display = 'none';
+            if (notice) notice.style.display = 'none';
 
             const totalCost = currentPricingData.grand_total ?? currentPricingData.breakdown?.grand_total ?? 0;
             if (_orderWalletBalance !== null && _orderWalletBalance < totalCost) {
