@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PrintPro Admin Dashboard</title>
+    <title>PrintPro Admin Dashboard - CANCELLED TAB TEST VERSION</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
@@ -576,6 +576,29 @@
             color: #a0aec0 !important;
         }
 
+        /* Special styling for Cancelled tab */
+        .nav-tabs .nav-link[onclick*="Cancelled"] {
+            color: #dc3545 !important;
+            font-weight: 700 !important;
+            position: relative;
+        }
+
+        .nav-tabs .nav-link[onclick*="Cancelled"]:hover {
+            color: #c82333 !important;
+            background: rgba(220, 53, 69, 0.1) !important;
+        }
+
+        .nav-tabs .nav-link[onclick*="Cancelled"].active {
+            color: #dc3545 !important;
+            border-bottom: 3px solid #dc3545 !important;
+            background: rgba(220, 53, 69, 0.05) !important;
+        }
+
+        .nav-tabs .nav-link[onclick*="Cancelled"]::after {
+            content: " 🚫";
+            font-size: 0.9em;
+        }
+
         .btn-sm {
             width: 32px;
             height: 32px;
@@ -610,19 +633,36 @@
         }
 
         .status-select {
-            padding: 4px 8px;
-            border-radius: 8px;
+            padding: 6px 12px;
+            border-radius: 12px;
             font-size: .75rem;
-            font-weight: 600;
-            border: 1px solid var(--border);
+            font-weight: 700;
+            border: 2px solid;
             background: transparent;
             outline: none;
             cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            min-width: 100px;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .status-select:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .status-select option {
+            font-weight: 600;
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin: 2px 0;
         }
 
         [data-theme="dark"] .status-select {
-            color: #fff;
-            background: var(--dark-card2);
+            color: #fff !important;
+            background: var(--dark-card2) !important;
         }
 
         /* ── LOADING STATES ── */
@@ -735,6 +775,60 @@
                 width: 100% !important;
                 margin-bottom: 10px;
             }
+
+            /* ── MOBILE TAB FIXES ── */
+            .nav-tabs {
+                overflow-x: auto !important;
+                overflow-y: hidden !important;
+                white-space: nowrap !important;
+                -webkit-overflow-scrolling: touch !important;
+                scrollbar-width: none !important;
+                -ms-overflow-style: none !important;
+                position: relative !important;
+            }
+
+            .nav-tabs::-webkit-scrollbar {
+                display: none !important;
+            }
+
+            .nav-tabs::after {
+                content: "← Swipe to see more tabs →";
+                position: absolute;
+                bottom: -20px;
+                left: 50%;
+                transform: translateX(-50%);
+                font-size: 0.6rem;
+                color: #6c757d;
+                white-space: nowrap;
+                pointer-events: none;
+            }
+
+            .nav-tabs .nav-item {
+                flex-shrink: 0 !important;
+                display: inline-block !important;
+            }
+
+            .nav-tabs .nav-link {
+                font-size: 0.7rem !important;
+                padding: 8px 12px !important;
+                white-space: nowrap !important;
+            }
+
+            /* Make CANCELLED tab extra visible on mobile */
+            .nav-tabs .nav-link[onclick*="Cancelled"] {
+                background: #ff0000 !important;
+                color: white !important;
+                border: 2px solid #ff0000 !important;
+                font-weight: 900 !important;
+                animation: pulse 2s infinite !important;
+                box-shadow: 0 0 10px rgba(255, 0, 0, 0.5) !important;
+            }
+
+            @keyframes pulse {
+                0% { transform: scale(1); box-shadow: 0 0 10px rgba(255, 0, 0, 0.5); }
+                50% { transform: scale(1.05); box-shadow: 0 0 20px rgba(255, 0, 0, 0.8); }
+                100% { transform: scale(1); box-shadow: 0 0 10px rgba(255, 0, 0, 0.5); }
+            }
         }
     </style>
 </head>
@@ -767,6 +861,9 @@
                 <div class="a-nav-item" onclick="showPage('settings')">
                     <i class="bi bi-gear"></i> Settings
                 </div>
+                <div class="a-nav-item" onclick="showPage('analytics')">
+                    <i class="bi bi-bar-chart-line"></i> Analytics
+                </div>
             </nav>
             <div class="a-logout">
                 <a href="#" onclick="handleLogout(event)"><i class="bi bi-box-arrow-left"></i> Logout</a>
@@ -780,7 +877,7 @@
                     <button class="btn btn-light d-lg-none action-btn" onclick="toggleSidebar()">
                         <i class="bi bi-list fs-4"></i>
                     </button>
-                    <h5 class="m-0 fw-bold" id="pageTitle">Dashboard</h5>
+                    <h5 class="m-0 fw-bold" id="pageTitle" style="color: red; background: yellow; padding: 5px;">🚫 CANCELLED TAB TEST - Dashboard</h5>
                 </div>
                 <div class="d-flex align-items-center gap-3">
                     <button class="btn border-0 p-0 text-muted fs-5" onclick="toggleTheme()">
@@ -939,12 +1036,9 @@
                                         onclick="filterOrdersByStatus('Delivered')">Delivered</button>
                                 </li>
                                 <li class="nav-item">
-                                    <button class="nav-link py-3 border-0 fw-bold small text-uppercase"
-                                        onclick="filterOrdersByStatus('Cancelled')">Cancelled</button>
-                                </li>
-                                <li class="nav-item">
-                                    <button class="nav-link py-3 border-0 fw-bold small text-uppercase"
-                                        onclick="filterOrdersByStatus('Reprint')">Reprint</button>
+                                    <button class="nav-link py-3 border-0 fw-bold small text-uppercase" 
+                                        style="background: #ff0000 !important; color: white !important; border: 2px solid #ff0000 !important;"
+                                        onclick="filterOrdersByStatus('Cancelled')">🚫 CANCELLED</button>
                                 </li>
                             </ul>
                         </div>
@@ -1072,6 +1166,77 @@
                                 </thead>
                                 <tbody></tbody>
                             </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analytics Page -->
+                <div class="a-page" id="page-analytics">
+                    <!-- Date range filter -->
+                    <div class="d-flex gap-2 mb-4 flex-wrap">
+                        <button class="btn btn-sm btn-primary" onclick="loadAnalytics('month')" id="aFilter-month">This Month</button>
+                        <button class="btn btn-sm btn-light" onclick="loadAnalytics('3months')" id="aFilter-3months">Last 3 Months</button>
+                        <button class="btn btn-sm btn-light" onclick="loadAnalytics('6months')" id="aFilter-6months">Last 6 Months</button>
+                        <button class="btn btn-sm btn-light" onclick="loadAnalytics('year')" id="aFilter-year">This Year</button>
+                    </div>
+
+                    <!-- KPI Cards -->
+                    <div class="kpi-grid" id="analyticsKpis">
+                        <div class="kpi-card">
+                            <div class="kpi-icon bg-primary-subtle text-primary">
+                                <i class="bi bi-box-seam"></i>
+                            </div>
+                            <div>
+                                <div class="kpi-lbl">Total Orders</div>
+                                <div class="kpi-val" id="aKpiOrders">—</div>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon bg-success-subtle text-success">
+                                <i class="bi bi-currency-dollar"></i>
+                            </div>
+                            <div>
+                                <div class="kpi-lbl">Total Revenue</div>
+                                <div class="kpi-val" id="aKpiRevenue">—</div>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon bg-warning-subtle text-warning">
+                                <i class="bi bi-hourglass-split"></i>
+                            </div>
+                            <div>
+                                <div class="kpi-lbl">Pending Proofs</div>
+                                <div class="kpi-val" id="aKpiProofs">—</div>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon bg-info-subtle text-info">
+                                <i class="bi bi-people"></i>
+                            </div>
+                            <div>
+                                <div class="kpi-lbl">Active Clients</div>
+                                <div class="kpi-val" id="aKpiClients">—</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Row -->
+                    <div class="row g-4">
+                        <div class="col-lg-5">
+                            <div class="card p-4">
+                                <h6 class="fw-bold mb-4">Orders by Print Category</h6>
+                                <div style="height:280px;">
+                                    <canvas id="categoryPieChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-7">
+                            <div class="card p-4">
+                                <h6 class="fw-bold mb-4">Monthly Revenue</h6>
+                                <div style="height:280px;">
+                                    <canvas id="monthlyRevenueChart"></canvas>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1443,6 +1608,13 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // ══════════════════════════════════════════════════════
+        //  TEST: Verify file is loaded correctly
+        // ══════════════════════════════════════════════════════
+        console.log('🔧 PrintPro Admin Dashboard Loaded - CANCELLED Tab Version 2.0');
+        console.log('📅 File updated:', new Date().toISOString());
+        alert('CANCELLED TAB TEST VERSION LOADED - Check browser title!');
+        
         // Global State
         const state = {
             user: JSON.parse(sessionStorage.getItem('pp_user') || '{}'),
@@ -1533,7 +1705,7 @@
                 }
             });
 
-            const titles = { dashboard: 'Dashboard', orders: 'All Orders', users: 'User Management', subscriptions: 'Subscriptions', specs: 'Specifications', settings: 'Settings' };
+            const titles = { dashboard: 'Dashboard', orders: 'All Orders', users: 'User Management', subscriptions: 'Subscriptions', specs: 'Specifications', settings: 'Settings', analytics: 'Analytics' };
             const titleEl = document.getElementById('pageTitle');
             if (titleEl) titleEl.textContent = titles[id] || id;
 
@@ -1542,6 +1714,7 @@
             if (id === 'users') loadUsers();
             if (id === 'subscriptions') loadSubscriptions();
             if (id === 'specs') loadSpecs();
+            if (id === 'analytics') loadAnalytics('month');
 
             if (window.innerWidth < 992) {
                 const sb = document.getElementById('sidebar');
@@ -1555,10 +1728,10 @@
             state.charts.status = new Chart(statusCtx, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Prepress', 'Printing', 'Finishing', 'Delivered'],
+                    labels: ['Prepress', 'Printing', 'Finishing', 'Delivered', 'Cancelled'],
                     datasets: [{
-                        data: [0, 0, 0, 0],
-                        backgroundColor: ['#fb6340', '#1171ef', '#7c4dff', '#2dce89'],
+                        data: [0, 0, 0, 0, 0],
+                        backgroundColor: ['#fb6340', '#1171ef', '#7c4dff', '#2dce89', '#6c757d'],
                         borderWidth: 0
                     }]
                 },
@@ -1604,7 +1777,8 @@
                         parseInt(d.status_counts['Prepress'] || 0),
                         parseInt(d.status_counts['Printing'] || 0),
                         parseInt(d.status_counts['Finishing'] || 0),
-                        parseInt(d.status_counts['Delivered'] || 0)
+                        parseInt(d.status_counts['Delivered'] || 0),
+                        parseInt(d.status_counts['Cancelled'] || 0)
                     ];
                     state.charts.status.update();
 
@@ -1653,7 +1827,16 @@
                 const res = await fetch('api/get_orders.php?_=' + Date.now());
                 const json = await res.json();
                 if (json.success) {
-                    state.orders = json.data;
+                    // Sort orders: cancelled orders go to the bottom
+                    state.orders = json.data.sort((a, b) => {
+                        // If one is cancelled and the other isn't, cancelled goes to bottom
+                        if (a.status === 'Cancelled' && b.status !== 'Cancelled') return 1;
+                        if (b.status === 'Cancelled' && a.status !== 'Cancelled') return -1;
+                        
+                        // Otherwise sort by created_at (newest first)
+                        return new Date(b.created_at) - new Date(a.created_at);
+                    });
+                    
                     renderOrders();
                     renderRecentOrders();
                     renderActivityFeed();
@@ -1670,9 +1853,11 @@
                 const sColor = getStatusColor(o.status);
                 const orderNum = o.order_number || ('PPR-' + String(o.id).padStart(3, '0'));
                 
-                // Highlight rows that are Proof Pending or Proof Pending Review
+                // Highlight rows that are Proof Pending, Proof Pending Review, or Cancelled
                 let rowStyle = '';
-                if (o.status === 'Proof Pending') {
+                if (o.status === 'Cancelled') {
+                    rowStyle = 'style="background: rgba(108, 117, 125, 0.08); border-left: 4px solid #6c757d;"';
+                } else if (o.status === 'Proof Pending') {
                     rowStyle = 'style="background: rgba(251, 99, 64, 0.05);"';
                 } else if (o.status === 'Proof Pending Review') {
                     rowStyle = 'style="background: rgba(29, 140, 248, 0.03);"';
@@ -1704,8 +1889,11 @@
                                     <span class="badge-status" style="background:#8898aa20;color:#8898aa;border:1px solid #8898aa40;font-size:.65rem;font-weight:800;padding:4px 10px;border-radius:6px;text-transform:uppercase;">Cancelled</span>
                                     ${o.rejection_reason ? `<div style="font-size:.65rem;color:#8898aa;margin-top:4px;max-width:160px;white-space:normal;line-height:1.3;" title="${o.rejection_reason}">↩ Refunded · ${o.rejection_reason.length > 40 ? o.rejection_reason.substring(0,40)+'…' : o.rejection_reason}</div>` : ''}
                                    </div>`
-                                : `<select class="status-select" style="color:${sColor}; border-color:${sColor}; font-size: .73rem; padding: 2px 6px;" onchange="updateOrderStatus(${o.id}, this.value)">
-                                    ${['Proof Pending', 'Proof Pending Review', 'Prepress', 'Printing', 'Finishing', 'Shipping', 'Delivered', 'Reprint'].map(s => `<option value="${s}" ${o.status === s ? 'selected' : ''}>${s}</option>`).join('')}
+                                : `<select class="status-select" style="color:${sColor}; border-color:${sColor}; background-color:${sColor}15; font-size: .73rem; padding: 2px 6px;" onchange="updateOrderStatus(${o.id}, this.value)">
+                                    ${['Proof Pending', 'Proof Pending Review', 'Prepress', 'Printing', 'Finishing', 'Shipping', 'Delivered', 'Reprint', 'Cancelled'].map(s => {
+                                        const optionColor = getStatusColor(s);
+                                        return `<option value="${s}" ${o.status === s ? 'selected' : ''} style="background-color:${optionColor}20; color:${optionColor};">${s}</option>`;
+                                    }).join('')}
                                    </select>`
                             }
                         </td>
@@ -1753,20 +1941,43 @@
         }
 
         function filterOrdersByStatus(status) {
+            console.log('🔍 Filtering by status:', status);
+            
             document.querySelectorAll('#orderTabs .nav-link').forEach(btn => {
                 btn.classList.remove('active');
                 const btnText = btn.textContent.trim();
                 if (status === 'All' && btnText === 'All Orders') btn.classList.add('active');
-                else if (btnText === status) btn.classList.add('active');
+                else if (btnText === status || btnText.includes(status)) btn.classList.add('active');
             });
 
-            document.getElementById('orderListTitle').textContent = status === 'All' ? 'All Orders' : status + ' Orders';
-
+            let filtered;
             if (status === 'All') {
-                renderOrders(state.orders);
+                // For "All Orders", show all but keep cancelled orders at the bottom
+                filtered = [...state.orders].sort((a, b) => {
+                    if (a.status === 'Cancelled' && b.status !== 'Cancelled') return 1;
+                    if (b.status === 'Cancelled' && a.status !== 'Cancelled') return -1;
+                    return new Date(b.created_at) - new Date(a.created_at);
+                });
+                document.getElementById('orderListTitle').textContent = `All Orders (${filtered.length})`;
             } else {
-                renderOrders(state.orders.filter(o => o.status === status));
+                filtered = state.orders.filter(o => o.status === status);
+                document.getElementById('orderListTitle').textContent = `${status} Orders (${filtered.length})`;
             }
+
+            // Debug: Log status counts for cancelled orders
+            if (status === 'Cancelled') {
+                console.log('🔍 Cancelled orders found:', filtered);
+                console.log('📊 All order statuses:', state.orders.map(o => ({id: o.id, status: o.status, rejection_reason: o.rejection_reason})));
+                
+                // Show alert if no cancelled orders found
+                if (filtered.length === 0) {
+                    showToast('No cancelled orders found. Try rejecting an order first to test this feature.', 'info');
+                } else {
+                    showToast(`Found ${filtered.length} cancelled orders`, 'success');
+                }
+            }
+
+            renderOrders(filtered);
         }
 
         function searchOrders(q) {
@@ -2248,8 +2459,7 @@
                 'Shipping': '#2dce89',
                 'Delivered': '#2dce89',
                 'Reprint': '#f5365c',
-                'Cancelled': '#8898aa',
-                'Refunded': '#2dce89'
+                'Cancelled': '#6c757d'
             }[status] || '#8898aa';
         }
 
@@ -2371,6 +2581,75 @@
                 showToast('Network error.', 'danger');
             }
         }
+
+        // ══════════════════════════════════════════════════════
+        //  ANALYTICS FUNCTIONS
+        // ══════════════════════════════════════════════════════
+        let analyticsCharts = { pie: null, bar: null };
+
+        async function loadAnalytics(range = 'month') {
+            document.querySelectorAll('[id^="aFilter-"]').forEach(b => b.className = 'btn btn-sm btn-light');
+            const activeBtn = document.getElementById('aFilter-' + range);
+            if (activeBtn) activeBtn.className = 'btn btn-sm btn-primary';
+
+            try {
+                const res  = await fetch('api/get_analytics.php?range=' + range + '&_=' + Date.now());
+                const json = await res.json();
+                if (!json.success) { showToast('Failed to load analytics', 'danger'); return; }
+                const d = json.data;
+
+                document.getElementById('aKpiOrders').textContent  = parseInt(d.kpis.total_orders).toLocaleString();
+                document.getElementById('aKpiRevenue').textContent = '₱' + parseFloat(d.kpis.total_revenue).toLocaleString(undefined, { minimumFractionDigits: 2 });
+                document.getElementById('aKpiProofs').textContent  = d.kpis.pending_proofs;
+                document.getElementById('aKpiClients').textContent = d.kpis.active_clients;
+
+                const pieCtx = document.getElementById('categoryPieChart');
+                if (pieCtx) {
+                    if (analyticsCharts.pie) analyticsCharts.pie.destroy();
+                    const pieColors = ['#1d8cf8','#2dce89','#fb6340','#7c4dff','#f5365c','#11cdef','#ffd600'];
+                    analyticsCharts.pie = new Chart(pieCtx.getContext('2d'), {
+                        type: 'doughnut',
+                        data: { labels: d.by_product.map(r => r.product_type || 'Unknown'), datasets: [{ data: d.by_product.map(r => parseInt(r.count)), backgroundColor: pieColors, borderWidth: 2, borderColor: '#fff' }] },
+                        options: { maintainAspectRatio: false, cutout: '65%', plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, font: { size: 11 } } } } }
+                    });
+                }
+
+                const barCtx = document.getElementById('monthlyRevenueChart');
+                if (barCtx) {
+                    if (analyticsCharts.bar) analyticsCharts.bar.destroy();
+                    analyticsCharts.bar = new Chart(barCtx.getContext('2d'), {
+                        type: 'bar',
+                        data: { labels: d.monthly_revenue.map(r => r.label), datasets: [{ label: 'Revenue (₱)', data: d.monthly_revenue.map(r => parseFloat(r.value) || 0), backgroundColor: 'rgba(29,140,248,0.8)', borderRadius: 6 }] },
+                        options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { callback: v => '₱' + v.toLocaleString() } }, x: { grid: { display: false } } } }
+                    });
+                }
+            } catch(e) {
+                console.error('Analytics error:', e);
+                showToast('Failed to load analytics', 'danger');
+            }
+        }
+
+        // ══════════════════════════════════════════════════════
+        //  DEBUG FUNCTIONS FOR TESTING CANCELLED ORDERS
+        // ══════════════════════════════════════════════════════
+        function debugOrderStatuses() {
+            console.log('📊 Current order statuses breakdown:');
+            const statusCounts = {};
+            state.orders.forEach(o => {
+                statusCounts[o.status] = (statusCounts[o.status] || 0) + 1;
+            });
+            console.table(statusCounts);
+            
+            const cancelledOrders = state.orders.filter(o => o.status === 'Cancelled');
+            console.log(`🚫 Found ${cancelledOrders.length} cancelled orders:`, cancelledOrders);
+            
+            if (cancelledOrders.length === 0) {
+                showToast('No cancelled orders found. Use the reject button (🚫) on any order to create a cancelled order for testing.', 'info');
+            }
+        }
+
+        // Add debug button to console (for testing)
+        console.log('🔧 Debug function available: debugOrderStatuses() - Run this to see order status breakdown');
 
     </script>
 </body>

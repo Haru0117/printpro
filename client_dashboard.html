@@ -5798,11 +5798,18 @@
             btn.disabled = true;
             btn.textContent = 'Updating…';
 
+            // Get user_id from sessionStorage (client_dashboard.html uses sessionStorage auth)
+            let userId = null;
+            try {
+                const sess = JSON.parse(sessionStorage.getItem('pp_user') || '{}');
+                userId = sess.id || sess.user_id || null;
+            } catch(e) {}
+
             try {
                 const res  = await fetch('api/update_subscription.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ plan: _selectedPlan })
+                    body: JSON.stringify({ plan: _selectedPlan, user_id: userId })
                 });
                 const data = await res.json();
 
@@ -6248,35 +6255,43 @@
                         if (orders.length === 0) {
                             ordersTbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 60px; color: var(--muted);"><i class="bi bi-box-seam" style="font-size: 3rem; display: block; margin-bottom: 15px; opacity: 0.2;"></i><p>No orders found</p></td></tr>`;
                         } else {
-                            orders.forEach(o => {
-                                let actionCell = '—';
-                                if (o.status === 'Proof Pending Review' && o.proof_file) {
-                                    actionCell = `<button class="btn btn-sm" style="padding:4px 10px; font-size:.78rem; border-radius:6px; background:var(--accent); color:#fff; border:none; display:inline-flex; align-items:center; gap:4px; font-weight:600;" onclick="openClientProofModal(${o.id})"><i class="bi bi-file-earmark-check"></i> Review Proof</button>`;
-                                }
-                                const cancellable = ['Proof Pending','Proof Pending Review','Prepress'];
-                                const cancelBtn = cancellable.includes(o.status)
-                                    ? `<button style="padding:4px 10px; font-size:.75rem; border-radius:6px; background:rgba(245,54,92,.1); color:#f5365c; border:1px solid rgba(245,54,92,.2); font-weight:600; cursor:pointer; margin-left:4px;" onclick="openCancelOrderModal(${o.id},'${o.order_number || 'PPR-' + String(o.id).padStart(3,'0')}')">Cancel</button>`
-                                    : '';
-                                const tr = `<tr data-status="${o.status.toLowerCase()}">
-                                    <td>${o.order_number || '#ORD-' + o.id}</td>
-                                    <td>${o.job_name || o.product_type}</td>
-                                    <td>${o.product_type || 'Product'}</td>
-                                    <td>${parseInt(o.quantity).toLocaleString()}</td>
-                                    <td>
-                                        ${o.status === 'Cancelled'
-                                            ? `<div>
-                                                <span class="badge-status badge-danger">Cancelled</span>
-                                                ${o.rejection_reason ? `<div style="font-size:.68rem;color:#8898aa;margin-top:3px;max-width:160px;white-space:normal;line-height:1.3;">↩ Refunded · ${o.rejection_reason.length > 40 ? o.rejection_reason.substring(0,40)+'…' : o.rejection_reason}</div>` : '<div style="font-size:.68rem;color:#2dce89;margin-top:2px;">↩ Credits refunded</div>'}
-                                               </div>`
-                                            : `<span class="badge-status ${getStatusClass(o.status)}">${o.status}</span>`
-                                        }
-                                    </td>
-                                    <td>${o.due_date ? new Date(o.due_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : '—'}</td>
-                                    <td style="font-weight:700;">₱${parseFloat(o.total_price || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-                                    <td style="white-space:nowrap;">${actionCell}${cancelBtn}</td>
-                                </tr>`;
-                                ordersTbody.innerHTML += tr;
-                            });
+                                orders.forEach(o => {
+                                    let actionCell = '—';
+                                    if (o.status === 'Proof Pending Review' && o.proof_file) {
+                                        actionCell = `<button class="btn btn-sm" style="padding:4px 10px; font-size:.78rem; border-radius:6px; background:var(--accent); color:#fff; border:none; display:inline-flex; align-items:center; gap:4px; font-weight:600;" onclick="openClientProofModal(${o.id})"><i class="bi bi-file-earmark-check"></i> Review Proof</button>`;
+                                    }
+                                    const cancellable = ['Proof Pending','Proof Pending Review','Prepress'];
+                                    const cancelBtn = cancellable.includes(o.status)
+                                        ? `<button style="padding:4px 10px; font-size:.75rem; border-radius:6px; background:rgba(245,54,92,.1); color:#f5365c; border:1px solid rgba(245,54,92,.2); font-weight:600; cursor:pointer; margin-left:4px;" onclick="openCancelOrderModal(${o.id},'${o.order_number || 'PPR-' + String(o.id).padStart(3,'0')}')">Cancel</button>`
+                                        : '';
+
+                                    let statusCell = '';
+                                    if (o.status === 'Cancelled') {
+                                        const reason = o.rejection_reason || '';
+                                        const reasonHtml = reason
+                                            ? `<div style="font-size:.68rem;color:#8898aa;margin-top:3px;max-width:160px;white-space:normal;line-height:1.3;">↩ Refunded · ${reason.length > 40 ? reason.substring(0,40)+'…' : reason}</div>`
+                                            : `<div style="font-size:.68rem;color:#2dce89;margin-top:2px;">↩ Credits refunded</div>`;
+                                        statusCell = `<div><span class="badge-status badge-danger">Cancelled</span>${reasonHtml}</div>`;
+                                    } else {
+                                        const displayStatus = o.status || 'Proof Pending';
+                                        statusCell = `<span class="badge-status ${getStatusClass(displayStatus)}">${displayStatus}</span>`;
+                                    }
+
+                                    const dueStr = o.due_date ? new Date(o.due_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : '—';
+                                    const totalStr = parseFloat(o.total_price || 0).toLocaleString(undefined, { minimumFractionDigits: 2 });
+
+                                    const tr = `<tr data-status="${(o.status || '').toLowerCase()}">
+                                        <td style="font-weight:600;">${o.order_number || '#ORD-' + o.id}</td>
+                                        <td>${o.job_name || o.product_type || '—'}</td>
+                                        <td>${o.product_type || '—'}</td>
+                                        <td>${parseInt(o.quantity || 0).toLocaleString()}</td>
+                                        <td>${statusCell}</td>
+                                        <td>${dueStr}</td>
+                                        <td style="font-weight:700;">₱${totalStr}</td>
+                                        <td style="white-space:nowrap;">${actionCell}${cancelBtn}</td>
+                                    </tr>`;
+                                    ordersTbody.innerHTML += tr;
+                                });
                         }
                     }
                 }
@@ -6602,7 +6617,8 @@
         });
 
         function getStatusClass(status) {
-            status = status.toLowerCase();
+            if (!status) return 'badge-warning';
+            status = status.toLowerCase().trim();
             if (status === 'delivered' || status === 'done' || status === 'paid') return 'badge-success';
             if (status === 'prepress' || status === 'printing') return 'badge-info';
             if (status === 'finishing' || status === 'processing') return 'badge-purple';
@@ -6610,7 +6626,7 @@
             if (status === 'pending' || status === 'due' || status === 'reprint' || status === 'proof pending') return 'badge-warning';
             if (status === 'cancelled' || status === 'rejected') return 'badge-danger';
             if (status === 'refunded') return 'badge-success';
-            return 'badge-success';
+            return 'badge-warning';
         }
 
         // ── CLIENT PROOF HANDLERS ───────────────────────

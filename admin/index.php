@@ -815,6 +815,9 @@ $userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
                 <div class="a-nav-item" onclick="showPage('settings')">
                     <i class="bi bi-gear"></i> Settings
                 </div>
+                <div class="a-nav-item" onclick="showPage('analytics')">
+                    <i class="bi bi-bar-chart-line"></i> Analytics
+                </div>
             </nav>
             <div class="a-logout">
                 <a href="#" onclick="handleLogout(event)"><i class="bi bi-box-arrow-left"></i> Logout</a>
@@ -981,6 +984,10 @@ $userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
                                 <li class="nav-item">
                                     <button class="nav-link py-3 border-0 fw-bold small text-uppercase"
                                         onclick="filterOrdersByStatus('Delivered')">Delivered</button>
+                                </li>
+                                <li class="nav-item">
+                                    <button class="nav-link py-3 border-0 fw-bold small text-uppercase"
+                                        onclick="filterOrdersByStatus('Cancelled')">Canceled</button>
                                 </li>
                             </ul>
                         </div>
@@ -1195,6 +1202,77 @@ $userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
                     </div>
                 </div>
 
+                <!-- Analytics Page -->
+                <div class="a-page" id="page-analytics">
+                    <!-- Date range filter -->
+                    <div class="d-flex gap-2 mb-4 flex-wrap">
+                        <button class="btn btn-sm btn-primary" onclick="loadAnalytics('month')" id="aFilter-month">This Month</button>
+                        <button class="btn btn-sm btn-light" onclick="loadAnalytics('3months')" id="aFilter-3months">Last 3 Months</button>
+                        <button class="btn btn-sm btn-light" onclick="loadAnalytics('6months')" id="aFilter-6months">Last 6 Months</button>
+                        <button class="btn btn-sm btn-light" onclick="loadAnalytics('year')" id="aFilter-year">This Year</button>
+                    </div>
+
+                    <!-- KPI Cards -->
+                    <div class="kpi-grid" id="analyticsKpis">
+                        <div class="kpi-card">
+                            <div class="kpi-icon bg-primary-subtle text-primary">
+                                <i class="bi bi-box-seam"></i>
+                            </div>
+                            <div>
+                                <div class="kpi-lbl">Total Orders</div>
+                                <div class="kpi-val" id="aKpiOrders">—</div>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon bg-success-subtle text-success">
+                                <i class="bi bi-currency-dollar"></i>
+                            </div>
+                            <div>
+                                <div class="kpi-lbl">Total Revenue</div>
+                                <div class="kpi-val" id="aKpiRevenue">—</div>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon bg-warning-subtle text-warning">
+                                <i class="bi bi-hourglass-split"></i>
+                            </div>
+                            <div>
+                                <div class="kpi-lbl">Pending Proofs</div>
+                                <div class="kpi-val" id="aKpiProofs">—</div>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon bg-info-subtle text-info">
+                                <i class="bi bi-people"></i>
+                            </div>
+                            <div>
+                                <div class="kpi-lbl">Active Clients</div>
+                                <div class="kpi-val" id="aKpiClients">—</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Row -->
+                    <div class="row g-4">
+                        <div class="col-lg-5">
+                            <div class="card p-4">
+                                <h6 class="fw-bold mb-4">Orders by Print Category</h6>
+                                <div style="height:280px;">
+                                    <canvas id="categoryPieChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-7">
+                            <div class="card p-4">
+                                <h6 class="fw-bold mb-4">Monthly Revenue</h6>
+                                <div style="height:280px;">
+                                    <canvas id="monthlyRevenueChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Settings Page -->
                 <div class="a-page" id="page-settings">
                     <div class="card border-0 shadow-sm overflow-hidden" style="border-radius:16px;">
@@ -1400,6 +1478,49 @@ $userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
             </div>
         </div>
     </div>
+
+                <!-- ══ ANALYTICS PAGE ══ -->
+                <div class="a-page" id="page-analytics">
+                    <div class="d-flex gap-2 mb-4 flex-wrap">
+                        <button class="btn btn-sm btn-primary" onclick="loadAnalytics('month')" id="aFilter-month">This Month</button>
+                        <button class="btn btn-sm btn-light" onclick="loadAnalytics('3months')" id="aFilter-3months">Last 3 Months</button>
+                        <button class="btn btn-sm btn-light" onclick="loadAnalytics('6months')" id="aFilter-6months">Last 6 Months</button>
+                        <button class="btn btn-sm btn-light" onclick="loadAnalytics('year')" id="aFilter-year">This Year</button>
+                    </div>
+                    <div class="kpi-grid" id="analyticsKpis">
+                        <div class="kpi-card">
+                            <div class="kpi-icon bg-primary-subtle text-primary"><i class="bi bi-box-seam"></i></div>
+                            <div><div class="kpi-lbl">Total Orders</div><div class="kpi-val" id="aKpiOrders">—</div></div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon bg-success-subtle text-success"><i class="bi bi-currency-dollar"></i></div>
+                            <div><div class="kpi-lbl">Total Revenue</div><div class="kpi-val" id="aKpiRevenue">—</div></div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon bg-warning-subtle text-warning"><i class="bi bi-hourglass-split"></i></div>
+                            <div><div class="kpi-lbl">Pending Proofs</div><div class="kpi-val" id="aKpiProofs">—</div></div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon bg-info-subtle text-info"><i class="bi bi-people"></i></div>
+                            <div><div class="kpi-lbl">Active Clients</div><div class="kpi-val" id="aKpiClients">—</div></div>
+                        </div>
+                    </div>
+                    <div class="row g-4 mt-1">
+                        <div class="col-lg-5">
+                            <div class="card p-4">
+                                <h6 class="fw-bold mb-4">Orders by Print Category</h6>
+                                <div style="height:280px;"><canvas id="categoryPieChart"></canvas></div>
+                            </div>
+                        </div>
+                        <div class="col-lg-7">
+                            <div class="card p-4">
+                                <h6 class="fw-bold mb-4">Monthly Revenue</h6>
+                                <div style="height:280px;"><canvas id="monthlyRevenueChart"></canvas></div>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- /analytics -->
+
     <div class="modal fade" id="specEditModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow" style="border-radius:16px;">
@@ -1604,6 +1725,38 @@ $userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
             }
         }
 
+        // Toast Notification System
+        function showToast(message, type = 'success') {
+            const toastContainer = document.getElementById('toastContainer');
+            if (!toastContainer) return;
+
+            const toastId = 'toast-' + Date.now();
+            const bgClass = type === 'success' ? 'bg-success' : type === 'danger' ? 'bg-danger' : type === 'warning' ? 'bg-warning' : 'bg-info';
+            const iconClass = type === 'success' ? 'bi-check-circle' : type === 'danger' ? 'bi-exclamation-triangle' : type === 'warning' ? 'bi-exclamation-triangle' : 'bi-info-circle';
+
+            const toastHtml = `
+                <div class="toast align-items-center text-white ${bgClass} border-0" role="alert" id="${toastId}" style="border-radius: 12px;">
+                    <div class="d-flex">
+                        <div class="toast-body d-flex align-items-center gap-2">
+                            <i class="bi ${iconClass}"></i>
+                            ${message}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                </div>
+            `;
+
+            toastContainer.insertAdjacentHTML('beforeend', toastHtml);
+            const toastElement = document.getElementById(toastId);
+            const toast = new bootstrap.Toast(toastElement, { delay: 4000 });
+            toast.show();
+
+            // Clean up after toast is hidden
+            toastElement.addEventListener('hidden.bs.toast', () => {
+                toastElement.remove();
+            });
+        }
+
         // Navigation
         function showPage(id) {
             const page = document.getElementById('page-' + id);
@@ -1619,7 +1772,7 @@ $userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
                 }
             });
 
-            const titles = { dashboard: 'Dashboard', orders: 'All Orders', users: 'User Management', subscriptions: 'Subscriptions', specs: 'Specifications', settings: 'Settings' };
+            const titles = { dashboard: 'Dashboard', orders: 'All Orders', users: 'User Management', subscriptions: 'Subscriptions', specs: 'Specifications', settings: 'Settings', analytics: 'Analytics' };
             const titleEl = document.getElementById('pageTitle');
             if (titleEl) titleEl.textContent = titles[id] || id;
 
@@ -1628,6 +1781,7 @@ $userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
             if (id === 'users') loadUsers();
             if (id === 'subscriptions') loadSubscriptions();
             if (id === 'specs') loadSpecs();
+            if (id === 'analytics') loadAnalytics('month');
 
             if (window.innerWidth < 992) {
                 const sb = document.getElementById('sidebar');
@@ -1647,10 +1801,10 @@ $userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
                 state.charts.status = new Chart(statusCtx, {
                     type: 'doughnut',
                     data: {
-                        labels: ['Prepress', 'Printing', 'Finishing', 'Delivered'],
+                        labels: ['Prepress', 'Printing', 'Finishing', 'Delivered', 'Cancelled'],
                         datasets: [{
-                            data: [0, 0, 0, 0],
-                            backgroundColor: ['#fb6340', '#1171ef', '#7c4dff', '#2dce89'],
+                            data: [0, 0, 0, 0, 0],
+                            backgroundColor: ['#fb6340', '#1171ef', '#7c4dff', '#2dce89', '#6c757d'],
                             borderWidth: 0
                         }]
                     },
@@ -1752,7 +1906,8 @@ $userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
                             parseInt(d.status_counts['Prepress'] || 0),
                             parseInt(d.status_counts['Printing'] || 0),
                             parseInt(d.status_counts['Finishing'] || 0),
-                            parseInt(d.status_counts['Delivered'] || 0)
+                            parseInt(d.status_counts['Delivered'] || 0),
+                            parseInt(d.status_counts['Cancelled'] || 0)
                         ];
                         state.charts.status.update();
                     }
@@ -1864,7 +2019,7 @@ $userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
                         </td>
                         <td>
                             <select class="status-select" style="color:${sColor}; border-color:${sColor}; font-size: .73rem; padding: 2px 6px;" onchange="updateOrderStatus(${o.id}, this.value)">
-                                ${['Proof Pending', 'Proof Pending Review', 'Prepress', 'Printing', 'Finishing', 'Shipping', 'Delivered', 'Reprint'].map(s => `<option value="${s}" ${o.status === s ? 'selected' : ''}>${s}</option>`).join('')}
+                                ${['Proof Pending', 'Proof Pending Review', 'Prepress', 'Printing', 'Finishing', 'Shipping', 'Delivered', 'Reprint', 'Cancelled'].map(s => `<option value="${s}" ${o.status === s ? 'selected' : ''}>${s}</option>`).join('')}
                             </select>
                         </td>
                         <td class="text-muted small">${o.due_date ? new Date(o.due_date).toLocaleDateString() : '-'}</td>
@@ -2437,7 +2592,8 @@ $userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
                 'Printing': 40,
                 'Finishing': 60,
                 'Shipping': 80,
-                'Delivered': 100
+                'Delivered': 100,
+                'Cancelled': 0
             }[status] || 0;
         }
 
@@ -2450,7 +2606,8 @@ $userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
                 'Finishing': '#8c09ff',
                 'Shipping': '#2dce89',
                 'Delivered': '#2dce89',
-                'Reprint': '#f5365c'
+                'Reprint': '#f5365c',
+                'Cancelled': '#6c757d'
             }[status] || '#8898aa';
         }
 
@@ -2592,6 +2749,51 @@ $userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
                 }
             } catch (e) {
                 alert('Network error. Please try again.');
+            }
+        }
+
+        // ── ANALYTICS ──────────────────────────────────────
+        let analyticsCharts = { pie: null, bar: null };
+
+        async function loadAnalytics(range = 'month') {
+            document.querySelectorAll('[id^="aFilter-"]').forEach(b => b.className = 'btn btn-sm btn-light');
+            const activeBtn = document.getElementById('aFilter-' + range);
+            if (activeBtn) activeBtn.className = 'btn btn-sm btn-primary';
+
+            try {
+                const res  = await fetch('../api/get_analytics.php?range=' + range + '&_=' + Date.now());
+                const json = await res.json();
+                if (!json.success) { showToast('Failed to load analytics', 'danger'); return; }
+                const d = json.data;
+
+                document.getElementById('aKpiOrders').textContent  = parseInt(d.kpis.total_orders).toLocaleString();
+                document.getElementById('aKpiRevenue').textContent = '₱' + parseFloat(d.kpis.total_revenue).toLocaleString(undefined, { minimumFractionDigits: 2 });
+                document.getElementById('aKpiProofs').textContent  = d.kpis.pending_proofs;
+                document.getElementById('aKpiClients').textContent = d.kpis.active_clients;
+
+                const pieCtx = document.getElementById('categoryPieChart');
+                if (pieCtx) {
+                    if (analyticsCharts.pie) analyticsCharts.pie.destroy();
+                    const pieColors = ['#1d8cf8','#2dce89','#fb6340','#7c4dff','#f5365c','#11cdef','#ffd600'];
+                    analyticsCharts.pie = new Chart(pieCtx.getContext('2d'), {
+                        type: 'doughnut',
+                        data: { labels: d.by_product.map(r => r.product_type || 'Unknown'), datasets: [{ data: d.by_product.map(r => parseInt(r.count)), backgroundColor: pieColors, borderWidth: 2, borderColor: '#fff' }] },
+                        options: { maintainAspectRatio: false, cutout: '65%', plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, font: { size: 11 } } } } }
+                    });
+                }
+
+                const barCtx = document.getElementById('monthlyRevenueChart');
+                if (barCtx) {
+                    if (analyticsCharts.bar) analyticsCharts.bar.destroy();
+                    analyticsCharts.bar = new Chart(barCtx.getContext('2d'), {
+                        type: 'bar',
+                        data: { labels: d.monthly_revenue.map(r => r.label), datasets: [{ label: 'Revenue (₱)', data: d.monthly_revenue.map(r => parseFloat(r.value) || 0), backgroundColor: 'rgba(29,140,248,0.8)', borderRadius: 6 }] },
+                        options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { callback: v => '₱' + v.toLocaleString() } }, x: { grid: { display: false } } } }
+                    });
+                }
+            } catch(e) {
+                console.error('Analytics error:', e);
+                showToast('Failed to load analytics', 'danger');
             }
         }
     </script>
