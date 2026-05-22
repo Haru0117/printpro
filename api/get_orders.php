@@ -28,7 +28,8 @@ try {
         $stmt = $pdo->query("
             SELECT o.*, 
                    COALESCE(NULLIF(o.job_name, ''), o.product_type) as job_name, 
-                   o.total_amount as total_price, 
+                   o.total_amount as total_price,
+                   COALESCE(NULLIF(o.status, ''), 'Proof Pending') as status,
                    c.business_name, 
                    u.name as client_name 
             FROM orders o 
@@ -47,7 +48,10 @@ try {
         if ($client) {
             $client_id = $client['id'];
             $stmt = $pdo->prepare("
-                SELECT *, COALESCE(NULLIF(job_name, ''), product_type) as job_name, total_amount as total_price 
+                SELECT *, 
+                       COALESCE(NULLIF(job_name, ''), product_type) as job_name, 
+                       total_amount as total_price,
+                       COALESCE(NULLIF(status, ''), 'Proof Pending') as status
                 FROM orders 
                 WHERE client_id = ? 
                 ORDER BY created_at DESC
@@ -59,8 +63,14 @@ try {
         }
     }
 
-    echo json_encode(['success' => true, 'data' => $orders]);
+    $response = ['success' => true, 'data' => $orders];
 } catch (PDOException $e) {
-    echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
+    $response = ['success' => false, 'message' => 'Database error: ' . $e->getMessage()];
 }
+
+// CLOSE CONNECTION IMMEDIATELY after fetching data (Fetch-Close-Render pattern)
+$pdo = null;
+
+// Now perform rendering
+echo json_encode($response);
 ?>

@@ -70,8 +70,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // 3. Update primary user record
-        $stmt = $pdo->prepare("UPDATE users SET name = ?, role = ?, status = ? WHERE id = ?");
-        $stmt->execute([$name, $role, $status, $id]);
+        $plan = $_POST['subscription_plan'] ?? null;
+        $planMap = ['pro' => 'Pro', 'premium' => 'Premium', 'premium+' => 'Premium+'];
+        $normalizedPlan = $plan ? ($planMap[strtolower(trim($plan))] ?? $plan) : null;
+
+        if ($normalizedPlan && in_array($normalizedPlan, ['Pro', 'Premium', 'Premium+'])) {
+            $stmt = $pdo->prepare("UPDATE users SET name = ?, role = ?, status = ?, subscription_plan = ? WHERE id = ?");
+            $stmt->execute([$name, $role, $status, $normalizedPlan, $id]);
+        } else {
+            $stmt = $pdo->prepare("UPDATE users SET name = ?, role = ?, status = ? WHERE id = ?");
+            $stmt->execute([$name, $role, $status, $id]);
+        }
 
         $pdo->commit();
         ob_clean();

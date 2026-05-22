@@ -23,6 +23,19 @@ try {
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($user) {
+        // Normalize subscription_plan to correct casing
+        $planMap = [
+            'pro'       => 'Pro',
+            'premium'   => 'Premium',
+            'premium+'  => 'Premium+',
+            'premiumplus' => 'Premium+',
+            'premium plus' => 'Premium+',
+        ];
+        $rawPlan = strtolower(trim($user['subscription_plan'] ?? ''));
+        if (isset($planMap[$rawPlan])) {
+            $user['subscription_plan'] = $planMap[$rawPlan];
+        }
+
         echo json_encode([
             'success' => true,
             'data' => $user

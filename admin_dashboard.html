@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PrintPro Admin Dashboard</title>
+    <title>PrintPro Admin Dashboard - CANCELLED TAB TEST VERSION</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
@@ -576,6 +576,29 @@
             color: #a0aec0 !important;
         }
 
+        /* Special styling for Cancelled tab */
+        .nav-tabs .nav-link[onclick*="Cancelled"] {
+            color: #dc3545 !important;
+            font-weight: 700 !important;
+            position: relative;
+        }
+
+        .nav-tabs .nav-link[onclick*="Cancelled"]:hover {
+            color: #c82333 !important;
+            background: rgba(220, 53, 69, 0.1) !important;
+        }
+
+        .nav-tabs .nav-link[onclick*="Cancelled"].active {
+            color: #dc3545 !important;
+            border-bottom: 3px solid #dc3545 !important;
+            background: rgba(220, 53, 69, 0.05) !important;
+        }
+
+        .nav-tabs .nav-link[onclick*="Cancelled"]::after {
+            content: " 🚫";
+            font-size: 0.9em;
+        }
+
         .btn-sm {
             width: 32px;
             height: 32px;
@@ -610,19 +633,36 @@
         }
 
         .status-select {
-            padding: 4px 8px;
-            border-radius: 8px;
+            padding: 6px 12px;
+            border-radius: 12px;
             font-size: .75rem;
-            font-weight: 600;
-            border: 1px solid var(--border);
+            font-weight: 700;
+            border: 2px solid;
             background: transparent;
             outline: none;
             cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            min-width: 100px;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .status-select:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .status-select option {
+            font-weight: 600;
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin: 2px 0;
         }
 
         [data-theme="dark"] .status-select {
-            color: #fff;
-            background: var(--dark-card2);
+            color: #fff !important;
+            background: var(--dark-card2) !important;
         }
 
         /* ── LOADING STATES ── */
@@ -735,6 +775,60 @@
                 width: 100% !important;
                 margin-bottom: 10px;
             }
+
+            /* ── MOBILE TAB FIXES ── */
+            .nav-tabs {
+                overflow-x: auto !important;
+                overflow-y: hidden !important;
+                white-space: nowrap !important;
+                -webkit-overflow-scrolling: touch !important;
+                scrollbar-width: none !important;
+                -ms-overflow-style: none !important;
+                position: relative !important;
+            }
+
+            .nav-tabs::-webkit-scrollbar {
+                display: none !important;
+            }
+
+            .nav-tabs::after {
+                content: "← Swipe to see more tabs →";
+                position: absolute;
+                bottom: -20px;
+                left: 50%;
+                transform: translateX(-50%);
+                font-size: 0.6rem;
+                color: #6c757d;
+                white-space: nowrap;
+                pointer-events: none;
+            }
+
+            .nav-tabs .nav-item {
+                flex-shrink: 0 !important;
+                display: inline-block !important;
+            }
+
+            .nav-tabs .nav-link {
+                font-size: 0.7rem !important;
+                padding: 8px 12px !important;
+                white-space: nowrap !important;
+            }
+
+            /* Make CANCELLED tab extra visible on mobile */
+            .nav-tabs .nav-link[onclick*="Cancelled"] {
+                background: #ff0000 !important;
+                color: white !important;
+                border: 2px solid #ff0000 !important;
+                font-weight: 900 !important;
+                animation: pulse 2s infinite !important;
+                box-shadow: 0 0 10px rgba(255, 0, 0, 0.5) !important;
+            }
+
+            @keyframes pulse {
+                0% { transform: scale(1); box-shadow: 0 0 10px rgba(255, 0, 0, 0.5); }
+                50% { transform: scale(1.05); box-shadow: 0 0 20px rgba(255, 0, 0, 0.8); }
+                100% { transform: scale(1); box-shadow: 0 0 10px rgba(255, 0, 0, 0.5); }
+            }
         }
     </style>
 </head>
@@ -767,6 +861,9 @@
                 <div class="a-nav-item" onclick="showPage('settings')">
                     <i class="bi bi-gear"></i> Settings
                 </div>
+                <div class="a-nav-item" onclick="showPage('analytics')">
+                    <i class="bi bi-bar-chart-line"></i> Analytics
+                </div>
             </nav>
             <div class="a-logout">
                 <a href="#" onclick="handleLogout(event)"><i class="bi bi-box-arrow-left"></i> Logout</a>
@@ -780,7 +877,7 @@
                     <button class="btn btn-light d-lg-none action-btn" onclick="toggleSidebar()">
                         <i class="bi bi-list fs-4"></i>
                     </button>
-                    <h5 class="m-0 fw-bold" id="pageTitle">Dashboard</h5>
+                    <h5 class="m-0 fw-bold" id="pageTitle" style="color: red; background: yellow; padding: 5px;">🚫 CANCELLED TAB TEST - Dashboard</h5>
                 </div>
                 <div class="d-flex align-items-center gap-3">
                     <button class="btn border-0 p-0 text-muted fs-5" onclick="toggleTheme()">
@@ -809,7 +906,7 @@
                             </div>
                             <div>
                                 <div class="kpi-lbl">Total Revenue</div>
-                                <div class="kpi-val">₱0.00</div>
+                                <div class="kpi-val" id="kpiRevenue">₱0.00</div>
                             </div>
                         </div>
                         <div class="kpi-card">
@@ -817,7 +914,7 @@
                             </div>
                             <div>
                                 <div class="kpi-lbl">Completed</div>
-                                <div class="kpi-val">0</div>
+                                <div class="kpi-val" id="kpiCompleted">0</div>
                             </div>
                         </div>
                         <div class="kpi-card">
@@ -825,14 +922,14 @@
                             </div>
                             <div>
                                 <div class="kpi-lbl">Pending</div>
-                                <div class="kpi-val">0</div>
+                                <div class="kpi-val" id="kpiPending">0</div>
                             </div>
                         </div>
                         <div class="kpi-card">
                             <div class="kpi-icon bg-info-subtle text-info"><i class="bi bi-person-plus"></i></div>
                             <div>
                                 <div class="kpi-lbl">New Users</div>
-                                <div class="kpi-val">0</div>
+                                <div class="kpi-val" id="kpiNewUsers">0</div>
                             </div>
                         </div>
                     </div>
@@ -916,6 +1013,10 @@
                                 </li>
                                 <li class="nav-item">
                                     <button class="nav-link py-3 border-0 fw-bold small text-uppercase"
+                                        onclick="filterOrdersByStatus('Proof Pending')">Proof Pending</button>
+                                </li>
+                                <li class="nav-item">
+                                    <button class="nav-link py-3 border-0 fw-bold small text-uppercase"
                                         onclick="filterOrdersByStatus('Prepress')">Prepress</button>
                                 </li>
                                 <li class="nav-item">
@@ -933,6 +1034,11 @@
                                 <li class="nav-item">
                                     <button class="nav-link py-3 border-0 fw-bold small text-uppercase"
                                         onclick="filterOrdersByStatus('Delivered')">Delivered</button>
+                                </li>
+                                <li class="nav-item">
+                                    <button class="nav-link py-3 border-0 fw-bold small text-uppercase" 
+                                        style="background: #ff0000 !important; color: white !important; border: 2px solid #ff0000 !important;"
+                                        onclick="filterOrdersByStatus('Cancelled')">🚫 CANCELLED</button>
                                 </li>
                             </ul>
                         </div>
@@ -999,6 +1105,7 @@
                                         <th>User</th>
                                         <th>Business</th>
                                         <th>Role</th>
+                                        <th>Plan</th>
                                         <th>Status</th>
                                         <th>Joined</th>
                                         <th>Actions</th>
@@ -1059,6 +1166,77 @@
                                 </thead>
                                 <tbody></tbody>
                             </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analytics Page -->
+                <div class="a-page" id="page-analytics">
+                    <!-- Date range filter -->
+                    <div class="d-flex gap-2 mb-4 flex-wrap">
+                        <button class="btn btn-sm btn-primary" onclick="loadAnalytics('month')" id="aFilter-month">This Month</button>
+                        <button class="btn btn-sm btn-light" onclick="loadAnalytics('3months')" id="aFilter-3months">Last 3 Months</button>
+                        <button class="btn btn-sm btn-light" onclick="loadAnalytics('6months')" id="aFilter-6months">Last 6 Months</button>
+                        <button class="btn btn-sm btn-light" onclick="loadAnalytics('year')" id="aFilter-year">This Year</button>
+                    </div>
+
+                    <!-- KPI Cards -->
+                    <div class="kpi-grid" id="analyticsKpis">
+                        <div class="kpi-card">
+                            <div class="kpi-icon bg-primary-subtle text-primary">
+                                <i class="bi bi-box-seam"></i>
+                            </div>
+                            <div>
+                                <div class="kpi-lbl">Total Orders</div>
+                                <div class="kpi-val" id="aKpiOrders">—</div>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon bg-success-subtle text-success">
+                                <i class="bi bi-currency-dollar"></i>
+                            </div>
+                            <div>
+                                <div class="kpi-lbl">Total Revenue</div>
+                                <div class="kpi-val" id="aKpiRevenue">—</div>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon bg-warning-subtle text-warning">
+                                <i class="bi bi-hourglass-split"></i>
+                            </div>
+                            <div>
+                                <div class="kpi-lbl">Pending Proofs</div>
+                                <div class="kpi-val" id="aKpiProofs">—</div>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon bg-info-subtle text-info">
+                                <i class="bi bi-people"></i>
+                            </div>
+                            <div>
+                                <div class="kpi-lbl">Active Clients</div>
+                                <div class="kpi-val" id="aKpiClients">—</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Row -->
+                    <div class="row g-4">
+                        <div class="col-lg-5">
+                            <div class="card p-4">
+                                <h6 class="fw-bold mb-4">Orders by Print Category</h6>
+                                <div style="height:280px;">
+                                    <canvas id="categoryPieChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-7">
+                            <div class="card p-4">
+                                <h6 class="fw-bold mb-4">Monthly Revenue</h6>
+                                <div style="height:280px;">
+                                    <canvas id="monthlyRevenueChart"></canvas>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1336,12 +1514,61 @@
                                 <option value="suspended">Suspended</option>
                             </select>
                         </div>
+                        <div class="mb-3" id="editPlanRow">
+                            <label class="form-label small fw-bold">Subscription Plan</label>
+                            <select class="form-select" id="editUserPlan">
+                                <option value="">— No Change —</option>
+                                <option value="Pro">Pro (₱999/mo)</option>
+                                <option value="Premium">Premium (₱1,899/mo)</option>
+                                <option value="Premium+">Premium+ (₱2,199/mo)</option>
+                            </select>
+                            <div class="form-text">Only applies to client accounts.</div>
+                        </div>
                     </div>
                     <div class="modal-footer border-0 p-4 pt-0">
                         <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
                         <button type="submit" class="btn btn-primary px-4 fw-bold">Save Changes</button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Reject/Cancel Order Modal -->
+    <div class="modal fade" id="adminRejectModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow" style="border-radius:16px;">
+                <div class="modal-header border-0 px-4 pt-4">
+                    <h5 class="fw-bold m-0">Reject / Cancel Order</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <input type="hidden" id="adminRejectOrderId">
+                    <p class="text-muted small mb-3">Order <strong id="adminRejectOrderNum"></strong> — client will be refunded automatically.</p>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Reason</label>
+                        <select class="form-select mb-2" id="adminRejectReasonSelect" onchange="handleAdminRejectSelect(this)">
+                            <option value="">— Select a reason —</option>
+                            <option value="Artwork file does not meet print specifications">Artwork does not meet print specs</option>
+                            <option value="Incorrect file format submitted">Incorrect file format</option>
+                            <option value="Low resolution artwork">Low resolution artwork</option>
+                            <option value="Missing bleed or safe zone">Missing bleed or safe zone</option>
+                            <option value="Payment issue">Payment issue</option>
+                            <option value="Client requested cancellation">Client requested cancellation</option>
+                            <option value="Duplicate order">Duplicate order</option>
+                            <option value="Product temporarily unavailable">Product temporarily unavailable</option>
+                            <option value="Other">Other (type below)</option>
+                        </select>
+                        <textarea class="form-control" id="adminRejectReasonText" rows="3"
+                            placeholder="Add details or type a custom reason..."
+                            style="display:none; resize:vertical;"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger px-4 fw-bold" onclick="submitAdminReject()">Reject & Refund</button>
+                </div>
             </div>
         </div>
     </div>
@@ -1381,6 +1608,13 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // ══════════════════════════════════════════════════════
+        //  TEST: Verify file is loaded correctly
+        // ══════════════════════════════════════════════════════
+        console.log('🔧 PrintPro Admin Dashboard Loaded - CANCELLED Tab Version 2.0');
+        console.log('📅 File updated:', new Date().toISOString());
+        alert('CANCELLED TAB TEST VERSION LOADED - Check browser title!');
+        
         // Global State
         const state = {
             user: JSON.parse(sessionStorage.getItem('pp_user') || '{}'),
@@ -1471,7 +1705,7 @@
                 }
             });
 
-            const titles = { dashboard: 'Dashboard', orders: 'All Orders', users: 'User Management', subscriptions: 'Subscriptions', specs: 'Specifications', settings: 'Settings' };
+            const titles = { dashboard: 'Dashboard', orders: 'All Orders', users: 'User Management', subscriptions: 'Subscriptions', specs: 'Specifications', settings: 'Settings', analytics: 'Analytics' };
             const titleEl = document.getElementById('pageTitle');
             if (titleEl) titleEl.textContent = titles[id] || id;
 
@@ -1480,6 +1714,7 @@
             if (id === 'users') loadUsers();
             if (id === 'subscriptions') loadSubscriptions();
             if (id === 'specs') loadSpecs();
+            if (id === 'analytics') loadAnalytics('month');
 
             if (window.innerWidth < 992) {
                 const sb = document.getElementById('sidebar');
@@ -1493,10 +1728,10 @@
             state.charts.status = new Chart(statusCtx, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Prepress', 'Printing', 'Finishing', 'Delivered'],
+                    labels: ['Prepress', 'Printing', 'Finishing', 'Delivered', 'Cancelled'],
                     datasets: [{
-                        data: [0, 0, 0, 0],
-                        backgroundColor: ['#fb6340', '#1171ef', '#7c4dff', '#2dce89'],
+                        data: [0, 0, 0, 0, 0],
+                        backgroundColor: ['#fb6340', '#1171ef', '#7c4dff', '#2dce89', '#6c757d'],
                         borderWidth: 0
                     }]
                 },
@@ -1527,20 +1762,23 @@
                 const json = await res.json();
                 if (json.success) {
                     const d = json.data;
-                    const kpis = document.querySelectorAll('#dashboardKpis .kpi-val');
-                    if (kpis.length >= 4) {
-                        kpis[0].textContent = '₱' + parseFloat(d.total_revenue || 0).toLocaleString(undefined, { minimumFractionDigits: 2 });
-                        kpis[1].textContent = d.status_counts['Delivered'] || 0;
-                        kpis[2].textContent = (parseInt(d.status_counts['Prepress'] || 0)) + (parseInt(d.status_counts['Printing'] || 0)) + (parseInt(d.status_counts['Finishing'] || 0));
-                        kpis[3].textContent = d.new_users || 0;
-                    }
+                    // Use stable IDs instead of positional querySelectorAll
+                    const kpiRev = document.getElementById('kpiRevenue');
+                    const kpiComp = document.getElementById('kpiCompleted');
+                    const kpiPend = document.getElementById('kpiPending');
+                    const kpiNew = document.getElementById('kpiNewUsers');
+                    if (kpiRev) kpiRev.textContent = '₱' + parseFloat(d.total_revenue || 0).toLocaleString(undefined, { minimumFractionDigits: 2 });
+                    if (kpiComp) kpiComp.textContent = d.status_counts['Delivered'] || 0;
+                    if (kpiPend) kpiPend.textContent = (parseInt(d.status_counts['Prepress'] || 0)) + (parseInt(d.status_counts['Printing'] || 0)) + (parseInt(d.status_counts['Finishing'] || 0));
+                    if (kpiNew) kpiNew.textContent = d.new_users || 0;
 
                     // Update Charts
                     state.charts.status.data.datasets[0].data = [
                         parseInt(d.status_counts['Prepress'] || 0),
                         parseInt(d.status_counts['Printing'] || 0),
                         parseInt(d.status_counts['Finishing'] || 0),
-                        parseInt(d.status_counts['Delivered'] || 0)
+                        parseInt(d.status_counts['Delivered'] || 0),
+                        parseInt(d.status_counts['Cancelled'] || 0)
                     ];
                     state.charts.status.update();
 
@@ -1589,7 +1827,16 @@
                 const res = await fetch('api/get_orders.php?_=' + Date.now());
                 const json = await res.json();
                 if (json.success) {
-                    state.orders = json.data;
+                    // Sort orders: cancelled orders go to the bottom
+                    state.orders = json.data.sort((a, b) => {
+                        // If one is cancelled and the other isn't, cancelled goes to bottom
+                        if (a.status === 'Cancelled' && b.status !== 'Cancelled') return 1;
+                        if (b.status === 'Cancelled' && a.status !== 'Cancelled') return -1;
+                        
+                        // Otherwise sort by created_at (newest first)
+                        return new Date(b.created_at) - new Date(a.created_at);
+                    });
+                    
                     renderOrders();
                     renderRecentOrders();
                     renderActivityFeed();
@@ -1606,9 +1853,11 @@
                 const sColor = getStatusColor(o.status);
                 const orderNum = o.order_number || ('PPR-' + String(o.id).padStart(3, '0'));
                 
-                // Highlight rows that are Proof Pending or Proof Pending Review
+                // Highlight rows that are Proof Pending, Proof Pending Review, or Cancelled
                 let rowStyle = '';
-                if (o.status === 'Proof Pending') {
+                if (o.status === 'Cancelled') {
+                    rowStyle = 'style="background: rgba(108, 117, 125, 0.08); border-left: 4px solid #6c757d;"';
+                } else if (o.status === 'Proof Pending') {
                     rowStyle = 'style="background: rgba(251, 99, 64, 0.05);"';
                 } else if (o.status === 'Proof Pending Review') {
                     rowStyle = 'style="background: rgba(29, 140, 248, 0.03);"';
@@ -1635,9 +1884,18 @@
                             </div>
                         </td>
                         <td>
-                            <select class="status-select" style="color:${sColor}; border-color:${sColor}; font-size: .73rem; padding: 2px 6px;" onchange="updateOrderStatus(${o.id}, this.value)">
-                                ${['Proof Pending', 'Proof Pending Review', 'Prepress', 'Printing', 'Finishing', 'Shipping', 'Delivered', 'Reprint'].map(s => `<option value="${s}" ${o.status === s ? 'selected' : ''}>${s}</option>`).join('')}
-                            </select>
+                            ${o.status === 'Cancelled'
+                                ? `<div>
+                                    <span class="badge-status" style="background:#8898aa20;color:#8898aa;border:1px solid #8898aa40;font-size:.65rem;font-weight:800;padding:4px 10px;border-radius:6px;text-transform:uppercase;">Cancelled</span>
+                                    ${o.rejection_reason ? `<div style="font-size:.65rem;color:#8898aa;margin-top:4px;max-width:160px;white-space:normal;line-height:1.3;" title="${o.rejection_reason}">↩ Refunded · ${o.rejection_reason.length > 40 ? o.rejection_reason.substring(0,40)+'…' : o.rejection_reason}</div>` : ''}
+                                   </div>`
+                                : `<select class="status-select" style="color:${sColor}; border-color:${sColor}; background-color:${sColor}15; font-size: .73rem; padding: 2px 6px;" onchange="updateOrderStatus(${o.id}, this.value)">
+                                    ${['Proof Pending', 'Proof Pending Review', 'Prepress', 'Printing', 'Finishing', 'Shipping', 'Delivered', 'Reprint', 'Cancelled'].map(s => {
+                                        const optionColor = getStatusColor(s);
+                                        return `<option value="${s}" ${o.status === s ? 'selected' : ''} style="background-color:${optionColor}20; color:${optionColor};">${s}</option>`;
+                                    }).join('')}
+                                   </select>`
+                            }
                         </td>
                         <td class="text-muted small">${o.due_date ? new Date(o.due_date).toLocaleDateString() : '-'}</td>
                         <td class="fw-bold">₱${parseFloat(o.total_amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
@@ -1646,6 +1904,7 @@
                                 <button class="btn btn-light action-btn" onclick="viewOrderDetails(${o.id})" title="View Details"><i class="bi bi-eye"></i></button>
                                 <a href="api/generate_ticket.php?order_id=${o.id}" target="_blank" class="btn btn-light action-btn" title="Job Ticket"><i class="bi bi-ticket-perforated"></i></a>
                                 ${proofBtn}
+                                ${o.status !== 'Cancelled' ? `<button class="btn btn-danger action-btn" onclick="openAdminRejectModal(${o.id}, '${orderNum}')" title="Reject Order" style="background:#f5365c; border:none; color:#fff;"><i class="bi bi-x-circle"></i></button>` : ''}
                             </div>
                         </td>
                     </tr>
@@ -1682,22 +1941,43 @@
         }
 
         function filterOrdersByStatus(status) {
-            // Update UI tabs
+            console.log('🔍 Filtering by status:', status);
+            
             document.querySelectorAll('#orderTabs .nav-link').forEach(btn => {
                 btn.classList.remove('active');
-                if (btn.textContent.trim() === status || (status === 'All' && btn.textContent.trim() === 'All Orders')) {
-                    btn.classList.add('active');
-                }
+                const btnText = btn.textContent.trim();
+                if (status === 'All' && btnText === 'All Orders') btn.classList.add('active');
+                else if (btnText === status || btnText.includes(status)) btn.classList.add('active');
             });
 
-            document.getElementById('orderListTitle').textContent = status === 'All' ? 'All Orders' : status + ' Orders';
-
+            let filtered;
             if (status === 'All') {
-                renderOrders(state.orders);
+                // For "All Orders", show all but keep cancelled orders at the bottom
+                filtered = [...state.orders].sort((a, b) => {
+                    if (a.status === 'Cancelled' && b.status !== 'Cancelled') return 1;
+                    if (b.status === 'Cancelled' && a.status !== 'Cancelled') return -1;
+                    return new Date(b.created_at) - new Date(a.created_at);
+                });
+                document.getElementById('orderListTitle').textContent = `All Orders (${filtered.length})`;
             } else {
-                const filtered = state.orders.filter(o => o.status === status);
-                renderOrders(filtered);
+                filtered = state.orders.filter(o => o.status === status);
+                document.getElementById('orderListTitle').textContent = `${status} Orders (${filtered.length})`;
             }
+
+            // Debug: Log status counts for cancelled orders
+            if (status === 'Cancelled') {
+                console.log('🔍 Cancelled orders found:', filtered);
+                console.log('📊 All order statuses:', state.orders.map(o => ({id: o.id, status: o.status, rejection_reason: o.rejection_reason})));
+                
+                // Show alert if no cancelled orders found
+                if (filtered.length === 0) {
+                    showToast('No cancelled orders found. Try rejecting an order first to test this feature.', 'info');
+                } else {
+                    showToast(`Found ${filtered.length} cancelled orders`, 'success');
+                }
+            }
+
+            renderOrders(filtered);
         }
 
         function searchOrders(q) {
@@ -1815,8 +2095,14 @@
         }
 
         function renderUsers(data = state.users) {
+            const planColors = { 'Pro': 'bg-info', 'Premium': 'bg-primary', 'Premium+': 'bg-danger' };
             const tbody = document.querySelector('#usersTable tbody');
-            tbody.innerHTML = data.map(u => `
+            tbody.innerHTML = data.map(u => {
+                const plan = u.subscription_plan || '—';
+                const planBadge = plan !== '—'
+                    ? `<span class="badge ${planColors[plan] || 'bg-secondary'} text-uppercase" style="font-size:.62rem;">${plan}</span>`
+                    : `<span class="text-muted small">—</span>`;
+                return `
                 <tr>
                     <td>
                         <div class="d-flex align-items-center gap-3">
@@ -1831,6 +2117,7 @@
                     </td>
                     <td>${u.business_name || '-'}</td>
                     <td><span class="badge bg-primary-subtle text-primary text-uppercase" style="font-size: .65rem;">${u.role}</span></td>
+                    <td>${u.role === 'client' ? planBadge : '<span class="text-muted small">N/A</span>'}</td>
                     <td><span class="badge-status ${(u.status || '').toLowerCase() === 'active' ? 'badge-success' : 'badge-danger'}">${u.status}</span></td>
                     <td class="text-muted small">${new Date(u.created_at).toLocaleDateString()}</td>
                     <td>
@@ -1839,8 +2126,8 @@
                             <button class="btn btn-sm btn-light text-danger" onclick="deleteUser(${u.id})"><i class="bi bi-trash3"></i></button>
                         </div>
                     </td>
-                </tr>
-            `).join('') || '<tr><td colspan="6" class="text-center p-4 text-muted">No users found.</td></tr>';
+                </tr>`;
+            }).join('') || '<tr><td colspan="7" class="text-center p-4 text-muted">No users found.</td></tr>';
         }
 
         function openUserEditModal(id) {
@@ -1850,6 +2137,18 @@
             document.getElementById('editUserName').value = u.name;
             document.getElementById('editUserRole').value = u.role;
             document.getElementById('editUserStatus').value = u.status;
+
+            // Plan field — only show for clients
+            const planRow = document.getElementById('editPlanRow');
+            const planSel = document.getElementById('editUserPlan');
+            if (u.role === 'client') {
+                planRow.style.display = 'block';
+                planSel.value = u.subscription_plan || '';
+            } else {
+                planRow.style.display = 'none';
+                planSel.value = '';
+            }
+
             new bootstrap.Modal(document.getElementById('userEditModal')).show();
         }
 
@@ -1868,6 +2167,9 @@
             formData.append('role', document.getElementById('editUserRole').value);
             formData.append('status', document.getElementById('editUserStatus').value);
 
+            const plan = document.getElementById('editUserPlan').value;
+            if (plan) formData.append('subscription_plan', plan);
+
             try {
                 const res = await fetch('api/update_user.php', { method: 'POST', body: formData });
                 const json = await res.json();
@@ -1875,6 +2177,7 @@
                     showToast('User updated successfully', 'success');
                     bootstrap.Modal.getInstance(document.getElementById('userEditModal')).hide();
                     loadUsers();
+                    loadSubscriptions();
                 } else {
                     showToast(json.message || 'Update failed', 'danger');
                 }
@@ -1921,31 +2224,77 @@
         }
 
         function renderSubscriptions(data = state.subscriptions) {
+            const planColors = { 'Pro': 'bg-info', 'Premium': 'bg-primary', 'Premium+': 'bg-danger' };
+            const planMap = { 'pro': 'Pro', 'premium': 'Premium', 'premium+': 'Premium+' };
             const tbody = document.querySelector('#subsTable tbody');
-            tbody.innerHTML = data.map(s => `
+            tbody.innerHTML = data.map(s => {
+                const rawPlan = s.active_plan || s.subscription_plan || '';
+                const plan = planMap[rawPlan.toLowerCase()] || rawPlan || '—';
+                const planBadge = plan !== '—'
+                    ? `<span class="badge ${planColors[plan] || 'bg-secondary'} text-uppercase" style="font-size:.62rem;">${plan}</span>`
+                    : `<span class="text-muted small">No Plan</span>`;
+                return `
                 <tr>
                     <td class="fw-bold">${s.name}</td>
                     <td>${s.email}</td>
                     <td>${s.business_name || 'N/A'}</td>
                     <td>
-                        <span class="badge bg-primary text-uppercase">${s.active_plan || s.base_plan}</span>
+                        <div class="d-flex align-items-center gap-2">
+                            ${planBadge}
+                            <select class="form-select form-select-sm" style="width:110px; font-size:.72rem;"
+                                onchange="adminChangePlan(${s.user_id}, this.value, this)">
+                                <option value="">Change…</option>
+                                <option value="Pro" ${plan === 'Pro' ? 'selected' : ''}>Pro</option>
+                                <option value="Premium" ${plan === 'Premium' ? 'selected' : ''}>Premium</option>
+                                <option value="Premium+" ${plan === 'Premium+' ? 'selected' : ''}>Premium+</option>
+                            </select>
+                        </div>
                     </td>
                     <td>
                         <span class="badge-status ${(s.sub_status || '').toLowerCase() === 'active' ? 'badge-success' :
-                    (s.sub_status || '').toLowerCase() === 'suspended' ? 'badge-danger' : 'badge-warning'
-                }">
-                            ${s.sub_status || 'Inactive'}
+                            (s.sub_status || '').toLowerCase() === 'suspended' ? 'badge-danger' : 'badge-warning'}">
+                            ${s.sub_status || 'Active'}
                         </span>
                     </td>
                     <td>${s.renews_on ? new Date(s.renews_on).toLocaleDateString() : '-'}</td>
                     <td>
-                        <button class="btn btn-sm ${(s.sub_status || '').toLowerCase() === 'suspended' ? 'btn-success' : 'btn-outline-danger'} px-3" 
+                        <button class="btn btn-sm ${(s.sub_status || '').toLowerCase() === 'suspended' ? 'btn-success' : 'btn-outline-danger'} px-3"
                                 onclick="toggleUserAccountStatus(${s.user_id}, '${s.sub_status}')">
                             ${(s.sub_status || '').toLowerCase() === 'suspended' ? 'Activate' : 'Suspend'}
                         </button>
                     </td>
-                </tr>
-            `).join('') || '<tr><td colspan="7" class="text-center p-4 text-muted">No matching subscriptions.</td></tr>';
+                </tr>`;
+            }).join('') || '<tr><td colspan="7" class="text-center p-4 text-muted">No matching subscriptions.</td></tr>';
+        }
+
+        async function adminChangePlan(userId, newPlan, selectEl) {
+            if (!newPlan) return;
+            const allowed = ['Pro', 'Premium', 'Premium+'];
+            if (!allowed.includes(newPlan)) return;
+
+            try {
+                const res = await fetch('api/update_subscription.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: userId, plan: newPlan })
+                });
+                const json = await res.json();
+                if (json.success) {
+                    showToast(`Plan updated to ${newPlan}`, 'success');
+                    // Update local state
+                    const sub = state.subscriptions.find(s => s.user_id == userId);
+                    if (sub) sub.active_plan = newPlan;
+                    const user = state.users.find(u => u.id == userId);
+                    if (user) user.subscription_plan = newPlan;
+                    loadSubscriptions();
+                } else {
+                    showToast(json.message || 'Failed to update plan', 'danger');
+                    selectEl.value = '';
+                }
+            } catch (e) {
+                showToast('Network error', 'danger');
+                selectEl.value = '';
+            }
         }
 
         function searchSubscriptions(q) {
@@ -1980,12 +2329,26 @@
             } catch (e) { showToast('Network error', 'danger'); }
         }
 
+        // Cache for specs to reduce database calls
+        let specsCache = null;
+        let specsCacheTime = 0;
+        const SPECS_CACHE_DURATION = 300000; // 5 minutes
+
         async function loadSpecs() {
+            // Check cache first
+            const now = Date.now();
+            if (specsCache && (now - specsCacheTime) < SPECS_CACHE_DURATION) {
+                state.specs = specsCache;
+                return;
+            }
+
             try {
                 const res = await fetch('api/specs.php');
                 const json = await res.json();
                 if (json.success) {
                     state.specs = json.data;
+                    specsCache = json.data;
+                    specsCacheTime = now;
                     renderSpecs();
                 }
             } catch (e) { showToast('Failed to load specifications', 'danger'); }
@@ -2080,7 +2443,9 @@
                 'Printing': 40,
                 'Finishing': 60,
                 'Shipping': 80,
-                'Delivered': 100
+                'Delivered': 100,
+                'Cancelled': 0,
+                'Reprint': 0
             }[status] || 0;
         }
 
@@ -2093,7 +2458,8 @@
                 'Finishing': '#8c09ff',
                 'Shipping': '#2dce89',
                 'Delivered': '#2dce89',
-                'Reprint': '#f5365c'
+                'Reprint': '#f5365c',
+                'Cancelled': '#6c757d'
             }[status] || '#8898aa';
         }
 
@@ -2168,6 +2534,122 @@
                 submitBtn.textContent = 'Upload Proof';
             }
         }
+
+        // ══════════════════════════════════════════════════════
+        //  ADMIN REJECT / CANCEL ORDER
+        // ══════════════════════════════════════════════════════
+        function openAdminRejectModal(orderId, orderNum) {
+            document.getElementById('adminRejectOrderId').value = orderId;
+            document.getElementById('adminRejectOrderNum').textContent = '#' + orderNum;
+            document.getElementById('adminRejectReasonSelect').value = '';
+            document.getElementById('adminRejectReasonText').value = '';
+            document.getElementById('adminRejectReasonText').style.display = 'none';
+            new bootstrap.Modal(document.getElementById('adminRejectModal')).show();
+        }
+
+        function handleAdminRejectSelect(sel) {
+            const textarea = document.getElementById('adminRejectReasonText');
+            textarea.style.display = sel.value === 'Other' ? 'block' : 'none';
+            if (sel.value !== 'Other') textarea.value = '';
+        }
+
+        async function submitAdminReject() {
+            const orderId = document.getElementById('adminRejectOrderId').value;
+            const select  = document.getElementById('adminRejectReasonSelect');
+            const textarea = document.getElementById('adminRejectReasonText');
+
+            let reason = select.value;
+            if (reason === 'Other') reason = textarea.value.trim();
+            if (!reason) { showToast('Please select or enter a rejection reason.', 'danger'); return; }
+
+            const formData = new FormData();
+            formData.append('order_id', orderId);
+            formData.append('rejection_reason', reason);
+
+            try {
+                const res  = await fetch('api/reject_order.php', { method: 'POST', body: formData });
+                const data = await res.json();
+                if (data.success) {
+                    bootstrap.Modal.getInstance(document.getElementById('adminRejectModal')).hide();
+                    showToast(data.message || 'Order cancelled and client refunded.', 'success');
+                    loadOrders();
+                    updateDashboardData();
+                } else {
+                    showToast(data.message || 'Failed to reject order.', 'danger');
+                }
+            } catch (e) {
+                showToast('Network error.', 'danger');
+            }
+        }
+
+        // ══════════════════════════════════════════════════════
+        //  ANALYTICS FUNCTIONS
+        // ══════════════════════════════════════════════════════
+        let analyticsCharts = { pie: null, bar: null };
+
+        async function loadAnalytics(range = 'month') {
+            document.querySelectorAll('[id^="aFilter-"]').forEach(b => b.className = 'btn btn-sm btn-light');
+            const activeBtn = document.getElementById('aFilter-' + range);
+            if (activeBtn) activeBtn.className = 'btn btn-sm btn-primary';
+
+            try {
+                const res  = await fetch('api/get_analytics.php?range=' + range + '&_=' + Date.now());
+                const json = await res.json();
+                if (!json.success) { showToast('Failed to load analytics', 'danger'); return; }
+                const d = json.data;
+
+                document.getElementById('aKpiOrders').textContent  = parseInt(d.kpis.total_orders).toLocaleString();
+                document.getElementById('aKpiRevenue').textContent = '₱' + parseFloat(d.kpis.total_revenue).toLocaleString(undefined, { minimumFractionDigits: 2 });
+                document.getElementById('aKpiProofs').textContent  = d.kpis.pending_proofs;
+                document.getElementById('aKpiClients').textContent = d.kpis.active_clients;
+
+                const pieCtx = document.getElementById('categoryPieChart');
+                if (pieCtx) {
+                    if (analyticsCharts.pie) analyticsCharts.pie.destroy();
+                    const pieColors = ['#1d8cf8','#2dce89','#fb6340','#7c4dff','#f5365c','#11cdef','#ffd600'];
+                    analyticsCharts.pie = new Chart(pieCtx.getContext('2d'), {
+                        type: 'doughnut',
+                        data: { labels: d.by_product.map(r => r.product_type || 'Unknown'), datasets: [{ data: d.by_product.map(r => parseInt(r.count)), backgroundColor: pieColors, borderWidth: 2, borderColor: '#fff' }] },
+                        options: { maintainAspectRatio: false, cutout: '65%', plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, font: { size: 11 } } } } }
+                    });
+                }
+
+                const barCtx = document.getElementById('monthlyRevenueChart');
+                if (barCtx) {
+                    if (analyticsCharts.bar) analyticsCharts.bar.destroy();
+                    analyticsCharts.bar = new Chart(barCtx.getContext('2d'), {
+                        type: 'bar',
+                        data: { labels: d.monthly_revenue.map(r => r.label), datasets: [{ label: 'Revenue (₱)', data: d.monthly_revenue.map(r => parseFloat(r.value) || 0), backgroundColor: 'rgba(29,140,248,0.8)', borderRadius: 6 }] },
+                        options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { callback: v => '₱' + v.toLocaleString() } }, x: { grid: { display: false } } } }
+                    });
+                }
+            } catch(e) {
+                console.error('Analytics error:', e);
+                showToast('Failed to load analytics', 'danger');
+            }
+        }
+
+        // ══════════════════════════════════════════════════════
+        //  DEBUG FUNCTIONS FOR TESTING CANCELLED ORDERS
+        // ══════════════════════════════════════════════════════
+        function debugOrderStatuses() {
+            console.log('📊 Current order statuses breakdown:');
+            const statusCounts = {};
+            state.orders.forEach(o => {
+                statusCounts[o.status] = (statusCounts[o.status] || 0) + 1;
+            });
+            console.table(statusCounts);
+            
+            const cancelledOrders = state.orders.filter(o => o.status === 'Cancelled');
+            console.log(`🚫 Found ${cancelledOrders.length} cancelled orders:`, cancelledOrders);
+            
+            if (cancelledOrders.length === 0) {
+                showToast('No cancelled orders found. Use the reject button (🚫) on any order to create a cancelled order for testing.', 'info');
+            }
+        }
+
+        // Add debug button to console (for testing)
+        console.log('🔧 Debug function available: debugOrderStatuses() - Run this to see order status breakdown');
 
     </script>
 </body>

@@ -17,6 +17,7 @@ if ($conn->connect_error) {
 $jsonData = file_get_contents('php://input');
 $data = json_decode($jsonData, true);
 
+$result = null;
 if ($data) {
     // 3. Map the data to variables
     $projectName = $conn->real_escape_string($data['projectName']);
@@ -29,13 +30,17 @@ if ($data) {
     $sql = "INSERT INTO orders (project_name, category, quantity, total_price) 
             VALUES ('$projectName', '$category', $quantity, '$totalPrice')";
 
-    if ($conn->query($sql) === TRUE) {
-        // Send a success response back to the JavaScript
-        echo json_encode(["success" => true]);
-    } else {
-        echo json_encode(["success" => false, "message" => $conn->error]);
-    }
+    $result = $conn->query($sql);
 }
 
+// CLOSE CONNECTION IMMEDIATELY after fetching data (Fetch-Close-Render pattern)
 $conn->close();
+$conn = null;
+
+// Now perform rendering with the data
+if ($result === TRUE) {
+    echo json_encode(["success" => true]);
+} else {
+    echo json_encode(["success" => false, "message" => $conn->error ?? "Query failed"]);
+}
 ?>

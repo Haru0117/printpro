@@ -697,6 +697,18 @@
             color: #fff !important;
         }
 
+        /* Purple - Finishing */
+        .badge-purple {
+            background: #7c4dff !important;
+            color: #fff !important;
+        }
+
+        /* Grey - Cancelled */
+        .badge-cancelled {
+            background: #8898aa !important;
+            color: #fff !important;
+        }
+
         /* Orders Page Badges (b-* syntax) */
         .badge {
             display: inline-block;
@@ -784,41 +796,237 @@
         }
 
         /* ── CLIENT CREATE ORDER ── */
+        /* ── CREATE ORDER LAYOUT ── */
         .c-order {
             padding: 20px 24px;
-            display: flex;
+            display: grid;
+            grid-template-columns: 58% 1fr;
             gap: 20px;
-            align-items: flex-start;
+            align-items: start;
         }
 
-        @media (max-width: 991px) {
+        .c-order-main {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            min-width: 0;
+        }
+
+        .c-order-sidebar {
+            position: sticky;
+            top: 20px;
+            min-width: 0;
+        }
+
+        @media (max-width: 1023px) {
             .c-order {
-                flex-direction: column;
+                grid-template-columns: 1fr;
                 padding: 16px;
             }
-
             .c-order-sidebar {
+                position: static;
                 width: 100%;
             }
         }
 
-        .c-order-main {
-            flex: 1;
+        /* ── STEP PROGRESS BAR ── */
+        .order-progress {
             display: flex;
-            flex-direction: column;
-            gap: 16px;
+            align-items: center;
+            margin-bottom: 20px;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 20px;
+            overflow-x: auto;
         }
 
-        .c-order-sidebar {
-            width: 260px;
+        .order-progress-step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
             flex-shrink: 0;
+            cursor: pointer;
+            transition: all .2s;
+            padding: 4px 8px;
+            border-radius: 8px;
         }
+
+        .order-progress-step:hover {
+            background: rgba(29, 140, 248, .05);
+        }
+
+        .order-progress-step.disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .order-progress-step.disabled:hover {
+            background: transparent;
+        }
+
+        .order-progress-step .prog-num {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: var(--border);
+            color: var(--muted);
+            font-size: .72rem;
+            font-weight: 700;
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+            transition: all .2s;
+        }
+
+        .order-progress-step .prog-label {
+            font-size: .75rem;
+            font-weight: 600;
+            color: var(--muted);
+            white-space: nowrap;
+            transition: color .2s;
+        }
+
+        .order-progress-step.active .prog-num { background: var(--accent); color: #fff; }
+        .order-progress-step.active .prog-label { color: var(--accent); }
+        .order-progress-step.done .prog-num { background: #2dce89; color: #fff; }
+        .order-progress-step.done .prog-label { color: #2dce89; }
+
+        .order-progress-connector {
+            flex: 1;
+            height: 2px;
+            background: var(--border);
+            margin: 0 8px;
+            min-width: 20px;
+            transition: background .3s;
+        }
+        .order-progress-connector.done { background: #2dce89; }
+
+        [data-theme="dark"] .order-progress { background: var(--dark-card); }
+
+        /* Mobile responsiveness for wizard navigation */
+        @media (max-width: 768px) {
+            .wizard-navigation {
+                position: sticky;
+                bottom: 0;
+                background: #fff;
+                border-top: 1px solid var(--border);
+                margin: 20px -16px -16px;
+                padding: 16px;
+                z-index: 10;
+            }
+            
+            html[data-theme="dark"] .wizard-navigation {
+                background: var(--dark-card);
+                border-top-color: var(--border);
+            }
+            
+            .nav-btn {
+                padding: 12px 16px;
+                font-size: .9rem;
+            }
+            
+            .order-progress {
+                padding: 12px 16px;
+                margin-bottom: 16px;
+            }
+            
+            .order-progress-step .prog-label {
+                display: none;
+            }
+            
+            .order-progress-connector {
+                margin: 0 4px;
+                min-width: 12px;
+            }
+        }
+
+        /* ── SUMMARY CARD EXTRAS ── */
+        .sum-section-title {
+            font-size: .65rem;
+            font-weight: 700;
+            color: rgba(255,255,255,.35);
+            text-transform: uppercase;
+            letter-spacing: .1em;
+            margin: 14px 0 8px;
+        }
+        .delivery-lbl { font-size: .7rem; color: rgba(255,255,255,.45); margin-bottom: 3px; }
+        .delivery-val { font-size: .82rem; font-weight: 600; color: rgba(255,255,255,.85); }
 
         .wizard-card {
             background: #fff;
             border-radius: 12px;
             border: 1px solid var(--border);
             overflow: hidden;
+            display: none;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all .3s ease;
+        }
+
+        .wizard-card.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .wizard-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding: 0 4px;
+        }
+
+        .nav-btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: .85rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all .2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .nav-btn-prev {
+            background: var(--off);
+            color: var(--muted);
+            border: 1px solid var(--border);
+        }
+
+        .nav-btn-prev:hover:not(:disabled) {
+            background: var(--border);
+            color: var(--navy);
+        }
+
+        .nav-btn-next {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .nav-btn-next:hover:not(:disabled) {
+            background: #1171ef;
+            transform: translateY(-1px);
+        }
+
+        .step-validation-error {
+            background: rgba(245, 54, 92, .08);
+            border: 1px solid rgba(245, 54, 92, .2);
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin-top: 12px;
+            font-size: .78rem;
+            color: #f5365c;
+            font-weight: 600;
+            display: none;
         }
 
         .wizard-hdr {
@@ -882,7 +1090,9 @@
         .pt-btn.active {
             border-color: var(--accent);
             color: var(--accent);
-            background: rgba(29, 140, 248, .06);
+            background: rgba(29, 140, 248, .15);
+            box-shadow: 0 0 0 2px rgba(29, 140, 248, .2);
+            font-weight: 600;
         }
 
         .pt-btn:hover:not(.active) {
@@ -3761,6 +3971,9 @@
                     <div class="c-nav-item" onclick="showClientPage('files', this)">
                         <i class="bi bi-folder2"></i> <span>Files</span>
                     </div>
+                    <div class="c-nav-item" onclick="showClientPage('track', this)">
+                        <i class="bi bi-truck"></i> <span>Track Orders</span>
+                    </div>
                     <div class="c-nav-item" onclick="showClientPage('billing', this)">
                         <i class="bi bi-credit-card"></i> <span>Billing</span>
                     </div>
@@ -3839,15 +4052,14 @@
                                     <h2 id="clientGreeting"
                                         style="font-family:'Sora',sans-serif; font-weight: 800; margin-bottom: 8px;">
                                         Welcome to PrintPro!</h2>
-                                    <p
+                                    <p id="heroBannerSubtitle"
                                         style="color: rgba(255,255,255,.7); font-size: .9rem; max-width: 400px; margin-bottom: 12px;">
-                                        You have no active orders yet. Start your first project by clicking the button
-                                        below!
+                                        Loading your orders...
                                     </p>
                                     <div
                                         style="display: flex; align-items: center; gap: 10px; margin-bottom: 24px; background: rgba(255,255,255,.1); width: fit-content; padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,.15);">
                                         <div style="font-size: .75rem; color: rgba(255,255,255,.8);">Current Plan:
-                                            <strong id="dashboardPlanName" style="color: #fff;">Free Plan</strong>
+                                            <strong id="dashboardPlanName" style="color: #fff;">Pro</strong>
                                         </div>
                                         <div style="width: 1px; height: 12px; background: rgba(255,255,255,.2);"></div>
                                         <div style="font-size: .75rem; color: rgba(255,255,255,.8);">Status: <strong
@@ -3869,7 +4081,7 @@
                                         style="width: 40px; height: 40px; background: rgba(79, 126, 247, .1); color: var(--accent); border-radius: 10px; display: grid; place-items: center; font-size: 1.2rem; margin-bottom: 8px;">
                                         <i class="bi bi-box-seam"></i>
                                     </div>
-                                    <div class="c-action-stat">0</div>
+                                    <div class="c-action-stat" id="kpiActiveOrders">—</div>
                                     <div class="c-action-label">Active Orders</div>
                                 </div>
                                 <div class="c-action-card" onclick="showClientPage('files', null)"
@@ -3879,7 +4091,7 @@
                                         style="width: 40px; height: 40px; background: rgba(62, 198, 198, .1); color: var(--teal); border-radius: 10px; display: grid; place-items: center; font-size: 1.2rem; margin-bottom: 8px;">
                                         <i class="bi bi-folder2"></i>
                                     </div>
-                                    <div class="c-action-stat">0</div>
+                                    <div class="c-action-stat" id="kpiAssets">—</div>
                                     <div class="c-action-label">Assets</div>
                                 </div>
                                 <div class="c-action-card" onclick="showClientPage('billing', null)"
@@ -3889,7 +4101,7 @@
                                         style="width: 40px; height: 40px; background: rgba(45, 206, 137, .1); color: #2dce89; border-radius: 10px; display: grid; place-items: center; font-size: 1.2rem; margin-bottom: 8px;">
                                         <i class="bi bi-credit-card"></i>
                                     </div>
-                                    <div class="c-action-stat">₱0</div>
+                                    <div class="c-action-stat" id="kpiCredits">₱—</div>
                                     <div class="c-action-label">Credits</div>
                                 </div>
                             </div>
@@ -3984,11 +4196,16 @@
                                     <div style="display:flex;gap:8px;">
                                         <select class="form-ctrl" style="font-size:.75rem;padding:4px 8px;width:auto;"
                                             onchange="filterOrdersBySelect(this)">
-                                            <option>All Status</option>
-                                            <option>Active</option>
-                                            <option>Pending</option>
-                                            <option>Done</option>
-                                            <option>Delivered</option>
+                                            <option value="all">All Status</option>
+                                            <option value="proof pending">Proof Pending</option>
+                                            <option value="proof pending review">Proof Pending Review</option>
+                                            <option value="prepress">Prepress</option>
+                                            <option value="printing">Printing</option>
+                                            <option value="finishing">Finishing</option>
+                                            <option value="shipping">Shipping</option>
+                                            <option value="delivered">Delivered</option>
+                                            <option value="cancelled">Cancelled</option>
+                                            <option value="reprint">Reprint</option>
                                         </select>
                                     </div>
                                 </div>
@@ -4027,8 +4244,31 @@
                         <div class="c-order">
                             <div class="c-order-main">
 
+                                <!-- Step Progress Bar -->
+                                <div class="order-progress" id="orderProgressBar">
+                                    <div class="order-progress-step active" id="prog-step-1" onclick="goToStep(1)">
+                                        <div class="prog-num">1</div>
+                                        <div class="prog-label">Product</div>
+                                    </div>
+                                    <div class="order-progress-connector" id="prog-conn-1"></div>
+                                    <div class="order-progress-step disabled" id="prog-step-2" onclick="goToStep(2)">
+                                        <div class="prog-num">2</div>
+                                        <div class="prog-label">Material & Size</div>
+                                    </div>
+                                    <div class="order-progress-connector" id="prog-conn-2"></div>
+                                    <div class="order-progress-step disabled" id="prog-step-3" onclick="goToStep(3)">
+                                        <div class="prog-num">3</div>
+                                        <div class="prog-label">Quantity & Production</div>
+                                    </div>
+                                    <div class="order-progress-connector" id="prog-conn-3"></div>
+                                    <div class="order-progress-step disabled" id="prog-step-4" onclick="goToStep(4)">
+                                        <div class="prog-num">4</div>
+                                        <div class="prog-label">Artwork</div>
+                                    </div>
+                                </div>
+
                                 <!-- Step 1: Product Type -->
-                                <div class="wizard-card">
+                                <div class="wizard-card active" id="wizard-step-1">
                                     <div class="wizard-hdr">
                                         <div class="step-num">1</div>
                                         <div class="step-title">Product Type</div>
@@ -4047,12 +4287,18 @@
                                                     class="bi bi-envelope-open"></i>Mailers</button>
                                             <button class="pt-btn" onclick="selectProductType(this)"><i
                                                     class="bi bi-badge-cc"></i>Cards</button>
+                                            <button class="pt-btn" onclick="selectProductType(this)"><i
+                                                    class="bi bi-rulers"></i>Custom</button>
+                                        </div>
+                                        <div class="step-validation-error" id="step-1-error">
+                                            <i class="bi bi-exclamation-circle-fill"></i>
+                                            Please select a product type to continue.
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- Step 2: Dimensions & Material -->
-                                <div class="wizard-card">
+                                <div class="wizard-card" id="wizard-step-2">
                                     <div class="wizard-hdr">
                                         <div class="step-num">2</div>
                                         <div class="step-title">Dimensions &amp; Material</div>
@@ -4068,8 +4314,7 @@
                                             </div>
                                             <div>
                                                 <div class="form-label-sm">Paper Weight</div>
-                                                <select class="form-control-sm-pp" id="paperSelect"
-                                                    onchange="updatePricing()">
+                                                <select class="form-control-sm-pp" id="paperSelect">
                                                     <option value="">Select Paper</option>
                                                 </select>
                                             </div>
@@ -4090,25 +4335,27 @@
                                             </div>
                                             <div>
                                                 <div class="form-label-sm">Finishing</div>
-                                                <select class="form-control-sm-pp" id="finishSelect"
-                                                    onchange="updatePricing()">
+                                                <select class="form-control-sm-pp" id="finishSelect">
                                                     <option value="">None / Standard</option>
                                                 </select>
                                             </div>
                                             <div>
                                                 <div class="form-label-sm">Bleed Option</div>
-                                                <select class="form-control-sm-pp" id="bleedSelect"
-                                                    onchange="updatePricing()">
+                                                <select class="form-control-sm-pp" id="bleedSelect">
                                                     <option>With Bleed (0.125")</option>
                                                     <option>No Bleed (Exact Size)</option>
                                                     <option>Custom Bleed (0.25")</option>
                                                 </select>
                                             </div>
                                         </div>
+                                        <div class="step-validation-error" id="step-2-error">
+                                            <i class="bi bi-exclamation-circle-fill"></i>
+                                            Please select a paper type to continue.
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div class="wizard-card">
+                                <div class="wizard-card" id="wizard-step-3">
                                     <div class="wizard-hdr">
                                         <div class="step-num">3</div>
                                         <div class="step-title">Quantity &amp; Production</div>
@@ -4118,10 +4365,10 @@
                                             <div class="form-label-sm">Print Quantity</div>
                                             <div
                                                 style="display:flex;align-items:center;gap:12px;margin-top:6px; flex-wrap: wrap;">
-                                                <input type="range" class="qty-slider" min="50" max="10000" step="50"
+                                                <input type="range" class="qty-slider" min="50" max="10000" step="1"
                                                     value="500" id="qtySlider" style="flex: 1; min-width: 200px;">
                                                 <input type="number" id="qtyVal" class="qty-input-pp" min="50"
-                                                    max="10000" step="50" value="500"
+                                                    max="10000" step="1" value="500"
                                                     title="Enter print quantity (min 50, max 10,000)">
                                                 <div class="d-flex justify-content-between mt-2" style="width:100%;">
                                                     <span class="fw-bold" id="qtyValDetailed">500 units</span>
@@ -4133,8 +4380,7 @@
                                         <div class="dim-grid">
                                             <div>
                                                 <div class="form-label-sm">Turnaround</div>
-                                                <select class="form-control-sm-pp" id="turnaroundSelect"
-                                                    onchange="updatePricing()">
+                                                <select class="form-control-sm-pp" id="turnaroundSelect">
                                                     <option value="standard">3-5 Business Days (Standard)</option>
                                                     <option value="rush">1-2 Business Days (Rush)</option>
                                                     <option value="priority">Same Day (Priority)</option>
@@ -4142,49 +4388,64 @@
                                             </div>
                                             <div>
                                                 <div class="form-label-sm">Shipping Method</div>
-                                                <select class="form-control-sm-pp" id="shippingSelect"
-                                                    onchange="updatePricing()">
+                                                <select class="form-control-sm-pp" id="shippingSelect">
                                                     <option value="free">Ground (Free)</option>
                                                     <option value="express">Express 2-Day</option>
                                                     <option value="overnight">Overnight</option>
                                                 </select>
                                             </div>
                                         </div>
+                                        <div class="step-validation-error" id="step-3-error">
+                                            <i class="bi bi-exclamation-circle-fill"></i>
+                                            Please ensure quantity is at least 50 units.
+                                        </div>
                                     </div>
                                 </div>
 
                                 <!-- Step 4: Artwork & Files -->
-                                <div class="wizard-card">
+                                <div class="wizard-card" id="wizard-step-4">
                                     <div class="wizard-hdr">
                                         <div class="step-num">4</div>
-                                        <div class="step-title">Artwork &amp; Files</div>
+                                        <div class="step-title">Artwork &amp; Files <span id="requiredBadge" style="display:none;background:#f5365c;color:#fff;font-size:.6rem;font-weight:800;padding:2px 7px;border-radius:10px;vertical-align:middle;letter-spacing:.04em;">REQUIRED</span></div>
                                     </div>
                                     <div class="wizard-body">
+                                        <!-- Required notice (only shown when user tries to order without files) -->
+                                        <div id="artworkRequiredNotice" style="display:none;align-items:center;gap:8px;background:rgba(245,54,92,.08);border:1px solid rgba(245,54,92,.2);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:.78rem;color:#f5365c;font-weight:600;">
+                                            <i class="bi bi-exclamation-circle-fill"></i>
+                                            You must attach your print-ready artwork file before placing an order. Accepted: PDF, AI, PSD, PNG, JPG (Max 500MB)
+                                        </div>
+
+                                        <!-- File attached confirmation (hidden by default) -->
+                                        <div id="artworkAttachedNotice" style="display:none;align-items:center;gap:8px;background:rgba(45,206,137,.08);border:1px solid rgba(45,206,137,.2);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:.78rem;color:#2dce89;font-weight:600;">
+                                            <i class="bi bi-check-circle-fill"></i>
+                                            <span id="attachedFileCount">1 file</span> attached successfully. You can upload additional files or proceed to place your order.
+                                        </div>
+
                                         <div style="display:flex; gap: 12px; margin-bottom: 16px;">
-                                            <button class="pt-btn" style="flex:1; padding: 10px;"
-                                                onclick="document.getElementById('upload-area').style.display='block'; document.getElementById('account-files').style.display='none'; this.classList.add('active'); this.nextElementSibling.classList.remove('active');"><i
+                                            <button class="pt-btn active" style="flex:1; padding: 10px;" id="uploadNewTab"
+                                                onclick="document.getElementById('upload-area').style.display='block'; document.getElementById('account-files').style.display='none'; this.classList.add('active'); document.getElementById('selectFromAccountTab').classList.remove('active');"><i
                                                     class="bi bi-cloud-upload" style="font-size: 1.1rem;"></i>Upload
                                                 New</button>
-                                            <button class="pt-btn active" style="flex:1; padding: 10px;"
-                                                onclick="document.getElementById('upload-area').style.display='none'; document.getElementById('account-files').style.display='block'; this.classList.add('active'); this.previousElementSibling.classList.remove('active');"><i
+                                            <button class="pt-btn" style="flex:1; padding: 10px;" id="selectFromAccountTab"
+                                                onclick="document.getElementById('upload-area').style.display='none'; document.getElementById('account-files').style.display='block'; this.classList.add('active'); document.getElementById('uploadNewTab').classList.remove('active');"><i
                                                     class="bi bi-folder2-open" style="font-size: 1.1rem;"></i>Select
                                                 from Account</button>
                                         </div>
 
-                                        <!-- Upload Area -->
+                                        <!-- Upload Area — shown by default -->
                                         <div id="upload-area"
-                                            style="display: none; border: 2px dashed var(--border); border-radius: 12px; padding: 30px; text-align: center; background: var(--off); cursor: pointer; transition: all .2s;"
+                                            style="display: block; border: 2px dashed var(--border); border-radius: 12px; padding: 20px; text-align: center; background: var(--off); cursor: pointer; transition: all .2s; min-height: 150px;"
+                                            onclick="document.getElementById('file-upload-input').click()"
                                             onmouseover="if(!this.classList.contains('dragover')) this.style.borderColor='var(--accent)';"
                                             onmouseout="if(!this.classList.contains('dragover')) this.style.borderColor='var(--border)';">
                                             <input type="file" id="file-upload-input" multiple style="display: none;"
                                                 accept=".pdf,.ai,.psd,.png,.jpg,.jpeg">
                                             <i class="bi bi-cloud-arrow-up"
-                                                style="font-size: 2.5rem; color: var(--accent); margin-bottom: 10px; display: block;"></i>
+                                                style="font-size: 2rem; color: var(--accent); margin-bottom: 8px; display: block;"></i>
                                             <h5
-                                                style="font-size: .9rem; font-family: 'Sora', sans-serif; font-weight: 700; color: var(--navy); margin-bottom: 4px;">
-                                                Drag &amp; Drop or Browse</h5>
-                                            <p style="font-size: .75rem; color: var(--muted); margin: 0;">Supports PDF,
-                                                AI, PSD, PNG, JPG (Max 500MB)</p>
+                                                style="font-size: .85rem; font-family: 'Sora', sans-serif; font-weight: 700; color: var(--navy); margin-bottom: 4px;">
+                                                Drag &amp; Drop or Click to Browse</h5>
+                                            <p style="font-size: .7rem; color: var(--muted); margin: 0;">PDF, AI, PSD, PNG, JPG — Max 500MB</p>
                                         </div>
 
                                         <!-- Upload Preview Area -->
@@ -4192,25 +4453,47 @@
                                             <div
                                                 style="font-size: .75rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 12px;">
                                                 Files to Upload</div>
-                                            <div id="upload-preview-list" class="files-grid"
-                                                style="grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); margin-bottom: 0;">
+                                            <div id="upload-preview-list" style="display:flex; flex-direction:column; gap:6px; max-height:200px; overflow-y:auto;">
                                             </div>
                                         </div>
 
                                         <!-- Account Files Area -->
-                                        <div id="account-files" style="display: block;">
+                                        <div id="account-files" style="display: none;">
                                             <div
                                                 style="font-size: .75rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 12px;">
                                                 Your Uploaded Files</div>
-                                            <div class="files-grid" id="wizard-account-files"
-                                                style="grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); margin-bottom: 0;">
+                                            <div id="wizard-account-files" style="display:flex; flex-direction:column; max-height:240px; overflow-y:auto;">
                                                 <div
-                                                    style="grid-column: 1/-1; padding: 20px; text-align: center; color: var(--muted); font-size: .8rem; border: 1px dashed var(--border); border-radius: 8px;">
+                                                    style="padding: 20px; text-align: center; color: var(--muted); font-size: .8rem; border: 1px dashed var(--border); border-radius: 8px;">
                                                     No files uploaded yet
                                                 </div>
                                             </div>
                                         </div>
+                                        
+                                        <!-- Special Instructions (Optional) -->
+                                        <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border);">
+                                            <div class="form-label-sm">Special Instructions (Optional)</div>
+                                            <textarea class="form-control-sm-pp" id="orderNotes" rows="3" placeholder="Any special instructions for your order..." style="margin-top: 8px;"></textarea>
+                                        </div>
+                                        
+                                        <div class="step-validation-error" id="step-4-error">
+                                            <i class="bi bi-exclamation-circle-fill"></i>
+                                            Please upload or select artwork files to continue.
+                                        </div>
                                     </div>
+                                </div>
+
+                                <!-- Navigation Buttons -->
+                                <div class="wizard-navigation">
+                                    <button class="nav-btn nav-btn-prev" id="prevBtn" onclick="previousStep()" disabled>
+                                        <i class="bi bi-arrow-left"></i> Previous
+                                    </button>
+                                    <div style="font-size: .8rem; color: var(--muted);">
+                                        Step <span id="currentStepNum">1</span> of 4
+                                    </div>
+                                    <button class="nav-btn nav-btn-next" id="nextBtn" onclick="nextStep()">
+                                        Next <i class="bi bi-arrow-right"></i>
+                                    </button>
                                 </div>
                             </div>
 
@@ -4218,46 +4501,59 @@
                             <div class="c-order-sidebar">
                                 <div class="summary-card">
                                     <div class="summary-title">PRODUCT SUMMARY</div>
-                                    <div class="summary-sub">Personalized Printing Solution</div>
-                                    <div class="summary-row"><span>Product</span><span id="sumProduct">Flyers</span>
-                                    </div>
-                                    <div class="summary-row"><span>Quantity</span><span id="sumQty">2,500</span></div>
+                                    <div class="summary-sub">Live price estimate — updates as you configure</div>
+
+                                    <div class="sum-section-title">Specifications</div>
+                                    <div class="summary-row"><span>Product</span><span id="sumProduct">Flyers</span></div>
+                                    <div class="summary-row"><span>Quantity</span><span id="sumQty">500</span></div>
                                     <div class="summary-row"><span>Size</span><span id="sumSize">4" × 6"</span></div>
-                                    <div class="summary-row"><span>Stock</span><span id="sumStock">100lb Gloss</span>
-                                    </div>
-                                    <div class="summary-row"><span>Finishing</span><span id="sumFinish">Matte UV</span>
-                                    </div>
-                                    <div class="summary-row"><span>Artwork</span><span id="sumArtwork">None</span></div>
+                                    <div class="summary-row"><span>Paper Stock</span><span id="sumStock">—</span></div>
+                                    <div class="summary-row"><span>Finishing</span><span id="sumFinish">—</span></div>
+                                    <div class="summary-row"><span>Bleed</span><span id="sumBleed">With Bleed</span></div>
+                                    <div class="summary-row"><span>Artwork</span><span id="sumArtwork" style="color:rgba(245,54,92,.8);">Not attached</span></div>
+
                                     <hr class="summary-divider">
+                                    <div class="sum-section-title">Timeline</div>
                                     <div class="delivery-box">
                                         <div class="delivery-lbl">Estimated Production</div>
-                                        <div class="delivery-val">3–5 Business Days</div>
+                                        <div class="delivery-val" id="sumProduction">3–5 Business Days</div>
                                     </div>
                                     <div class="delivery-box" style="margin-top:8px;">
                                         <div class="delivery-lbl">Estimated Arrival</div>
                                         <div class="delivery-val" style="display:flex;align-items:center;gap:6px;">
-                                            <i class="bi bi-calendar3"
-                                                style="color:rgba(255,255,255,.45);font-size:.8rem;"></i>
-                                            July 18th – 22nd
+                                            <i class="bi bi-calendar3" style="color:rgba(255,255,255,.45);font-size:.8rem;"></i>
+                                            <span id="sumArrival">—</span>
                                         </div>
                                     </div>
+
                                     <hr class="summary-divider">
-                                    <div class="summary-row"><span>Subtotal</span><span
-                                            id="sumSubtotal">₱3,200.00</span></div>
+                                    <div class="sum-section-title">Price Breakdown</div>
+                                    <div class="summary-row"><span>Base Price</span><span id="sumBasePrice">₱—</span></div>
+                                    <div class="summary-row"><span>Material</span><span id="sumMaterialFee">₱—</span></div>
+                                    <div class="summary-row"><span>Finishing Fee</span><span id="sumFinishFee">₱—</span></div>
+                                    <div class="summary-row"><span>Turnaround</span><span id="sumTurnaroundFee">₱—</span></div>
+                                    <div class="summary-row"><span>Subtotal</span><span id="sumSubtotal">₱—</span></div>
                                     <div class="summary-row" id="sumDiscountRow" style="display:none; color:#2dce89;">
-                                        <span>Discount</span><span id="sumDiscount">-₱0.00</span>
+                                        <span>Bulk Discount</span><span id="sumDiscount">-₱0.00</span>
                                     </div>
-                                    <div class="summary-row"><span>Shipping</span><span id="sumShipping">₱0.00</span>
-                                    </div>
-                                    <div class="summary-row"><span>Estimated Tax (12%)</span><span
-                                            id="sumTax">₱384.00</span></div>
-                                    <div class="summary-total">
+                                    <div class="summary-row"><span>Shipping</span><span id="sumShipping">₱0.00</span></div>
+                                    <div class="summary-row"><span>VAT (12%)</span><span id="sumTax">₱—</span></div>
+
+                                    <div class="summary-total" style="margin-top:12px;">
                                         <span class="summary-total-lbl">Total Estimate</span>
-                                        <span class="summary-total-val" id="summaryTotal">₱3,584.00</span>
+                                        <span class="summary-total-val" id="summaryTotal">₱—</span>
                                     </div>
 
-                                    <button class="btn-continue" id="placeOrderBtn" onclick="placeOrder()">Place Order
-                                        →</button>
+                                    <div id="walletWarning" style="display:none; margin-top:10px; padding:8px 12px; background:rgba(245,54,92,.12); border:1px solid rgba(245,54,92,.3); border-radius:8px; font-size:.75rem; color:#f5365c; font-weight:600;">
+                                        <i class="bi bi-exclamation-triangle-fill"></i> Insufficient credits
+                                    </div>
+
+                                    <button class="btn-continue" id="placeOrderBtn" onclick="placeOrder()" style="margin-top:14px;">
+                                        Place Order →
+                                    </button>
+                                    <div style="text-align:center; margin-top:8px; font-size:.7rem; color:rgba(255,255,255,.3);">
+                                        Credits will be deducted on confirmation
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -4523,6 +4819,27 @@
                         </div>
                     </div><!-- /templates -->
 
+                    <!-- ══ TRACK ORDERS PAGE ══ -->
+                    <div class="c-page" id="c-track">
+                        <div class="c-track-wrap" style="padding:20px 24px;">
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+                                <div>
+                                    <h4 class="page-title" style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:var(--navy);margin:0;">Track Orders</h4>
+                                    <p style="font-size:.75rem;color:var(--muted);margin:0;">Real-time status of your active print jobs</p>
+                                </div>
+                                <button onclick="loadTrackOrders()" style="background:var(--accent);color:#fff;border:none;padding:7px 16px;border-radius:8px;font-size:.8rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;">
+                                    <i class="bi bi-arrow-clockwise"></i> Refresh
+                                </button>
+                            </div>
+                            <div id="trackOrdersList">
+                                <div style="text-align:center;padding:60px;color:var(--muted);">
+                                    <i class="bi bi-arrow-repeat" style="font-size:2rem;display:block;margin-bottom:12px;opacity:.3;"></i>
+                                    Loading your orders…
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- /track -->
+
                     <!-- ══ FILES PAGE ══ -->
                     <div class="c-page" id="c-files">
                         <div class="files-layout">
@@ -4644,7 +4961,7 @@
                                         <p style="font-size:.75rem;color:var(--muted);margin:0;">Manage payments and
                                             download invoices</p>
                                     </div>
-                                    <button
+                                    <button id="exportAllBtn" onclick="billingExportCSV()"
                                         style="background:var(--accent);color:#fff;border:none;padding:10px 20px;border-radius:8px;font-size:.82rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;box-shadow: 0 4px 10px rgba(29, 140, 248, .2);">
                                         <i class="bi bi-download"></i> Export All
                                     </button>
@@ -4653,7 +4970,7 @@
                                 <div class="stat-grid">
                                     <div class="stat-box">
                                         <div>
-                                            <div class="stat-val">₱0</div>
+                                            <div class="stat-val client-total-spend" id="billingTotalSpend">₱—</div>
                                             <div class="stat-lbl">Total Spend YTD</div>
                                         </div>
                                         <div class="stat-icon blue"><i class="bi bi-currency-php">₱</i></div>
@@ -4661,7 +4978,7 @@
 
                                     <div class="stat-box">
                                         <div>
-                                            <div class="stat-val">₱0</div>
+                                            <div class="stat-val client-paid-to-date" id="billingPaidToDate">₱—</div>
                                             <div class="stat-lbl">Paid to Date</div>
                                         </div>
                                         <div class="stat-icon green"><i class="bi bi-check-circle"></i></div>
@@ -4674,48 +4991,10 @@
                                         <span class="card-hdr-title">Monthly Spend</span>
                                         <span style="font-size:.72rem;color:var(--muted);">Last 6 months</span>
                                     </div>
-                                    <div class="spend-chart">
-                                        <div class="spend-bar-row">
-                                            <div class="spend-bar-label">May</div>
-                                            <div class="spend-bar-wrap">
-                                                <div class="spend-bar-fill" style="width:0%;"></div>
-                                            </div>
-                                            <div class="spend-bar-val">₱0</div>
-                                        </div>
-                                        <div class="spend-bar-row">
-                                            <div class="spend-bar-label">Jun</div>
-                                            <div class="spend-bar-wrap">
-                                                <div class="spend-bar-fill" style="width:0%;"></div>
-                                            </div>
-                                            <div class="spend-bar-val">₱0</div>
-                                        </div>
-                                        <div class="spend-bar-row">
-                                            <div class="spend-bar-label">Jul</div>
-                                            <div class="spend-bar-wrap">
-                                                <div class="spend-bar-fill" style="width:0%;"></div>
-                                            </div>
-                                            <div class="spend-bar-val">₱0</div>
-                                        </div>
-                                        <div class="spend-bar-row">
-                                            <div class="spend-bar-label">Aug</div>
-                                            <div class="spend-bar-wrap">
-                                                <div class="spend-bar-fill" style="width:0%;"></div>
-                                            </div>
-                                            <div class="spend-bar-val">₱0</div>
-                                        </div>
-                                        <div class="spend-bar-row">
-                                            <div class="spend-bar-label">Sep</div>
-                                            <div class="spend-bar-wrap">
-                                                <div class="spend-bar-fill" style="width:0%;"></div>
-                                            </div>
-                                            <div class="spend-bar-val">₱0</div>
-                                        </div>
-                                        <div class="spend-bar-row">
-                                            <div class="spend-bar-label">Oct</div>
-                                            <div class="spend-bar-wrap">
-                                                <div class="spend-bar-fill" style="width:0%;"></div>
-                                            </div>
-                                            <div class="spend-bar-val">₱0</div>
+                                    <div class="spend-chart" id="monthlySpendChart">
+                                        <div style="text-align:center;padding:30px;color:var(--muted);font-size:.8rem;">
+                                            <i class="bi bi-bar-chart" style="font-size:1.6rem;display:block;margin-bottom:8px;opacity:.2;"></i>
+                                            Loading spend data…
                                         </div>
                                     </div>
                                 </div>
@@ -4823,36 +5102,36 @@
                                     style="margin-bottom:14px; background: linear-gradient(135deg, #1a2340, #2a3558); color: #fff; border: none;">
                                     <div class="card-hdr" style="border-bottom: 1px solid rgba(255,255,255,.1);">
                                         <span class="card-hdr-title" style="color: #fff;">Active Subscription</span>
-                                        <span class="badge-status badge-active client-sub-status">Active</span>
+                                        <span class="badge-status badge-active client-sub-status" id="subStatusBadge">Active</span>
                                     </div>
                                     <div style="padding: 16px;">
                                         <div
                                             style="font-size: .75rem; color: rgba(255,255,255,.6); margin-bottom: 4px;">
                                             CURRENT PLAN</div>
-                                        <div class="client-sub-plan"
+                                        <div class="client-sub-plan" id="subPlanName"
                                             style="font-family: 'Sora', sans-serif; font-size: 1.2rem; font-weight: 800; margin-bottom: 12px;">
-                                            Free Plan</div>
+                                            Loading…</div>
 
                                         <div
                                             style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;">
                                             <div
                                                 style="display: flex; justify-content: space-between; font-size: .8rem;">
                                                 <span style="color: rgba(255,255,255,.6);">Billing Cycle</span>
-                                                <span style="font-weight: 600;">None</span>
+                                                <span id="subBillingCycle" style="font-weight: 600;">—</span>
                                             </div>
                                             <div
                                                 style="display: flex; justify-content: space-between; font-size: .8rem;">
                                                 <span style="color: rgba(255,255,255,.6);">Renews On</span>
-                                                <span class="client-sub-renews" style="font-weight: 600;">N/A</span>
+                                                <span class="client-sub-renews" id="subRenewsOn" style="font-weight: 600;">—</span>
                                             </div>
                                             <div
                                                 style="display: flex; justify-content: space-between; font-size: .8rem;">
                                                 <span style="color: rgba(255,255,255,.6);">Amount</span>
-                                                <span class="client-sub-amount" style="font-weight: 600;">₱0.00</span>
+                                                <span class="client-sub-amount" id="subAmount" style="font-weight: 600;">—</span>
                                             </div>
                                         </div>
 
-                                        <button
+                                        <button onclick="openPlanModal()"
                                             style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid rgba(255,255,255,.2); background: rgba(255,255,255,.1); color: #fff; font-size: .8rem; font-weight: 600; cursor: pointer; transition: background .2s;"
                                             onmouseover="this.style.background='rgba(255,255,255,.2)'"
                                             onmouseout="this.style.background='rgba(255,255,255,.1)'">Upgrade
@@ -4924,10 +5203,10 @@
                                         <div class="settings-row">
                                             <div>
                                                 <div class="settings-row-label">Password</div>
-                                                <div class="settings-row-sub">Last changed 3 months ago</div>
+                                                <div class="settings-row-sub">Click to update your login password</div>
                                             </div>
                                             <button class="btn btn-sm border"
-                                                onclick="alert('Password reset link sent.')">Change</button>
+                                                onclick="openPasswordModal()">Change</button>
                                         </div>
                                         <div class="settings-row">
                                             <div>
@@ -4950,11 +5229,11 @@
                                                 <div
                                                     style="font-size: .72rem; color: rgba(255,255,255,.6); margin-bottom: 4px; text-transform:uppercase;">
                                                     Current Plan</div>
-                                                <div class="client-sub-plan"
+                                                <div class="client-sub-plan" id="acctPlanName"
                                                     style="font-family: 'Sora', sans-serif; font-size: 1.4rem; font-weight: 800;">
-                                                    Premium Plan</div>
+                                                    Loading…</div>
                                             </div>
-                                            <span class="badge-status badge-active client-sub-status">ACTIVE</span>
+                                            <span class="badge-status badge-active client-sub-status" id="acctSubStatus">ACTIVE</span>
                                         </div>
 
                                         <div
@@ -4962,14 +5241,13 @@
                                             <div
                                                 style="display: flex; justify-content: space-between; font-size: .85rem; margin-bottom:8px;">
                                                 <span style="color: rgba(255,255,255,.6);">Renews On</span>
-                                                <span class="client-sub-renews" style="font-weight: 600;">Nov 12,
-                                                    2024</span>
+                                                <span class="client-sub-renews" id="acctRenewsOn" style="font-weight: 600;">—</span>
                                             </div>
                                             <div
                                                 style="display: flex; justify-content: space-between; font-size: .85rem;">
                                                 <span style="color: rgba(255,255,255,.6);">Billing Amount</span>
-                                                <span class="client-sub-amount"
-                                                    style="font-weight: 600;">₱1,899.00</span>
+                                                <span class="client-sub-amount" id="acctBillingAmount"
+                                                    style="font-weight: 600;">—</span>
                                             </div>
                                         </div>
 
@@ -4979,7 +5257,7 @@
                                                 onclick="showClientPage('billing', null)">Manage Billing</button>
                                             <button class="btn btn-outline-light w-100"
                                                 style="font-size:.8rem; font-weight:600; border-color:rgba(255,255,255,.2);"
-                                                onclick="alert('Loading plans...')">Change Plan</button>
+                                                onclick="openPlanModal()">Change Plan</button>
                                         </div>
                                         <div style="margin-top:16px; text-align:center;">
                                             <a href="#"
@@ -5016,6 +5294,241 @@
             </div>
         </div>
     </div><!-- /client portal -->
+
+    <!-- Order Confirmation Modal -->
+    <div id="orderConfirmModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(10,18,42,0.85); backdrop-filter:blur(8px); z-index:10002; justify-content:center; align-items:center; opacity:0; transition:opacity 0.2s;">
+        <div id="orderConfirmContent" style="background:#fff; border-radius:18px; width:95%; max-width:480px; padding:32px; box-shadow:0 20px 60px rgba(0,0,0,0.35); transform:scale(0.93); transition:transform 0.2s;">
+            <div style="text-align:center; margin-bottom:24px;">
+                <div style="width:64px; height:64px; background:#fff; border:2px solid #e8ecf4; border-radius:50%; display:grid; place-items:center; margin:0 auto 14px; box-shadow:0 4px 12px rgba(0,0,0,.08);">
+                    <img src="favicon.png" alt="PrintPro" style="width:38px; height:38px; object-fit:contain;">
+                </div>
+                <h4 style="font-family:'Sora',sans-serif; font-weight:800; color:#0d1b3e; margin:0 0 6px;">Confirm Your Order</h4>
+                <p style="color:#8898aa; font-size:.85rem; margin:0;">Please review your order details before placing.</p>
+            </div>
+
+            <!-- Order Summary -->
+            <div style="background:#f8f9ff; border-radius:12px; padding:16px; margin-bottom:20px; font-size:.82rem;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                    <span style="color:#8898aa; font-weight:600;">Product</span>
+                    <span style="font-weight:700; color:#0d1b3e;" id="confirmProduct">—</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                    <span style="color:#8898aa; font-weight:600;">Quantity</span>
+                    <span style="font-weight:700; color:#0d1b3e;" id="confirmQty">—</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                    <span style="color:#8898aa; font-weight:600;">Size</span>
+                    <span style="font-weight:700; color:#0d1b3e;" id="confirmSize">—</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                    <span style="color:#8898aa; font-weight:600;">Paper Stock</span>
+                    <span style="font-weight:700; color:#0d1b3e;" id="confirmPaper">—</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                    <span style="color:#8898aa; font-weight:600;">Finishing</span>
+                    <span style="font-weight:700; color:#0d1b3e;" id="confirmFinish">—</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                    <span style="color:#8898aa; font-weight:600;">Turnaround</span>
+                    <span style="font-weight:700; color:#0d1b3e;" id="confirmTurnaround">—</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                    <span style="color:#8898aa; font-weight:600;">Artwork</span>
+                    <span style="font-weight:700; color:#2dce89;" id="confirmArtwork">—</span>
+                </div>
+                <div style="border-top:1px solid #e8ecf4; margin:10px 0;"></div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="color:#8898aa; font-weight:600;">Total to Deduct</span>
+                    <span style="font-family:'Sora',sans-serif; font-size:1.3rem; font-weight:800; color:#1d8cf8;" id="confirmTotal">₱—</span>
+                </div>
+            </div>
+
+            <div style="display:flex; gap:10px;">
+                <button onclick="closeOrderConfirmModal()" style="flex:1; padding:11px; border:1px solid #dde3f0; border-radius:10px; background:#fff; color:#344767; font-size:.88rem; font-weight:600; cursor:pointer;">
+                    ← Go Back
+                </button>
+                <button id="confirmPlaceBtn" onclick="executePlaceOrder()" style="flex:2; padding:11px; border:none; border-radius:10px; background:linear-gradient(90deg,#1d8cf8,#00c6ff); color:#fff; font-size:.88rem; font-weight:700; cursor:pointer; font-family:'DM Sans',sans-serif;">
+                    ✓ Confirm & Place Order
+                </button>
+            </div>
+            <p style="text-align:center; font-size:.72rem; color:#aaa; margin:10px 0 0;">Credits will be deducted immediately upon confirmation.</p>
+        </div>
+    </div>
+
+    <!-- Cancel Order Modal (Client) -->
+    <div id="cancelOrderModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(10,18,42,0.85); backdrop-filter:blur(8px); z-index:10002; justify-content:center; align-items:center; opacity:0; transition:opacity 0.2s;">
+        <div id="cancelOrderContent" style="background:#fff; border-radius:18px; width:95%; max-width:440px; padding:28px; box-shadow:0 20px 60px rgba(0,0,0,0.35); transform:scale(0.93); transition:transform 0.2s;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h5 style="font-family:'Sora',sans-serif; font-weight:800; color:#0d1b3e; margin:0;">Cancel Order</h5>
+                <button onclick="closeCancelOrderModal()" style="background:none; border:none; font-size:1.3rem; color:#8898aa; cursor:pointer;">×</button>
+            </div>
+            <input type="hidden" id="cancelOrderId">
+            <p style="font-size:.83rem; color:#8898aa; margin-bottom:16px;">Order <strong id="cancelOrderNum" style="color:#0d1b3e;"></strong> — your credits will be fully refunded.</p>
+
+            <div style="margin-bottom:14px;">
+                <label style="font-size:.75rem; font-weight:700; color:#8898aa; text-transform:uppercase; letter-spacing:.05em; display:block; margin-bottom:6px;">Reason for Cancellation</label>
+                <select id="cancelReasonSelect" onchange="handleCancelReasonSelect(this)" style="width:100%; padding:9px 12px; border:1px solid #dde3f0; border-radius:8px; font-size:.85rem; font-family:'DM Sans',sans-serif; color:#344767; margin-bottom:8px;">
+                    <option value="">— Select a reason —</option>
+                    <option value="Changed my mind">Changed my mind</option>
+                    <option value="Ordered by mistake">Ordered by mistake</option>
+                    <option value="Found a better price elsewhere">Found a better price elsewhere</option>
+                    <option value="Need to change specifications">Need to change specifications</option>
+                    <option value="Delivery timeline too long">Delivery timeline too long</option>
+                    <option value="Budget constraints">Budget constraints</option>
+                    <option value="Other">Other (type below)</option>
+                </select>
+                <textarea id="cancelReasonText" placeholder="Add more details (optional)..." rows="3"
+                    style="width:100%; padding:9px 12px; border:1px solid #dde3f0; border-radius:8px; font-size:.82rem; font-family:'DM Sans',sans-serif; color:#344767; resize:vertical; box-sizing:border-box; display:none;"></textarea>
+            </div>
+
+            <div id="cancelModalMsg" style="font-size:.8rem; font-weight:600; min-height:16px; margin-bottom:10px;"></div>
+            <div style="display:flex; gap:10px;">
+                <button onclick="closeCancelOrderModal()" style="flex:1; padding:10px; border:1px solid #dde3f0; border-radius:8px; background:#fff; color:#344767; font-size:.85rem; font-weight:600; cursor:pointer;">Keep Order</button>
+                <button id="cancelSubmitBtn" onclick="submitCancelOrder()" style="flex:1; padding:10px; border:none; border-radius:8px; background:#f5365c; color:#fff; font-size:.85rem; font-weight:700; cursor:pointer;">Cancel Order</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Password Change Modal -->
+    <div id="passwordModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(10,18,42,0.8); backdrop-filter:blur(8px); z-index:10001; justify-content:center; align-items:center; opacity:0; transition:opacity 0.2s ease-in-out;">
+        <div id="passwordModalContent" style="background:#fff; border-radius:16px; width:95%; max-width:420px; padding:28px; box-shadow:0 20px 60px rgba(0,0,0,0.3); transform:scale(0.93); transition:transform 0.2s ease-in-out;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h5 style="margin:0; font-family:'Sora',sans-serif; font-weight:800; color:#0d1b3e;">Change Password</h5>
+                <button onclick="closePasswordModal()" style="background:none; border:none; font-size:1.3rem; color:#8898aa; cursor:pointer; line-height:1;">×</button>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:14px;">
+                <div>
+                    <label style="font-size:.75rem; font-weight:700; color:#8898aa; text-transform:uppercase; letter-spacing:.05em; display:block; margin-bottom:5px;">Current Password</label>
+                    <input type="password" id="pwCurrentInput" placeholder="Enter current password"
+                        style="width:100%; padding:9px 12px; border:1px solid #dde3f0; border-radius:8px; font-size:.85rem; font-family:'DM Sans',sans-serif; color:#344767; box-sizing:border-box;"
+                        onfocus="this.style.borderColor='#1d8cf8'" onblur="this.style.borderColor='#dde3f0'">
+                </div>
+                <div>
+                    <label style="font-size:.75rem; font-weight:700; color:#8898aa; text-transform:uppercase; letter-spacing:.05em; display:block; margin-bottom:5px;">New Password</label>
+                    <input type="password" id="pwNewInput" placeholder="Min. 6 characters"
+                        style="width:100%; padding:9px 12px; border:1px solid #dde3f0; border-radius:8px; font-size:.85rem; font-family:'DM Sans',sans-serif; color:#344767; box-sizing:border-box;"
+                        onfocus="this.style.borderColor='#1d8cf8'" onblur="this.style.borderColor='#dde3f0'">
+                </div>
+                <div>
+                    <label style="font-size:.75rem; font-weight:700; color:#8898aa; text-transform:uppercase; letter-spacing:.05em; display:block; margin-bottom:5px;">Confirm New Password</label>
+                    <input type="password" id="pwConfirmInput" placeholder="Repeat new password"
+                        style="width:100%; padding:9px 12px; border:1px solid #dde3f0; border-radius:8px; font-size:.85rem; font-family:'DM Sans',sans-serif; color:#344767; box-sizing:border-box;"
+                        onfocus="this.style.borderColor='#1d8cf8'" onblur="this.style.borderColor='#dde3f0'"
+                        onkeydown="if(event.key==='Enter') submitPasswordChange()">
+                </div>
+                <div id="pwModalMsg" style="font-size:.8rem; font-weight:600; min-height:18px;"></div>
+                <button id="pwSubmitBtn" onclick="submitPasswordChange()"
+                    style="width:100%; padding:11px; background:linear-gradient(90deg,#1d8cf8,#00c6ff); color:#fff; border:none; border-radius:9px; font-size:.88rem; font-weight:700; cursor:pointer; font-family:'DM Sans',sans-serif;">
+                    Change Password
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Plan Upgrade Modal -->
+    <div id="planModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(8,14,36,0.92); backdrop-filter:blur(10px); z-index:10000; justify-content:center; align-items:center; opacity:0; transition:opacity 0.25s ease-in-out; padding:16px;">
+        <div style="width:95%; max-width:980px; transform:scale(0.93); transition:transform 0.25s ease-in-out;" id="planModalContent">
+
+            <!-- Header -->
+            <div style="text-align:center; margin-bottom:32px; position:relative;">
+                <div style="display:inline-block; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15); border-radius:20px; padding:4px 14px; font-size:.7rem; font-weight:700; color:rgba(255,255,255,.6); letter-spacing:.1em; text-transform:uppercase; margin-bottom:14px;">SIMPLE PRICING</div>
+                <h2 style="font-family:'Sora',sans-serif; font-weight:800; color:#fff; font-size:1.8rem; margin:0 0 10px;">Choose the plan that fits your shop.</h2>
+                <p style="color:rgba(255,255,255,.5); font-size:.88rem; margin:0;">No hidden fees. Cancel any time. Current plan: <strong id="planModalCurrentPlan" style="color:#1d8cf8;">—</strong></p>
+                <button onclick="closePlanModal()" style="position:absolute; top:0; right:0; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); border-radius:8px; color:rgba(255,255,255,.5); font-size:1.1rem; width:34px; height:34px; cursor:pointer; display:grid; place-items:center; transition:background .2s;" onmouseover="this.style.background='rgba(255,255,255,.15)'" onmouseout="this.style.background='rgba(255,255,255,.08)'">×</button>
+            </div>
+
+            <!-- Plan Cards -->
+            <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:20px;" id="planCardsGrid">
+
+                <!-- PRO -->
+                <div class="plan-card" data-plan="Pro" onclick="selectPlan(this)"
+                    style="background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); border-radius:18px; padding:28px 24px; cursor:pointer; transition:all .25s; position:relative; display:flex; flex-direction:column;">
+                    <div style="font-size:.7rem; font-weight:700; color:rgba(255,255,255,.4); text-transform:uppercase; letter-spacing:.1em; margin-bottom:10px;">PRO</div>
+                    <div style="display:flex; align-items:flex-end; gap:4px; margin-bottom:6px;">
+                        <span style="font-family:'Sora',sans-serif; font-size:2.4rem; font-weight:800; color:#fff; line-height:1;">₱999</span>
+                        <span style="color:rgba(255,255,255,.4); font-size:.82rem; margin-bottom:6px;">/mo</span>
+                    </div>
+                    <p style="color:rgba(255,255,255,.45); font-size:.78rem; margin:0 0 20px; line-height:1.5;">Perfect for small print shops just getting started with digital order management.</p>
+                    <ul style="list-style:none; padding:0; margin:0 0 24px; display:flex; flex-direction:column; gap:10px; flex:1;">
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> Up to <strong style="color:#fff;">200 jobs/month</strong></li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> All 6 product types</li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> Standard + Rush turnaround</li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> ₱25,000 monthly credits</li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> Real-time order tracking</li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> Proof review & approval</li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> 500MB file storage</li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> Basic analytics</li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> Email support</li>
+                    </ul>
+                    <button class="plan-select-btn" data-plan="Pro" onclick="selectPlan(this.closest('.plan-card'))"
+                        style="width:100%; padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.08); color:#fff; font-size:.85rem; font-weight:700; cursor:pointer; transition:all .2s; font-family:'DM Sans',sans-serif;"
+                        onmouseover="this.style.background='rgba(255,255,255,.15)'" onmouseout="this.style.background='rgba(255,255,255,.08)'">Get Started</button>
+                </div>
+
+                <!-- PREMIUM — highlighted -->
+                <div class="plan-card" data-plan="Premium" onclick="selectPlan(this)"
+                    style="background:linear-gradient(135deg,#1d8cf8,#0070e0); border:2px solid rgba(255,255,255,.25); border-radius:18px; padding:28px 24px; cursor:pointer; transition:all .25s; position:relative; display:flex; flex-direction:column; box-shadow:0 8px 40px rgba(29,140,248,.35); transform:translateY(-6px);">
+                    <div style="position:absolute; top:-14px; left:50%; transform:translateX(-50%); background:#2dce89; color:#fff; font-size:.65rem; font-weight:800; padding:4px 14px; border-radius:20px; letter-spacing:.08em; white-space:nowrap;">MOST POPULAR</div>
+                    <div style="font-size:.7rem; font-weight:700; color:rgba(255,255,255,.6); text-transform:uppercase; letter-spacing:.1em; margin-bottom:10px;">PREMIUM</div>
+                    <div style="display:flex; align-items:flex-end; gap:4px; margin-bottom:6px;">
+                        <span style="font-family:'Sora',sans-serif; font-size:2.4rem; font-weight:800; color:#fff; line-height:1;">₱1,899</span>
+                        <span style="color:rgba(255,255,255,.6); font-size:.82rem; margin-bottom:6px;">/mo</span>
+                    </div>
+                    <p style="color:rgba(255,255,255,.7); font-size:.78rem; margin:0 0 20px; line-height:1.5;">Designed for growing teams managing multiple customers and high-volume daily orders.</p>
+                    <ul style="list-style:none; padding:0; margin:0 0 24px; display:flex; flex-direction:column; gap:10px; flex:1;">
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:#fff;"><span style="color:#fff; font-size:.9rem;">✔</span> Up to <strong>2,000 jobs/month</strong></li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:#fff;"><span style="color:#fff; font-size:.9rem;">✔</span> Everything in Pro</li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:#fff;"><span style="color:#fff; font-size:.9rem;">✔</span> All product types + custom sizes</li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:#fff;"><span style="color:#fff; font-size:.9rem;">✔</span> ₱75,000 monthly credits</li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:#fff;"><span style="color:#fff; font-size:.9rem;">✔</span> <strong>5% discount</strong> on all orders</li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:#fff;"><span style="color:#fff; font-size:.9rem;">✔</span> Advanced analytics</li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:#fff;"><span style="color:#fff; font-size:.9rem;">✔</span> Global fulfillment options</li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:#fff;"><span style="color:#fff; font-size:.9rem;">✔</span> 2GB file storage</li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:#fff;"><span style="color:#fff; font-size:.9rem;">✔</span> Priority support (phone + email)</li>
+                    </ul>
+                    <button class="plan-select-btn" data-plan="Premium" onclick="selectPlan(this.closest('.plan-card'))"
+                        style="width:100%; padding:12px; border-radius:10px; border:none; background:#fff; color:#1d8cf8; font-size:.85rem; font-weight:800; cursor:pointer; transition:all .2s; font-family:'DM Sans',sans-serif;"
+                        onmouseover="this.style.background='rgba(255,255,255,.9)'" onmouseout="this.style.background='#fff'">Get Started</button>
+                </div>
+
+                <!-- PREMIUM+ -->
+                <div class="plan-card" data-plan="Premium+" onclick="selectPlan(this)"
+                    style="background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); border-radius:18px; padding:28px 24px; cursor:pointer; transition:all .25s; position:relative; display:flex; flex-direction:column;">
+                    <div style="font-size:.7rem; font-weight:700; color:rgba(255,255,255,.4); text-transform:uppercase; letter-spacing:.1em; margin-bottom:10px;">PREMIUM+</div>
+                    <div style="display:flex; align-items:flex-end; gap:4px; margin-bottom:6px;">
+                        <span style="font-family:'Sora',sans-serif; font-size:2.4rem; font-weight:800; color:#fff; line-height:1;">₱2,199</span>
+                        <span style="color:rgba(255,255,255,.4); font-size:.82rem; margin-bottom:6px;">/mo</span>
+                    </div>
+                    <p style="color:rgba(255,255,255,.45); font-size:.78rem; margin:0 0 20px; line-height:1.5;">For high-volume print operations with custom workflows and dedicated SLA guarantees.</p>
+                    <ul style="list-style:none; padding:0; margin:0 0 24px; display:flex; flex-direction:column; gap:10px; flex:1;">
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> <strong style="color:#fff;">Unlimited jobs</strong></li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> Everything in Premium</li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> <strong style="color:#fff;">Unlimited credits</strong></li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> <strong style="color:#fff;">10% discount</strong> on all orders</li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> 10GB file storage</li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> Custom integrations</li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> <strong style="color:#fff;">Dedicated account manager</strong></li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> 99.99% uptime SLA</li>
+                        <li style="display:flex; align-items:center; gap:8px; font-size:.8rem; color:rgba(255,255,255,.75);"><span style="color:#2dce89; font-size:.9rem;">✔</span> White-label options</li>
+                    </ul>
+                    <button class="plan-select-btn" data-plan="Premium+" onclick="selectPlan(this.closest('.plan-card'))"
+                        style="width:100%; padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.08); color:#fff; font-size:.85rem; font-weight:700; cursor:pointer; transition:all .2s; font-family:'DM Sans',sans-serif;"
+                        onmouseover="this.style.background='rgba(255,255,255,.15)'" onmouseout="this.style.background='rgba(255,255,255,.08)'">Contact Sales</button>
+                </div>
+
+            </div>
+
+            <!-- Footer note + confirm -->
+            <div style="text-align:center; margin-top:24px; display:flex; flex-direction:column; align-items:center; gap:12px;">
+                <span id="planModalMsg" style="font-size:.82rem; color:rgba(255,255,255,.5);"></span>
+                <button id="confirmPlanBtn" onclick="confirmPlanChange()" disabled
+                    style="padding:12px 40px; border:none; border-radius:10px; background:#1d8cf8; color:#fff; font-size:.88rem; font-weight:700; cursor:pointer; opacity:.4; transition:all .2s; font-family:'DM Sans',sans-serif;">
+                    Confirm Plan Change
+                </button>
+                <p style="color:rgba(255,255,255,.3); font-size:.75rem; margin:0;">Need a custom plan? <a href="mailto:support@printpro.com" style="color:rgba(255,255,255,.5); text-decoration:underline;">Talk to our team →</a></p>
+            </div>
+        </div>
+    </div>
 
     <!-- Proof Review Modal -->
     <div class="modal" id="proofModal"
@@ -5108,6 +5621,7 @@
     <!-- ── SCRIPTS ── -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        console.log('Script loaded - client dashboard');
         // 1. Navigation Mapping
         const clientNavMap = {
             dashboard: 'nav-client-dashboard',
@@ -5116,6 +5630,7 @@
             templates: 'nav-client-templates',
             billing: 'nav-client-billing',
             files: 'nav-client-files',
+            track: 'nav-client-track',
             account: 'nav-client-account'
         };
 
@@ -5136,9 +5651,16 @@
             }
 
             if (id === 'files' && typeof fmRender === 'function') fmRender();
-
-            // Auto-load wallet when billing tab opens
             if (id === 'billing' && typeof walletLoad === 'function') walletLoad();
+            if (id === 'track') loadTrackOrders();
+            if (id === 'create') {
+                // Initialize the interactive wizard
+                setTimeout(() => {
+                    if (typeof initializeWizard === 'function') {
+                        initializeWizard();
+                    }
+                }, 100);
+            }
         }
 
         // Load wallet on initial page render (in case billing is default page)
@@ -5198,39 +5720,338 @@
                 const data = await res.json();
                 if (!data.success) throw new Error(data.error || 'Failed to load wallet');
 
-                // Update balance display
+                const balanceRaw = parseFloat(data.balance_raw || 0);
+                const fmt = (n) => '₱' + n.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+                // Update balance display (wallet card)
                 const balEl = document.getElementById('walletBalanceDisplay');
-                if (balEl) balEl.textContent = '₱' + parseFloat(data.balance_raw || 0).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                if (balEl) balEl.textContent = fmt(balanceRaw);
+
+                // Update Credits KPI card on dashboard
+                const kpiCredits = document.getElementById('kpiCredits');
+                if (kpiCredits) kpiCredits.textContent = fmt(balanceRaw);
 
                 // Calculate Spend and Paid to Date from transactions
                 let totalSpent = 0;
-                let totalPaid = 0;
+                let totalPaid  = 0;
+                const monthlyMap = {}; // 'YYYY-MM' → amount spent
+
                 if (data.transactions && data.transactions.length > 0) {
                     data.transactions.forEach(tx => {
-                        if (tx.type === 'deduct') {
-                            totalSpent += parseFloat(tx.amount_raw || 0);
-                        } else if (tx.type === 'add') {
-                            totalPaid += parseFloat(tx.amount_raw || 0);
+                        const amt = parseFloat(tx.amount || 0);
+                        if (tx.transaction_type === 'deduct') {
+                            totalSpent += amt;
+                            // bucket by month
+                            if (tx.created_at) {
+                                const d = new Date(tx.created_at);
+                                const key = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+                                monthlyMap[key] = (monthlyMap[key] || 0) + amt;
+                            }
+                        } else if (tx.transaction_type === 'add') {
+                            totalPaid += amt;
                         }
                     });
                 }
 
-                // Also update the top stat boxes
-                const spendEls = document.querySelectorAll('.client-total-spend');
-                const paidEls = document.querySelectorAll('.client-paid-to-date');
-                spendEls.forEach(el => {
-                    el.textContent = '₱' + totalSpent.toLocaleString('en-PH', { minimumFractionDigits: 2 });
-                });
-                paidEls.forEach(el => {
-                    el.textContent = '₱' + totalPaid.toLocaleString('en-PH', { minimumFractionDigits: 2 });
-                });
+                // ── Total Spend YTD ──
+                const spendEl = document.getElementById('billingTotalSpend');
+                if (spendEl) spendEl.textContent = fmt(totalSpent);
+                document.querySelectorAll('.client-total-spend').forEach(el => el.textContent = fmt(totalSpent));
 
+                // ── Paid to Date ──
+                const paidEl = document.getElementById('billingPaidToDate');
+                if (paidEl) paidEl.textContent = fmt(totalPaid);
+                document.querySelectorAll('.client-paid-to-date').forEach(el => el.textContent = fmt(totalPaid));
+
+                // ── Monthly Spend Chart (last 6 months) ──
+                const chartEl = document.getElementById('monthlySpendChart');
+                if (chartEl) {
+                    const months = [];
+                    const now = new Date();
+                    for (let i = 5; i >= 0; i--) {
+                        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                        const key   = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+                        const label = d.toLocaleDateString('en-US', { month: 'short' });
+                        months.push({ key, label, amount: monthlyMap[key] || 0 });
+                    }
+                    const maxAmt = Math.max(...months.map(m => m.amount), 1);
+                    chartEl.innerHTML = months.map(m => {
+                        const pct = Math.round((m.amount / maxAmt) * 100);
+                        return `
+                        <div class="spend-bar-row">
+                            <div class="spend-bar-label">${m.label}</div>
+                            <div class="spend-bar-wrap">
+                                <div class="spend-bar-fill" style="width:${pct}%;transition:width .6s ease;"></div>
+                            </div>
+                            <div class="spend-bar-val">${m.amount > 0 ? fmt(m.amount) : '₱0'}</div>
+                        </div>`;
+                    }).join('');
+                }
 
                 walletRenderTransactions(data.transactions || []);
+
+                // ── Load subscription info ──
+                billingLoadSubscription();
+
             } catch (err) {
                 const txList = document.getElementById('walletTxList');
                 if (txList) txList.innerHTML = `<div style="text-align:center;padding:20px;color:var(--muted);font-size:.8rem;"><i class="bi bi-exclamation-circle" style="display:block;font-size:1.4rem;margin-bottom:6px;opacity:.4;"></i>Could not load wallet data</div>`;
             }
+        }
+
+        async function billingLoadSubscription() {
+            try {
+                const res  = await fetch('api/get_profile.php');
+                const data = await res.json();
+                if (!data.success) return;
+
+                const rawPlan = data.data.subscription_plan || 'Pro';
+                const planNorm = { 'pro': 'Pro', 'premium': 'Premium', 'premium+': 'Premium+', 'premiumplus': 'Premium+' };
+                const plan = planNorm[rawPlan.toLowerCase()] || rawPlan;
+                _currentPlan = plan; // keep in sync for modal
+
+                const planPrices = {
+                    'Pro': '₱999.00', 'Premium': '₱1,899.00', 'Premium+': '₱2,199.00'
+                };
+
+                const planEl = document.getElementById('subPlanName');
+                if (planEl) planEl.textContent = plan;
+
+                const cycleEl = document.getElementById('subBillingCycle');
+                if (cycleEl) cycleEl.textContent = 'Monthly';
+
+                const renewsEl = document.getElementById('subRenewsOn');
+                if (renewsEl) {
+                    const next = new Date();
+                    next.setMonth(next.getMonth() + 1);
+                    renewsEl.textContent = next.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                }
+
+                const amtEl = document.getElementById('subAmount');
+                if (amtEl) amtEl.textContent = planPrices[plan] || '₱999.00';
+
+                // Also update dashboard plan name in hero banner
+                const dashPlan = document.getElementById('dashboardPlanName');
+                if (dashPlan) dashPlan.textContent = plan;
+
+                // Update account page card
+                const acctPlan = document.getElementById('acctPlanName');
+                if (acctPlan) acctPlan.textContent = plan;
+                const acctAmt = document.getElementById('acctBillingAmount');
+                if (acctAmt) acctAmt.textContent = planPrices[plan] || '₱999.00';
+                const acctRenews = document.getElementById('acctRenewsOn');
+                if (acctRenews) {
+                    const next = new Date();
+                    next.setMonth(next.getMonth() + 1);
+                    acctRenews.textContent = next.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                }
+
+                // Update status badge
+                const badge = document.getElementById('subStatusBadge');
+                if (badge) {
+                    badge.textContent = 'ACTIVE';
+                    badge.className = 'badge-status badge-active client-sub-status';
+                }
+
+            } catch (e) { /* silent fail */ }
+        }
+
+        // ══════════════════════════════════════════════════════
+        //  PLAN UPGRADE MODAL
+        // ══════════════════════════════════════════════════════
+
+        let _selectedPlan = null;
+        let _currentPlan  = null;
+
+        function openPlanModal() {
+            _selectedPlan = null;
+            const modal = document.getElementById('planModal');
+            modal.style.display = 'flex';
+            setTimeout(() => {
+                modal.style.opacity = '1';
+                document.getElementById('planModalContent').style.transform = 'scale(1)';
+            }, 10);
+
+            // Show current plan
+            const curEl = document.getElementById('planModalCurrentPlan');
+            if (curEl) curEl.textContent = _currentPlan || 'Pro';
+
+            // Reset card highlights to dark default
+            document.querySelectorAll('.plan-card').forEach(c => {
+                const isPremium = c.dataset.plan === 'Premium';
+                if (isPremium) {
+                    c.style.background = 'linear-gradient(135deg,#1d8cf8,#0070e0)';
+                    c.style.border = '2px solid rgba(255,255,255,.25)';
+                    c.style.boxShadow = '0 8px 40px rgba(29,140,248,.35)';
+                    c.style.transform = 'translateY(-6px)';
+                } else {
+                    c.style.background = 'rgba(255,255,255,.05)';
+                    c.style.border = '1px solid rgba(255,255,255,.1)';
+                    c.style.boxShadow = 'none';
+                    c.style.transform = 'none';
+                }
+            });
+
+            // Mark current plan with green border
+            document.querySelectorAll('.plan-card').forEach(c => {
+                if (c.dataset.plan === _currentPlan) {
+                    c.style.border = '2px solid #2dce89';
+                }
+            });
+
+            const btn = document.getElementById('confirmPlanBtn');
+            btn.disabled = true;
+            btn.style.opacity = '.5';
+            document.getElementById('planModalMsg').textContent = 'Select a plan to continue.';
+        }
+
+        function closePlanModal() {
+            const modal = document.getElementById('planModal');
+            modal.style.opacity = '0';
+            document.getElementById('planModalContent').style.transform = 'scale(0.92)';
+            setTimeout(() => { modal.style.display = 'none'; }, 200);
+        }
+
+        function selectPlan(card) {
+            _selectedPlan = card.dataset.plan;
+
+            // Reset all cards to default dark style
+            document.querySelectorAll('.plan-card').forEach(c => {
+                const isPremium = c.dataset.plan === 'Premium';
+                if (isPremium) {
+                    c.style.background = 'linear-gradient(135deg,#1d8cf8,#0070e0)';
+                    c.style.border = '2px solid rgba(255,255,255,.25)';
+                    c.style.boxShadow = '0 8px 40px rgba(29,140,248,.35)';
+                    c.style.transform = 'translateY(-6px)';
+                } else {
+                    c.style.background = 'rgba(255,255,255,.05)';
+                    c.style.border = '1px solid rgba(255,255,255,.1)';
+                    c.style.boxShadow = 'none';
+                    c.style.transform = 'none';
+                }
+            });
+
+            // Highlight selected card
+            if (card.dataset.plan === 'Premium') {
+                card.style.border = '2px solid #2dce89';
+                card.style.boxShadow = '0 8px 40px rgba(29,140,248,.5), 0 0 0 3px rgba(45,206,137,.4)';
+            } else {
+                card.style.background = 'rgba(29,140,248,.15)';
+                card.style.border = '2px solid #1d8cf8';
+                card.style.boxShadow = '0 4px 24px rgba(29,140,248,.25)';
+            }
+
+            const btn = document.getElementById('confirmPlanBtn');
+            const msg = document.getElementById('planModalMsg');
+
+            if (_selectedPlan === _currentPlan) {
+                btn.disabled = true;
+                btn.style.opacity = '.4';
+                msg.textContent = 'This is your current plan.';
+            } else {
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                msg.textContent = `Switch from ${_currentPlan || '—'} → ${_selectedPlan}`;
+                msg.style.color = '#1d8cf8';
+            }
+        }
+
+        async function confirmPlanChange() {
+            if (!_selectedPlan || _selectedPlan === _currentPlan) return;
+
+            const btn = document.getElementById('confirmPlanBtn');
+            btn.disabled = true;
+            btn.textContent = 'Updating…';
+
+            // Get user_id from sessionStorage (client_dashboard.html uses sessionStorage auth)
+            let userId = null;
+            try {
+                const sess = JSON.parse(sessionStorage.getItem('pp_user') || '{}');
+                userId = sess.id || sess.user_id || null;
+            } catch(e) {}
+
+            try {
+                const res  = await fetch('api/update_subscription.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ plan: _selectedPlan, user_id: userId })
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    _currentPlan = _selectedPlan;
+                    closePlanModal();
+
+                    // Refresh all plan displays
+                    billingLoadSubscription();
+
+                    // Update account page plan display immediately
+                    const acctPlan = document.getElementById('acctPlanName');
+                    if (acctPlan) acctPlan.textContent = _selectedPlan;
+                    const planPrices = { 'Pro': '₱999.00', 'Premium': '₱1,899.00', 'Premium+': '₱2,199.00' };
+                    const acctAmt = document.getElementById('acctBillingAmount');
+                    if (acctAmt) acctAmt.textContent = planPrices[_selectedPlan] || '₱999.00';
+
+                    // Update all .client-sub-plan spans
+                    document.querySelectorAll('.client-sub-plan').forEach(el => el.textContent = _selectedPlan);
+
+                    // Update hero banner
+                    const dashPlan = document.getElementById('dashboardPlanName');
+                    if (dashPlan) dashPlan.textContent = _selectedPlan;
+
+                    // Show success toast
+                    showPlanToast('Plan updated to ' + _selectedPlan + ' ✓', true);
+                } else {
+                    showPlanToast(data.message || 'Failed to update plan.', false);
+                }
+            } catch (e) {
+                showPlanToast('Network error. Please try again.', false);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Confirm Plan';
+            }
+        }
+
+        function showPlanToast(msg, success) {
+            // Reuse walletShowNotif if on billing page, otherwise use alert
+            if (typeof walletShowNotif === 'function') {
+                walletShowNotif(msg, success);
+            } else {
+                alert(msg);
+            }
+        }
+
+        // Close modal on backdrop click
+        document.getElementById('planModal').addEventListener('click', function(e) {
+            if (e.target === this) closePlanModal();
+        });
+
+        function billingExportCSV() {
+            const txList = document.getElementById('walletTxList');
+            // Gather rows from the rendered transaction list
+            const rows = [['Date', 'Description', 'Type', 'Amount']];
+            document.querySelectorAll('#walletTxList .wallet-tx-item').forEach(item => {
+                const cols = item.querySelectorAll('div');
+                const label = cols[1]?.querySelector('div:first-child')?.textContent?.trim() || '';
+                const date  = cols[1]?.querySelector('div:last-child')?.textContent?.trim() || '';
+                const amt   = item.querySelector('.wallet-tx-amt')?.textContent?.trim() || '';
+                const type  = amt.startsWith('+') ? 'Credit Added' : 'Order Deducted';
+                rows.push([date, label, type, amt]);
+            });
+
+            if (rows.length <= 1) {
+                alert('No transactions to export.');
+                return;
+            }
+
+            const csv = rows.map(r => r.map(c => '"' + String(c).replace(/"/g, '""') + '"').join(',')).join('\n');
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url  = URL.createObjectURL(blob);
+            const a    = document.createElement('a');
+            a.href     = url;
+            a.download = 'printpro_transactions_' + new Date().toISOString().slice(0,10) + '.csv';
+            a.click();
+            URL.revokeObjectURL(url);
         }
 
         function walletRenderTransactions(txs) {
@@ -5399,12 +6220,12 @@
             };
 
             const amounts = {
-                'Free Plan': '₱0.00', 'Basic Plan': '₱899.00', 'Premium Plan': '₱1,899.00', 'Enterprise Plan': '₱4,500.00'
+                'Pro': '₱999.00', 'Premium': '₱1,899.00', 'Premium+': '₱2,199.00'
             };
 
             document.querySelectorAll('.client-sub-plan').forEach(el => el.textContent = data.plan || el.textContent);
             document.querySelectorAll('.client-sub-renews').forEach(el => el.textContent = formatDate(data.ends));
-            document.querySelectorAll('.client-sub-amount').forEach(el => el.textContent = amounts[data.plan] || '₱0.00');
+            document.querySelectorAll('.client-sub-amount').forEach(el => el.textContent = amounts[data.plan] || '₱999.00');
             document.querySelectorAll('.client-sub-status').forEach(el => {
                 const s = (data.status || '').trim();
                 el.textContent = s.toUpperCase();
@@ -5424,11 +6245,10 @@
             });
         }
 
-        // Bug #9 Fix: Define filterOrdersBySelect() which is wired to the Orders page status filter <select>
         function filterOrdersBySelect(sel) {
             const val = sel.value.toLowerCase();
             document.querySelectorAll('#c-orders .orders-table tbody tr').forEach(row => {
-                if (val === 'all status' || val === 'all') {
+                if (val === 'all' || val === 'all status') {
                     row.style.display = '';
                 } else {
                     const status = (row.getAttribute('data-status') || '').toLowerCase();
@@ -5449,22 +6269,40 @@
             function clampQty(val) {
                 val = parseInt(val) || 50;
                 val = Math.max(50, Math.min(10000, val));   // hard cap at 10 000
-                return Math.round(val / 50) * 50;            // round to nearest 50
+                return val;                                   // no rounding, step=1 for precision
             }
 
+            // Debounce function to reduce API calls
+            function debounce(func, wait) {
+                let timeout;
+                return function executedFunction(...args) {
+                    const later = () => {
+                        clearTimeout(timeout);
+                        func(...args);
+                    };
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                };
+            }
+
+            const debouncedUpdatePricing = debounce(updatePricing, 500);
+
             if (qtySlider && qtyInput) {
-                // Slider → input (live, no rounding needed — slider already steps by 50)
+                // Slider → input (live, no rounding needed — slider already steps by 1)
                 qtySlider.addEventListener('input', () => {
                     qtyInput.value = qtySlider.value;
-                    updatePricing();
+                    debouncedUpdatePricing();
                 });
 
-                // Input → slider (live as user types)
+                // Input → slider (live as user types — clamp immediately)
                 qtyInput.addEventListener('input', () => {
                     const raw = parseInt(qtyInput.value) || 50;
                     const clamped = Math.max(50, Math.min(10000, raw));
+                    // If user typed over the cap, correct it right away
+                    if (raw > 10000) qtyInput.value = 10000;
+                    if (raw < 50 && qtyInput.value.length > 0) qtyInput.value = 50;
                     qtySlider.value = clamped;
-                    updatePricing();
+                    debouncedUpdatePricing();
                 });
 
                 // Input → enforce clamp + round to 50 on blur / Enter
@@ -5475,16 +6313,30 @@
                     updatePricing();
                 }
                 qtyInput.addEventListener('change', finalizeQty);
+                qtyInput.addEventListener('blur', finalizeQty);
                 qtyInput.addEventListener('keydown', (e) => {
                     if (e.key === 'Enter') { e.preventDefault(); qtyInput.blur(); }
                 });
-            } else if (qtySlider) {
-                // Fallback: slider only
-                qtySlider.addEventListener('input', updatePricing);
             }
+
+            // Add debounced event listeners to select elements
+            const paperSelect = document.getElementById('paperSelect');
+            const finishSelect = document.getElementById('finishSelect');
+            const bleedSelect = document.getElementById('bleedSelect');
+            const turnaroundSelect = document.getElementById('turnaroundSelect');
+            const shippingSelect = document.getElementById('shippingSelect');
+
+            if (paperSelect) paperSelect.addEventListener('change', debouncedUpdatePricing);
+            if (finishSelect) finishSelect.addEventListener('change', debouncedUpdatePricing);
+            if (bleedSelect) bleedSelect.addEventListener('change', debouncedUpdatePricing);
+            if (turnaroundSelect) turnaroundSelect.addEventListener('change', debouncedUpdatePricing);
+            if (shippingSelect) shippingSelect.addEventListener('change', debouncedUpdatePricing);
 
             loadOrderSpecs();
             loadOrders();
+            // Load credits and subscription on every page load
+            if (typeof walletLoad === 'function') walletLoad();
+            if (typeof billingLoadSubscription === 'function') billingLoadSubscription();
         });
 
         async function loadOrders() {
@@ -5494,66 +6346,452 @@
                 if (data.success) {
                     const orders = data.data;
 
+                    // ── Update KPI: Active Orders ──
+                    const activeStatuses = ['Prepress','Printing','Finishing','Shipping','Proof Pending','Proof Pending Review'];
+                    const activeOrders  = orders.filter(o => activeStatuses.includes(o.status));
+                    const kpiActive = document.getElementById('kpiActiveOrders');
+                    if (kpiActive) kpiActive.textContent = activeOrders.length;
+
+                    // ── Update Hero Banner Subtitle ──
+                    const subtitle = document.getElementById('heroBannerSubtitle');
+                    if (subtitle) {
+                        if (orders.length === 0) {
+                            subtitle.textContent = 'You have no active orders yet. Start your first project by clicking the button below!';
+                        } else {
+                            const proofReady = orders.filter(o => o.status === 'Proof Pending Review' && o.proof_file);
+                            const shipping   = orders.filter(o => o.status === 'Shipping');
+                            const parts = [];
+                            if (proofReady.length > 0) parts.push(`${proofReady.length} proof${proofReady.length > 1 ? 's' : ''} ready for review`);
+                            if (shipping.length > 0)   parts.push(`${shipping.length} active shipment${shipping.length > 1 ? 's' : ''}`);
+                            if (activeOrders.length > 0 && parts.length === 0) parts.push(`${activeOrders.length} order${activeOrders.length > 1 ? 's' : ''} in progress`);
+                            subtitle.textContent = parts.length > 0 ? 'You have ' + parts.join(' and ') + '.' : 'All caught up! Place a new order anytime.';
+                        }
+                    }
+
+                    // ── Update clientGreeting with real name ──
+                    const greeting = document.getElementById('clientGreeting');
+                    if (greeting) {
+                        const session = sessionStorage.getItem('pp_user');
+                        if (session) {
+                            try {
+                                const user = JSON.parse(session);
+                                greeting.textContent = 'Welcome back, ' + (user.name || 'Client') + '!';
+                                // Also update plan name
+                                const planEl = document.getElementById('dashboardPlanName');
+                                if (planEl && user.subscription_plan) planEl.textContent = user.subscription_plan;
+                            } catch(e) {}
+                        }
+                    }
+
+                    // ── Load file count for Assets KPI ──
+                    fetch('api/user_files.php')
+                        .then(r => r.json())
+                        .then(fd => {
+                            const kpiAssets = document.getElementById('kpiAssets');
+                            if (kpiAssets) kpiAssets.textContent = (fd.success && Array.isArray(fd.data)) ? fd.data.length : 0;
+                        })
+                        .catch(() => { const el = document.getElementById('kpiAssets'); if (el) el.textContent = '0'; });
+
                     // 1. Dashboard "Recent Orders"
                     const dashTbody = document.querySelector('#c-dashboard .orders-table tbody');
                     if (dashTbody) {
-                        dashTbody.innerHTML = '';
-                        orders.slice(0, 5).forEach(o => {
-                            const tr = `<tr>
-                                <td style="font-weight:600;">${o.order_number || '#ORD-' + o.id}</td>
-                                <td>${o.job_name}</td>
-                                <td>${parseInt(o.quantity).toLocaleString()}</td>
-                                <td><span class="badge-status ${getStatusClass(o.status)}">${o.status}</span></td>
-                                <td>${new Date(o.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</td>
-                                <td style="font-weight:700;">₱${parseFloat(o.total_price).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-                            </tr>`;
-                            dashTbody.innerHTML += tr;
-                        });
+                        if (orders.length === 0) {
+                            dashTbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 40px; color: var(--muted);"><i class="bi bi-box-seam" style="font-size: 2rem; display: block; margin-bottom: 10px; opacity: 0.3;"></i>No orders yet</td></tr>`;
+                        } else {
+                            dashTbody.innerHTML = '';
+                            orders.slice(0, 5).forEach(o => {
+                                const tr = `<tr>
+                                    <td style="font-weight:600;">${o.order_number || '#ORD-' + o.id}</td>
+                                    <td>${o.job_name || o.product_type}</td>
+                                    <td>${parseInt(o.quantity).toLocaleString()}</td>
+                                    <td><span class="badge-status ${getStatusClass(o.status)}">${o.status}</span></td>
+                                    <td>${o.due_date ? new Date(o.due_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : '—'}</td>
+                                    <td style="font-weight:700;">₱${parseFloat(o.total_price || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                </tr>`;
+                                dashTbody.innerHTML += tr;
+                            });
+                        }
                     }
 
                     // 2. Orders Page "All Orders"
                     const ordersTbody = document.querySelector('#c-orders .orders-table tbody');
                     if (ordersTbody) {
                         ordersTbody.innerHTML = '';
-                        orders.forEach(o => {
-                            let actionCell = '—';
-                            if (o.status === 'Proof Pending Review' && o.proof_file) {
-                                actionCell = `<button class="btn btn-sm" style="padding:4px 10px; font-size:.78rem; border-radius:6px; background:var(--accent); color:#fff; border:none; display:inline-flex; align-items:center; gap:4px; font-weight:600;" onclick="openClientProofModal(${o.id})"><i class="bi bi-file-earmark-check"></i> Review Proof</button>`;
-                            }
+                        if (orders.length === 0) {
+                            ordersTbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 60px; color: var(--muted);"><i class="bi bi-box-seam" style="font-size: 3rem; display: block; margin-bottom: 15px; opacity: 0.2;"></i><p>No orders found</p></td></tr>`;
+                        } else {
+                                orders.forEach(o => {
+                                    let actionCell = '—';
+                                    if (o.status === 'Proof Pending Review' && o.proof_file) {
+                                        actionCell = `<button class="btn btn-sm" style="padding:4px 10px; font-size:.78rem; border-radius:6px; background:var(--accent); color:#fff; border:none; display:inline-flex; align-items:center; gap:4px; font-weight:600;" onclick="openClientProofModal(${o.id})"><i class="bi bi-file-earmark-check"></i> Review Proof</button>`;
+                                    }
+                                    const cancellable = ['Proof Pending','Proof Pending Review','Prepress'];
+                                    const cancelBtn = cancellable.includes(o.status)
+                                        ? `<button style="padding:4px 10px; font-size:.75rem; border-radius:6px; background:rgba(245,54,92,.1); color:#f5365c; border:1px solid rgba(245,54,92,.2); font-weight:600; cursor:pointer; margin-left:4px;" onclick="openCancelOrderModal(${o.id},'${o.order_number || 'PPR-' + String(o.id).padStart(3,'0')}')">Cancel</button>`
+                                        : '';
 
-                            const tr = `<tr data-status="${o.status.toLowerCase()}">
-                                <td>${o.order_number || '#ORD-' + o.id}</td>
-                                <td>${o.job_name}</td>
-                                <td>${o.product_type || 'Product'}</td>
-                                <td>${parseInt(o.quantity).toLocaleString()}</td>
-                                <td><span class="badge-status ${getStatusClass(o.status)}">${o.status}</span></td>
-                                <td>${o.due_date ? new Date(o.due_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : '—'}</td>
-                                <td style="font-weight:700;">₱${parseFloat(o.total_price).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-                                <td>${actionCell}</td>
-                            </tr>`;
-                            ordersTbody.innerHTML += tr;
-                        });
+                                    let statusCell = '';
+                                    if (o.status === 'Cancelled') {
+                                        const reason = o.rejection_reason || '';
+                                        const reasonHtml = reason
+                                            ? `<div style="font-size:.68rem;color:#8898aa;margin-top:3px;max-width:160px;white-space:normal;line-height:1.3;">↩ Refunded · ${reason.length > 40 ? reason.substring(0,40)+'…' : reason}</div>`
+                                            : `<div style="font-size:.68rem;color:#2dce89;margin-top:2px;">↩ Credits refunded</div>`;
+                                        statusCell = `<div><span class="badge-status badge-danger">Cancelled</span>${reasonHtml}</div>`;
+                                    } else {
+                                        const displayStatus = o.status || 'Proof Pending';
+                                        statusCell = `<span class="badge-status ${getStatusClass(displayStatus)}">${displayStatus}</span>`;
+                                    }
+
+                                    const dueStr = o.due_date ? new Date(o.due_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : '—';
+                                    const totalStr = parseFloat(o.total_price || 0).toLocaleString(undefined, { minimumFractionDigits: 2 });
+
+                                    const tr = `<tr data-status="${(o.status || '').toLowerCase()}">
+                                        <td style="font-weight:600;">${o.order_number || '#ORD-' + o.id}</td>
+                                        <td>${o.job_name || o.product_type || '—'}</td>
+                                        <td>${o.product_type || '—'}</td>
+                                        <td>${parseInt(o.quantity || 0).toLocaleString()}</td>
+                                        <td>${statusCell}</td>
+                                        <td>${dueStr}</td>
+                                        <td style="font-weight:700;">₱${totalStr}</td>
+                                        <td style="white-space:nowrap;">${actionCell}${cancelBtn}</td>
+                                    </tr>`;
+                                    ordersTbody.innerHTML += tr;
+                                });
+                        }
                     }
                 }
             } catch (e) { console.error(e); }
         }
 
-        function getStatusClass(status) {
-            status = status.toLowerCase();
-            // GREEN - Success/Paid/Delivered
-            if (status === 'delivered' || status === 'done' || status === 'paid' || status === 'active') return 'badge-success';
-            // CYAN - Prepress/Printing
-            if (status === 'prepress' || status === 'printing') return 'badge-info';
-            // PURPLE - Finishing/Processing
-            if (status === 'finishing' || status === 'processing') return 'badge-purple';
-            // DEEP BLUE - Shipping
-            if (status === 'shipping' || status === 'shipped' || status === 'proof pending review') return 'badge-primary';
-            // ORANGE - Pending/Due/Reprint
-            if (status === 'pending' || status === 'due' || status === 'reprint' || status === 'proof pending') return 'badge-warning';
-            // RED - Danger/Cancelled
-            if (status === 'cancelled' || status === 'rejected') return 'badge-danger';
+        // ══════════════════════════════════════════════════════
+        //  GLOBAL TOAST (reuses fm-toast element)
+        // ══════════════════════════════════════════════════════
+        let _toastTimer = null;
+        function showToast(msg, type) {
+            const toast = document.getElementById('fm-toast');
+            const textEl = document.getElementById('fm-toast-text');
+            if (!toast || !textEl) return;
 
-            return 'badge-success';
+            textEl.textContent = msg;
+
+            // Color by type
+            if (type === 'success') {
+                toast.style.background = '#1aae6f';
+            } else if (type === 'danger' || type === 'error') {
+                toast.style.background = '#f5365c';
+            } else {
+                toast.style.background = '#1a2340';
+            }
+
+            toast.classList.add('show');
+            clearTimeout(_toastTimer);
+            _toastTimer = setTimeout(() => toast.classList.remove('show'), 3500);
+        }
+
+        // ══════════════════════════════════════════════════════
+        //  ORDER CONFIRMATION MODAL
+        // ══════════════════════════════════════════════════════
+        function openOrderConfirmModal() {
+            // Populate summary from current form state
+            const activeBtn = document.querySelector('.product-types .pt-btn.active');
+            const product   = activeBtn ? activeBtn.textContent.trim() : 'Flyers';
+            const qty       = document.getElementById('qtyVal').value || document.getElementById('qtySlider').value;
+            const w         = document.getElementById('customWidth').value;
+            const h         = document.getElementById('customHeight').value;
+            const paperSel  = document.getElementById('paperSelect');
+            const paper     = paperSel.options[paperSel.selectedIndex]?.text || '—';
+            const finishSel = document.getElementById('finishSelect');
+            const finish    = finishSel.options[finishSel.selectedIndex]?.text || '—';
+            const taSel     = document.getElementById('turnaroundSelect');
+            const ta        = taSel.options[taSel.selectedIndex]?.text || '—';
+            const artwork   = document.getElementById('sumArtwork')?.textContent || '—';
+            const total     = document.getElementById('summaryTotal')?.textContent || '₱—';
+
+            document.getElementById('confirmProduct').textContent    = product;
+            document.getElementById('confirmQty').textContent        = parseInt(qty).toLocaleString() + ' units';
+            document.getElementById('confirmSize').textContent       = w + '" × ' + h + '"';
+            document.getElementById('confirmPaper').textContent      = paper;
+            document.getElementById('confirmFinish').textContent     = finish;
+            document.getElementById('confirmTurnaround').textContent = ta;
+            document.getElementById('confirmArtwork').textContent    = artwork;
+            document.getElementById('confirmTotal').textContent      = total;
+
+            const modal = document.getElementById('orderConfirmModal');
+            modal.style.display = 'flex';
+            setTimeout(() => { modal.style.opacity = '1'; document.getElementById('orderConfirmContent').style.transform = 'scale(1)'; }, 10);
+        }
+
+        function closeOrderConfirmModal() {
+            const modal = document.getElementById('orderConfirmModal');
+            modal.style.opacity = '0';
+            document.getElementById('orderConfirmContent').style.transform = 'scale(0.93)';
+            setTimeout(() => { modal.style.display = 'none'; }, 200);
+        }
+
+        document.getElementById('orderConfirmModal').addEventListener('click', function(e) {
+            if (e.target === this) closeOrderConfirmModal();
+        });
+
+        // ══════════════════════════════════════════════════════
+        //  CANCEL ORDER MODAL (CLIENT)
+        // ══════════════════════════════════════════════════════
+        function openCancelOrderModal(orderId, orderNum) {
+            document.getElementById('cancelOrderId').value = orderId;
+            document.getElementById('cancelOrderNum').textContent = '#' + orderNum;
+            document.getElementById('cancelReasonSelect').value = '';
+            document.getElementById('cancelReasonText').value = '';
+            document.getElementById('cancelReasonText').style.display = 'none';
+            document.getElementById('cancelModalMsg').textContent = '';
+            const modal = document.getElementById('cancelOrderModal');
+            modal.style.display = 'flex';
+            setTimeout(() => { modal.style.opacity = '1'; document.getElementById('cancelOrderContent').style.transform = 'scale(1)'; }, 10);
+        }
+
+        function closeCancelOrderModal() {
+            const modal = document.getElementById('cancelOrderModal');
+            modal.style.opacity = '0';
+            document.getElementById('cancelOrderContent').style.transform = 'scale(0.93)';
+            setTimeout(() => { modal.style.display = 'none'; }, 200);
+        }
+
+        function handleCancelReasonSelect(sel) {
+            const textarea = document.getElementById('cancelReasonText');
+            textarea.style.display = sel.value === 'Other' ? 'block' : 'none';
+            if (sel.value !== 'Other') textarea.value = '';
+        }
+
+        async function submitCancelOrder() {
+            const orderId = document.getElementById('cancelOrderId').value;
+            const select  = document.getElementById('cancelReasonSelect');
+            const textarea = document.getElementById('cancelReasonText');
+            const msg     = document.getElementById('cancelModalMsg');
+            const btn     = document.getElementById('cancelSubmitBtn');
+
+            let reason = select.value;
+            if (reason === 'Other') reason = textarea.value.trim();
+            if (!reason) { msg.textContent = 'Please select or enter a reason.'; msg.style.color = '#f5365c'; return; }
+
+            btn.disabled = true; btn.textContent = 'Cancelling…';
+            const formData = new FormData();
+            formData.append('order_id', orderId);
+            formData.append('reason', reason);
+
+            try {
+                const res  = await fetch('api/cancel_order.php', { method: 'POST', body: formData });
+                const data = await res.json();
+                if (data.success) {
+                    closeCancelOrderModal();
+                    // Show refund confirmation
+                    if (typeof showToast === 'function') {
+                        showToast(data.message || 'Order cancelled. Credits refunded to your wallet.', 'success');
+                    }
+                    if (typeof walletLoad === 'function') walletLoad();
+                    if (typeof loadOrders === 'function') loadOrders();
+                    if (typeof loadTrackOrders === 'function') loadTrackOrders();
+                } else {
+                    msg.textContent = data.message || 'Failed to cancel order.';
+                    msg.style.color = '#f5365c';
+                }
+            } catch (e) {
+                msg.textContent = 'Network error. Please try again.';
+                msg.style.color = '#f5365c';
+            } finally {
+                btn.disabled = false; btn.textContent = 'Cancel Order';
+            }
+        }
+
+        document.getElementById('cancelOrderModal').addEventListener('click', function(e) {
+            if (e.target === this) closeCancelOrderModal();
+        });
+
+        // ══════════════════════════════════════════════════════
+        //  TRACK ORDERS
+        // ══════════════════════════════════════════════════════
+        async function loadTrackOrders() {
+            const container = document.getElementById('trackOrdersList');
+            if (!container) return;
+            container.innerHTML = `<div style="text-align:center;padding:40px;color:var(--muted);"><i class="bi bi-arrow-repeat" style="font-size:1.5rem;display:block;margin-bottom:8px;opacity:.3;"></i>Loading…</div>`;
+
+            try {
+                const res  = await fetch('api/get_orders.php');
+                const data = await res.json();
+                if (!data.success) throw new Error(data.message);
+
+                const orders = data.data;
+                const activeStatuses = ['Prepress','Printing','Finishing','Shipping','Proof Pending','Proof Pending Review'];
+                const active = orders.filter(o => activeStatuses.includes(o.status));
+
+                if (active.length === 0) {
+                    container.innerHTML = `
+                        <div style="text-align:center;padding:60px;color:var(--muted);">
+                            <i class="bi bi-check-circle" style="font-size:3rem;display:block;margin-bottom:12px;color:#2dce89;opacity:.5;"></i>
+                            <h5 style="font-weight:700;margin-bottom:6px;">All caught up!</h5>
+                            <p style="font-size:.85rem;">No active orders in production right now.</p>
+                            <button onclick="showClientPage('create',null)" style="margin-top:12px;background:var(--accent);color:#fff;border:none;padding:8px 20px;border-radius:8px;font-size:.82rem;font-weight:600;cursor:pointer;">+ Place New Order</button>
+                        </div>`;
+                    return;
+                }
+
+                const steps = ['Prepress','Printing','Finishing','Shipping','Delivered'];
+
+                container.innerHTML = active.map(o => {
+                    const orderNum = o.order_number || ('PPR-' + String(o.id).padStart(3,'0'));
+                    const jobName  = o.job_name || o.product_type || 'Print Job';
+                    const dueDate  = o.due_date ? new Date(o.due_date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—';
+                    const total    = parseFloat(o.total_price || o.total_amount || 0).toLocaleString('en-US',{minimumFractionDigits:2});
+
+                    // Map status to step index
+                    const statusMap = {
+                        'Proof Pending': -1, 'Proof Pending Review': -1,
+                        'Prepress': 0, 'Printing': 1, 'Finishing': 2, 'Shipping': 3, 'Delivered': 4
+                    };
+                    const currentIdx = statusMap[o.status] ?? 0;
+
+                    const stepsHtml = steps.map((step, i) => {
+                        let circleClass = 'pending', labelClass = '', icon = i + 1;
+                        if (i < currentIdx) { circleClass = 'done'; icon = '<i class="bi bi-check-lg"></i>'; labelClass = 'done'; }
+                        else if (i === currentIdx) { circleClass = 'current'; labelClass = 'current'; }
+                        const connector = i < steps.length - 1
+                            ? `<div class="step-connector ${i < currentIdx ? 'done' : 'pending'}"></div>`
+                            : '';
+                        return `
+                            <div class="track-step">
+                                <div class="step-circle ${circleClass}">${icon}</div>
+                                <div class="step-label ${labelClass}">${step}</div>
+                            </div>${connector}`;
+                    }).join('');
+
+                    // Proof pending special notice
+                    const proofNotice = (o.status === 'Proof Pending Review' && o.proof_file)
+                        ? `<div style="margin:0 20px 16px;padding:10px 14px;background:rgba(29,140,248,.08);border:1px solid rgba(29,140,248,.2);border-radius:8px;font-size:.78rem;color:var(--accent);font-weight:600;display:flex;align-items:center;gap:8px;">
+                               <i class="bi bi-file-earmark-check-fill"></i>
+                               Your proof is ready for review!
+                               <button onclick="openClientProofModal(${o.id})" style="margin-left:auto;background:var(--accent);color:#fff;border:none;padding:4px 12px;border-radius:6px;font-size:.75rem;font-weight:700;cursor:pointer;">Review Now</button>
+                           </div>`
+                        : '';
+
+                    return `
+                        <div class="track-card">
+                            <div class="track-card-hdr">
+                                <div>
+                                    <div class="track-order-id">#${orderNum}</div>
+                                    <div class="track-order-name">${escapeHtml(jobName)}</div>
+                                </div>
+                                <span class="badge-status ${getStatusClass(o.status)}">${o.status}</span>
+                            </div>
+                            ${proofNotice}
+                            <div class="progress-track">
+                                <div class="steps-row">${stepsHtml}</div>
+                            </div>
+                            <div class="track-details">
+                                <div class="track-detail">
+                                    <div class="track-detail-lbl">Product</div>
+                                    <div class="track-detail-val">${o.product_type || '—'}</div>
+                                </div>
+                                <div class="track-detail">
+                                    <div class="track-detail-lbl">Quantity</div>
+                                    <div class="track-detail-val">${parseInt(o.quantity).toLocaleString()} units</div>
+                                </div>
+                                <div class="track-detail">
+                                    <div class="track-detail-lbl">Due Date</div>
+                                    <div class="track-detail-val">${dueDate}</div>
+                                </div>
+                                <div class="track-detail">
+                                    <div class="track-detail-lbl">Total</div>
+                                    <div class="track-detail-val" style="color:var(--accent);font-weight:700;">₱${total}</div>
+                                </div>
+                            </div>
+                            ${['Proof Pending','Proof Pending Review','Prepress'].includes(o.status) ? `
+                            <div style="padding:12px 20px; border-top:1px solid var(--border); display:flex; justify-content:flex-end;">
+                                <button onclick="openCancelOrderModal(${o.id},'${orderNum}')" style="padding:6px 16px; font-size:.78rem; border-radius:6px; background:rgba(245,54,92,.08); color:#f5365c; border:1px solid rgba(245,54,92,.2); font-weight:600; cursor:pointer;">
+                                    Cancel Order
+                                </button>
+                            </div>` : ''}
+                        </div>`;
+                }).join('');
+
+            } catch (e) {
+                container.innerHTML = `<div style="text-align:center;padding:40px;color:var(--muted);">Could not load orders. Please try again.</div>`;
+            }
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        }
+
+        // ══════════════════════════════════════════════════════
+        //  PASSWORD CHANGE
+        // ══════════════════════════════════════════════════════
+        function openPasswordModal() {
+            document.getElementById('pwCurrentInput').value = '';
+            document.getElementById('pwNewInput').value = '';
+            document.getElementById('pwConfirmInput').value = '';
+            document.getElementById('pwModalMsg').textContent = '';
+            document.getElementById('pwModalMsg').style.color = '';
+            const modal = document.getElementById('passwordModal');
+            modal.style.display = 'flex';
+            setTimeout(() => { modal.style.opacity = '1'; document.getElementById('passwordModalContent').style.transform = 'scale(1)'; }, 10);
+        }
+
+        function closePasswordModal() {
+            const modal = document.getElementById('passwordModal');
+            modal.style.opacity = '0';
+            document.getElementById('passwordModalContent').style.transform = 'scale(0.93)';
+            setTimeout(() => { modal.style.display = 'none'; }, 200);
+        }
+
+        async function submitPasswordChange() {
+            const current = document.getElementById('pwCurrentInput').value.trim();
+            const newPw   = document.getElementById('pwNewInput').value.trim();
+            const confirm = document.getElementById('pwConfirmInput').value.trim();
+            const msg     = document.getElementById('pwModalMsg');
+            const btn     = document.getElementById('pwSubmitBtn');
+
+            if (!current || !newPw || !confirm) { msg.textContent = 'Please fill in all fields.'; msg.style.color = '#f5365c'; return; }
+            if (newPw.length < 6) { msg.textContent = 'New password must be at least 6 characters.'; msg.style.color = '#f5365c'; return; }
+            if (newPw !== confirm) { msg.textContent = 'New passwords do not match.'; msg.style.color = '#f5365c'; return; }
+
+            btn.disabled = true; btn.textContent = 'Saving…';
+
+            const formData = new FormData();
+            formData.append('current_password', current);
+            formData.append('new_password', newPw);
+
+            try {
+                const res  = await fetch('api/change_password.php', { method: 'POST', body: formData });
+                const data = await res.json();
+                if (data.success) {
+                    msg.textContent = '✓ Password changed successfully!';
+                    msg.style.color = '#2dce89';
+                    setTimeout(() => closePasswordModal(), 1500);
+                } else {
+                    msg.textContent = data.message || 'Failed to change password.';
+                    msg.style.color = '#f5365c';
+                }
+            } catch (e) {
+                msg.textContent = 'Network error. Please try again.';
+                msg.style.color = '#f5365c';
+            } finally {
+                btn.disabled = false; btn.textContent = 'Change Password';
+            }
+        }
+
+        document.getElementById('passwordModal').addEventListener('click', function(e) {
+            if (e.target === this) closePasswordModal();
+        });
+
+        function getStatusClass(status) {
+            if (!status) return 'badge-warning';
+            status = status.toLowerCase().trim();
+            if (status === 'delivered' || status === 'done' || status === 'paid') return 'badge-success';
+            if (status === 'prepress' || status === 'printing') return 'badge-info';
+            if (status === 'finishing' || status === 'processing') return 'badge-purple';
+            if (status === 'shipping' || status === 'shipped' || status === 'proof pending review') return 'badge-primary';
+            if (status === 'pending' || status === 'due' || status === 'reprint' || status === 'proof pending') return 'badge-warning';
+            if (status === 'cancelled' || status === 'rejected') return 'badge-danger';
+            if (status === 'refunded') return 'badge-success';
+            return 'badge-warning';
         }
 
         // ── CLIENT PROOF HANDLERS ───────────────────────
@@ -5659,12 +6897,26 @@
 
         masterSpecs = [];
 
+        // Cache for specs to reduce database calls
+        let specsCache = null;
+        let specsCacheTime = 0;
+        const SPECS_CACHE_DURATION = 300000; // 5 minutes
+
         async function loadOrderSpecs() {
+            // Check cache first
+            const now = Date.now();
+            if (specsCache && (now - specsCacheTime) < SPECS_CACHE_DURATION) {
+                masterSpecs = specsCache;
+                return;
+            }
+
             try {
                 const res = await fetch('api/specs.php');
                 const data = await res.json();
                 if (data.success) {
                     masterSpecs = data.data;
+                    specsCache = data.data;
+                    specsCacheTime = now;
                 }
             } catch (e) {
                 console.error("Specs API error:", e);
@@ -5676,9 +6928,376 @@
             }
         }
 
-        let currentPricingData = null;
+        // ── INTERACTIVE WIZARD NAVIGATION ──
+        let currentWizardStep = 1;
+        const totalSteps = 4;
 
-        // ── FRONTEND HARDCODED PRICING LOGIC ──
+        // Step validation functions
+        const stepValidations = {
+            1: () => !!document.querySelector('.product-types .pt-btn.active'),
+            2: () => !!document.getElementById('paperSelect').value,
+            3: () => parseInt(document.getElementById('qtyVal').value) >= 50,
+            4: () => (uploadedFiles && uploadedFiles.length > 0) || !!window.selectedSavedFileId
+        };
+
+        // Navigate to specific step
+        function goToStep(stepNumber) {
+            // Prevent navigation to disabled steps
+            const stepElement = document.getElementById(`prog-step-${stepNumber}`);
+            if (stepElement && stepElement.classList.contains('disabled')) {
+                return;
+            }
+
+            // Validate current step before moving forward
+            if (stepNumber > currentWizardStep && !validateCurrentStep()) {
+                showStepError(currentWizardStep);
+                return;
+            }
+
+            // Hide current step
+            const currentCard = document.getElementById(`wizard-step-${currentWizardStep}`);
+            if (currentCard) {
+                currentCard.classList.remove('active');
+            }
+
+            // Show target step
+            const targetCard = document.getElementById(`wizard-step-${stepNumber}`);
+            if (targetCard) {
+                setTimeout(() => {
+                    targetCard.classList.add('active');
+                }, 150);
+            }
+
+            // Update current step
+            currentWizardStep = stepNumber;
+            
+            // Update UI
+            updateWizardUI();
+            hideAllStepErrors();
+        }
+
+        // Navigate to next step
+        function nextStep() {
+            if (currentWizardStep < totalSteps) {
+                if (validateCurrentStep()) {
+                    goToStep(currentWizardStep + 1);
+                } else {
+                    showStepError(currentWizardStep);
+                }
+            }
+        }
+
+        // Navigate to previous step
+        function previousStep() {
+            if (currentWizardStep > 1) {
+                goToStep(currentWizardStep - 1);
+            }
+        }
+
+        // Validate current step
+        function validateCurrentStep() {
+            const validation = stepValidations[currentWizardStep];
+            return validation ? validation() : true;
+        }
+
+        // Show step validation error
+        function showStepError(stepNumber) {
+            hideAllStepErrors();
+            const errorElement = document.getElementById(`step-${stepNumber}-error`);
+            if (errorElement) {
+                errorElement.style.display = 'flex';
+            }
+        }
+
+        // Hide all step errors
+        function hideAllStepErrors() {
+            for (let i = 1; i <= totalSteps; i++) {
+                const errorElement = document.getElementById(`step-${i}-error`);
+                if (errorElement) {
+                    errorElement.style.display = 'none';
+                }
+            }
+        }
+
+        // Update wizard UI (progress bar, navigation buttons)
+        function updateWizardUI() {
+            // Update progress bar
+            updateInteractiveProgressBar();
+            
+            // Update navigation buttons
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const stepNum = document.getElementById('currentStepNum');
+            
+            if (prevBtn) prevBtn.disabled = currentWizardStep === 1;
+            if (nextBtn) {
+                if (currentWizardStep === totalSteps) {
+                    nextBtn.style.display = 'none';
+                } else {
+                    nextBtn.style.display = 'flex';
+                }
+            }
+            if (stepNum) stepNum.textContent = currentWizardStep;
+        }
+
+        // Update interactive progress bar
+        function updateInteractiveProgressBar() {
+            for (let i = 1; i <= totalSteps; i++) {
+                const stepElement = document.getElementById(`prog-step-${i}`);
+                const connElement = document.getElementById(`prog-conn-${i}`);
+                
+                if (!stepElement) continue;
+                
+                // Remove all classes
+                stepElement.classList.remove('active', 'done', 'disabled');
+                
+                // Determine step state
+                if (i < currentWizardStep) {
+                    // Completed step
+                    stepElement.classList.add('done');
+                    stepElement.querySelector('.prog-num').innerHTML = '<i class="bi bi-check-lg" style="font-size:.7rem;"></i>';
+                } else if (i === currentWizardStep) {
+                    // Current step
+                    stepElement.classList.add('active');
+                    stepElement.querySelector('.prog-num').textContent = i;
+                } else {
+                    // Future step - check if accessible
+                    const canAccess = stepValidations[i - 1] ? stepValidations[i - 1]() : false;
+                    if (!canAccess) {
+                        stepElement.classList.add('disabled');
+                    }
+                    stepElement.querySelector('.prog-num').textContent = i;
+                }
+                
+                // Update connector
+                if (connElement) {
+                    connElement.classList.toggle('done', i < currentWizardStep);
+                }
+            }
+        }
+
+        // Enhanced product type selection (without auto-advance)
+        function selectProductTypeEnhanced(button) {
+            // Call original function
+            selectProductType(button);
+            
+            // Update wizard UI
+            setTimeout(() => {
+                updateWizardUI();
+            }, 100);
+        }
+
+        // Enhanced form change handlers
+        function handleFormChange() {
+            updateWizardUI();
+            hideAllStepErrors();
+        }
+
+        // Handle file attachment status
+        function updateFileAttachmentStatus() {
+            const hasFiles = (uploadedFiles && uploadedFiles.length > 0) || !!window.selectedSavedFileId;
+            const attachedNotice = document.getElementById('artworkAttachedNotice');
+            const fileCountSpan = document.getElementById('attachedFileCount');
+            
+            if (hasFiles) {
+                // Show success notice
+                if (attachedNotice) {
+                    attachedNotice.style.display = 'flex';
+                    
+                    // Update file count
+                    if (fileCountSpan) {
+                        const fileCount = uploadedFiles ? uploadedFiles.length : 1;
+                        fileCountSpan.textContent = fileCount === 1 ? '1 file' : `${fileCount} files`;
+                    }
+                }
+                
+                // Hide any error messages
+                hideAllStepErrors();
+            } else {
+                // Hide success notice
+                if (attachedNotice) attachedNotice.style.display = 'none';
+            }
+            
+            // Update wizard UI
+            updateWizardUI();
+        }
+
+        // Show required warnings when user tries to order without files
+        function showFileRequiredWarning() {
+            const requiredBadge = document.getElementById('requiredBadge');
+            const requiredNotice = document.getElementById('artworkRequiredNotice');
+            
+            if (requiredBadge) requiredBadge.style.display = 'inline';
+            if (requiredNotice) requiredNotice.style.display = 'flex';
+        }
+
+        // Hide required warnings
+        function hideFileRequiredWarning() {
+            const requiredBadge = document.getElementById('requiredBadge');
+            const requiredNotice = document.getElementById('artworkRequiredNotice');
+            
+            if (requiredBadge) requiredBadge.style.display = 'none';
+            if (requiredNotice) requiredNotice.style.display = 'none';
+        }
+
+        // Enhanced step validation
+        function validateCurrentStep() {
+            const validation = stepValidations[currentWizardStep];
+            return validation ? validation() : true;
+        }
+
+        // Override file upload handlers to update status
+        function handleFileUpload() {
+            // Call original file upload logic here
+            // Then update the attachment status
+            setTimeout(() => {
+                updateFileAttachmentStatus();
+            }, 100);
+        }
+
+        // Override file selection from account
+        function handleFileSelection() {
+            // Call original file selection logic here
+            // Then update the attachment status
+            setTimeout(() => {
+                updateFileAttachmentStatus();
+            }, 100);
+        }
+
+        // Initialize wizard on page load
+        function initializeWizard() {
+            // Set up event listeners for form changes
+            const paperSelect = document.getElementById('paperSelect');
+            const qtyVal = document.getElementById('qtyVal');
+            const qtySlider = document.getElementById('qtySlider');
+            const fileInput = document.getElementById('file-upload-input');
+            
+            if (paperSelect) {
+                paperSelect.addEventListener('change', () => {
+                    handleFormChange();
+                    if (currentWizardStep === 2 && validateCurrentStep()) {
+                        setTimeout(() => nextStep(), 500);
+                    }
+                });
+            }
+            
+            if (qtyVal) {
+                qtyVal.addEventListener('input', handleFormChange);
+            }
+            
+            if (qtySlider) {
+                qtySlider.addEventListener('input', handleFormChange);
+            }
+
+            // Set up file upload listener
+            if (fileInput) {
+                fileInput.addEventListener('change', function(e) {
+                    if (e.target.files && e.target.files.length > 0) {
+                        // Simulate file upload (you'll need to integrate with existing upload logic)
+                        uploadedFiles = Array.from(e.target.files);
+                        updateFileAttachmentStatus();
+                    }
+                });
+            }
+
+            // Replace product type buttons with enhanced version
+            const productButtons = document.querySelectorAll('.product-types .pt-btn');
+            productButtons.forEach(btn => {
+                btn.setAttribute('onclick', 'selectProductTypeEnhanced(this)');
+            });
+            
+            // Initial file attachment status check
+            updateFileAttachmentStatus();
+            
+            // Initial UI update
+            updateWizardUI();
+        }
+
+        // ── PROGRESS BAR UPDATER ──
+        function updateProgressBar() {
+            // Use the new interactive progress bar update
+            if (typeof updateInteractiveProgressBar === 'function') {
+                updateInteractiveProgressBar();
+            } else {
+                // Fallback to original logic
+                const hasProduct = !!document.querySelector('.product-types .pt-btn.active');
+                const hasMaterial = !!document.getElementById('paperSelect').value;
+                const hasQty = parseInt(document.getElementById('qtyVal').value) >= 50;
+                const hasArtwork = (uploadedFiles && uploadedFiles.length > 0) || !!window.selectedSavedFileId;
+
+                const steps = [
+                    { el: document.getElementById('prog-step-1'), conn: document.getElementById('prog-conn-1'), done: hasProduct },
+                    { el: document.getElementById('prog-step-2'), conn: document.getElementById('prog-conn-2'), done: hasMaterial },
+                    { el: document.getElementById('prog-step-3'), conn: document.getElementById('prog-conn-3'), done: hasQty },
+                    { el: document.getElementById('prog-step-4'), conn: null, done: hasArtwork },
+                ];
+
+                let currentStep = 0;
+                steps.forEach((s, i) => { if (s.done) currentStep = i + 1; });
+
+                steps.forEach((s, i) => {
+                    if (!s.el) return;
+                    s.el.classList.remove('active', 'done');
+                    if (i < currentStep) {
+                        s.el.classList.add('done');
+                        s.el.querySelector('.prog-num').innerHTML = '<i class="bi bi-check-lg" style="font-size:.7rem;"></i>';
+                    } else if (i === currentStep) {
+                        s.el.classList.add('active');
+                        s.el.querySelector('.prog-num').textContent = i + 1;
+                    } else {
+                        s.el.querySelector('.prog-num').textContent = i + 1;
+                    }
+                    if (s.conn) {
+                        s.conn.classList.toggle('done', i < currentStep);
+                    }
+                });
+            }
+        }
+
+        // Add keyboard navigation support
+        document.addEventListener('keydown', function(e) {
+            // Only handle keyboard navigation when on create order page
+            const createPage = document.getElementById('c-create');
+            if (!createPage || !createPage.classList.contains('active')) return;
+            
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                e.preventDefault();
+                nextStep();
+            } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                e.preventDefault();
+                previousStep();
+            } else if (e.key >= '1' && e.key <= '4') {
+                e.preventDefault();
+                goToStep(parseInt(e.key));
+            }
+        });
+
+        // ── ARRIVAL DATE CALCULATOR ──
+        function calcArrivalDate(turnaround, shipping) {
+            const prodDays = { standard: 5, rush: 2, priority: 1 };
+            const shipDays = { free: 5, express: 2, overnight: 1 };
+            const prod = prodDays[turnaround] || 5;
+            const ship = shipDays[shipping] || 5;
+            const total = prod + ship;
+
+            const start = new Date();
+            let added = 0;
+            while (added < total) {
+                start.setDate(start.getDate() + 1);
+                const day = start.getDay();
+                if (day !== 0 && day !== 6) added++;
+            }
+            const earliest = new Date(start);
+            earliest.setDate(earliest.getDate() - 1);
+
+            const fmt = (d) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            return fmt(earliest) + ' – ' + fmt(start);
+        }
+
+        function getProductionLabel(turnaround) {
+            const map = { standard: '3–5 Business Days', rush: '1–2 Business Days', priority: 'Same Day' };
+            return map[turnaround] || '3–5 Business Days';
+        }
         function calculatePriceFrontend(qty, paperText, sizeText, finishText, turnaround, shipping) {
             // Base Prices per Product (assuming Flyers for now)
             let unitBase = 2.50; // Base unit price
@@ -5755,7 +7374,8 @@
             // Read quantity from the number input (source of truth); fall back to slider
             const qtyInput = document.getElementById('qtyVal');
             const qtySlider = document.getElementById('qtySlider');
-            const qty = qtyInput ? parseInt(qtyInput.value) || 50 : parseInt(qtySlider.value);
+            let qty = qtyInput ? parseInt(qtyInput.value) || 50 : parseInt(qtySlider.value);
+            qty = Math.max(50, Math.min(10000, qty)); // hard cap — never send > 10,000
 
             const paperId = document.getElementById('paperSelect').value;
             const sizeId = document.getElementById('sizeSelect').value;
@@ -5809,6 +7429,20 @@
             const turnaround = document.getElementById('turnaroundSelect').value;
             const shipping = document.getElementById('shippingSelect').value;
 
+            // Update timeline in summary
+            const sumProd = document.getElementById('sumProduction');
+            if (sumProd) sumProd.textContent = getProductionLabel(turnaround);
+            const sumArr = document.getElementById('sumArrival');
+            if (sumArr) sumArr.textContent = calcArrivalDate(turnaround, shipping);
+
+            // Update bleed in summary
+            const bleedSel2 = document.getElementById('bleedSelect');
+            const sumBleed = document.getElementById('sumBleed');
+            if (sumBleed && bleedSel2) sumBleed.textContent = bleedSel2.options[bleedSel2.selectedIndex]?.text || '—';
+
+            // Update progress bar
+            updateProgressBar();
+
             const formData = new URLSearchParams();
             formData.append('product_id', resolvedProductId);
             formData.append('quantity', qty);
@@ -5821,13 +7455,15 @@
             formData.append('shipping', shipping);
 
             try {
-                const response = await fetch('api/calculate_quote.php', {
+                console.log('Sending pricing request:', formData.toString());
+                const response = await fetch('../api/calculate_quote.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: formData.toString()
                 });
 
                 const result = await response.json();
+                console.log('API response:', result);
 
                 if (result.success) {
                     const d = result.breakdown;
@@ -5844,7 +7480,6 @@
                     if (d.discount_amount > 0) {
                         if (sumDiscount) sumDiscount.textContent = '-₱' + d.discount_amount.toLocaleString(undefined, { minimumFractionDigits: 2 });
                         if (sumDiscountRow) sumDiscountRow.style.display = 'flex';
-
                         if (badge) {
                             badge.textContent = d.discount_rate + '% BULK DISCOUNT';
                             badge.style.display = 'inline-block';
@@ -5862,6 +7497,17 @@
 
                     const sumShipping = document.getElementById('sumShipping');
                     if (sumShipping) sumShipping.textContent = '₱' + d.shipping_cost.toLocaleString(undefined, { minimumFractionDigits: 2 });
+
+                    // New breakdown fields
+                    const fmt2 = (n) => '₱' + (n || 0).toLocaleString(undefined, { minimumFractionDigits: 2 });
+                    const bp = document.getElementById('sumBasePrice');
+                    if (bp) bp.textContent = fmt2(d.base_price || d.subtotal_base);
+                    const mf = document.getElementById('sumMaterialFee');
+                    if (mf) mf.textContent = d.material_multiplier ? ('×' + parseFloat(d.material_multiplier).toFixed(2)) : '×1.00';
+                    const ff = document.getElementById('sumFinishFee');
+                    if (ff) ff.textContent = fmt2(d.finish_fee || d.finish_cost || 0);
+                    const tf = document.getElementById('sumTurnaroundFee');
+                    if (tf) tf.textContent = d.turnaround_surcharge > 0 ? fmt2(d.turnaround_surcharge) : 'Included';
 
                     orderWalletCheck();
                 }
@@ -5988,48 +7634,81 @@
             uploadedFiles = []; // Clear manual uploads if choosing from account
             document.getElementById('upload-preview').style.display = 'none';
             document.getElementById('upload-preview-list').innerHTML = '';
+            artworkAttached();
         }
 
         // Step 4: File Upload Handling
         let uploadedFiles = [];
 
+        // Helper: hide the required notice and reset step border when a file is attached
+        function artworkAttached() {
+            const notice = document.getElementById('artworkRequiredNotice');
+            if (notice) {
+                notice.style.background = 'rgba(45,206,137,.08)';
+                notice.style.border = '1px solid rgba(45,206,137,.3)';
+                notice.style.color = '#1aae6f';
+                notice.innerHTML = '<i class="bi bi-check-circle-fill"></i> Artwork file attached — ready to place order.';
+            }
+            const step = document.getElementById('artworkStep');
+            if (step) { step.style.border = ''; step.style.boxShadow = ''; }
+            // Update artwork summary text
+            const sumArt = document.getElementById('sumArtwork');
+            if (sumArt) { sumArt.textContent = 'Attached ✓'; sumArt.style.color = '#2dce89'; }
+            updateProgressBar();
+        }
+
+        function artworkRemoved() {
+            const notice = document.getElementById('artworkRequiredNotice');
+            if (notice) {
+                notice.style.background = 'rgba(245,54,92,.08)';
+                notice.style.border = '1px solid rgba(245,54,92,.2)';
+                notice.style.color = '#f5365c';
+                notice.innerHTML = '<i class="bi bi-exclamation-circle-fill"></i> You must attach your print-ready artwork file before placing an order. Accepted: PDF, AI, PSD, PNG, JPG (Max 500MB)';
+            }
+            const sumArt = document.getElementById('sumArtwork');
+            if (sumArt) { sumArt.textContent = 'Not attached'; sumArt.style.color = 'rgba(245,54,92,.8)'; }
+            updateProgressBar();
+        }
+        let savedFiles = [];
+
         document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM Content Loaded - initializing file upload');
             const uploadArea = document.getElementById('upload-area');
             const fileInput = document.getElementById('file-upload-input');
             const previewArea = document.getElementById('upload-preview');
             const previewList = document.getElementById('upload-preview-list');
 
+            console.log('upload-area:', uploadArea);
+            console.log('file-upload-input:', fileInput);
+
+            // Load saved files from database
+            console.log('Loading saved files on page load...');
+            loadSavedFiles();
+
             if (uploadArea && fileInput) {
-                uploadArea.addEventListener('click', () => fileInput.click());
-
-                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(evt => {
-                    uploadArea.addEventListener(evt, e => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                    });
+                console.log('Adding click event listener to upload area');
+                uploadArea.addEventListener('click', () => {
+                    console.log('Upload area clicked, triggering file input click');
+                    fileInput.click();
                 });
 
-                uploadArea.addEventListener('dragover', () => {
+                uploadArea.addEventListener('dragover', (e) => {
+                    e.preventDefault();
                     uploadArea.style.borderColor = 'var(--accent)';
-                    uploadArea.style.background = 'rgba(29, 140, 248, 0.05)';
+                    uploadArea.style.background = 'rgba(29, 140, 248, .04)';
                 });
 
-                ['dragleave', 'drop'].forEach(evt => {
-                    uploadArea.addEventListener(evt, () => {
-                        uploadArea.style.borderColor = 'var(--border)';
-                        uploadArea.style.background = 'var(--off)';
-                    });
+                uploadArea.addEventListener('dragleave', () => {
+                    uploadArea.style.borderColor = 'var(--border)';
+                    uploadArea.style.background = 'transparent';
                 });
 
-                uploadArea.addEventListener('drop', e => {
-                    handleFiles(e.dataTransfer.files);
-                });
+                uploadArea.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    uploadArea.style.borderColor = 'var(--border)';
+                    uploadArea.style.background = 'transparent';
 
-                fileInput.addEventListener('change', e => {
-                    handleFiles(e.target.files);
-                });
-
-                function handleFiles(files) {
+                    const files = e.dataTransfer.files;
                     if (files.length > 0) {
                         previewArea.style.display = 'block';
                         Array.from(files).forEach(file => {
@@ -6037,23 +7716,67 @@
                             const card = document.createElement('div');
                             card.className = 'file-card';
                             card.style.padding = '12px';
-                            card.style.position = 'relative';
+                            card.style.marginBottom = '8px';
+                            card.style.border = '1px solid var(--border)';
+                            card.style.borderRadius = '8px';
+                            card.style.display = 'flex';
+                            card.style.justifyContent = 'space-between';
+                            card.style.alignItems = 'center';
                             card.innerHTML = `
-                                <span class="file-icon" style="font-size: 1.8rem; margin-bottom: 6px;">📄</span>
-                                <div class="file-name" style="font-size: .75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%;">${file.name}</div>
-                                <button type="button" class="btn-close" style="position: absolute; top: 5px; right: 5px; width: 10px; height: 10px; padding: 0;" onclick="event.stopPropagation(); removeFile(this, '${file.name}')"></button>
+                                <span style="font-size: 0.85rem;">${file.name}</span>
+                                <button type="button" onclick="removeFile(this, '${file.name}')" style="background: none; border: none; color: #dc3545; cursor: pointer; font-size: 1.2rem;">&times;</button>
                             `;
                             previewList.appendChild(card);
                         });
                         document.getElementById('sumArtwork').textContent = uploadedFiles.length + ' file(s) selected';
+                        artworkAttached();
 
                         // Clear selection from account
                         document.querySelectorAll('#account-files .file-card').forEach(c => {
-                            c.style.borderColor = 'var(--border)';
-                            c.style.background = '#fff';
+                            c.classList.remove('active');
                         });
+
+                        // Save files to database
+                        saveFilesToDatabase(files);
                     }
-                }
+                });
+
+                fileInput.addEventListener('change', (e) => {
+                    console.log('File input change event triggered');
+                    const files = e.target.files;
+                    console.log('Files selected:', files);
+                    if (files.length > 0) {
+                        previewArea.style.display = 'block';
+                        Array.from(files).forEach(file => {
+                            uploadedFiles.push(file);
+                            const card = document.createElement('div');
+                            card.className = 'file-card';
+                            card.style.padding = '12px';
+                            card.style.marginBottom = '8px';
+                            card.style.border = '1px solid var(--border)';
+                            card.style.borderRadius = '8px';
+                            card.style.display = 'flex';
+                            card.style.justifyContent = 'space-between';
+                            card.style.alignItems = 'center';
+                            card.innerHTML = `
+                                <span style="font-size: 0.85rem;">${file.name}</span>
+                                <button type="button" onclick="removeFile(this, '${file.name}')" style="background: none; border: none; color: #dc3545; cursor: pointer; font-size: 1.2rem;">&times;</button>
+                            `;
+                            previewList.appendChild(card);
+                        });
+                        document.getElementById('sumArtwork').textContent = uploadedFiles.length + ' file(s) selected';
+                        artworkAttached();
+
+                        // Clear selection from account
+                        document.querySelectorAll('#account-files .file-card').forEach(c => {
+                            c.classList.remove('active');
+                        });
+
+                        // Save files to database
+                        console.log('Calling saveFilesToDatabase...');
+                        saveFilesToDatabase(files);
+                    }
+                });
             }
         });
 
@@ -6063,8 +7786,139 @@
             if (uploadedFiles.length === 0) {
                 document.getElementById('upload-preview').style.display = 'none';
                 document.getElementById('sumArtwork').textContent = 'None';
+                artworkRemoved();
             } else {
                 document.getElementById('sumArtwork').textContent = uploadedFiles.length + ' file(s) selected';
+            }
+        }
+
+        async function saveFilesToDatabase(files) {
+            console.log('Saving files to database:', files);
+            for (const file of Array.from(files)) {
+                const formData = new FormData();
+                formData.append('file', file);
+
+                try {
+                    console.log('Uploading file:', file.name);
+                    const response = await fetch('api/user_files.php', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const result = await response.json();
+                    console.log('Upload response:', result);
+                    if (result.success) {
+                        console.log('File saved to database:', result.original_filename);
+                    } else {
+                        console.error('Upload failed:', result.message);
+                    }
+                } catch (e) {
+                    console.error('Error saving file to database:', e);
+                }
+            }
+            // Reload saved files after upload
+            loadSavedFiles();
+        }
+
+        async function loadSavedFiles() {
+            console.log('Loading saved files...');
+            try {
+                const response = await fetch('api/user_files.php');
+                const result = await response.json();
+                console.log('Load saved files response:', result);
+                if (result.success) {
+                    savedFiles = result.data;
+                    console.log('Saved files loaded:', savedFiles);
+                    renderSavedFiles();
+                } else {
+                    console.error('Failed to load saved files:', result.message);
+                }
+            } catch (e) {
+                console.error('Error loading saved files:', e);
+            }
+        }
+
+        function renderSavedFiles() {
+            const container = document.getElementById('wizard-account-files');
+            if (!container) return;
+
+            container.innerHTML = '';
+            if (savedFiles.length === 0) {
+                container.innerHTML = `
+                    <div style="grid-column: 1/-1; padding: 20px; text-align: center; color: var(--muted); font-size: .8rem; border: 1px dashed var(--border); border-radius: 8px;">
+                        No saved files found. Upload files to save them for future use.
+                    </div>
+                `;
+                return;
+            }
+
+            savedFiles.forEach(file => {
+                const card = document.createElement('div');
+                card.className = 'file-card';
+                card.style.cssText = 'padding:10px 14px; margin-bottom:8px; border:1px solid var(--border); border-radius:8px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; transition:all 0.2s; gap:8px;';
+
+                // File icon based on extension
+                const ext = file.original_filename.split('.').pop().toLowerCase();
+                const iconMap = { pdf: '📄', png: '🖼️', jpg: '🖼️', jpeg: '🖼️', ai: '🎨', psd: '🎨' };
+                const icon = iconMap[ext] || '📎';
+
+                card.innerHTML = `
+                    <div style="display:flex; align-items:center; gap:8px; min-width:0; flex:1;">
+                        <span style="font-size:1.1rem; flex-shrink:0;">${icon}</span>
+                        <span style="font-size:.8rem; font-weight:500; color:var(--navy); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:200px;" title="${file.original_filename}">${file.original_filename}</span>
+                    </div>
+                    <button type="button" onclick="event.stopPropagation(); deleteSavedFile(${file.id})" style="background:none; border:none; color:#dc3545; cursor:pointer; font-size:1rem; flex-shrink:0; padding:2px 4px;" title="Delete">×</button>
+                `;
+                card.onclick = (e) => {
+                    if (e.target.tagName !== 'BUTTON') {
+                        selectSavedFile(file.id, file.original_filename);
+                    }
+                };
+                container.appendChild(card);
+            });
+        }
+
+        async function selectSavedFile(fileId, filename) {
+            // Clear manual uploads
+            uploadedFiles = [];
+            document.getElementById('upload-preview').style.display = 'none';
+            document.getElementById('upload-preview-list').innerHTML = '';
+
+            // Mark as selected in UI
+            document.querySelectorAll('#wizard-account-files .file-card').forEach(c => {
+                c.classList.remove('active');
+                c.style.background = 'transparent';
+                c.style.borderColor = 'var(--border)';
+            });
+            const clicked = event.target.closest('.file-card');
+            if (clicked) {
+                clicked.classList.add('active');
+                clicked.style.background = 'rgba(29, 140, 248, .06)';
+                clicked.style.borderColor = 'var(--accent)';
+            }
+
+            // Update summary
+            document.getElementById('sumArtwork').textContent = filename;
+
+            // Store selected file ID for order submission
+            window.selectedSavedFileId = fileId;
+
+            // Mark artwork as attached — clears the red notice
+            artworkAttached();
+        }
+
+        async function deleteSavedFile(fileId) {
+            if (!confirm('Are you sure you want to delete this file?')) return;
+
+            try {
+                const response = await fetch(`api/user_files.php?id=${fileId}`, {
+                    method: 'DELETE'
+                });
+                const result = await response.json();
+                if (result.success) {
+                    loadSavedFiles();
+                }
+            } catch (e) {
+                console.error('Error deleting file:', e);
             }
         }
 
@@ -6111,71 +7965,114 @@
                 return;
             }
 
-            const totalCost = currentPricingData.grand_total ?? currentPricingData.breakdown?.grand_total ?? 0;
+            // Validate artwork — show warnings only here
+            if ((!uploadedFiles || uploadedFiles.length === 0) && !window.selectedSavedFileId) {
+                // Show required badge and notice
+                const requiredBadge = document.getElementById('requiredBadge');
+                const notice = document.getElementById('artworkRequiredNotice');
+                if (requiredBadge) requiredBadge.style.display = 'inline';
+                if (notice) {
+                    notice.style.display = 'flex';
+                    notice.style.background = 'rgba(245,54,92,.15)';
+                    notice.style.border = '1px solid rgba(245,54,92,.5)';
+                    setTimeout(() => {
+                        notice.style.background = 'rgba(245,54,92,.08)';
+                        notice.style.border = '1px solid rgba(245,54,92,.2)';
+                    }, 3000);
+                }
+                // Navigate to step 4 so user sees the warning
+                goToStep(4);
+                document.getElementById('upload-area').style.display = 'block';
+                document.getElementById('account-files').style.display = 'none';
+                document.getElementById('uploadNewTab').classList.add('active');
+                document.getElementById('selectFromAccountTab').classList.remove('active');
+                return;
+            }
 
+            // Hide warnings if files are present
+            const requiredBadge = document.getElementById('requiredBadge');
+            const notice = document.getElementById('artworkRequiredNotice');
+            if (requiredBadge) requiredBadge.style.display = 'none';
+            if (notice) notice.style.display = 'none';
+
+            const totalCost = currentPricingData.grand_total ?? currentPricingData.breakdown?.grand_total ?? 0;
             if (_orderWalletBalance !== null && _orderWalletBalance < totalCost) {
                 const shortfall = (totalCost - _orderWalletBalance).toLocaleString('en-PH', { minimumFractionDigits: 2 });
-                alert('⚠️ Insufficient Credits\n\nYour wallet balance is too low to place this order.\nPlease add ₱' + shortfall + ' or more before continuing.');
+                alert('⚠️ Insufficient Credits\n\nPlease add ₱' + shortfall + ' or more before continuing.');
                 showClientPage('billing', null);
                 return;
             }
 
-            const btn = document.getElementById('placeOrderBtn');
-            btn.disabled = true;
-            btn.textContent = 'Processing...';
+            // Show confirmation modal instead of placing immediately
+            openOrderConfirmModal();
+        }
+
+        async function executePlaceOrder() {
+            const btn = document.getElementById('confirmPlaceBtn');
+            btn.disabled = true; btn.textContent = 'Placing Order…';
 
             const activeProductBtn = document.querySelector('.product-types .pt-btn.active');
             const productType = activeProductBtn ? activeProductBtn.textContent.trim() : 'Flyers';
-            const sizeWidth = parseFloat(document.getElementById('customWidth').value) || 4.0;
-            const sizeHeight = parseFloat(document.getElementById('customHeight').value) || 6.0;
-            const paperSel = document.getElementById('paperSelect');
+            const sizeWidth   = parseFloat(document.getElementById('customWidth').value) || 4.0;
+            const sizeHeight  = parseFloat(document.getElementById('customHeight').value) || 6.0;
+            const paperSel    = document.getElementById('paperSelect');
             const paperWeight = paperSel.options[paperSel.selectedIndex]?.text || '';
-            const finishSel = document.getElementById('finishSelect');
-            const finish = finishSel.options[finishSel.selectedIndex]?.text || 'None';
-            const bleedSel = document.getElementById('bleedSelect');
-            const bleed = bleedSel.options[bleedSel.selectedIndex]?.text || 'With Bleed';
-            const turnaround = document.getElementById('turnaroundSelect').value || 'standard';
-            const shipping = document.getElementById('shippingSelect').value || 'free';
+            const finishSel   = document.getElementById('finishSelect');
+            const finish      = finishSel.options[finishSel.selectedIndex]?.text || 'None';
+            const bleedSel    = document.getElementById('bleedSelect');
+            const bleed       = bleedSel.options[bleedSel.selectedIndex]?.text || 'With Bleed';
+            const turnaround  = document.getElementById('turnaroundSelect').value || 'standard';
+            const shipping    = document.getElementById('shippingSelect').value || 'free';
+            const notes       = document.getElementById('orderNotes')?.value || '';
+            const jobName     = (productType + ' Project');
+
+            // Get total from currentPricingData (the authoritative source)
+            const totalCost = currentPricingData
+                ? (currentPricingData.grand_total ?? currentPricingData.breakdown?.grand_total ?? 0)
+                : 0;
+
+            if (!totalCost || totalCost <= 0) {
+                alert('Price calculation error. Please go back and recalculate.');
+                btn.disabled = false; btn.textContent = '✓ Confirm & Place Order';
+                return;
+            }
+
+            const _qtyInput = document.getElementById('qtyVal');
+            const _qty = Math.max(50, Math.min(10000, parseInt(_qtyInput?.value || document.getElementById('qtySlider').value) || 50));
 
             const formData = new FormData();
             formData.append('product_type', productType);
+            formData.append('job_name',     jobName);
             formData.append('paper_weight', paperWeight);
-            formData.append('finish', finish);
-            formData.append('bleed', bleed);
-            formData.append('size_width', sizeWidth);
-            formData.append('size_height', sizeHeight);
-            // Use the editable input as the authoritative quantity (falls back to slider)
-            const _qtyInput = document.getElementById('qtyVal');
-            const _qty = _qtyInput ? (parseInt(_qtyInput.value) || parseInt(document.getElementById('qtySlider').value)) : document.getElementById('qtySlider').value;
-            formData.append('quantity', _qty);
-            formData.append('turnaround', turnaround);
-            formData.append('shipping', shipping);
-            formData.append('total_price', totalCost);
+            formData.append('finish',       finish);
+            formData.append('bleed',        bleed);
+            formData.append('size_width',   sizeWidth);
+            formData.append('size_height',  sizeHeight);
+            formData.append('quantity',     _qty);
+            formData.append('turnaround',   turnaround);
+            formData.append('shipping',     shipping);
+            formData.append('total_price',  totalCost);
+            formData.append('notes',        notes);
 
-            // Add artwork file if selected
             if (uploadedFiles && uploadedFiles.length > 0) {
                 formData.append('artwork_file', uploadedFiles[0]);
+            } else if (window.selectedSavedFileId) {
+                formData.append('saved_file_id', window.selectedSavedFileId);
             }
 
             try {
-                const res = await fetch(getApiUrl('api/place_order.php'), { method: 'POST', body: formData });
+                const res  = await fetch('api/place_order.php', { method: 'POST', body: formData });
                 const data = await res.json();
                 if (data.success) {
+                    closeOrderConfirmModal();
+                    showToast('Order ' + data.order_number + ' placed successfully!', 'success');
                     if (typeof walletLoad === 'function') walletLoad();
-                    // show success toast instead of alert if possible, or just alert
-                    if (typeof showToast === 'function') {
-                        showToast('Order ' + data.order_number + ' placed successfully!');
-                    } else {
-                        alert('✅ Order ' + data.order_number + ' placed successfully!\nEstimated due: ' + data.due_date);
-                    }
-
-                    // Call loadOrders or refresh wallet if exists
                     if (typeof orderWalletCheck === 'function') orderWalletCheck();
                     if (typeof loadOrders === 'function') loadOrders();
-
                     showClientPage('orders', null);
                 } else {
                     if (data.message && data.message.toLowerCase().includes('insufficient')) {
+                        closeOrderConfirmModal();
                         alert('⚠️ Insufficient Credits\n\n' + data.message + '\n\nPlease top up your wallet in the Billing section.');
                         showClientPage('billing', null);
                     } else {
@@ -6183,10 +8080,11 @@
                     }
                 }
             } catch (e) {
+                console.error('Place order error:', e);
                 alert('Network error. Make sure you are connected and try again.');
             } finally {
                 btn.disabled = false;
-                btn.textContent = 'Place Order →';
+                btn.textContent = '✓ Confirm & Place Order';
             }
         }
 
@@ -6412,10 +8310,43 @@
         let fmSearchQuery = '';
 
         function fmInit() {
+            fmLoadSavedFiles();
             fmRender();
             fmSetupDragAndDrop();
             document.addEventListener('click', () => fmHideContext());
             window.addEventListener('resize', () => fmHideContext());
+        }
+
+        async function fmLoadSavedFiles() {
+            try {
+                const response = await fetch('../api/user_files.php');
+                const result = await response.json();
+                if (result.success) {
+                    // Convert database files to file manager format
+                    fmFiles = result.data.map(file => ({
+                        id: file.id,
+                        name: file.original_filename,
+                        type: getFileTypeFromMime(file.mime_type),
+                        size: file.file_size,
+                        date: file.uploaded_at,
+                        deleted: false,
+                        starred: false,
+                        recent: true,
+                        shared: false,
+                        filePath: file.file_path
+                    }));
+                    console.log('Loaded files into file manager:', fmFiles);
+                }
+            } catch (e) {
+                console.error('Error loading files for file manager:', e);
+            }
+        }
+
+        function getFileTypeFromMime(mimeType) {
+            if (mimeType.includes('pdf')) return 'pdf';
+            if (mimeType.includes('image')) return 'image';
+            if (mimeType.includes('illustrator') || mimeType.includes('postscript')) return 'ai';
+            return 'file';
         }
 
         function fmRender() {
@@ -6701,9 +8632,9 @@
 
             // Helper to format plan name
             const formatPlan = (plan) => {
-                if (!plan) return 'Free Plan';
-                if (plan === 'premium+') return 'Premium Plus';
-                return plan.charAt(0).toUpperCase() + plan.slice(1) + ' Plan';
+                if (!plan) return 'Pro';
+                if (plan === 'Premium+') return 'Premium+';
+                return plan;
             };
 
             const renderData = (data) => {

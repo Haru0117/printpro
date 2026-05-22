@@ -26,4 +26,8 @@ function is_admin() {
     $role = strtolower($_SESSION['role']);
     return ($role === 'admin' || $role === 'super_admin');
 }
+
+function is_logged_in() {
+    return isset($_SESSION['user_id']);
+}
 ?>

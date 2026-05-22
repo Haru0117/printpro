@@ -621,19 +621,32 @@ $userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
 
         .progress-bar-wrap {
             width: 100%;
-            height: 6px;
+            height: 24px;
             background: var(--off);
-            border-radius: 3px;
+            border-radius: 4px;
             overflow: hidden;
+            position: relative;
+            border: 1px solid rgba(0, 0, 0, 0.1);
         }
 
         [data-theme="dark"] .progress-bar-wrap {
             background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .progress-bar-fill {
             height: 100%;
             transition: width 0.5s ease;
+            display: block;
+            position: relative;
+            min-width: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: white;
+            font-weight: 600;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
         }
 
         .status-select {
@@ -802,6 +815,9 @@ $userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
                 <div class="a-nav-item" onclick="showPage('settings')">
                     <i class="bi bi-gear"></i> Settings
                 </div>
+                <div class="a-nav-item" onclick="showPage('analytics')">
+                    <i class="bi bi-bar-chart-line"></i> Analytics
+                </div>
             </nav>
             <div class="a-logout">
                 <a href="#" onclick="handleLogout(event)"><i class="bi bi-box-arrow-left"></i> Logout</a>
@@ -968,6 +984,10 @@ $userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
                                 <li class="nav-item">
                                     <button class="nav-link py-3 border-0 fw-bold small text-uppercase"
                                         onclick="filterOrdersByStatus('Delivered')">Delivered</button>
+                                </li>
+                                <li class="nav-item">
+                                    <button class="nav-link py-3 border-0 fw-bold small text-uppercase"
+                                        onclick="filterOrdersByStatus('Cancelled')">Canceled</button>
                                 </li>
                             </ul>
                         </div>
@@ -1182,6 +1202,77 @@ $userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
                     </div>
                 </div>
 
+                <!-- Analytics Page -->
+                <div class="a-page" id="page-analytics">
+                    <!-- Date range filter -->
+                    <div class="d-flex gap-2 mb-4 flex-wrap">
+                        <button class="btn btn-sm btn-primary" onclick="loadAnalytics('month')" id="aFilter-month">This Month</button>
+                        <button class="btn btn-sm btn-light" onclick="loadAnalytics('3months')" id="aFilter-3months">Last 3 Months</button>
+                        <button class="btn btn-sm btn-light" onclick="loadAnalytics('6months')" id="aFilter-6months">Last 6 Months</button>
+                        <button class="btn btn-sm btn-light" onclick="loadAnalytics('year')" id="aFilter-year">This Year</button>
+                    </div>
+
+                    <!-- KPI Cards -->
+                    <div class="kpi-grid" id="analyticsKpis">
+                        <div class="kpi-card">
+                            <div class="kpi-icon bg-primary-subtle text-primary">
+                                <i class="bi bi-box-seam"></i>
+                            </div>
+                            <div>
+                                <div class="kpi-lbl">Total Orders</div>
+                                <div class="kpi-val" id="aKpiOrders">—</div>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon bg-success-subtle text-success">
+                                <i class="bi bi-currency-dollar"></i>
+                            </div>
+                            <div>
+                                <div class="kpi-lbl">Total Revenue</div>
+                                <div class="kpi-val" id="aKpiRevenue">—</div>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon bg-warning-subtle text-warning">
+                                <i class="bi bi-hourglass-split"></i>
+                            </div>
+                            <div>
+                                <div class="kpi-lbl">Pending Proofs</div>
+                                <div class="kpi-val" id="aKpiProofs">—</div>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon bg-info-subtle text-info">
+                                <i class="bi bi-people"></i>
+                            </div>
+                            <div>
+                                <div class="kpi-lbl">Active Clients</div>
+                                <div class="kpi-val" id="aKpiClients">—</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Row -->
+                    <div class="row g-4">
+                        <div class="col-lg-5">
+                            <div class="card p-4">
+                                <h6 class="fw-bold mb-4">Orders by Print Category</h6>
+                                <div style="height:280px;">
+                                    <canvas id="categoryPieChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-7">
+                            <div class="card p-4">
+                                <h6 class="fw-bold mb-4">Monthly Revenue</h6>
+                                <div style="height:280px;">
+                                    <canvas id="monthlyRevenueChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Settings Page -->
                 <div class="a-page" id="page-settings">
                     <div class="card border-0 shadow-sm overflow-hidden" style="border-radius:16px;">
@@ -1387,6 +1478,49 @@ $userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
             </div>
         </div>
     </div>
+
+                <!-- ══ ANALYTICS PAGE ══ -->
+                <div class="a-page" id="page-analytics">
+                    <div class="d-flex gap-2 mb-4 flex-wrap">
+                        <button class="btn btn-sm btn-primary" onclick="loadAnalytics('month')" id="aFilter-month">This Month</button>
+                        <button class="btn btn-sm btn-light" onclick="loadAnalytics('3months')" id="aFilter-3months">Last 3 Months</button>
+                        <button class="btn btn-sm btn-light" onclick="loadAnalytics('6months')" id="aFilter-6months">Last 6 Months</button>
+                        <button class="btn btn-sm btn-light" onclick="loadAnalytics('year')" id="aFilter-year">This Year</button>
+                    </div>
+                    <div class="kpi-grid" id="analyticsKpis">
+                        <div class="kpi-card">
+                            <div class="kpi-icon bg-primary-subtle text-primary"><i class="bi bi-box-seam"></i></div>
+                            <div><div class="kpi-lbl">Total Orders</div><div class="kpi-val" id="aKpiOrders">—</div></div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon bg-success-subtle text-success"><i class="bi bi-currency-dollar"></i></div>
+                            <div><div class="kpi-lbl">Total Revenue</div><div class="kpi-val" id="aKpiRevenue">—</div></div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon bg-warning-subtle text-warning"><i class="bi bi-hourglass-split"></i></div>
+                            <div><div class="kpi-lbl">Pending Proofs</div><div class="kpi-val" id="aKpiProofs">—</div></div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon bg-info-subtle text-info"><i class="bi bi-people"></i></div>
+                            <div><div class="kpi-lbl">Active Clients</div><div class="kpi-val" id="aKpiClients">—</div></div>
+                        </div>
+                    </div>
+                    <div class="row g-4 mt-1">
+                        <div class="col-lg-5">
+                            <div class="card p-4">
+                                <h6 class="fw-bold mb-4">Orders by Print Category</h6>
+                                <div style="height:280px;"><canvas id="categoryPieChart"></canvas></div>
+                            </div>
+                        </div>
+                        <div class="col-lg-7">
+                            <div class="card p-4">
+                                <h6 class="fw-bold mb-4">Monthly Revenue</h6>
+                                <div style="height:280px;"><canvas id="monthlyRevenueChart"></canvas></div>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- /analytics -->
+
     <div class="modal fade" id="specEditModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow" style="border-radius:16px;">
@@ -1591,6 +1725,38 @@ $userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
             }
         }
 
+        // Toast Notification System
+        function showToast(message, type = 'success') {
+            const toastContainer = document.getElementById('toastContainer');
+            if (!toastContainer) return;
+
+            const toastId = 'toast-' + Date.now();
+            const bgClass = type === 'success' ? 'bg-success' : type === 'danger' ? 'bg-danger' : type === 'warning' ? 'bg-warning' : 'bg-info';
+            const iconClass = type === 'success' ? 'bi-check-circle' : type === 'danger' ? 'bi-exclamation-triangle' : type === 'warning' ? 'bi-exclamation-triangle' : 'bi-info-circle';
+
+            const toastHtml = `
+                <div class="toast align-items-center text-white ${bgClass} border-0" role="alert" id="${toastId}" style="border-radius: 12px;">
+                    <div class="d-flex">
+                        <div class="toast-body d-flex align-items-center gap-2">
+                            <i class="bi ${iconClass}"></i>
+                            ${message}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                </div>
+            `;
+
+            toastContainer.insertAdjacentHTML('beforeend', toastHtml);
+            const toastElement = document.getElementById(toastId);
+            const toast = new bootstrap.Toast(toastElement, { delay: 4000 });
+            toast.show();
+
+            // Clean up after toast is hidden
+            toastElement.addEventListener('hidden.bs.toast', () => {
+                toastElement.remove();
+            });
+        }
+
         // Navigation
         function showPage(id) {
             const page = document.getElementById('page-' + id);
@@ -1606,7 +1772,7 @@ $userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
                 }
             });
 
-            const titles = { dashboard: 'Dashboard', orders: 'All Orders', users: 'User Management', subscriptions: 'Subscriptions', specs: 'Specifications', settings: 'Settings' };
+            const titles = { dashboard: 'Dashboard', orders: 'All Orders', users: 'User Management', subscriptions: 'Subscriptions', specs: 'Specifications', settings: 'Settings', analytics: 'Analytics' };
             const titleEl = document.getElementById('pageTitle');
             if (titleEl) titleEl.textContent = titles[id] || id;
 
@@ -1615,6 +1781,7 @@ $userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
             if (id === 'users') loadUsers();
             if (id === 'subscriptions') loadSubscriptions();
             if (id === 'specs') loadSpecs();
+            if (id === 'analytics') loadAnalytics('month');
 
             if (window.innerWidth < 992) {
                 const sb = document.getElementById('sidebar');
@@ -1624,84 +1791,163 @@ $userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
 
         // Charts
         function initCharts() {
-            const statusCtx = document.getElementById('statusChart').getContext('2d');
-            state.charts.status = new Chart(statusCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Prepress', 'Printing', 'Finishing', 'Delivered'],
-                    datasets: [{
-                        data: [0, 0, 0, 0],
-                        backgroundColor: ['#fb6340', '#1171ef', '#7c4dff', '#2dce89'],
-                        borderWidth: 0
-                    }]
-                },
-                options: { maintainAspectRatio: false, cutout: '80%', plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, font: { size: 10 } } } } }
-            });
+            try {
+                const statusCtx = document.getElementById('statusChart');
+                if (!statusCtx) {
+                    console.warn('statusChart canvas not found');
+                    return;
+                }
 
-            const revCtx = document.getElementById('revenueChart').getContext('2d');
-            state.charts.revenue = new Chart(revCtx, {
-                type: 'line',
-                data: {
-                    labels: [],
-                    datasets: [{
-                        label: 'Revenue',
-                        data: [],
-                        borderColor: '#1d8cf8',
-                        backgroundColor: 'rgba(29, 140, 248, 0.1)',
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } }, x: { grid: { display: false } } } }
-            });
+                state.charts.status = new Chart(statusCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Prepress', 'Printing', 'Finishing', 'Delivered', 'Cancelled'],
+                        datasets: [{
+                            data: [0, 0, 0, 0, 0],
+                            backgroundColor: ['#fb6340', '#1171ef', '#7c4dff', '#2dce89', '#6c757d'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: { 
+                        maintainAspectRatio: false, 
+                        cutout: '80%', 
+                        responsive: true,
+                        plugins: { 
+                            legend: { 
+                                position: 'bottom', 
+                                labels: { 
+                                    usePointStyle: true, 
+                                    font: { size: 10 },
+                                    padding: 15
+                                } 
+                            } 
+                        } 
+                    }
+                });
+
+                const revCtx = document.getElementById('revenueChart');
+                if (!revCtx) {
+                    console.warn('revenueChart canvas not found');
+                    return;
+                }
+
+                state.charts.revenue = new Chart(revCtx, {
+                    type: 'line',
+                    data: {
+                        labels: [],
+                        datasets: [{
+                            label: 'Revenue (₱)',
+                            data: [],
+                            borderColor: '#1d8cf8',
+                            backgroundColor: 'rgba(29, 140, 248, 0.1)',
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 4,
+                            pointBackgroundColor: '#1d8cf8',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2
+                        }]
+                    },
+                    options: { 
+                        maintainAspectRatio: false,
+                        responsive: true,
+                        plugins: { 
+                            legend: { 
+                                display: true,
+                                position: 'top'
+                            } 
+                        }, 
+                        scales: { 
+                            y: { 
+                                beginAtZero: true, 
+                                grid: { 
+                                    color: 'rgba(0,0,0,0.05)' 
+                                },
+                                ticks: {
+                                    callback: function(value) {
+                                        return '₱' + value.toLocaleString();
+                                    }
+                                }
+                            }, 
+                            x: { 
+                                grid: { 
+                                    display: false 
+                                } 
+                            } 
+                        } 
+                    }
+                });
+            } catch (e) {
+                console.error('Error initializing charts:', e);
+            }
         }
 
         async function updateDashboardData(period = '6months') {
             try {
-                const res = await fetch(`../api/get_dashboard_stats.php?period=${period}&_=${Date.now()}`);
+                const res = await fetch(`../api/get_dashboard_stats.php?period=${period}&_=${Date.now()}`, {
+                    credentials: 'include'
+                });
                 const json = await res.json();
                 if (json.success) {
                     const d = json.data;
+                    
+                    // Update KPIs
                     const kpis = document.querySelectorAll('#dashboardKpis .kpi-val');
                     if (kpis.length >= 4) {
                         kpis[0].textContent = '₱' + parseFloat(d.total_revenue || 0).toLocaleString(undefined, { minimumFractionDigits: 2 });
-                        kpis[1].textContent = d.status_counts['Delivered'] || 0;
-                        kpis[2].textContent = (parseInt(d.status_counts['Prepress'] || 0)) + (parseInt(d.status_counts['Printing'] || 0)) + (parseInt(d.status_counts['Finishing'] || 0));
+                        kpis[1].textContent = d.status_counts?.['Delivered'] || 0;
+                        kpis[2].textContent = (parseInt(d.status_counts?.['Prepress'] || 0)) + (parseInt(d.status_counts?.['Printing'] || 0)) + (parseInt(d.status_counts?.['Finishing'] || 0));
                         kpis[3].textContent = d.new_users || 0;
                     }
 
-                    // Update Charts
-                    state.charts.status.data.datasets[0].data = [
-                        parseInt(d.status_counts['Prepress'] || 0),
-                        parseInt(d.status_counts['Printing'] || 0),
-                        parseInt(d.status_counts['Finishing'] || 0),
-                        parseInt(d.status_counts['Delivered'] || 0)
-                    ];
-                    state.charts.status.update();
+                    // Update Status Chart
+                    if (state.charts.status && d.status_counts) {
+                        state.charts.status.data.datasets[0].data = [
+                            parseInt(d.status_counts['Prepress'] || 0),
+                            parseInt(d.status_counts['Printing'] || 0),
+                            parseInt(d.status_counts['Finishing'] || 0),
+                            parseInt(d.status_counts['Delivered'] || 0),
+                            parseInt(d.status_counts['Cancelled'] || 0)
+                        ];
+                        state.charts.status.update();
+                    }
 
-                    if (d.revenue_chart) {
-                        state.charts.revenue.data.labels = d.revenue_chart.map(r => r.label);
+                    // Update Revenue Chart
+                    if (state.charts.revenue && d.revenue_chart && d.revenue_chart.length > 0) {
+                        state.charts.revenue.data.labels = d.revenue_chart.map(r => r.label || '');
                         state.charts.revenue.data.datasets[0].data = d.revenue_chart.map(r => parseFloat(r.value) || 0);
+                        state.charts.revenue.update();
+                    } else if (state.charts.revenue) {
+                        // Show placeholder message when no data
+                        state.charts.revenue.data.labels = ['No Data'];
+                        state.charts.revenue.data.datasets[0].data = [0];
                         state.charts.revenue.update();
                     }
 
-                    // Fix chart colors for dark mode
-                    if (state.theme === 'dark') {
+                    // Adjust chart colors for dark mode
+                    if (state.theme === 'dark' && state.charts.revenue) {
                         Chart.defaults.color = '#a0aec0';
-                        state.charts.revenue.options.scales.x.grid.color = 'rgba(255,255,255,0.05)';
-                        state.charts.revenue.options.scales.y.grid.color = 'rgba(255,255,255,0.05)';
-                    } else {
+                        if (state.charts.revenue.options.scales) {
+                            state.charts.revenue.options.scales.x.grid.color = 'rgba(255,255,255,0.05)';
+                            state.charts.revenue.options.scales.y.grid.color = 'rgba(255,255,255,0.05)';
+                        }
+                    } else if (state.charts.revenue) {
                         Chart.defaults.color = '#666';
-                        state.charts.revenue.options.scales.x.grid.color = 'rgba(0,0,0,0.05)';
-                        state.charts.revenue.options.scales.y.grid.color = 'rgba(0,0,0,0.05)';
+                        if (state.charts.revenue.options.scales) {
+                            state.charts.revenue.options.scales.x.grid.color = 'rgba(0,0,0,0.05)';
+                            state.charts.revenue.options.scales.y.grid.color = 'rgba(0,0,0,0.05)';
+                        }
                     }
 
-                    state.charts.revenue.update();
+                    if (state.charts.revenue) {
+                        state.charts.revenue.update();
+                    }
                 } else {
+                    console.error('Dashboard API error:', json.message);
                     showToast(json.message || 'Failed to load stats', 'danger');
                 }
             } catch (e) { 
-                console.error(e);
+                console.error('Dashboard update error:', e);
                 showToast('Network error loading dashboard stats', 'danger'); 
             }
         }
@@ -1721,7 +1967,9 @@ $userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
 
         async function loadOrders() {
             try {
-                const res = await fetch('../api/get_orders.php?_=' + Date.now());
+                const res = await fetch('../api/get_orders.php?_=' + Date.now(), {
+                    credentials: 'include'
+                });
                 const json = await res.json();
                 if (json.success) {
                     state.orders = json.data;
@@ -1764,14 +2012,14 @@ $userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
                         <td>${o.business_name || o.client_name || 'Walk-in'}</td>
                         <td>${o.product_type || 'Custom'}</td>
                         <td>${parseInt(o.quantity).toLocaleString()}</td>
-                        <td style="width:120px;">
+                        <td style="width:140px;">
                             <div class="progress-bar-wrap">
-                                <div class="progress-bar-fill" style="width:${progress}%; background:${sColor};"></div>
+                                <div class="progress-bar-fill" style="width:${progress}%; background:${sColor};">${progress}%</div>
                             </div>
                         </td>
                         <td>
                             <select class="status-select" style="color:${sColor}; border-color:${sColor}; font-size: .73rem; padding: 2px 6px;" onchange="updateOrderStatus(${o.id}, this.value)">
-                                ${['Proof Pending', 'Proof Pending Review', 'Prepress', 'Printing', 'Finishing', 'Shipping', 'Delivered', 'Reprint'].map(s => `<option value="${s}" ${o.status === s ? 'selected' : ''}>${s}</option>`).join('')}
+                                ${['Proof Pending', 'Proof Pending Review', 'Prepress', 'Printing', 'Finishing', 'Shipping', 'Delivered', 'Reprint', 'Cancelled'].map(s => `<option value="${s}" ${o.status === s ? 'selected' : ''}>${s}</option>`).join('')}
                             </select>
                         </td>
                         <td class="text-muted small">${o.due_date ? new Date(o.due_date).toLocaleDateString() : '-'}</td>
@@ -1779,8 +2027,9 @@ $userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
                         <td>
                             <div class="d-flex gap-2">
                                 <button class="btn btn-light action-btn" onclick="viewOrderDetails(${o.id})" title="View Details"><i class="bi bi-eye"></i></button>
-                                <a href="../api/generate_ticket.php?order_id=${o.id}" target="_blank" class="btn btn-light action-btn" title="Job Ticket"><i class="bi bi-ticket-perforated"></i></a>
+                                <a href="../job_ticket.php?order_id=${o.id}" target="_blank" class="btn btn-light action-btn" title="View Job Ticket" style="font-size:16px;">🎫</a>
                                 ${proofBtn}
+                                <button class="btn btn-danger action-btn" onclick="openRejectModal(${o.id})" title="Reject Order"><i class="bi bi-x-circle"></i></button>
                             </div>
                         </td>
                     </tr>
@@ -2343,7 +2592,8 @@ $userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
                 'Printing': 40,
                 'Finishing': 60,
                 'Shipping': 80,
-                'Delivered': 100
+                'Delivered': 100,
+                'Cancelled': 0
             }[status] || 0;
         }
 
@@ -2356,7 +2606,8 @@ $userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
                 'Finishing': '#8c09ff',
                 'Shipping': '#2dce89',
                 'Delivered': '#2dce89',
-                'Reprint': '#f5365c'
+                'Reprint': '#f5365c',
+                'Cancelled': '#6c757d'
             }[status] || '#8898aa';
         }
 
@@ -2433,6 +2684,118 @@ $userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
             }
         }
 
+    </script>
+
+    <!-- Reject Order Modal -->
+    <div class="modal fade" id="rejectOrderModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Reject Order</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="rejectionReason" class="form-label">Rejection Reason <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="rejectionReason" rows="4" placeholder="Please explain why this order is being rejected..." required></textarea>
+                    </div>
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <strong>Warning:</strong> Rejecting this order will refund the full amount to the client's wallet.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" onclick="confirmRejectOrder()">Reject Order</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let rejectOrderId = null;
+
+        function openRejectModal(orderId) {
+            rejectOrderId = orderId;
+            document.getElementById('rejectionReason').value = '';
+            const modal = new bootstrap.Modal(document.getElementById('rejectOrderModal'));
+            modal.show();
+        }
+
+        async function confirmRejectOrder() {
+            const reason = document.getElementById('rejectionReason').value.trim();
+            if (!reason) {
+                alert('Please provide a rejection reason.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('order_id', rejectOrderId);
+            formData.append('rejection_reason', reason);
+
+            try {
+                const res = await fetch('../api/reject_order.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    alert('Order rejected successfully. Credits refunded to client.');
+                    bootstrap.Modal.getInstance(document.getElementById('rejectOrderModal')).hide();
+                    loadOrders(); // Reload orders to show updated status
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            } catch (e) {
+                alert('Network error. Please try again.');
+            }
+        }
+
+        // ── ANALYTICS ──────────────────────────────────────
+        let analyticsCharts = { pie: null, bar: null };
+
+        async function loadAnalytics(range = 'month') {
+            document.querySelectorAll('[id^="aFilter-"]').forEach(b => b.className = 'btn btn-sm btn-light');
+            const activeBtn = document.getElementById('aFilter-' + range);
+            if (activeBtn) activeBtn.className = 'btn btn-sm btn-primary';
+
+            try {
+                const res  = await fetch('../api/get_analytics.php?range=' + range + '&_=' + Date.now());
+                const json = await res.json();
+                if (!json.success) { showToast('Failed to load analytics', 'danger'); return; }
+                const d = json.data;
+
+                document.getElementById('aKpiOrders').textContent  = parseInt(d.kpis.total_orders).toLocaleString();
+                document.getElementById('aKpiRevenue').textContent = '₱' + parseFloat(d.kpis.total_revenue).toLocaleString(undefined, { minimumFractionDigits: 2 });
+                document.getElementById('aKpiProofs').textContent  = d.kpis.pending_proofs;
+                document.getElementById('aKpiClients').textContent = d.kpis.active_clients;
+
+                const pieCtx = document.getElementById('categoryPieChart');
+                if (pieCtx) {
+                    if (analyticsCharts.pie) analyticsCharts.pie.destroy();
+                    const pieColors = ['#1d8cf8','#2dce89','#fb6340','#7c4dff','#f5365c','#11cdef','#ffd600'];
+                    analyticsCharts.pie = new Chart(pieCtx.getContext('2d'), {
+                        type: 'doughnut',
+                        data: { labels: d.by_product.map(r => r.product_type || 'Unknown'), datasets: [{ data: d.by_product.map(r => parseInt(r.count)), backgroundColor: pieColors, borderWidth: 2, borderColor: '#fff' }] },
+                        options: { maintainAspectRatio: false, cutout: '65%', plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, font: { size: 11 } } } } }
+                    });
+                }
+
+                const barCtx = document.getElementById('monthlyRevenueChart');
+                if (barCtx) {
+                    if (analyticsCharts.bar) analyticsCharts.bar.destroy();
+                    analyticsCharts.bar = new Chart(barCtx.getContext('2d'), {
+                        type: 'bar',
+                        data: { labels: d.monthly_revenue.map(r => r.label), datasets: [{ label: 'Revenue (₱)', data: d.monthly_revenue.map(r => parseFloat(r.value) || 0), backgroundColor: 'rgba(29,140,248,0.8)', borderRadius: 6 }] },
+                        options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { callback: v => '₱' + v.toLocaleString() } }, x: { grid: { display: false } } } }
+                    });
+                }
+            } catch(e) {
+                console.error('Analytics error:', e);
+                showToast('Failed to load analytics', 'danger');
+            }
+        }
     </script>
 </body>
 </html>

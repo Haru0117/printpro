@@ -140,10 +140,8 @@ try {
           </div>
           <div
             style="background:linear-gradient(135deg,var(--navy),#2a3558);border-radius:16px;padding:24px;margin-bottom:20px;color:#fff;">
-            <h2 style="font-family:'Sora',sans-serif;font-weight:800;margin-bottom:8px;" id="heroGreeting">Welcome back!
-            </h2>
-            <p style="color:rgba(255,255,255,.7);margin-bottom:16px;">You have 3 orders ready for review and 2 active
-              shipments.</p>
+            <h2 style="font-family:'Sora',sans-serif;font-weight:800;margin-bottom:8px;" id="heroGreeting">Welcome back, <?php echo htmlspecialchars($userName); ?>!</h2>
+            <p style="color:rgba(255,255,255,.7);margin-bottom:16px;" id="heroBannerSubtitle">Loading your orders...</p>
             <button class="btn btn-primary" onclick="showPage('create')">+ New Project →</button>
           </div>
           <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;">
@@ -152,15 +150,15 @@ try {
                   class="bi bi-box-seam"></i></div>
               <div>
                 <div class="kpi-lbl">Active Orders</div>
-                <div class="kpi-val">12</div>
+                <div class="kpi-val" id="kpiActiveOrders">—</div>
               </div>
             </div>
             <div class="kpi-card" onclick="showPage('cfiles')">
               <div class="kpi-icon" style="background:rgba(62,198,198,.1);color:var(--teal);"><i
                   class="bi bi-folder2"></i></div>
               <div>
-                <div class="kpi-lbl">Files</div>
-                <div class="kpi-val">48</div>
+                <div class="kpi-lbl">Assets</div>
+                <div class="kpi-val" id="kpiFiles">—</div>
               </div>
             </div>
             <div class="kpi-card" onclick="showPage('cbilling')">
@@ -168,7 +166,7 @@ try {
                   class="bi bi-credit-card"></i></div>
               <div>
                 <div class="kpi-lbl">Credits</div>
-                <div class="kpi-val">₱<?php echo number_format($credit_balance, 0); ?></div>
+                <div class="kpi-val" id="kpiCredits">₱<?php echo number_format($credit_balance, 0); ?></div>
               </div>
             </div>
           </div>
@@ -185,11 +183,11 @@ try {
                   <p style="margin:4px 0 0 0;color:var(--muted);font-size:.9rem;">Available for orders</p>
                 </div>
               </div>
-              <div style="font-size:2rem;font-weight:700;color:var(--success);margin-bottom:8px;">
+              <div id="dashCreditBalance" style="font-size:2rem;font-weight:700;color:var(--success);margin-bottom:8px;">
                 ₱<?php echo number_format($credit_balance, 2); ?>
               </div>
               <div style="color:var(--muted);font-size:.85rem;">
-                Default: ₱10,000.00 | Used for order payments
+                Used for order payments
               </div>
             </div>
 
@@ -229,6 +227,37 @@ try {
               </div>
             </div>
           </div>
+
+          <!-- Recent Orders on Dashboard -->
+          <div class="card orders-card">
+            <div class="card-hdr" style="display:flex;justify-content:space-between;align-items:center;">
+              <span class="card-title">Recent Orders</span>
+              <div style="display:flex;gap:8px;">
+                <button class="btn btn-primary btn-sm" style="padding:6px 14px;font-size:.78rem;" onclick="showPage('create')">+ New Order</button>
+                <button class="btn btn-outline btn-sm" style="padding:6px 14px;font-size:.78rem;" onclick="showPage('corders')">View all</button>
+              </div>
+            </div>
+            <table class="tbl orders-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>JOB NAME</th>
+                  <th>QTY</th>
+                  <th>STATUS</th>
+                  <th>DUE</th>
+                  <th>TOTAL</th>
+                </tr>
+              </thead>
+              <tbody id="dashRecentOrdersTbody">
+                <tr>
+                  <td colspan="6" style="text-align:center;color:var(--muted);padding:30px;">
+                    <i class="bi bi-arrow-repeat spin" style="font-size:1.5rem;display:block;margin-bottom:8px;"></i>
+                    Loading...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <!-- ════ CLIENT: CREATE ORDER ════ -->
@@ -261,7 +290,7 @@ try {
                   <div class="dim-grid">
                     <div class="form-row" style="grid-column: 1 / -1; margin-bottom: 12px;">
                       <label class="form-label">Job Name</label>
-                      <input type="text" class="form-ctrl" id="jobNameInput" placeholder="e.g. Summer Promo Flyer" oninput="updateSummaryJobName(this.value)">
+                      <input type="text" class="form-ctrl" id="jobNameInput" placeholder="e.g. Summer Promo Flyer">
                     </div>
                     <div class="form-row"><label class="form-label">Size</label><select class="form-ctrl"
                         id="sizeSelect" onchange="calcPrice()">
@@ -289,9 +318,8 @@ try {
                   <div class="step-title">Quantity</div>
                 </div>
                 <div class="wizard-body">
-                  <input type="range" class="qty-slider" id="qtySlider" min="100" max="10000" step="100" value="100"
-                    oninput="updateQty(this.value)">
-                  <div id="qtyDisplay">100</div>
+                  <input type="range" class="qty-slider" id="qtySlider" min="100" max="10000" step="1" value="100">
+                  <input type="number" id="qtyDisplay" min="100" max="10000" value="100" style="width: 100px; padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px; text-align: center; font-size: 1rem; margin-top: 12px; cursor: pointer; background: white; pointer-events: auto;">
                 </div>
               </div>
               <div class="wizard-card">
@@ -576,27 +604,35 @@ try {
 
   <script src="../assets/js/printpro.js"></script>
   <script>
-    // Load credits data
+    // Debounce utility function to prevent excessive AJAX calls
+    function debounce(func, wait) {
+      let timeout;
+      return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+      };
+    }
+
+    // Load credits
     function loadCredits() {
       fetch('../api/get_credits.php')
         .then(res => res.json())
         .then(data => {
-          console.log('Credits API response:', data);
           if (data.success) {
-            // Update topbar credits
-            const topbarCredits = document.getElementById('topbarCredits');
-            if (topbarCredits) {
-              const balanceNum = parseFloat(data.balance_raw);
-              const displayValue = balanceNum >= 1000 ? (balanceNum / 1000).toFixed(1) + 'k' : balanceNum.toFixed(2);
-              topbarCredits.textContent = '₱' + displayValue;
-              console.log('Updated topbar credits to:', topbarCredits.textContent);
-            }
+            const balanceNum = parseFloat(data.balance_raw) || 0;
+            const formatted  = '₱' + balanceNum.toLocaleString('en-PH', {minimumFractionDigits: 2, maximumFractionDigits: 2});
 
-            // Update KPI card
-            const creditKpi = document.querySelector('[onclick="showPage(\'cbilling\')"] .kpi-val');
-            if (creditKpi) {
-              creditKpi.textContent = '₱' + (parseFloat(data.balance_raw) / 1000).toFixed(1) + 'k';
-            }
+            // Topbar
+            const topbarCredits = document.getElementById('topbarCredits');
+            if (topbarCredits) topbarCredits.textContent = formatted;
+
+            // KPI card — use stable ID
+            const kpiCredits = document.getElementById('kpiCredits');
+            if (kpiCredits) kpiCredits.textContent = formatted;
+
+            // Dashboard credit balance card
+            const dashCredit = document.getElementById('dashCreditBalance');
+            if (dashCredit) dashCredit.textContent = formatted;
 
             // Update balance in credits overview card
             const overviewCards = document.querySelectorAll('div[style*="font-size:2rem"]');
@@ -718,46 +754,125 @@ try {
     function updateQty(val) {
         document.getElementById('qtyDisplay').textContent = val;
         document.getElementById('sumQty').textContent = val + ' units';
-        calcPrice();
+        updatePricing();
     }
 
     let currentPricingData = { grand_total: 0 };
 
-    function calcPrice() {
+    async function updatePricing() {
+        const qtySlider = document.getElementById('qtySlider');
+        const qty = parseInt(qtySlider.value) || 100;
+
+        // Update quantity display
+        document.getElementById('qtyDisplay').textContent = qty;
+        document.getElementById('sumQty').textContent = qty + ' units';
+
         const sizeSelect = document.getElementById('sizeSelect');
         const paperSelect = document.getElementById('paperSelect');
         const finishSelect = document.getElementById('finishSelect');
-        const sidesSelect = document.getElementById('sidesSelect');
-        const qtySlider = document.getElementById('qtySlider');
 
-        if (!sizeSelect || !paperSelect || !finishSelect || !qtySlider) return;
+        if (!sizeSelect || !paperSelect || !finishSelect) return;
 
-        const sizeVal = parseFloat(sizeSelect.value) || 0;
-        const paperVal = parseFloat(paperSelect.value) || 0;
-        
-        const selectedFinishOpt = finishSelect.options[finishSelect.selectedIndex];
-        const finishPerUnit = parseFloat(selectedFinishOpt.value) || 0;
-        const finishSetup = parseFloat(selectedFinishOpt.getAttribute('data-setup')) || 0;
+        const sizeText = sizeSelect.options[sizeSelect.selectedIndex]?.text || '';
+        const paperText = paperSelect.options[paperSelect.selectedIndex]?.text || '';
+        const finishText = finishSelect.options[finishSelect.selectedIndex]?.text || '';
 
-        const sidesVal = parseFloat(sidesSelect.value) || 1;
-        const qty = parseInt(qtySlider.value) || 100;
+        // Get custom dimensions (default to 4x6 if not available)
+        let custom_width = 4.0;
+        let custom_height = 6.0;
 
-        let baseProdPrice = 1.5;
-        if (selectedProduct === 'Brochures') baseProdPrice = 2.5;
-        if (selectedProduct === 'Banners') baseProdPrice = 12.0;
-
-        let unitCost = baseProdPrice * sizeVal * paperVal * sidesVal;
-        if (unitCost === 0) {
-            document.getElementById('sumTotal').textContent = '₱—';
-            currentPricingData.grand_total = 0;
-            return;
+        // Try to extract dimensions from size text if it contains dimensions
+        const sizeMatch = sizeText.match(/(\d+\.?\d*)\s*[x×]\s*(\d+\.?\d*)/i);
+        if (sizeMatch) {
+            custom_width = parseFloat(sizeMatch[1]);
+            custom_height = parseFloat(sizeMatch[2]);
         }
 
-        let totalCost = (unitCost * qty) + finishSetup + (finishPerUnit * qty);
-        
-        currentPricingData.grand_total = totalCost;
-        document.getElementById('sumTotal').textContent = '₱' + totalCost.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-        document.getElementById('sumTotal').setAttribute('data-total-raw', totalCost.toFixed(2));
+        // Get bleed value (default to 0.125 if bleedSelect doesn't exist)
+        let bleed = 0.125;
+        const bleedSelect = document.getElementById('bleedSelect');
+        if (bleedSelect) {
+            const bleedText = bleedSelect.value;
+            if (bleedText.includes('0.125')) bleed = 0.125;
+            else if (bleedText.includes('0.25')) bleed = 0.25;
+            else if (bleedText.includes('No Bleed') || bleedText === '0') bleed = 0;
+        }
+
+        // Resolve product_id from selectedProduct
+        const productIdMap = { 'Flyers': 1, 'Brochures': 2, 'Booklets': 3, 'Cards': 4, 'Posters': 5, 'Mailers': 6, 'Banners': 1 };
+        const resolvedProductId = productIdMap[selectedProduct] || 1;
+
+        // Get turnaround and shipping (default to standard/free if selects don't exist)
+        const turnaroundSelect = document.getElementById('turnaroundSelect');
+        const turnaround = turnaroundSelect ? turnaroundSelect.value : 'standard';
+
+        const shippingSelect = document.getElementById('shippingSelect');
+        const shipping = shippingSelect ? shippingSelect.value : 'free';
+
+        // Prepare form data
+        const formData = new URLSearchParams();
+        formData.append('product_id', resolvedProductId);
+        formData.append('quantity', qty);
+        formData.append('custom_width', custom_width);
+        formData.append('custom_height', custom_height);
+        formData.append('bleed', bleed);
+        formData.append('material', paperText);
+        formData.append('finish', finishText);
+        formData.append('turnaround', turnaround);
+        formData.append('shipping', shipping);
+
+        try {
+            const response = await fetch('../api/calculate_quote.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: formData.toString()
+            });
+
+            const result = await response.json();
+
+            if (result.success && result.breakdown) {
+                const d = result.breakdown;
+                window.currentPricingData = d;
+
+                // Update summary card
+                const sumTotal = document.getElementById('sumTotal');
+                if (sumTotal) {
+                    sumTotal.textContent = '₱' + d.grand_total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    sumTotal.setAttribute('data-total-raw', d.grand_total.toFixed(2));
+                }
+
+                // Update additional summary fields if they exist
+                const sumSubtotal = document.getElementById('sumSubtotal');
+                if (sumSubtotal) sumSubtotal.textContent = '₱' + d.subtotal_final.toLocaleString('en-US', { minimumFractionDigits: 2 });
+
+                const sumTax = document.getElementById('sumTax');
+                if (sumTax) sumTax.textContent = '₱' + d.vat_tax.toLocaleString('en-US', { minimumFractionDigits: 2 });
+
+                const sumShipping = document.getElementById('sumShipping');
+                if (sumShipping) sumShipping.textContent = '₱' + d.shipping_cost.toLocaleString('en-US', { minimumFractionDigits: 2 });
+
+                const sumSize = document.getElementById('sumSize');
+                if (sumSize) sumSize.textContent = custom_width + '" × ' + custom_height + '"';
+
+                const sumStock = document.getElementById('sumStock');
+                if (sumStock) sumStock.textContent = paperText;
+
+                const sumFinish = document.getElementById('sumFinish');
+                if (sumFinish) sumFinish.textContent = finishText;
+
+                // Call orderWalletCheck if it exists
+                if (typeof orderWalletCheck === 'function') {
+                    orderWalletCheck();
+                }
+            }
+        } catch (err) {
+            console.error('Pricing error:', err);
+        }
+    }
+
+    // Keep calcPrice as an alias for backward compatibility
+    function calcPrice() {
+        updatePricing();
     }
 
     function handleArtworkSelection(input) {
@@ -878,11 +993,100 @@ try {
         if (json.success) {
           clientOrders = json.data;
           renderOrdersTable();
+          updateDashboardKpis();
         } else {
           console.warn('Failed to load client orders:', json.message);
+          updateDashboardKpis(); // still update with 0
         }
       } catch (e) {
         console.warn('Network error loading orders:', e);
+        updateDashboardKpis();
+      }
+    }
+
+    function updateDashboardKpis() {
+      const activeStatuses = ['Prepress','Printing','Finishing','Shipping','Proof Pending','Proof Pending Review'];
+      const activeOrders = clientOrders.filter(o => activeStatuses.includes(o.status));
+      const proofPending = clientOrders.filter(o => o.status === 'Proof Pending Review' && o.proof_file);
+      const inShipping  = clientOrders.filter(o => o.status === 'Shipping');
+
+      // Active Orders KPI
+      const kpiActive = document.getElementById('kpiActiveOrders');
+      if (kpiActive) kpiActive.textContent = activeOrders.length;
+
+      // Hero banner subtitle
+      const subtitle = document.getElementById('heroBannerSubtitle');
+      if (subtitle) {
+        if (clientOrders.length === 0) {
+          subtitle.textContent = 'You have no orders yet. Start your first project by clicking the button below!';
+        } else {
+          const parts = [];
+          if (proofPending.length > 0) parts.push(`${proofPending.length} proof${proofPending.length > 1 ? 's' : ''} ready for review`);
+          if (inShipping.length > 0)  parts.push(`${inShipping.length} active shipment${inShipping.length > 1 ? 's' : ''}`);
+          if (activeOrders.length > 0 && parts.length === 0) parts.push(`${activeOrders.length} order${activeOrders.length > 1 ? 's' : ''} in progress`);
+          subtitle.textContent = parts.length > 0 ? 'You have ' + parts.join(' and ') + '.' : 'All caught up! Place a new order anytime.';
+        }
+      }
+
+      // Load file count separately
+      loadFileCount();
+
+      // Render recent orders on dashboard (last 5)
+      renderDashboardRecentOrders();
+    }
+
+    function renderDashboardRecentOrders() {
+      const tbody = document.getElementById('dashRecentOrdersTbody');
+      if (!tbody) return;
+
+      const recent = clientOrders.slice(0, 5);
+
+      if (recent.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" style="text-align:center;color:var(--muted);padding:30px;">
+              <i class="bi bi-inbox" style="font-size:2rem;display:block;margin-bottom:8px;"></i>
+              No orders yet. Place your first order!
+            </td>
+          </tr>`;
+        return;
+      }
+
+      tbody.innerHTML = recent.map(o => {
+        const orderNum = o.order_number || ('PPR-' + String(o.id).padStart(3, '0'));
+        const jobName  = o.job_name || (o.product_type + ' Project');
+        const total    = parseFloat(o.total_price || o.total_amount || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        const dateStr  = o.due_date ? new Date(o.due_date).toLocaleDateString('en-US', {month: 'short', day: 'numeric'}) : '—';
+
+        let badgeClass = 'b-active';
+        if (['Proof Pending','Proof Pending Review'].includes(o.status)) badgeClass = 'b-pending';
+        if (['Delivered','Done'].includes(o.status)) badgeClass = 'b-done';
+        if (o.status === 'Reprint') badgeClass = 'b-pending';
+
+        return `
+          <tr>
+            <td style="font-weight:700;">#${orderNum}</td>
+            <td style="font-weight:500;">${escapeHtml(jobName)}</td>
+            <td>${parseInt(o.quantity).toLocaleString()}</td>
+            <td><span class="badge ${badgeClass}">${o.status}</span></td>
+            <td>${dateStr}</td>
+            <td style="font-weight:700;">₱${total}</td>
+          </tr>`;
+      }).join('');
+    }
+
+    async function loadFileCount() {
+      try {
+        const res = await fetch('../api/user_files.php');
+        const json = await res.json();
+        const kpiFiles = document.getElementById('kpiFiles');
+        if (kpiFiles) {
+          const count = (json.success && Array.isArray(json.data)) ? json.data.length : 0;
+          kpiFiles.textContent = count;
+        }
+      } catch (e) {
+        const kpiFiles = document.getElementById('kpiFiles');
+        if (kpiFiles) kpiFiles.textContent = '0';
       }
     }
 
@@ -1047,7 +1251,45 @@ try {
       loadOrderSpecs();
       loadMyOrders();
       setInterval(loadCredits, 30000);
-      
+
+      // Add debounced event listeners for input fields to prevent excessive calls
+      const jobNameInput = document.getElementById('jobNameInput');
+      if (jobNameInput) {
+        const debouncedUpdateJobName = debounce((val) => updateSummaryJobName(val), 300);
+        jobNameInput.addEventListener('input', (e) => debouncedUpdateJobName(e.target.value));
+      }
+
+      const qtySlider = document.getElementById('qtySlider');
+      const qtyDisplay = document.getElementById('qtyDisplay');
+
+      if (qtySlider && qtyDisplay) {
+        const debouncedUpdatePricing = debounce(() => updatePricing(), 300);
+
+        // Slider change updates input
+        qtySlider.addEventListener('input', (e) => {
+          qtyDisplay.value = e.target.value;
+          document.getElementById('sumQty').textContent = e.target.value + ' units';
+          debouncedUpdatePricing();
+        });
+
+        // Input change updates slider
+        qtyDisplay.addEventListener('input', (e) => {
+          let val = parseInt(e.target.value) || 100;
+          val = Math.max(100, Math.min(10000, val));
+          qtySlider.value = val;
+          document.getElementById('sumQty').textContent = val + ' units';
+          debouncedUpdatePricing();
+        });
+
+        // Ensure input is within bounds on blur
+        qtyDisplay.addEventListener('blur', (e) => {
+          let val = parseInt(e.target.value) || 100;
+          val = Math.max(100, Math.min(10000, val));
+          qtyDisplay.value = val;
+          qtySlider.value = val;
+        });
+      }
+
       // Setup upload area drag and drop listeners
       const uploadArea = document.getElementById('upload-area');
       if (uploadArea) {
