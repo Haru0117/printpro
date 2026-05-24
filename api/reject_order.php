@@ -41,6 +41,16 @@ try {
         exit;
     }
 
+    // ── REJECTED LOCK ─────────────────────────────────────────
+    if ($order['status'] === 'Rejected') {
+        echo json_encode([
+            'success' => false,
+            'message' => 'This order can no longer be modified because it has been rejected.'
+        ]);
+        exit;
+    }
+    // ──────────────────────────────────────────────────────────
+
     $orderNum = $order['order_number'] ?: ('PPR-' . str_pad($order_id, 3, '0', STR_PAD_LEFT));
 
     $pdo->beginTransaction();

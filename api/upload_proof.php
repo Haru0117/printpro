@@ -43,6 +43,16 @@ try {
         exit;
     }
 
+    // ── REJECTED LOCK ─────────────────────────────────────────
+    if ($order['status'] === 'Rejected') {
+        echo json_encode([
+            'success' => false,
+            'message' => 'This order can no longer be modified because it has been rejected.'
+        ]);
+        exit;
+    }
+    // ──────────────────────────────────────────────────────────
+
     $file = $_FILES['proof_file'];
     $fileName = basename($file['name']);
     $fileSize = $file['size'];

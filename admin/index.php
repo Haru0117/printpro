@@ -665,6 +665,47 @@ $userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
             background: var(--dark-card2);
         }
 
+        /* ── REJECTED ORDER LOCK STYLES ── */
+        .order-row-rejected {
+            background: rgba(245, 54, 92, 0.04) !important;
+            opacity: 0.82;
+        }
+        [data-theme="dark"] .order-row-rejected {
+            background: rgba(245, 54, 92, 0.08) !important;
+        }
+        .rejected-lock-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: .68rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            background: rgba(245, 54, 92, 0.12);
+            color: #f5365c;
+            border: 1px solid rgba(245, 54, 92, 0.25);
+            white-space: nowrap;
+        }
+        .rejected-notice {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 14px 16px;
+            border-radius: 12px;
+            background: rgba(245, 54, 92, 0.08);
+            border: 1px solid rgba(245, 54, 92, 0.22);
+            color: #f5365c;
+            font-size: .85rem;
+            margin-bottom: 18px;
+        }
+        [data-theme="dark"] .rejected-notice {
+            background: rgba(245, 54, 92, 0.13);
+            border-color: rgba(245, 54, 92, 0.35);
+        }
+        .rejected-notice i { font-size: 1.2rem; flex-shrink: 0; margin-top: 1px; }
+
         /* ── LOADING STATES ── */
         .skeleton {
             background: linear-gradient(90deg, #f0f2f8 25%, #e0e6ed 50%, #f0f2f8 75%);
@@ -988,6 +1029,10 @@ $userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
                                 <li class="nav-item">
                                     <button class="nav-link py-3 border-0 fw-bold small text-uppercase"
                                         onclick="filterOrdersByStatus('Cancelled')">Canceled</button>
+                                </li>
+                                <li class="nav-item">
+                                    <button class="nav-link py-3 border-0 fw-bold small text-uppercase text-danger"
+                                        onclick="filterOrdersByStatus('Rejected')">Rejected</button>
                                 </li>
                             </ul>
                         </div>
@@ -1985,43 +2030,56 @@ $userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
         function renderOrders(data = state.orders) {
             const tbody = document.querySelector('#ordersTable tbody');
             tbody.innerHTML = data.map(o => {
-                const progress = getProgress(o.status);
-                const sColor = getStatusColor(o.status);
-                const orderNum = o.order_number || ('PPR-' + String(o.id).padStart(3, '0'));
-                
-                // Highlight rows that are Proof Pending or Proof Pending Review
-                let rowStyle = '';
-                if (o.status === 'Proof Pending') {
-                    rowStyle = 'style="background: rgba(251, 99, 64, 0.05);"';
+                const isRejected = o.status === 'Rejected';
+                const progress   = getProgress(o.status);
+                const sColor     = getStatusColor(o.status);
+                const orderNum   = o.order_number || ('PPR-' + String(o.id).padStart(3, '0'));
+
+                // Row highlight
+                let rowClass = '';
+                if (isRejected) {
+                    rowClass = 'class="order-row-rejected"';
+                } else if (o.status === 'Proof Pending') {
+                    rowClass = 'style="background: rgba(251, 99, 64, 0.05);"';
                 } else if (o.status === 'Proof Pending Review') {
-                    rowStyle = 'style="background: rgba(29, 140, 248, 0.03);"';
+                    rowClass = 'style="background: rgba(29, 140, 248, 0.03);"';
                 }
 
-                // Custom actions for proof files
+                // Status cell: locked badge for Rejected, dropdown otherwise
+                const statusCell = isRejected
+                    ? `<span class="rejected-lock-badge"><i class="bi bi-lock-fill"></i> Rejected</span>`
+                    : `<select class="status-select" style="color:${sColor}; border-color:${sColor}; font-size:.73rem; padding:2px 6px;" onchange="updateOrderStatus(${o.id}, this.value)">
+                           ${['Proof Pending','Proof Pending Review','Prepress','Printing','Finishing','Shipping','Delivered','Reprint','Cancelled'].map(s => `<option value="${s}" ${o.status === s ? 'selected' : ''}>${s}</option>`).join('')}
+                       </select>`;
+
+                // Proof button — hidden for Rejected
                 let proofBtn = '';
-                if (o.status === 'Proof Pending') {
-                    proofBtn = `<button class="btn btn-warning action-btn text-white" style="background:var(--warning); border:none;" onclick="openAdminProofUploadModal(${o.id})" title="Upload Print Proof"><i class="bi bi-cloud-arrow-up"></i></button>`;
-                } else if (o.proof_file) {
-                    const proofPath = '../' + o.proof_file.replace(/^\.\.\//, '');
-                    proofBtn = `<a href="${proofPath}" target="_blank" class="btn btn-success action-btn text-white" style="background:#2dce89; border:none;" title="View Print Proof"><i class="bi bi-file-earmark-check"></i></a>`;
+                if (!isRejected) {
+                    if (o.status === 'Proof Pending') {
+                        proofBtn = `<button class="btn btn-warning action-btn text-white" style="background:var(--warning); border:none;" onclick="openAdminProofUploadModal(${o.id})" title="Upload Print Proof"><i class="bi bi-cloud-arrow-up"></i></button>`;
+                    } else if (o.proof_file) {
+                        const proofPath = '../' + o.proof_file.replace(/^\.\.\//, '');
+                        proofBtn = `<a href="${proofPath}" target="_blank" class="btn btn-success action-btn text-white" style="background:#2dce89; border:none;" title="View Print Proof"><i class="bi bi-file-earmark-check"></i></a>`;
+                    }
                 }
+
+                // Reject button — hidden for Rejected
+                const rejectBtn = isRejected
+                    ? ''
+                    : `<button class="btn btn-danger action-btn" onclick="openRejectModal(${o.id})" title="Reject Order"><i class="bi bi-x-circle"></i></button>`;
 
                 return `
-                    <tr ${rowStyle}>
+                    <tr ${rowClass}>
                         <td class="fw-bold">#${orderNum}</td>
                         <td>${o.business_name || o.client_name || 'Walk-in'}</td>
                         <td>${o.product_type || 'Custom'}</td>
                         <td>${parseInt(o.quantity).toLocaleString()}</td>
                         <td style="width:140px;">
                             <div class="progress-bar-wrap">
-                                <div class="progress-bar-fill" style="width:${progress}%; background:${sColor};">${progress}%</div>
+                                <div class="progress-bar-fill" style="width:${progress}%; background:${sColor};">${progress > 0 ? progress + '%' : ''}</div>
                             </div>
                         </td>
-                        <td>
-                            <select class="status-select" style="color:${sColor}; border-color:${sColor}; font-size: .73rem; padding: 2px 6px;" onchange="updateOrderStatus(${o.id}, this.value)">
-                                ${['Proof Pending', 'Proof Pending Review', 'Prepress', 'Printing', 'Finishing', 'Shipping', 'Delivered', 'Reprint', 'Cancelled'].map(s => `<option value="${s}" ${o.status === s ? 'selected' : ''}>${s}</option>`).join('')}
-                            </select>
-                        </td>
+                        <td>${statusCell}</td>
                         <td class="text-muted small">${o.due_date ? new Date(o.due_date).toLocaleDateString() : '-'}</td>
                         <td class="fw-bold">₱${parseFloat(o.total_amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
                         <td>
@@ -2029,7 +2087,7 @@ $userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
                                 <button class="btn btn-light action-btn" onclick="viewOrderDetails(${o.id})" title="View Details"><i class="bi bi-eye"></i></button>
                                 <a href="../job_ticket.php?order_id=${o.id}" target="_blank" class="btn btn-light action-btn" title="View Job Ticket" style="font-size:16px;">🎫</a>
                                 ${proofBtn}
-                                <button class="btn btn-danger action-btn" onclick="openRejectModal(${o.id})" title="Reject Order"><i class="bi bi-x-circle"></i></button>
+                                ${rejectBtn}
                             </div>
                         </td>
                     </tr>
@@ -2109,6 +2167,31 @@ $userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
                     document.getElementById('detailStatus').textContent = o.status;
                     document.getElementById('detailDate').textContent = new Date(o.created_at).toLocaleString();
 
+                    // ── REJECTED BANNER ──────────────────────────────────────
+                    let rejectedBanner = document.getElementById('detailRejectedBanner');
+                    if (!rejectedBanner) {
+                        rejectedBanner = document.createElement('div');
+                        rejectedBanner.id = 'detailRejectedBanner';
+                        // Insert before the spec list section
+                        const specSection = document.getElementById('detailSpecList').closest('.col-md-7');
+                        specSection.insertBefore(rejectedBanner, specSection.firstChild);
+                    }
+                    if (o.status === 'Rejected') {
+                        const reason = o.rejection_reason ? `<br><span class="fw-bold">Reason:</span> ${o.rejection_reason}` : '';
+                        rejectedBanner.innerHTML = `
+                            <div class="rejected-notice">
+                                <i class="bi bi-lock-fill"></i>
+                                <div>
+                                    <strong>This order can no longer be modified because it has been rejected.</strong>${reason}
+                                </div>
+                            </div>`;
+                        rejectedBanner.style.display = 'block';
+                    } else {
+                        rejectedBanner.style.display = 'none';
+                        rejectedBanner.innerHTML = '';
+                    }
+                    // ──────────────────────────────────────────────────────────
+
                     // Render Specs
                     const specList = document.getElementById('detailSpecList');
                     specList.innerHTML = '';
@@ -2133,6 +2216,14 @@ $userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
         }
 
         async function updateOrderStatus(orderId, status) {
+            // ── REJECTED LOCK (frontend guard) ──────────────────
+            const order = state.orders.find(o => o.id == orderId);
+            if (order && order.status === 'Rejected') {
+                showToast('This order can no longer be modified because it has been rejected.', 'danger');
+                loadOrders(); // re-render to restore dropdown state
+                return;
+            }
+            // ────────────────────────────────────────────────────
             try {
                 const formData = new FormData();
                 formData.append('order_id', orderId);
@@ -2145,6 +2236,7 @@ $userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
                     updateDashboardData();
                 } else {
                     showToast(json.message || 'Update failed', 'danger');
+                    loadOrders(); // restore UI if backend rejected the change
                 }
             } catch (e) { showToast('Network error', 'danger'); }
         }
@@ -2593,7 +2685,9 @@ $userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
                 'Finishing': 60,
                 'Shipping': 80,
                 'Delivered': 100,
-                'Cancelled': 0
+                'Reprint': 30,
+                'Cancelled': 0,
+                'Rejected': 0
             }[status] || 0;
         }
 
@@ -2607,7 +2701,8 @@ $userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
                 'Shipping': '#2dce89',
                 'Delivered': '#2dce89',
                 'Reprint': '#f5365c',
-                'Cancelled': '#6c757d'
+                'Cancelled': '#6c757d',
+                'Rejected': '#f5365c'
             }[status] || '#8898aa';
         }
 
@@ -2627,12 +2722,19 @@ $userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
             const o = state.orders.find(x => x.id == orderId);
             if (!o) return;
 
+            // ── REJECTED LOCK (frontend guard) ───────────────
+            if (o.status === 'Rejected') {
+                showToast('This order can no longer be modified because it has been rejected.', 'danger');
+                return;
+            }
+            // ─────────────────────────────────────────────────
+
             document.getElementById('adminProofOrderId').value = o.id;
             document.getElementById('adminProofOrderNum').textContent = o.order_number || ('PPR-' + String(o.id).padStart(3, '0'));
             document.getElementById('adminProofClientName').textContent = o.business_name || o.client_name || 'Client';
             document.getElementById('adminProofProduct').textContent = o.product_type || 'Custom';
             document.getElementById('adminProofQty').textContent = parseInt(o.quantity).toLocaleString();
-            
+
             document.getElementById('adminProofFileInput').value = '';
 
             const modal = new bootstrap.Modal(document.getElementById('adminProofModal'));
@@ -2716,6 +2818,13 @@ $userRole = htmlspecialchars($_SESSION['role'] ?? 'Admin');
         let rejectOrderId = null;
 
         function openRejectModal(orderId) {
+            // ── REJECTED LOCK (frontend guard) ───────────────
+            const order = state.orders.find(o => o.id == orderId);
+            if (order && order.status === 'Rejected') {
+                showToast('This order has already been rejected and cannot be modified.', 'danger');
+                return;
+            }
+            // ─────────────────────────────────────────────────
             rejectOrderId = orderId;
             document.getElementById('rejectionReason').value = '';
             const modal = new bootstrap.Modal(document.getElementById('rejectOrderModal'));
