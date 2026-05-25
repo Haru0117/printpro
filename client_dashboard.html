@@ -3942,6 +3942,47 @@
         html[data-theme="dark"] .c-search:focus-within {
             background: var(--dark-card) !important;
         }
+
+        /* ── Cancel Order Modal (dark mode) ── */
+        html[data-theme="dark"] #cancelOrderContent {
+            background: var(--dark-card) !important;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6) !important;
+        }
+        html[data-theme="dark"] #cancelOrderContent h5 {
+            color: var(--navy) !important;
+        }
+        html[data-theme="dark"] #cancelOrderContent p,
+        html[data-theme="dark"] #cancelOrderContent .text-muted,
+        html[data-theme="dark"] #cancelOrderContent div[style*="color:#8898aa"] {
+            color: var(--muted) !important;
+        }
+        html[data-theme="dark"] #cancelOrderContent strong {
+            color: var(--navy) !important;
+        }
+        html[data-theme="dark"] #cancelReasonText {
+            background: var(--dark-bg) !important;
+            color: var(--navy) !important;
+            border-color: var(--border) !important;
+        }
+        html[data-theme="dark"] #cancelReasonText::placeholder {
+            color: var(--muted) !important;
+        }
+        html[data-theme="dark"] #cancelOrderContent button[onclick="closeCancelOrderModal()"] {
+            color: var(--muted) !important;
+        }
+        html[data-theme="dark"] #cancelOrderContent button[style*="background:#fff"] {
+            background: var(--dark-card2) !important;
+            color: var(--navy) !important;
+            border-color: var(--border) !important;
+        }
+        html[data-theme="dark"] .cancel-client-btn {
+            background: rgba(245,54,92,0.15) !important;
+            color: #f58a9e !important;
+            border: 1px solid rgba(245,54,92,0.3) !important;
+        }
+        html[data-theme="dark"] .cancel-client-btn:hover {
+            background: rgba(245,54,92,0.25) !important;
+        }
     </style>
     <script src="assets/js/printpro.js"></script>
 </head>
@@ -4891,6 +4932,20 @@
                                     <i class="bi bi-arrow-clockwise"></i> Refresh
                                 </button>
                             </div>
+                            <div style="margin-bottom:14px;">
+                                <select id="trackFilterSelect" onchange="loadTrackOrders()"
+                                    style="width:100%;max-width:220px;padding:7px 10px;border:1px solid var(--border);border-radius:8px;font-size:.78rem;font-family:'DM Sans',sans-serif;color:var(--navy);background:#fff;">
+                                    <option value="all">All Active Orders</option>
+                                    <option value="Proof Pending">Proof Pending</option>
+                                    <option value="Proof Pending Review">Proof Pending Review</option>
+                                    <option value="Prepress">Prepress</option>
+                                    <option value="Printing">Printing</option>
+                                    <option value="Finishing">Finishing</option>
+                                    <option value="Shipping">Shipping</option>
+                                    <option value="Delivered">Delivered</option>
+                                    <option value="cancelled-rejected">Cancelled / Rejected / Pending</option>
+                                </select>
+                            </div>
                             <div id="trackOrdersList">
                                 <div style="text-align:center;padding:60px;color:var(--muted);">
                                     <i class="bi bi-arrow-repeat"
@@ -5464,25 +5519,15 @@
             </div>
             <input type="hidden" id="cancelOrderId">
             <p style="font-size:.83rem; color:#8898aa; margin-bottom:16px;">Order <strong id="cancelOrderNum"
-                    style="color:#0d1b3e;"></strong> — your credits will be fully refunded.</p>
+                    style="color:#0d1b3e;"></strong> — an admin will review your request before refunding credits.</p>
 
             <div style="margin-bottom:14px;">
                 <label
                     style="font-size:.75rem; font-weight:700; color:#8898aa; text-transform:uppercase; letter-spacing:.05em; display:block; margin-bottom:6px;">Reason
-                    for Cancellation</label>
-                <select id="cancelReasonSelect" onchange="handleCancelReasonSelect(this)"
-                    style="width:100%; padding:9px 12px; border:1px solid #dde3f0; border-radius:8px; font-size:.85rem; font-family:'DM Sans',sans-serif; color:#344767; margin-bottom:8px;">
-                    <option value="">— Select a reason —</option>
-                    <option value="Changed my mind">Changed my mind</option>
-                    <option value="Ordered by mistake">Ordered by mistake</option>
-                    <option value="Found a better price elsewhere">Found a better price elsewhere</option>
-                    <option value="Need to change specifications">Need to change specifications</option>
-                    <option value="Delivery timeline too long">Delivery timeline too long</option>
-                    <option value="Budget constraints">Budget constraints</option>
-                    <option value="Other">Other (type below)</option>
-                </select>
-                <textarea id="cancelReasonText" placeholder="Add more details (optional)..." rows="3"
-                    style="width:100%; padding:9px 12px; border:1px solid #dde3f0; border-radius:8px; font-size:.82rem; font-family:'DM Sans',sans-serif; color:#344767; resize:vertical; box-sizing:border-box; display:none;"></textarea>
+                    for Cancellation <span style="color:#f5365c;">*</span></label>
+                <textarea id="cancelReasonText" placeholder="Please type your reason for cancelling this order (required)..." rows="4"
+                    style="width:100%; padding:9px 12px; border:1px solid #dde3f0; border-radius:8px; font-size:.82rem; font-family:'DM Sans',sans-serif; color:#344767; resize:vertical; box-sizing:border-box;" required></textarea>
+                <div style="font-size:.7rem;color:#8898aa;margin-top:4px;">You must provide a reason to cancel this order.</div>
             </div>
 
             <div id="cancelModalMsg" style="font-size:.8rem; font-weight:600; min-height:16px; margin-bottom:10px;">
@@ -6632,16 +6677,19 @@
                                 }
                                 const cancellable = ['Proof Pending', 'Proof Pending Review', 'Prepress'];
                                 const cancelBtn = cancellable.includes(o.status)
-                                    ? `<button style="padding:4px 10px; font-size:.75rem; border-radius:6px; background:rgba(245,54,92,.1); color:#f5365c; border:1px solid rgba(245,54,92,.2); font-weight:600; cursor:pointer; margin-left:4px;" onclick="openCancelOrderModal(${o.id},'${o.order_number || 'PPR-' + String(o.id).padStart(3, '0')}')">Cancel</button>`
+                                    ? `<button class="cancel-client-btn" style="padding:4px 10px; font-size:.75rem; border-radius:6px; background:rgba(245,54,92,.1); color:#f5365c; border:1px solid rgba(245,54,92,.2); font-weight:600; cursor:pointer; margin-left:4px;" onclick="openCancelOrderModal(${o.id},'${o.order_number || 'PPR-' + String(o.id).padStart(3, '0')}')">Cancel</button>`
                                     : '';
 
                                 let statusCell = '';
-                                if (o.status === 'Cancelled') {
-                                    const reason = o.rejection_reason || '';
-                                    const reasonHtml = reason
-                                        ? `<div style="font-size:.68rem;color:#8898aa;margin-top:3px;max-width:160px;white-space:normal;line-height:1.3;">↩ Refunded · ${reason.length > 40 ? reason.substring(0, 40) + '…' : reason}</div>`
-                                        : `<div style="font-size:.68rem;color:#2dce89;margin-top:2px;">↩ Credits refunded</div>`;
-                                    statusCell = `<div><span class="badge-status badge-danger">Cancelled</span>${reasonHtml}</div>`;
+                                if (o.status === 'Cancellation Requested') {
+                                    const reason = o.rejection_reason || 'No reason provided';
+                                    const reasonHtml = `<div style="font-size:.68rem;color:#856404;margin-top:3px;max-width:160px;white-space:normal;line-height:1.3;" title="${reason}">⏳ ${reason.length > 50 ? reason.substring(0, 50) + '…' : reason}</div>`;
+                                    statusCell = `<div><span class="badge-status badge-warning">Cancellation Requested</span>${reasonHtml}</div>`;
+                                } else if (o.status === 'Cancelled' || o.status === 'Rejected') {
+                                    const reason = o.rejection_reason || 'No reason provided';
+                                    const statusLabel = o.status === 'Cancelled' ? 'Cancelled' : 'Rejected';
+                                    const reasonHtml = `<div style="font-size:.68rem;color:#842029;margin-top:3px;max-width:160px;white-space:normal;line-height:1.3;" title="${reason}">↩ ${reason.length > 50 ? reason.substring(0, 50) + '…' : reason}</div>`;
+                                    statusCell = `<div><span class="badge-status badge-danger">${statusLabel}</span>${reasonHtml}</div>`;
                                 } else {
                                     const displayStatus = o.status || 'Proof Pending';
                                     statusCell = `<span class="badge-status ${getStatusClass(displayStatus)}">${displayStatus}</span>`;
@@ -6743,13 +6791,12 @@
         function openCancelOrderModal(orderId, orderNum) {
             document.getElementById('cancelOrderId').value = orderId;
             document.getElementById('cancelOrderNum').textContent = '#' + orderNum;
-            document.getElementById('cancelReasonSelect').value = '';
             document.getElementById('cancelReasonText').value = '';
-            document.getElementById('cancelReasonText').style.display = 'none';
             document.getElementById('cancelModalMsg').textContent = '';
             const modal = document.getElementById('cancelOrderModal');
             modal.style.display = 'flex';
             setTimeout(() => { modal.style.opacity = '1'; document.getElementById('cancelOrderContent').style.transform = 'scale(1)'; }, 10);
+            setTimeout(() => document.getElementById('cancelReasonText').focus(), 300);
         }
 
         function closeCancelOrderModal() {
@@ -6759,22 +6806,14 @@
             setTimeout(() => { modal.style.display = 'none'; }, 200);
         }
 
-        function handleCancelReasonSelect(sel) {
-            const textarea = document.getElementById('cancelReasonText');
-            textarea.style.display = sel.value === 'Other' ? 'block' : 'none';
-            if (sel.value !== 'Other') textarea.value = '';
-        }
-
         async function submitCancelOrder() {
             const orderId = document.getElementById('cancelOrderId').value;
-            const select = document.getElementById('cancelReasonSelect');
             const textarea = document.getElementById('cancelReasonText');
             const msg = document.getElementById('cancelModalMsg');
             const btn = document.getElementById('cancelSubmitBtn');
 
-            let reason = select.value;
-            if (reason === 'Other') reason = textarea.value.trim();
-            if (!reason) { msg.textContent = 'Please select or enter a reason.'; msg.style.color = '#f5365c'; return; }
+            const reason = textarea.value.trim();
+            if (!reason || reason.length < 5) { msg.textContent = 'Please type a detailed reason for cancellation (at least 5 characters).'; msg.style.color = '#f5365c'; return; }
 
             btn.disabled = true; btn.textContent = 'Cancelling…';
             const formData = new FormData();
@@ -6786,11 +6825,9 @@
                 const data = await res.json();
                 if (data.success) {
                     closeCancelOrderModal();
-                    // Show refund confirmation
                     if (typeof showToast === 'function') {
-                        showToast(data.message || 'Order cancelled. Credits refunded to your wallet.', 'success');
+                        showToast(data.message || 'Cancellation request submitted for admin review.', 'success');
                     }
-                    if (typeof walletLoad === 'function') walletLoad();
                     if (typeof loadOrders === 'function') loadOrders();
                     if (typeof loadTrackOrders === 'function') loadTrackOrders();
                 } else {
@@ -6823,17 +6860,33 @@
                 if (!data.success) throw new Error(data.message);
 
                 const orders = data.data;
-                const activeStatuses = ['Prepress', 'Printing', 'Finishing', 'Shipping', 'Proof Pending', 'Proof Pending Review'];
-                const active = orders.filter(o => activeStatuses.includes(o.status));
+                const filterVal = document.getElementById('trackFilterSelect')?.value || 'all';
 
-                if (active.length === 0) {
-                    container.innerHTML = `
-                        <div style="text-align:center;padding:60px;color:var(--muted);">
-                            <i class="bi bi-check-circle" style="font-size:3rem;display:block;margin-bottom:12px;color:#2dce89;opacity:.5;"></i>
-                            <h5 style="font-weight:700;margin-bottom:6px;">All caught up!</h5>
-                            <p style="font-size:.85rem;">No active orders in production right now.</p>
-                            <button onclick="showClientPage('create',null)" style="margin-top:12px;background:var(--accent);color:#fff;border:none;padding:8px 20px;border-radius:8px;font-size:.82rem;font-weight:600;cursor:pointer;">+ Place New Order</button>
-                        </div>`;
+                let active, cancelledRejected;
+                if (filterVal === 'all') {
+                    const activeStatuses = ['Prepress', 'Printing', 'Finishing', 'Shipping', 'Proof Pending', 'Proof Pending Review'];
+                    active = orders.filter(o => activeStatuses.includes(o.status));
+                    cancelledRejected = orders.filter(o => o.status === 'Cancelled' || o.status === 'Rejected' || o.status === 'Cancellation Requested');
+                } else if (filterVal === 'cancelled-rejected') {
+                    active = [];
+                    cancelledRejected = orders.filter(o => o.status === 'Cancelled' || o.status === 'Rejected' || o.status === 'Cancellation Requested');
+                } else {
+                    active = orders.filter(o => o.status === filterVal);
+                    cancelledRejected = [];
+                }
+
+                if (active.length === 0 && cancelledRejected.length === 0) {
+                    if (orders.length === 0) {
+                        container.innerHTML = `
+                            <div style="text-align:center;padding:60px;color:var(--muted);">
+                                <i class="bi bi-check-circle" style="font-size:3rem;display:block;margin-bottom:12px;color:#2dce89;opacity:.5;"></i>
+                                <h5 style="font-weight:700;margin-bottom:6px;">All caught up!</h5>
+                                <p style="font-size:.85rem;">No orders found.</p>
+                                <button onclick="showClientPage('create',null)" style="margin-top:12px;background:var(--accent);color:#fff;border:none;padding:8px 20px;border-radius:8px;font-size:.82rem;font-weight:600;cursor:pointer;">+ Place New Order</button>
+                            </div>`;
+                    } else {
+                        container.innerHTML = `<div style="text-align:center;padding:40px;color:var(--muted);font-size:.85rem;">No orders match the selected filter.</div>`;
+                    }
                     return;
                 }
 
@@ -6908,12 +6961,53 @@
                             </div>
                             ${['Proof Pending', 'Proof Pending Review', 'Prepress'].includes(o.status) ? `
                             <div style="padding:12px 20px; border-top:1px solid var(--border); display:flex; justify-content:flex-end;">
-                                <button onclick="openCancelOrderModal(${o.id},'${orderNum}')" style="padding:6px 16px; font-size:.78rem; border-radius:6px; background:rgba(245,54,92,.08); color:#f5365c; border:1px solid rgba(245,54,92,.2); font-weight:600; cursor:pointer;">
+                                <button class="cancel-client-btn" onclick="openCancelOrderModal(${o.id},'${orderNum}')" style="padding:6px 16px; font-size:.78rem; border-radius:6px; background:rgba(245,54,92,.08); color:#f5365c; border:1px solid rgba(245,54,92,.2); font-weight:600; cursor:pointer;">
                                     Cancel Order
                                 </button>
                             </div>` : ''}
                         </div>`;
                 }).join('');
+
+                // ── Show cancelled/rejected orders separately ──
+                if (cancelledRejected.length > 0) {
+                    container.innerHTML += `
+                        <div style="margin-top:24px;padding-top:16px;border-top:2px solid var(--border);">
+                            <h6 style="font-family:'Sora',sans-serif;font-weight:700;color:#6c757d;margin-bottom:12px;">
+                                <i class="bi bi-x-circle"></i> Cancelled / Rejected / Pending
+                            </h6>
+                            ${cancelledRejected.map(o => {
+                                const orderNum = o.order_number || ('PPR-' + String(o.id).padStart(3, '0'));
+                                const jobName = o.job_name || o.product_type || 'Print Job';
+                                const reason = o.rejection_reason || 'No reason provided';
+                                const isPending = o.status === 'Cancellation Requested';
+                                const statusLabel = isPending ? 'Pending Approval' : (o.status === 'Cancelled' ? 'Cancelled' : 'Rejected');
+                                const borderColor = isPending ? '#ffc107' : (o.status === 'Cancelled' ? '#6c757d' : '#c82333');
+                                const badgeClass = isPending ? 'badge-warning' : 'badge-danger';
+                                return `
+                                <div class="track-card" style="border-left:4px solid ${borderColor};opacity:0.85;">
+                                    <div class="track-card-hdr">
+                                        <div>
+                                            <div class="track-order-id">#${orderNum}</div>
+                                            <div class="track-order-name">${escapeHtml(jobName)}</div>
+                                        </div>
+                                        <span class="badge-status ${badgeClass}">${statusLabel}</span>
+                                    </div>
+                                    <div style="padding:14px 20px;font-size:.82rem;">
+                                        <div style="color:${isPending ? '#856404' : '#842029'};font-weight:600;margin-bottom:4px;">${isPending ? '⏳ Reason for cancellation request:' : '↩ Reason for cancellation:'}</div>
+                                        <div style="color:#6c757d;">${escapeHtml(reason)}</div>
+                                        ${isPending
+                                            ? `<div style="margin-top:8px;font-size:.72rem;color:#ffc107;font-weight:600;">
+                                                   <i class="bi bi-clock"></i> Awaiting admin approval
+                                               </div>`
+                                            : `<div style="margin-top:8px;font-size:.72rem;color:#2dce89;font-weight:600;">
+                                                   <i class="bi bi-check-circle-fill"></i> Credits have been refunded
+                                               </div>`
+                                        }
+                                    </div>
+                                </div>`;
+                            }).join('')}
+                        </div>`;
+                }
 
             } catch (e) {
                 container.innerHTML = `<div style="text-align:center;padding:40px;color:var(--muted);">Could not load orders. Please try again.</div>`;
@@ -6994,6 +7088,7 @@
             if (status === 'finishing' || status === 'processing') return 'badge-purple';
             if (status === 'shipping' || status === 'shipped' || status === 'proof pending review') return 'badge-primary';
             if (status === 'pending' || status === 'due' || status === 'reprint' || status === 'proof pending') return 'badge-warning';
+            if (status === 'cancellation requested') return 'badge-warning';
             if (status === 'cancelled' || status === 'rejected') return 'badge-danger';
             if (status === 'refunded') return 'badge-success';
             return 'badge-warning';
@@ -7046,7 +7141,7 @@
             const orderId = document.getElementById('proofOrderIdVal').value;
             if (!orderId) return;
 
-            const newStatus = (action === 'approve') ? 'Prepress' : 'Proof Pending';
+            const newStatus = (action === 'approve') ? 'Prepress' : 'Revision Requested';
 
             try {
                 const res = await fetch('api/update_order_status.php', {

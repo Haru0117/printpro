@@ -2,7 +2,7 @@
 session_start();
 if (!isset($_SESSION['user_id'])) { header('Location: ../index.html?action=login'); exit; }
 $_role = strtolower($_SESSION['role'] ?? '');
-if ($_role === 'client') { header('Location: ../client/'); exit; }
+if ($_role === 'client') { header('Location: ../client_dashboard.html'); exit; }
 if ($_role !== 'admin' && $_role !== 'super_admin') { header('Location: ../index.html?action=login'); exit; }
 $adminName  = htmlspecialchars($_SESSION['name']  ?? 'Admin');
 $adminEmail = htmlspecialchars($_SESSION['email'] ?? '');

@@ -52,8 +52,8 @@ try {
         $stmt->execute([$order_id]);
         echo json_encode(['success' => true, 'message' => 'Proof approved successfully.']);
     } else {
-        // Request revision -> sets status='Proof Pending', clears proof_file
-        $stmt = $pdo->prepare("UPDATE orders SET status = 'Proof Pending', proof_file = NULL, proof_reviewed_at = NOW() WHERE id = ?");
+        // Request revision -> sets status='Revision Requested', clears proof_file
+        $stmt = $pdo->prepare("UPDATE orders SET status = 'Revision Requested', proof_file = NULL, proof_reviewed_at = NOW() WHERE id = ?");
         $stmt->execute([$order_id]);
         echo json_encode(['success' => true, 'message' => 'Proof revision requested successfully.']);
     }

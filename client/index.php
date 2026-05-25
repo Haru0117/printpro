@@ -5,17 +5,14 @@ if (!isset($_SESSION['user_id'])) {
     header('Location: ../index.html?action=login');
     exit;
 }
-// Role guard — admins get bounced to their dashboard
+// Redirect everyone to the proper dashboard files
 $_role = strtolower($_SESSION['role'] ?? '');
 if ($_role === 'admin' || $_role === 'super_admin') {
-    header('Location: ../admin/');
+    header('Location: ../admin_dashboard.html');
     exit;
 }
-// Only 'client' role is allowed past this point
-if ($_role !== 'client') {
-    header('Location: ../index.html?action=login');
-    exit;
-}
+header('Location: ../client_dashboard.html');
+exit;
 $userName = $_SESSION['name'] ?? 'Client';
 $userEmail = $_SESSION['email'] ?? 'client@example.com';
 $userRole = $_SESSION['role'] ?? 'client';

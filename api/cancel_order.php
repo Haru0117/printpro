@@ -4,15 +4,21 @@
 //  POST: { order_id, reason }
 //  Only cancellable if status is Prepress or earlier
 // ─────────────────────────────────────────────────────────────
-session_start();
+require_once '../includes/db.php';
+require_once '../includes/auth.php';
+
 header('Content-Type: application/json');
 
-if (!isset($_SESSION['user_id'])) {
-    echo json_encode(['success' => false, 'message' => 'Unauthorized']);
+if (!is_logged_in()) {
+    echo json_encode(['success' => false, 'message' => 'Unauthorized. Please log in again.']);
     exit;
 }
 
-require_once '../includes/db.php';
+$role = strtolower($_SESSION['role'] ?? '');
+if ($role !== 'client') {
+    echo json_encode(['success' => false, 'message' => 'Only clients can cancel orders.']);
+    exit;
+}
 
 $order_id = intval($_POST['order_id'] ?? 0);
 $reason   = trim($_POST['reason'] ?? '');
@@ -27,6 +33,9 @@ if (empty($reason)) {
 }
 
 try {
+    // Ensure status column accepts any string value (convert ENUM → VARCHAR)
+    $pdo->exec("ALTER TABLE orders MODIFY COLUMN status VARCHAR(50) NOT NULL DEFAULT 'Proof Pending'");
+
     // Verify order belongs to this client and is cancellable
     $stmt = $pdo->prepare("
         SELECT o.id, o.status, o.client_id, o.total_amount
@@ -48,34 +57,16 @@ try {
         exit;
     }
 
-    $pdo->beginTransaction();
-
-    // Update order status
-    $stmt = $pdo->prepare("UPDATE orders SET status = 'Cancelled', rejection_reason = ?, updated_at = NOW() WHERE id = ?");
+    // Don't cancel immediately — set status to "Cancellation Requested" for admin approval
+    $stmt = $pdo->prepare("UPDATE orders SET status = 'Cancellation Requested', rejection_reason = ?, updated_at = NOW() WHERE id = ?");
     $stmt->execute([$reason, $order_id]);
-
-    // Refund credits — use 'add' so walletLoad() picks it up
-    $orderNum    = 'PPR-' . str_pad($order_id, 3, '0', STR_PAD_LEFT);
-    $description = "Refund for cancelled order #{$orderNum}: {$reason}";
-
-    $stmt = $pdo->prepare("
-        INSERT INTO credit_transactions (client_id, transaction_type, amount, description, order_id)
-        VALUES (?, 'add', ?, ?, ?)
-    ");
-    $stmt->execute([$order['client_id'], $order['total_amount'], $description, $order_id]);
-
-    $stmt = $pdo->prepare("UPDATE client_credits SET balance = balance + ?, updated_at = NOW() WHERE client_id = ?");
-    $stmt->execute([$order['total_amount'], $order['client_id']]);
-
-    $pdo->commit();
 
     echo json_encode([
         'success' => true,
-        'message' => 'Order cancelled. ₱' . number_format($order['total_amount'], 2) . ' refunded to your wallet.'
+        'message' => 'Cancellation request submitted. An admin will review and approve it.'
     ]);
 
 } catch (PDOException $e) {
-    if ($pdo->inTransaction()) $pdo->rollBack();
     echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
 }
 ?>

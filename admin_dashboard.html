@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PrintPro Admin Dashboard - CANCELLED TAB TEST VERSION</title>
+    <title>PrintPro Admin Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
@@ -576,67 +576,6 @@
             color: #a0aec0 !important;
         }
 
-        .order-tab-group-right {
-            margin-left: auto;
-            position: relative;
-        }
-
-        .order-tab-group-right:first-of-type {
-            border-left: 1px solid rgba(33, 37, 41, 0.08);
-            padding-left: 16px;
-            margin-right: 8px;
-        }
-
-        .nav-tabs .nav-link[onclick*="Rejected"],
-        .nav-tabs .nav-link[onclick*="Cancelled"] {
-            white-space: nowrap;
-        }
-
-        .nav-tabs .nav-link[onclick*="Rejected"] {
-            color: #dc3545 !important;
-            font-weight: 700 !important;
-            position: relative;
-        }
-
-        .nav-tabs .nav-link[onclick*="Rejected"]:hover {
-            color: #c82333 !important;
-            background: rgba(220, 53, 69, 0.1) !important;
-        }
-
-        .nav-tabs .nav-link[onclick*="Rejected"].active {
-            color: #dc3545 !important;
-            border-bottom: 3px solid #dc3545 !important;
-            background: rgba(220, 53, 69, 0.05) !important;
-        }
-
-        .nav-tabs .nav-link[onclick*="Rejected"]::after {
-            content: " ❌";
-            font-size: 0.9em;
-        }
-
-        /* Special styling for Cancelled tab */
-        .nav-tabs .nav-link[onclick*="Cancelled"] {
-            color: #6c757d !important;
-            font-weight: 700 !important;
-            position: relative;
-        }
-
-        .nav-tabs .nav-link[onclick*="Cancelled"]:hover {
-            color: #5a6268 !important;
-            background: rgba(108, 117, 125, 0.1) !important;
-        }
-
-        .nav-tabs .nav-link[onclick*="Cancelled"].active {
-            color: #6c757d !important;
-            border-bottom: 3px solid #6c757d !important;
-            background: rgba(108, 117, 125, 0.05) !important;
-        }
-
-        .nav-tabs .nav-link[onclick*="Cancelled"]::after {
-            content: " 🚫";
-            font-size: 0.9em;
-        }
-
         .btn-sm {
             width: 32px;
             height: 32px;
@@ -852,15 +791,6 @@
                 white-space: nowrap !important;
             }
 
-            /* Make CANCELLED tab extra visible on mobile */
-            .nav-tabs .nav-link[onclick*="Cancelled"] {
-                background: #ff0000 !important;
-                color: white !important;
-                border: 2px solid #ff0000 !important;
-                font-weight: 900 !important;
-                animation: pulse 2s infinite !important;
-                box-shadow: 0 0 10px rgba(255, 0, 0, 0.5) !important;
-            }
 
             @keyframes pulse {
                 0% {
@@ -926,8 +856,7 @@
                     <button class="btn btn-light d-lg-none action-btn" onclick="toggleSidebar()">
                         <i class="bi bi-list fs-4"></i>
                     </button>
-                    <h5 class="m-0 fw-bold" id="pageTitle" style="color: red; background: yellow; padding: 5px;">🚫
-                        CANCELLED TAB TEST - Dashboard</h5>
+                    <h5 class="m-0 fw-bold" id="pageTitle">Dashboard</h5>
                 </div>
                 <div class="d-flex align-items-center gap-3">
                     <button class="btn border-0 p-0 text-muted fs-5" onclick="toggleTheme()">
@@ -1048,6 +977,15 @@
                                     <!-- Dynamic Content -->
                                 </div>
                             </div>
+                            <div class="card p-4" style="border-left:4px solid #6c757d;">
+                                <h6 class="fw-bold mb-3" style="display:flex;align-items:center;gap:8px;">
+                                    <i class="bi bi-x-circle" style="color:#6c757d;"></i>
+                                    Cancelled / Rejected / Pending
+                                </h6>
+                                <div id="cancelledFeed">
+                                    <div style="text-align:center;padding:20px;color:var(--muted);font-size:.8rem;">Loading...</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1085,13 +1023,13 @@
                                     <button class="nav-link py-3 border-0 fw-bold small text-uppercase"
                                         onclick="filterOrdersByStatus('Delivered')">Delivered</button>
                                 </li>
-                                <li class="nav-item order-tab-group-right">
+                                <li class="nav-item">
                                     <button class="nav-link py-3 border-0 fw-bold small text-uppercase"
-                                        onclick="filterOrdersByStatus('Rejected')">Rejected</button>
+                                        onclick="filterOrdersByStatus('Cancellation Requested')">Cancellation Requested</button>
                                 </li>
-                                <li class="nav-item order-tab-group-right">
+                                <li class="nav-item">
                                     <button class="nav-link py-3 border-0 fw-bold small text-uppercase"
-                                        onclick="filterOrdersByStatus('Cancelled')">Cancelled</button>
+                                        onclick="filterOrdersByStatus('Cancelled/Rejected')">Cancelled</button>
                                 </li>
                             </ul>
                         </div>
@@ -1395,19 +1333,14 @@
                                     <form id="businessSettingsForm" onsubmit="saveBusinessSettings(event)">
                                         <div class="row g-3">
                                             <div class="col-md-12">
-                                                <label class="form-label small fw-bold">Company Address</label>
-                                                <textarea class="form-control" name="company_address" rows="2"
-                                                    placeholder="Street, City, Zip Code"></textarea>
+                                                <label class="form-label small fw-bold">Business Name</label>
+                                                <input type="text" class="form-control" name="business_name"
+                                                    placeholder="PrintPro">
                                             </div>
-                                            <div class="col-md-6">
-                                                <label class="form-label small fw-bold">Tax ID / TIN</label>
-                                                <input type="text" class="form-control" name="tax_id"
-                                                    placeholder="000-000-000-000">
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label class="form-label small fw-bold">Contact Number</label>
-                                                <input type="text" class="form-control" name="contact_phone"
-                                                    placeholder="+63 900 000 0000">
+                                            <div class="col-md-12">
+                                                <label class="form-label small fw-bold">Industry</label>
+                                                <input type="text" class="form-control" name="industry"
+                                                    placeholder="Printing">
                                             </div>
                                             <div class="col-12 mt-4">
                                                 <button type="submit" class="btn btn-primary px-4 fw-bold">Update
@@ -1686,9 +1619,24 @@
         // ══════════════════════════════════════════════════════
         //  TEST: Verify file is loaded correctly
         // ══════════════════════════════════════════════════════
-        console.log('🔧 PrintPro Admin Dashboard Loaded - CANCELLED Tab Version 2.0');
-        console.log('📅 File updated:', new Date().toISOString());
-        alert('CANCELLED TAB TEST VERSION LOADED - Check browser title!');
+        console.log('🔧 PrintPro Admin Dashboard Loaded');
+
+        // ── Toast helper ──
+        function showToast(msg, type) {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+            const colors = { success: '#2dce89', danger: '#f5365c', warning: '#fb6340', info: '#1d8cf8' };
+            const bg = colors[type] || '#344767';
+            const toast = document.createElement('div');
+            toast.style.cssText = `background:${bg};color:#fff;padding:10px 18px;border-radius:8px;font-size:.82rem;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,0.15);margin-bottom:8px;opacity:0;transform:translateY(-8px);transition:all 0.25s ease;`;
+            toast.textContent = msg;
+            container.appendChild(toast);
+            requestAnimationFrame(() => { toast.style.opacity = '1'; toast.style.transform = 'translateY(0)'; });
+            setTimeout(() => {
+                toast.style.opacity = '0'; toast.style.transform = 'translateY(-8px)';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
 
         // Global State
         const state = {
@@ -1716,6 +1664,7 @@
             loadUsers();
             loadSubscriptions();
             loadSpecs();
+            loadAdminProfile();
 
             document.getElementById('userAvatar').textContent = state.user.name ? state.user.name[0].toUpperCase() : 'A';
             document.getElementById('userName').textContent = state.user.name || 'Admin';
@@ -1903,11 +1852,17 @@
                 const res = await fetch('api/get_orders.php?_=' + Date.now());
                 const json = await res.json();
                 if (json.success) {
-                    // Sort orders: cancelled orders go to the bottom
+                    // Sort orders: revision/cancellation requests at top, cancelled/rejected at bottom
                     state.orders = json.data.sort((a, b) => {
-                        // If one is cancelled and the other isn't, cancelled goes to bottom
-                        if (a.status === 'Cancelled' && b.status !== 'Cancelled') return 1;
-                        if (b.status === 'Cancelled' && a.status !== 'Cancelled') return -1;
+                        const aPending = a.status === 'Revision Requested' || a.status === 'Cancellation Requested';
+                        const bPending = b.status === 'Revision Requested' || b.status === 'Cancellation Requested';
+                        if (aPending && !bPending) return -1;
+                        if (bPending && !aPending) return 1;
+
+                        const aEnd = a.status === 'Cancelled' || a.status === 'Rejected';
+                        const bEnd = b.status === 'Cancelled' || b.status === 'Rejected';
+                        if (aEnd && !bEnd) return 1;
+                        if (bEnd && !aEnd) return -1;
 
                         // Otherwise sort by created_at (newest first)
                         return new Date(b.created_at) - new Date(a.created_at);
@@ -1916,11 +1871,14 @@
                     renderOrders();
                     renderRecentOrders();
                     renderActivityFeed();
+                    renderCancelledFeed();
                 } else {
                     showToast(json.message || 'Failed to load orders', 'danger');
                 }
             } catch (e) { showToast('Network error loading orders', 'danger'); }
         }
+
+
 
         function renderOrders(data = state.orders) {
             const tbody = document.querySelector('#ordersTable tbody');
@@ -1929,9 +1887,11 @@
                 const sColor = getStatusColor(o.status);
                 const orderNum = o.order_number || ('PPR-' + String(o.id).padStart(3, '0'));
 
-                // Highlight rows that are Proof Pending, Proof Pending Review, Cancelled, or Rejected
+                // Highlight rows based on status
                 let rowStyle = '';
-                if (o.status === 'Cancelled') {
+                if (o.status === 'Cancellation Requested') {
+                    rowStyle = 'style="background: rgba(255, 193, 7, 0.07); border-left: 4px solid #ffc107;"';
+                } else if (o.status === 'Cancelled') {
                     rowStyle = 'style="background: rgba(108, 117, 125, 0.08); border-left: 4px solid #6c757d;"';
                 } else if (o.status === 'Rejected') {
                     rowStyle = 'style="background: rgba(220, 53, 69, 0.07); border-left: 4px solid #c82333;"';
@@ -1962,13 +1922,18 @@
                             </div>
                         </td>
                         <td>
-                            ${o.status === 'Cancelled' || o.status === 'Rejected'
+                            ${o.status === 'Cancellation Requested'
+                        ? `<div>
+                                    <span class="badge-status" style="background:#fff3cd;color:#856404;border:1px solid #ffc107;font-size:.65rem;font-weight:800;padding:4px 10px;border-radius:6px;text-transform:uppercase;">Cancellation Requested</span>
+                                    ${o.rejection_reason ? `<div style="font-size:.65rem;color:#856404;margin-top:4px;max-width:160px;white-space:normal;line-height:1.3;" title="${o.rejection_reason}">⏳ Pending · ${o.rejection_reason.length > 40 ? o.rejection_reason.substring(0, 40) + '…' : o.rejection_reason}</div>` : ''}
+                                   </div>`
+                        : o.status === 'Cancelled' || o.status === 'Rejected'
                         ? `<div>
                                     <span class="badge-status" style="background:${o.status === 'Cancelled' ? '#8898aa20' : '#f8d7da'};color:${o.status === 'Cancelled' ? '#8898aa' : '#842029'};border:1px solid ${o.status === 'Cancelled' ? '#8898aa40' : '#f5c2c7'};font-size:.65rem;font-weight:800;padding:4px 10px;border-radius:6px;text-transform:uppercase;">${o.status}</span>
                                     ${o.rejection_reason ? `<div style="font-size:.65rem;color:${o.status === 'Cancelled' ? '#8898aa' : '#842029'};margin-top:4px;max-width:160px;white-space:normal;line-height:1.3;" title="${o.rejection_reason}">↩ Refunded · ${o.rejection_reason.length > 40 ? o.rejection_reason.substring(0, 40) + '…' : o.rejection_reason}</div>` : ''}
                                    </div>`
                         : `<select class="status-select" style="color:${sColor}; border-color:${sColor}; background-color:${sColor}15; font-size: .73rem; padding: 2px 6px;" onchange="updateOrderStatus(${o.id}, this.value)">
-                                    ${['Proof Pending', 'Proof Pending Review', 'Prepress', 'Printing', 'Finishing', 'Shipping', 'Delivered', 'Reprint', 'Cancelled', 'Rejected'].map(s => {
+                                    ${['Proof Pending', 'Proof Pending Review', 'Prepress', 'Printing', 'Finishing', 'Shipping', 'Delivered', 'Reprint', 'Revision Requested', 'Cancellation Requested', 'Cancelled', 'Rejected'].map(s => {
                             const optionColor = getStatusColor(s);
                             return `<option value="${s}" ${o.status === s ? 'selected' : ''} style="background-color:${optionColor}20; color:${optionColor};">${s}</option>`;
                         }).join('')}
@@ -1982,7 +1947,11 @@
                                 <button class="btn btn-light action-btn" onclick="viewOrderDetails(${o.id})" title="View Details"><i class="bi bi-eye"></i></button>
                                 <a href="api/generate_ticket.php?order_id=${o.id}" target="_blank" class="btn btn-light action-btn" title="Job Ticket"><i class="bi bi-ticket-perforated"></i></a>
                                 ${proofBtn}
-                                ${o.status !== 'Cancelled' ? `<button class="btn btn-danger action-btn" onclick="openAdminRejectModal(${o.id}, '${orderNum}')" title="Reject Order" style="background:#f5365c; border:none; color:#fff;"><i class="bi bi-x-circle"></i></button>` : ''}
+                                ${o.status === 'Cancellation Requested'
+                                    ? `<button class="btn btn-success action-btn" onclick="approveCancellation(${o.id})" title="Approve Cancellation & Refund" style="background:#2dce89; border:none; color:#fff;"><i class="bi bi-check-circle"></i></button>
+                                       <button class="btn btn-secondary action-btn" onclick="denyCancellation(${o.id})" title="Deny Cancellation Request" style="background:#6c757d; border:none; color:#fff;"><i class="bi bi-x-lg"></i></button>`
+                                    : o.status !== 'Cancelled' ? `<button class="btn btn-danger action-btn" onclick="openAdminRejectModal(${o.id}, '${orderNum}')" title="Reject Order" style="background:#f5365c; border:none; color:#fff;"><i class="bi bi-x-circle"></i></button>` : ''
+                                }
                             </div>
                         </td>
                     </tr>
@@ -2018,41 +1987,149 @@
             `).join('');
         }
 
+        function renderCancelledFeed() {
+            const feed = document.getElementById('cancelledFeed');
+            const items = state.orders.filter(o => o.status === 'Cancellation Requested' || o.status === 'Cancelled' || o.status === 'Rejected').slice(0, 5);
+            if (!items.length) {
+                feed.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted);font-size:.8rem;">No cancelled, rejected, or pending cancellation orders.</div>';
+                return;
+            }
+            feed.innerHTML = items.map(o => {
+                let isPending, isRejected, borderColor, labelColor, bgColor;
+                if (o.status === 'Cancellation Requested') {
+                    isPending = true;
+                    borderColor = '#ffc107';
+                    labelColor = '#856404';
+                    bgColor = 'rgba(255,193,7,.06)';
+                } else {
+                    isPending = false;
+                    isRejected = o.status === 'Rejected';
+                    borderColor = isRejected ? '#c82333' : '#6c757d';
+                    labelColor = isRejected ? '#842029' : '#8898aa';
+                    bgColor = isRejected ? 'rgba(220,53,69,.04)' : 'rgba(108,117,125,.04)';
+                }
+                const orderNum = o.order_number || ('PPR-' + String(o.id).padStart(3, '0'));
+                return `
+                <div style="border-left:3px solid ${borderColor};background:${bgColor};border-radius:8px;padding:10px 12px;margin-bottom:10px;font-size:.78rem;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+                        <strong style="color:${labelColor};">#${orderNum}</strong>
+                        <span style="color:${labelColor};font-weight:700;font-size:.65rem;text-transform:uppercase;">${o.status}</span>
+                    </div>
+                    <div style="color:var(--muted);margin-bottom:2px;">${o.business_name || o.client_name || 'Walk-in'} · ${o.product_type || 'Custom'}</div>
+                    <div style="color:${isPending ? '#856404' : '#842029'};font-weight:600;font-size:.72rem;margin-top:4px;padding:4px 8px;background:${isPending ? 'rgba(255,193,7,.1)' : 'rgba(132,34,41,.06)'};border-radius:4px;">${isPending ? '⏳' : '↩'} ${o.rejection_reason || 'No reason provided'}</div>
+                    <div style="color:var(--muted);font-size:.65rem;margin-top:4px;">${timeAgo(o.created_at)}</div>
+                </div>`;
+            }).join('');
+        }
+
+        // ══════════════════════════════════════════════════════
+        //  SETTINGS FORM HANDLERS
+        // ══════════════════════════════════════════════════════
+        async function saveAdminProfile(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.disabled = true; btn.textContent = 'Saving…';
+            const fd = new FormData(e.target);
+            fd.append('business_name', 'PrintPro Admin');
+            fd.append('industry', 'Printing');
+            try {
+                const res = await fetch('api/update_profile.php', { method: 'POST', body: fd });
+                const d = await res.json();
+                showToast(d.message, d.success ? 'success' : 'danger');
+                if (d.success) {
+                    const u = state.user;
+                    u.name = fd.get('name');
+                    u.email = fd.get('email');
+                    sessionStorage.setItem('pp_user', JSON.stringify(u));
+                }
+            } catch (_) { showToast('Network error', 'danger'); }
+            btn.disabled = false; btn.textContent = 'Update Account';
+        }
+
+        async function saveSystemSettings(e) {
+            e.preventDefault();
+            const fd = new FormData(e.target);
+            fd.forEach((v, k) => localStorage.setItem('sys_' + k, v));
+            showToast('System settings saved locally.', 'success');
+        }
+
+        async function saveBusinessSettings(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.disabled = true; btn.textContent = 'Saving…';
+            const fd = new FormData(e.target);
+            fd.append('name', state.user.name || 'Admin');
+            fd.append('email', state.user.email || '');
+            try {
+                const res = await fetch('api/update_profile.php', { method: 'POST', body: fd });
+                const d = await res.json();
+                showToast(d.message, d.success ? 'success' : 'danger');
+            } catch (_) { showToast('Network error', 'danger'); }
+            btn.disabled = false; btn.textContent = 'Update Profile';
+        }
+
+        async function saveSecuritySettings(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.disabled = true; btn.textContent = 'Changing…';
+            const fd = new FormData(e.target);
+            const pw = fd.get('new_password');
+            const confirm = fd.get('confirm_password');
+            if (pw !== confirm) { showToast('New passwords do not match.', 'danger'); btn.disabled = false; btn.textContent = 'Change Password'; return; }
+            try {
+                const res = await fetch('api/change_password.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({ current_password: fd.get('current_password'), new_password: pw })
+                });
+                const d = await res.json();
+                showToast(d.message, d.success ? 'success' : 'danger');
+                if (d.success) e.target.reset();
+            } catch (_) { showToast('Network error', 'danger'); }
+            btn.disabled = false; btn.textContent = 'Change Password';
+        }
+
+        function loadAdminProfile() {
+            const u = state.user;
+            const nameEl = document.getElementById('setAdminName');
+            const emailEl = document.getElementById('setAdminEmail');
+            if (nameEl && u.name) nameEl.value = u.name;
+            if (emailEl && u.email) emailEl.value = u.email;
+        }
+
         function filterOrdersByStatus(status) {
             console.log('🔍 Filtering by status:', status);
 
             document.querySelectorAll('#orderTabs .nav-link').forEach(btn => {
                 btn.classList.remove('active');
                 const btnText = btn.textContent.trim();
+                const onclickAttr = btn.getAttribute('onclick') || '';
                 if (status === 'All' && btnText === 'All Orders') btn.classList.add('active');
-                else if (btnText === status || btnText.includes(status)) btn.classList.add('active');
+                else if (btnText === status || btnText.includes(status) || onclickAttr.includes(status)) btn.classList.add('active');
             });
 
             let filtered;
             if (status === 'All') {
-                // For "All Orders", show all but keep cancelled orders at the bottom
+                // For "All Orders", show all but keep cancelled/rejected at the bottom
                 filtered = [...state.orders].sort((a, b) => {
-                    if (a.status === 'Cancelled' && b.status !== 'Cancelled') return 1;
-                    if (b.status === 'Cancelled' && a.status !== 'Cancelled') return -1;
+                    const aPending = a.status === 'Revision Requested' || a.status === 'Cancellation Requested';
+                    const bPending = b.status === 'Revision Requested' || b.status === 'Cancellation Requested';
+                    if (aPending && !bPending) return -1;
+                    if (bPending && !aPending) return 1;
+
+                    const aEnd = a.status === 'Cancelled' || a.status === 'Rejected';
+                    const bEnd = b.status === 'Cancelled' || b.status === 'Rejected';
+                    if (aEnd && !bEnd) return 1;
+                    if (bEnd && !aEnd) return -1;
                     return new Date(b.created_at) - new Date(a.created_at);
                 });
                 document.getElementById('orderListTitle').textContent = `All Orders (${filtered.length})`;
+            } else if (status === 'Cancelled/Rejected') {
+                filtered = state.orders.filter(o => o.status === 'Cancelled' || o.status === 'Rejected');
+                document.getElementById('orderListTitle').textContent = `Cancelled / Rejected (${filtered.length})`;
             } else {
                 filtered = state.orders.filter(o => o.status === status);
                 document.getElementById('orderListTitle').textContent = `${status} Orders (${filtered.length})`;
-            }
-
-            // Debug: Log status counts for cancelled orders
-            if (status === 'Cancelled') {
-                console.log('🔍 Cancelled orders found:', filtered);
-                console.log('📊 All order statuses:', state.orders.map(o => ({ id: o.id, status: o.status, rejection_reason: o.rejection_reason })));
-
-                // Show alert if no cancelled orders found
-                if (filtered.length === 0) {
-                    showToast('No cancelled orders found. Try rejecting an order first to test this feature.', 'info');
-                } else {
-                    showToast(`Found ${filtered.length} cancelled orders`, 'success');
-                }
             }
 
             renderOrders(filtered);
@@ -2082,6 +2159,14 @@
                     document.getElementById('detailTotal').textContent = '₱' + parseFloat(o.total_amount).toLocaleString(undefined, { minimumFractionDigits: 2 });
                     document.getElementById('detailStatus').textContent = o.status;
                     document.getElementById('detailDate').textContent = new Date(o.created_at).toLocaleString();
+
+                    // Show rejection/cancellation reason if applicable
+                    const statusEl = document.getElementById('detailStatus');
+                    if (o.rejection_reason && (o.status === 'Cancelled' || o.status === 'Rejected')) {
+                        statusEl.innerHTML = `${o.status} <span style="font-size:.65rem;display:block;margin-top:4px;opacity:0.8;">↩ ${o.rejection_reason}</span>`;
+                    } else {
+                        statusEl.textContent = o.status;
+                    }
 
                     // Render Specs
                     const specList = document.getElementById('detailSpecList');
@@ -2119,6 +2204,43 @@
                     updateDashboardData();
                 } else {
                     showToast(json.message || 'Update failed', 'danger');
+                }
+            } catch (e) { showToast('Network error', 'danger'); }
+        }
+
+        async function approveCancellation(orderId) {
+            if (!confirm('Approve this cancellation request? The client will be refunded automatically.')) return;
+            try {
+                const formData = new FormData();
+                formData.append('order_id', orderId);
+                const res = await fetch('api/approve_cancellation.php', { method: 'POST', body: formData });
+                const json = await res.json();
+                if (json.success) {
+                    showToast(json.message, 'success');
+                    loadOrders();
+                    updateDashboardData();
+                } else {
+                    showToast(json.message || 'Failed to approve cancellation', 'danger');
+                }
+            } catch (e) { showToast('Network error', 'danger'); }
+        }
+
+        async function denyCancellation(orderId) {
+            const reason = prompt('Enter a reason for denying this cancellation (optional):');
+            if (reason === null) return;
+            try {
+                const formData = new FormData();
+                formData.append('order_id', orderId);
+                formData.append('status', 'Proof Pending');
+                formData.append('clear_reason', '1');
+                const res = await fetch('api/update_order_status.php', { method: 'POST', body: formData });
+                const json = await res.json();
+                if (json.success) {
+                    showToast('Cancellation request denied. Order reverted to Proof Pending.', 'success');
+                    loadOrders();
+                    updateDashboardData();
+                } else {
+                    showToast(json.message || 'Failed to deny cancellation', 'danger');
                 }
             } catch (e) { showToast('Network error', 'danger'); }
         }
@@ -2538,6 +2660,8 @@
                 'Shipping': '#2dce89',
                 'Delivered': '#2dce89',
                 'Reprint': '#f5365c',
+                'Revision Requested': '#ffc107',
+                'Cancellation Requested': '#ffc107',
                 'Cancelled': '#6c757d',
                 'Rejected': '#c82333'
             }[status] || '#8898aa';
@@ -2709,27 +2833,6 @@
             }
         }
 
-        // ══════════════════════════════════════════════════════
-        //  DEBUG FUNCTIONS FOR TESTING CANCELLED ORDERS
-        // ══════════════════════════════════════════════════════
-        function debugOrderStatuses() {
-            console.log('📊 Current order statuses breakdown:');
-            const statusCounts = {};
-            state.orders.forEach(o => {
-                statusCounts[o.status] = (statusCounts[o.status] || 0) + 1;
-            });
-            console.table(statusCounts);
-
-            const cancelledOrders = state.orders.filter(o => o.status === 'Cancelled');
-            console.log(`🚫 Found ${cancelledOrders.length} cancelled orders:`, cancelledOrders);
-
-            if (cancelledOrders.length === 0) {
-                showToast('No cancelled orders found. Use the reject button (🚫) on any order to create a cancelled order for testing.', 'info');
-            }
-        }
-
-        // Add debug button to console (for testing)
-        console.log('🔧 Debug function available: debugOrderStatuses() - Run this to see order status breakdown');
 
     </script>
 </body>

@@ -11,7 +11,7 @@ if (!isset($_SESSION['user_id'])) {
 // Clients hitting this page → bounce to client dashboard
 $_role = strtolower($_SESSION['role'] ?? '');
 if ($_role === 'client') {
-    header('Location: ../client/');
+    header('Location: ../client_dashboard.html');
     exit;
 }
 

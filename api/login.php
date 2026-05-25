@@ -81,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $role = strtolower($user['role']);
         if ($role === 'admin' || $role === 'super_admin' || $role === 'manager' || $role === 'operator') {
-            $redirect = 'admin/';
+            $redirect = 'admin_dashboard.html';
             $portal = 'admin';
         } else {
             $redirect = 'client_dashboard.html';

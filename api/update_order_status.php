@@ -25,6 +25,9 @@ if (!$order_id || !$status) {
 }
 
 try {
+    // Ensure status column accepts any string value (convert ENUM → VARCHAR)
+    $pdo->exec("ALTER TABLE orders MODIFY COLUMN status VARCHAR(50) NOT NULL DEFAULT 'Proof Pending'");
+
     // ── REJECTED LOCK: fetch current status before any mutation ──
     $chk = $pdo->prepare("SELECT status FROM orders WHERE id = ?");
     $chk->execute([$order_id]);
@@ -35,16 +38,22 @@ try {
         exit;
     }
 
-    if ($current['status'] === 'Rejected') {
+    if ($current['status'] === 'Rejected' || $current['status'] === 'Cancelled') {
+        $label = $current['status'] === 'Rejected' ? 'rejected' : 'cancelled';
         echo json_encode([
             'success' => false,
-            'message' => 'This order can no longer be modified because it has been rejected.'
+            'message' => "This order can no longer be modified because it has been {$label}."
         ]);
         exit;
     }
     // ────────────────────────────────────────────────────────────
 
-    $stmt = $pdo->prepare("UPDATE orders SET status = ?, updated_at = NOW() WHERE id = ?");
+    $clearReason = intval($_POST['clear_reason'] ?? 0);
+    if ($clearReason) {
+        $stmt = $pdo->prepare("UPDATE orders SET status = ?, rejection_reason = NULL, updated_at = NOW() WHERE id = ?");
+    } else {
+        $stmt = $pdo->prepare("UPDATE orders SET status = ?, updated_at = NOW() WHERE id = ?");
+    }
     $stmt->execute([$status, $order_id]);
 
     echo json_encode(['success' => true]);
