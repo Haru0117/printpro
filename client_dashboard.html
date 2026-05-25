@@ -1256,6 +1256,79 @@
             color: var(--accent2);
         }
 
+        .btn-outline {
+            width: 100%;
+            margin-top: 14px;
+            padding: 10px;
+            background: transparent;
+            color: var(--accent);
+            border: 1.5px solid var(--accent);
+            border-radius: 9px;
+            font-weight: 700;
+            font-size: .88rem;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            transition: background .2s, color .2s;
+        }
+        .btn-outline:hover {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .cart-item-box {
+            background: rgba(255,255,255,.04);
+            border: 1px solid rgba(255,255,255,.06);
+            border-radius: 8px;
+            padding: 8px 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .cart-item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .cart-item-name {
+            font-size: .8rem;
+            font-weight: 700;
+        }
+        .cart-item-meta {
+            font-size: .7rem;
+            color: rgba(255,255,255,.45);
+        }
+        .cart-item-price {
+            font-size: .78rem;
+            font-weight: 600;
+            color: #2dce89;
+        }
+        .cart-item-actions {
+            display: flex;
+            gap: 2px;
+            align-items: center;
+        }
+        .cart-item-remove,
+        .cart-item-edit {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            line-height: 1;
+            padding: 0 4px;
+            opacity: .7;
+            transition: opacity .15s;
+        }
+        .cart-item-remove {
+            color: #f5365c;
+        }
+        .cart-item-edit {
+            color: #3b82f6;
+        }
+        .cart-item-remove:hover,
+        .cart-item-edit:hover {
+            opacity: 1;
+        }
+
         .btn-continue {
             width: 100%;
             margin-top: 14px;
@@ -3983,6 +4056,74 @@
         html[data-theme="dark"] .cancel-client-btn:hover {
             background: rgba(245,54,92,0.25) !important;
         }
+
+        /* Cart section — dark mode */
+        html[data-theme="dark"] #cartSection {
+            border-top-color: rgba(255, 255, 255, 0.08);
+        }
+        html[data-theme="dark"] .cart-item-box {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+        html[data-theme="dark"] .cart-item-name {
+            color: #e0e6ed;
+        }
+        html[data-theme="dark"] .cart-item-meta {
+            color: #8a96b0;
+        }
+        html[data-theme="dark"] .cart-item-remove {
+            color: #f87171;
+        }
+        html[data-theme="dark"] .cart-item-edit {
+            color: #60a5fa;
+        }
+        html[data-theme="dark"] .btn-outline {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        html[data-theme="dark"] .btn-outline:hover {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        /* Order confirmation modal — dark mode */
+        html[data-theme="dark"] #orderConfirmContent {
+            background: #111e40 !important;
+        }
+        html[data-theme="dark"] #orderConfirmContent h4 {
+            color: #e0e6ed !important;
+        }
+        html[data-theme="dark"] #orderConfirmContent p {
+            color: #8a96b0 !important;
+        }
+        html[data-theme="dark"] #orderConfirmIcon {
+            background: #0a1628 !important;
+            border-color: rgba(255,255,255,0.15) !important;
+        }
+        html[data-theme="dark"] #orderConfirmContent div[style*="background:#f8f9ff"],
+        html[data-theme="dark"] #orderConfirmContent div[style*="background: #f8f9ff"] {
+            background: #0a1628 !important;
+        }
+        html[data-theme="dark"] #orderConfirmContent span[style*="color:#8898aa"] {
+            color: #8a96b0 !important;
+        }
+        html[data-theme="dark"] #orderConfirmContent span[style*="color:#0d1b3e"]:not(#confirmTotal) {
+            color: #e0e6ed !important;
+        }
+        html[data-theme="dark"] #orderConfirmContent div[style*="border-top"] {
+            border-top-color: rgba(255,255,255,0.08) !important;
+        }
+        html[data-theme="dark"] #orderConfirmContent button[onclick="closeOrderConfirmModal()"] {
+            background: transparent !important;
+            border-color: rgba(255,255,255,0.2) !important;
+            color: #e0e6ed !important;
+        }
+        html[data-theme="dark"] #orderConfirmContent button[onclick="closeOrderConfirmModal()"]:hover {
+            background: rgba(255,255,255,0.05) !important;
+        }
+        html[data-theme="dark"] #confirmTotal {
+            color: #60a5fa !important;
+        }
     </style>
     <script src="assets/js/printpro.js"></script>
 </head>
@@ -4642,14 +4783,34 @@
                                         <i class="bi bi-exclamation-triangle-fill"></i> Insufficient credits
                                     </div>
 
-                                    <button class="btn-continue" id="placeOrderBtn" onclick="placeOrder()"
+                                    <button class="btn-outline" id="addToCartBtn" onclick="cartAddItem()"
                                         style="margin-top:14px;">
+                                        + Add to Cart
+                                    </button>
+                                    <button class="btn-continue" id="placeOrderBtn" onclick="placeOrder()"
+                                        style="margin-top:6px;">
                                         Place Order →
                                     </button>
                                     <div
                                         style="text-align:center; margin-top:8px; font-size:.7rem; color:rgba(255,255,255,.3);">
                                         Credits will be deducted on confirmation
                                     </div>
+                                </div>
+
+                                <!-- Cart Section -->
+                                <div id="cartSection"
+                                    style="display:none; margin-top:20px; border-top:1px solid rgba(255,255,255,.08); padding-top:14px;">
+                                    <div
+                                        style="font-size:.72rem; font-weight:700; color:rgba(255,255,255,.45); letter-spacing:.5px; text-transform:uppercase; margin-bottom:10px;">
+                                        Cart (<span id="cartCount">0</span>)
+                                    </div>
+                                    <div id="cartItems"
+                                        style="display:flex; flex-direction:column; gap:6px; max-height:280px; overflow-y:auto;">
+                                    </div>
+                                    <button class="btn-continue" id="cartPlaceBtn" onclick="cartPlaceAll()"
+                                        style="display:none; margin-top:6px;">
+                                        Place All Orders →
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -5442,9 +5603,9 @@
     <div id="orderConfirmModal"
         style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(10,18,42,0.85); backdrop-filter:blur(8px); z-index:10002; justify-content:center; align-items:center; opacity:0; transition:opacity 0.2s;">
         <div id="orderConfirmContent"
-            style="background:#fff !important; color:#0d1b3e !important; border-radius:18px; width:95%; max-width:480px; padding:32px; box-shadow:0 20px 60px rgba(0,0,0,0.35); transform:scale(0.93); transition:transform 0.2s;">
+            style="background:#fff; color:#0d1b3e; border-radius:18px; width:95%; max-width:480px; padding:32px; box-shadow:0 20px 60px rgba(0,0,0,0.35); transform:scale(0.93); transition:transform 0.2s;">
             <div style="text-align:center; margin-bottom:24px;">
-                <div
+                <div id="orderConfirmIcon"
                     style="width:64px; height:64px; background:#fff; border:2px solid #e8ecf4; border-radius:50%; display:grid; place-items:center; margin:0 auto 14px; box-shadow:0 4px 12px rgba(0,0,0,.08);">
                     <img src="favicon.png" alt="PrintPro" style="width:38px; height:38px; object-fit:contain;">
                 </div>
@@ -5916,6 +6077,7 @@
         // Load wallet on initial page render (in case billing is default page)
         document.addEventListener('DOMContentLoaded', () => {
             if (typeof walletLoad === 'function') walletLoad();
+            cartLoad();
         });
 
 
@@ -8308,6 +8470,12 @@
         }
 
         async function executePlaceOrder() {
+            // Cart batch mode — redirect to cart execution
+            if (window._cartPlacing) {
+                window._cartPlacing = false;
+                executeCartPlaceAll();
+                return;
+            }
             const btn = document.getElementById('confirmPlaceBtn');
             btn.disabled = true; btn.textContent = 'Placing Order…';
 
@@ -8386,6 +8554,277 @@
                 btn.disabled = false;
                 btn.textContent = '✓ Confirm & Place Order';
             }
+        }
+
+        // ══════════════════════════════════════════════════════
+        //  CART — Multi-Product Ordering
+        // ══════════════════════════════════════════════════════
+        const cartItems = [];
+
+        function cartRender() {
+            const section = document.getElementById('cartSection');
+            const container = document.getElementById('cartItems');
+            const count = document.getElementById('cartCount');
+            const placeBtn = document.getElementById('cartPlaceBtn');
+
+            cartSave();
+
+            if (!cartItems.length) {
+                section.style.display = 'none';
+                placeBtn.style.display = 'none';
+                return;
+            }
+            section.style.display = 'block';
+            count.textContent = cartItems.length;
+            container.innerHTML = cartItems.map((item, i) => {
+                const meta = `${item.quantity} units | ${item.sizeWidth}"×${item.sizeHeight}"${item.fileName ? ' | ' + item.fileName : ''}`;
+                return `<div class="cart-item-box">
+                    <div class="cart-item-row">
+                        <span class="cart-item-name">${item.productType}</span>
+                        <span class="cart-item-actions">
+                            <button class="cart-item-edit" onclick="cartEdit(${i})" title="Edit">✎</button>
+                            <button class="cart-item-remove" onclick="cartRemove(${i})" title="Remove">×</button>
+                        </span>
+                    </div>
+                    <div class="cart-item-row">
+                        <span class="cart-item-meta">${meta}</span>
+                    </div>
+                </div>`;
+            }).join('');
+            placeBtn.style.display = 'block';
+            placeBtn.textContent = `Place All ${cartItems.length} Orders →`;
+        }
+
+        async function cartAddItem() {
+            if (!currentPricingData) {
+                showToast('Please complete the specifications first.', 'warning');
+                return;
+            }
+            if ((!uploadedFiles || uploadedFiles.length === 0) && !window.selectedSavedFileId) {
+                goToStep(4);
+                showToast('Please attach artwork before adding to cart.', 'warning');
+                return;
+            }
+
+            const totalCost = currentPricingData.grand_total ?? currentPricingData.breakdown?.grand_total ?? 0;
+            if (!totalCost || totalCost <= 0) {
+                showToast('Price calculation error. Please recalculate.', 'warning');
+                return;
+            }
+
+            const activeProductBtn = document.querySelector('.product-types .pt-btn.active');
+            const productType = activeProductBtn ? activeProductBtn.textContent.trim() : 'Flyers';
+            const sizeWidth = parseFloat(document.getElementById('customWidth').value) || 4.0;
+            const sizeHeight = parseFloat(document.getElementById('customHeight').value) || 6.0;
+            const paperSel = document.getElementById('paperSelect');
+            const paperWeight = paperSel.options[paperSel.selectedIndex]?.text || '';
+            const finishSel = document.getElementById('finishSelect');
+            const finish = finishSel.options[finishSel.selectedIndex]?.text || 'None';
+            const bleedSel = document.getElementById('bleedSelect');
+            const bleed = bleedSel.options[bleedSel.selectedIndex]?.text || 'With Bleed';
+            const turnaround = document.getElementById('turnaroundSelect').value || 'standard';
+            const shipping = document.getElementById('shippingSelect').value || 'free';
+            const notes = document.getElementById('orderNotes')?.value || '';
+            const _qtyInput = document.getElementById('qtyVal');
+            const quantity = Math.max(50, Math.min(10000, parseInt(_qtyInput?.value || document.getElementById('qtySlider').value) || 50));
+
+            const item = { productType, sizeWidth, sizeHeight, paperWeight, finish, bleed, quantity, turnaround, shipping, notes, lineTotal: totalCost };
+
+            if (uploadedFiles && uploadedFiles.length > 0) {
+                item.fileObject = uploadedFiles[0];
+                item.fileName = uploadedFiles[0].name;
+            } else if (window.selectedSavedFileId) {
+                item.savedFileId = window.selectedSavedFileId;
+                const nameEl = document.querySelector('#wizard-account-files .selected-saved-file .file-name');
+                item.fileName = nameEl ? nameEl.textContent : 'Saved file';
+            }
+
+            cartItems.push(item);
+            cartSave();
+            cartRender();
+            document.getElementById('addToCartBtn').textContent = '+ Add to Cart';
+            showToast(item.productType + ' × ' + quantity + ' added to cart!', 'success');
+
+            // Reset order form to step 1 for next item
+            resetOrderForm();
+        }
+
+        function cartSave() {
+            try { sessionStorage.setItem('pp_client_cart', JSON.stringify(cartItems.map(it => {
+                const o = { productType: it.productType, sizeWidth: it.sizeWidth, sizeHeight: it.sizeHeight, paperWeight: it.paperWeight, finish: it.finish, bleed: it.bleed, quantity: it.quantity, turnaround: it.turnaround, shipping: it.shipping, notes: it.notes, lineTotal: it.lineTotal, fileName: it.fileName, savedFileId: it.savedFileId };
+                if (it.savedFileId) o.savedFileId = it.savedFileId;
+                return o;
+            }))); } catch (e) {}
+        }
+
+        function cartLoad() {
+            try {
+                const raw = sessionStorage.getItem('pp_client_cart');
+                if (raw) { const arr = JSON.parse(raw); if (Array.isArray(arr) && arr.length) { cartItems.push(...arr); cartRender(); } }
+            } catch (e) {}
+        }
+
+        function resetOrderForm() {
+            // Reset product type to Flyers (first button)
+            document.querySelectorAll('.product-types .pt-btn').forEach(b => b.classList.remove('active'));
+            const firstBtn = document.querySelector('.product-types .pt-btn');
+            if (firstBtn) { firstBtn.classList.add('active'); selectProductType(firstBtn); }
+            // Reset dimensions
+            document.getElementById('customWidth').value = 4;
+            document.getElementById('customHeight').value = 6;
+            // Reset selects to defaults (will be handled by selectProductType)
+            // Reset qty
+            document.getElementById('qtySlider').value = 500;
+            document.getElementById('qtyVal').value = 500;
+            // Reset turnaround/shipping
+            document.getElementById('turnaroundSelect').selectedIndex = 0;
+            document.getElementById('shippingSelect').selectedIndex = 0;
+            // Clear notes
+            document.getElementById('orderNotes').value = '';
+            // Clear uploaded files
+            uploadedFiles = [];
+            window.selectedSavedFileId = null;
+            const fp = document.getElementById('filePreviews');
+            if (fp) fp.innerHTML = '';
+            artworkRemoved();
+            // Reset summary
+            document.getElementById('sumQty').textContent = '500';
+            document.getElementById('sumArtwork').textContent = 'Not attached';
+            document.getElementById('sumArtwork').style.color = 'rgba(245,54,92,.8)';
+            // Go to step 1
+            goToStep(1);
+            updatePricing();
+        }
+
+        function cartRemove(index) {
+            cartItems.splice(index, 1);
+            cartSave();
+            cartRender();
+            if (!cartItems.length) {
+                showToast('Cart is now empty.', 'info');
+            }
+        }
+
+        function cartEdit(index) {
+            const item = cartItems[index];
+            cartItems.splice(index, 1);
+            cartSave();
+            cartRender();
+
+            // Select product type button
+            const btns = document.querySelectorAll('.product-types .pt-btn');
+            btns.forEach(b => {
+                if (b.textContent.trim() === item.productType) {
+                    b.classList.add('active');
+                    selectProductType(b);
+                } else {
+                    b.classList.remove('active');
+                }
+            });
+
+            // Set size
+            const sizeStr = item.sizeWidth + '" × ' + item.sizeHeight + '"';
+            setSelectByText('sizeSelect', sizeStr);
+            handleSizeChange(document.getElementById('sizeSelect'));
+
+            // Set paper, finish, bleed by text match
+            setSelectByText('paperSelect', item.paperWeight);
+            setSelectByText('finishSelect', item.finish);
+            if (item.bleed) setSelectByText('bleedSelect', item.bleed);
+
+            // Set quantity
+            document.getElementById('qtySlider').value = item.quantity;
+            document.getElementById('qtyVal').value = item.quantity;
+
+            // Set turnaround and shipping
+            document.getElementById('turnaroundSelect').value = item.turnaround;
+            document.getElementById('shippingSelect').value = item.shipping;
+
+            // Set notes
+            if (item.notes) document.getElementById('orderNotes').value = item.notes;
+
+            // Restore saved file reference
+            if (item.savedFileId) {
+                window.selectedSavedFileId = item.savedFileId;
+            }
+
+            // Go to step 3 (specs)
+            goToStep(3);
+            updatePricing();
+
+            document.getElementById('addToCartBtn').textContent = '✓ Save Changes';
+            showToast('Editing ' + item.productType + ' — save your changes when done.', 'info');
+        }
+
+        function openCartConfirmModal() {
+            const totalQty = cartItems.reduce((s, it) => s + it.quantity, 0);
+            const totalCost = cartItems.reduce((s, it) => s + it.lineTotal, 0);
+            const labels = { confirmProduct: cartItems.length + ' items', confirmQty: totalQty.toLocaleString() + ' units total', confirmSize: '—', confirmPaper: '—', confirmFinish: '—', confirmTurnaround: '—', confirmArtwork: cartItems.length + ' file(s)', confirmTotal: '₱' + totalCost.toLocaleString('en-PH', { minimumFractionDigits: 2 }) };
+            Object.keys(labels).forEach(id => { const el = document.getElementById(id); if (el) el.textContent = labels[id]; });
+            const totalEl = document.getElementById('confirmTotal');
+            if (totalEl) totalEl.style.color = '#1d8cf8';
+            window._cartPlacing = true;
+            const modal = document.getElementById('orderConfirmModal');
+            modal.style.display = 'flex';
+            setTimeout(() => { modal.style.opacity = '1'; document.getElementById('orderConfirmContent').style.transform = 'scale(1)'; }, 10);
+        }
+
+        async function cartPlaceAll() {
+            if (!cartItems.length) return;
+            openCartConfirmModal();
+        }
+
+        async function executeCartPlaceAll() {
+            const btn = document.getElementById('confirmPlaceBtn');
+            btn.disabled = true; btn.textContent = 'Placing orders…';
+
+            let successCount = 0, failCount = 0, orderNumbers = [];
+
+            for (let i = 0; i < cartItems.length; i++) {
+                const item = cartItems[i];
+                btn.textContent = `Placing order ${i + 1} of ${cartItems.length}…`;
+
+                const formData = new FormData();
+                formData.append('product_type', item.productType);
+                formData.append('job_name', item.productType + ' Project');
+                formData.append('paper_weight', item.paperWeight);
+                formData.append('finish', item.finish);
+                formData.append('bleed', item.bleed);
+                formData.append('size_width', item.sizeWidth);
+                formData.append('size_height', item.sizeHeight);
+                formData.append('quantity', item.quantity);
+                formData.append('turnaround', item.turnaround);
+                formData.append('shipping', item.shipping);
+                formData.append('total_price', item.lineTotal);
+                formData.append('notes', item.notes);
+
+                if (item.fileObject) formData.append('artwork_file', item.fileObject);
+                else if (item.savedFileId) formData.append('saved_file_id', item.savedFileId);
+
+                try {
+                    const res = await fetch('api/place_order.php', { method: 'POST', body: formData });
+                    const data = await res.json();
+                    if (data.success) { successCount++; orderNumbers.push(data.order_number); }
+                    else { failCount++; console.error('Order ' + (i + 1) + ' failed:', data.message); }
+                } catch (e) { failCount++; console.error('Order ' + (i + 1) + ' network error:', e); }
+            }
+
+            btn.disabled = false;
+            btn.textContent = '✓ Confirm & Place Order';
+            closeOrderConfirmModal();
+
+            cartItems.length = 0;
+            cartSave();
+            cartRender();
+
+            if (successCount > 0) {
+                showToast(successCount + ' order' + (successCount > 1 ? 's' : '') + ' placed: ' + orderNumbers.join(', '), 'success');
+                if (typeof walletLoad === 'function') walletLoad();
+                if (typeof orderWalletCheck === 'function') orderWalletCheck();
+                if (typeof loadOrders === 'function') loadOrders();
+                showClientPage('orders', null);
+            }
+            if (failCount > 0) alert(failCount + ' order' + (failCount > 1 ? 's' : '') + ' failed to place. Check console for details.');
         }
 
         // Run when localstorage changes

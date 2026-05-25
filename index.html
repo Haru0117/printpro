@@ -1234,6 +1234,30 @@
             border-radius: 10px;
         }
 
+        .qw-qty-input {
+            font-family: 'Sora', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--navy);
+            width: 90px;
+            background: #fff;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            padding: 6px 10px;
+            text-align: center;
+        }
+        .qw-qty-input:focus {
+            outline: none;
+            border-color: #f97316;
+            box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
+        }
+        .qw-qty-input::-webkit-outer-spin-button,
+        .qw-qty-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .qw-qty-input { -moz-appearance: textfield; }
+
         input[type=range].qw-range {
             -webkit-appearance: none;
             width: 100%;
@@ -1305,6 +1329,79 @@
 
         .qw-btn-prev:hover {
             background: rgba(59, 130, 246, 0.08);
+        }
+
+        .qw-btn-addcart {
+            background: transparent;
+            color: #3b82f6;
+            border: 1.5px solid #3b82f6;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .qw-btn-addcart:hover {
+            background: rgba(59,130,246,.08);
+        }
+
+        .qw-cart-item-box {
+            background: #fff;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .qw-cart-item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .qw-cart-item-name {
+            font-size: .9rem;
+            font-weight: 700;
+            color: var(--navy);
+        }
+        .qw-cart-item-meta {
+            font-size: .8rem;
+            color: var(--muted);
+        }
+        .qw-cart-item-price {
+            font-size: .85rem;
+            font-weight: 700;
+            color: #f97316;
+        }
+        .qw-cart-item-actions {
+            display: flex;
+            gap: 2px;
+            align-items: center;
+        }
+        .qw-cart-item-remove,
+        .qw-cart-item-edit {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            line-height: 1;
+            padding: 0 4px;
+            opacity: .6;
+            transition: opacity .15s;
+        }
+        .qw-cart-item-remove {
+            color: #ef4444;
+        }
+        .qw-cart-item-edit {
+            color: #3b82f6;
+        }
+        .qw-cart-item-remove:hover,
+        .qw-cart-item-edit:hover {
+            opacity: 1;
         }
 
         .qw-btn-next,
@@ -1820,6 +1917,73 @@
         html[data-theme="dark"] .qw-act-btn.blue:hover {
             background: #2563eb;
         }
+
+        /* Cart section — dark mode */
+        html[data-theme="dark"] #qwCartSection {
+            background: #111e40 !important;
+            border-color: rgba(255, 255, 255, 0.08) !important;
+        }
+        html[data-theme="dark"] #qwCartSection .qw-cart-item-box {
+            background: #0a1628;
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        html[data-theme="dark"] #qwCartSection .qw-cart-item-name {
+            color: #e0e6ed;
+        }
+        html[data-theme="dark"] #qwCartSection .qw-cart-item-meta {
+            color: #8a96b0;
+        }
+        html[data-theme="dark"] #qwCartSection .qw-cart-item-remove {
+            color: #f87171;
+        }
+        html[data-theme="dark"] #qwCartSection .qw-cart-item-edit {
+            color: #60a5fa;
+        }
+        html[data-theme="dark"] #qwCartSection .qw-btn-submit {
+            background: linear-gradient(90deg, #f97316, #fbbf24);
+        }
+        html[data-theme="dark"] .qw-btn-addcart {
+            color: #60a5fa;
+            border-color: #60a5fa;
+        }
+        html[data-theme="dark"] .qw-btn-addcart:hover {
+            background: rgba(96, 165, 250, 0.12);
+        }
+        html[data-theme="dark"] .qw-qty-input {
+            background: #0a1628;
+            border-color: rgba(255, 255, 255, 0.1);
+            color: #e0e6ed;
+        }
+        html[data-theme="dark"] .qw-qty-input:focus {
+            border-color: #f97316;
+            box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.2);
+        }
+
+        /* Quote confirmation modal — dark mode */
+        html[data-theme="dark"] #qwConfirmModal > div {
+            background: #111e40 !important;
+        }
+        html[data-theme="dark"] #qwConfirmModal h4 {
+            color: #e0e6ed !important;
+        }
+        html[data-theme="dark"] #qwConfirmModal #qwConfirmBody {
+            background: #0a1628 !important;
+            color: #e0e6ed !important;
+        }
+        html[data-theme="dark"] #qwConfirmModal #qwConfirmBody div[style*="border-bottom"] {
+            border-bottom-color: rgba(255,255,255,0.08) !important;
+        }
+        html[data-theme="dark"] #qwConfirmModal #qwConfirmBody td {
+            color: #e0e6ed !important;
+        }
+        html[data-theme="dark"] #qwConfirmModal #qwConfirmBody td[style*="color:#8898aa"] {
+            color: #8a96b0 !important;
+        }
+        html[data-theme="dark"] #qwConfirmModal button[onclick="qwCloseConfirmModal()"] {
+            background: transparent !important;
+            border-color: rgba(255,255,255,0.2) !important;
+            color: #e0e6ed !important;
+        }
     </style>
 </head>
 
@@ -2287,10 +2451,13 @@
                                 <label class="qw-label" style="font-size:15px;">Print Quantity</label>
                                 <div class="qw-qty-badge"><span id="qwQtyDisplay">2,500</span> units</div>
                             </div>
-                            <input type="range" id="qwQty" class="qw-range" min="250" max="10000" step="250"
-                                value="2500" oninput="qwQtyUpdate()">
+                            <div style="display:flex;align-items:center;gap:12px;">
+                                <input type="range" id="qwQty" class="qw-range" min="50" max="10000" step="1"
+                                    value="2500" style="flex:1;">
+                                <input type="number" id="qwQtyInput" class="qw-qty-input" min="50" max="10000" step="1" value="2500">
+                            </div>
                             <div class="qw-ticks">
-                                <span>250</span><span>2,500</span><span>5,000</span><span>7,500</span><span>10,000</span>
+                                <span>50</span><span>2,500</span><span>5,000</span><span>7,500</span><span>10,000</span>
                             </div>
                         </div>
                         <div class="qw-grid">
@@ -2314,11 +2481,24 @@
                                     placeholder="Special instructions, packaging, delivery notes..."></textarea>
                             </div>
                         </div>
-                        <div class="qw-actions"><button class="qw-btn-prev" onclick="qwPrev(3)">← Back</button><button
-                                class="qw-btn-submit" onclick="qwSubmit()">Generate Quotation →</button></div>
+                        <div class="qw-actions" style="flex-wrap:wrap;gap:10px;"><button class="qw-btn-prev" onclick="qwPrev(3)">← Back</button>
+                            <button class="qw-btn-addcart" id="qwCartAddBtn" onclick="qwCartAdd()">+ Add to Cart</button>
+                            <button class="qw-btn-submit" onclick="qwSubmit()">Get Quote →</button></div>
                     </div>
                 </div>
             </div>
+            <!-- Cart Section -->
+            <div id="qwCartSection" style="display:none; max-width:960px; margin:24px auto 0; padding:20px; background:var(--off-white); border:1.5px solid var(--border); border-radius:14px;">
+                <div style="font-weight:700; font-size:.95rem; margin-bottom:10px; display:flex; align-items:center; gap:8px;">
+                    <span>📋 Quotation Cart</span>
+                    <span id="qwCartCount" style="background:#f97316; color:#fff; font-size:.75rem; padding:2px 10px; border-radius:20px;">0</span>
+                </div>
+                <div id="qwCartItems" style="display:flex; flex-direction:column; gap:8px;"></div>
+                <button class="qw-btn-submit" onclick="qwSubmit()" style="margin-top:12px;font-size:14px;padding:10px 20px;">
+                    Get Quote for All Items →
+                </button>
+            </div>
+
             <!-- Summary View -->
             <div id="qwSummarySection" style="display:none;">
                 <div class="qw-summary-card" id="qwPrintArea">
@@ -2345,42 +2525,69 @@
                             </tr>
                         </table>
                     </div>
-                    <div class="qw-sum-section">
-                        <div class="qw-sum-label">Project Specifications</div>
-                        <table class="qw-sum-table">
-                            <tr>
-                                <td class="lbl">Product</td>
-                                <td class="val" id="qwSumProduct"></td>
-                            </tr>
-                            <tr>
-                                <td class="lbl">Dimensions</td>
-                                <td class="val" id="qwSumSize"></td>
-                            </tr>
-                            <tr>
-                                <td class="lbl">Paper Weight</td>
-                                <td class="val" id="qwSumPaper"></td>
-                            </tr>
-                            <tr>
-                                <td class="lbl">Finishing</td>
-                                <td class="val" id="qwSumFinish"></td>
-                            </tr>
-                            <tr>
-                                <td class="lbl">Bleed</td>
-                                <td class="val" id="qwSumBleed"></td>
-                            </tr>
-                            <tr>
-                                <td class="lbl">Quantity</td>
-                                <td class="val" id="qwSumQty"></td>
-                            </tr>
-                            <tr>
-                                <td class="lbl">Turnaround</td>
-                                <td class="val" id="qwSumTA"></td>
-                            </tr>
-                            <tr>
-                                <td class="lbl">Shipping</td>
-                                <td class="val" id="qwSumShip"></td>
-                            </tr>
-                        </table>
+                    <div id="qwSumSpecsSection">
+                        <div class="qw-sum-section">
+                            <div class="qw-sum-label">Project Specifications</div>
+                            <table class="qw-sum-table" id="qwSumSpecsTable">
+                                <tr>
+                                    <td class="lbl">Product</td>
+                                    <td class="val" id="qwSumProduct"></td>
+                                </tr>
+                                <tr>
+                                    <td class="lbl">Dimensions</td>
+                                    <td class="val" id="qwSumSize"></td>
+                                </tr>
+                                <tr>
+                                    <td class="lbl">Paper Weight</td>
+                                    <td class="val" id="qwSumPaper"></td>
+                                </tr>
+                                <tr>
+                                    <td class="lbl">Finishing</td>
+                                    <td class="val" id="qwSumFinish"></td>
+                                </tr>
+                                <tr>
+                                    <td class="lbl">Bleed</td>
+                                    <td class="val" id="qwSumBleed"></td>
+                                </tr>
+                                <tr>
+                                    <td class="lbl">Quantity</td>
+                                    <td class="val" id="qwSumQty"></td>
+                                </tr>
+                                <tr>
+                                    <td class="lbl">Turnaround</td>
+                                    <td class="val" id="qwSumTA"></td>
+                                </tr>
+                                <tr>
+                                    <td class="lbl">Shipping</td>
+                                    <td class="val" id="qwSumShip"></td>
+                                </tr>
+                                <tr id="qwSumNotesRow" style="display:none;">
+                                    <td class="lbl">Additional Notes</td>
+                                    <td class="val" id="qwSumNotes"></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="qwSumMultiSection" style="display:none;">
+                        <div class="qw-sum-section">
+                            <div class="qw-sum-label">Items <span id="qwSumMultiCount"></span></div>
+                            <table class="qw-sum-table" id="qwSumMultiTable">
+                                <thead>
+                                    <tr style="font-size:.78rem; color:var(--muted);">
+                                        <th style="text-align:left;padding:6px 0;">Product</th>
+                                        <th style="text-align:left;padding:6px 0;">Size</th>
+                                        <th style="text-align:left;padding:6px 0;">Paper</th>
+                                        <th style="text-align:left;padding:6px 0;">Finish</th>
+                                        <th style="text-align:left;padding:6px 0;">Bleed</th>
+                                        <th style="text-align:right;padding:6px 0;">Qty</th>
+                                        <th style="text-align:left;padding:6px 0;">Turnaround</th>
+                                        <th style="text-align:left;padding:6px 0;">Shipping</th>
+                                        <th style="text-align:right;padding:6px 0;">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="qwSumMultiBody"></tbody>
+                            </table>
+                        </div>
                     </div>
                     <div class="qw-price-block">
                         <div class="qw-price-title">🏷️ Price Estimate Breakdown</div>
@@ -2781,10 +2988,31 @@
                     <div style="margin-bottom:16px;">
                         <label
                             style="display:block;font-size:.78rem;font-weight:600;color:#1a2340;margin-bottom:6px;">Password</label>
-                        <input type="password" id="rPass" required placeholder="Create a strong password"
-                            style="width:100%;padding:11px 14px;border:1.5px solid #dde3f0;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.88rem;color:#1a2340;outline:none;transition:border-color .2s,box-shadow .2s;"
-                            onfocus="this.style.borderColor='#1d8cf8';this.style.boxShadow='0 0 0 3px rgba(29,140,248,.12)'"
-                            onblur="this.style.borderColor='#dde3f0';this.style.boxShadow='none'">
+                        <div class="pass-wrap">
+                            <input type="password" id="rPass" required placeholder="Create a strong password"
+                                style="width:100%;padding:11px 14px;padding-right:44px;border:1.5px solid #dde3f0;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.88rem;color:#1a2340;outline:none;transition:border-color .2s,box-shadow .2s;"
+                                onfocus="this.style.borderColor='#1d8cf8';this.style.boxShadow='0 0 0 3px rgba(29,140,248,.12)'"
+                                onblur="this.style.borderColor='#dde3f0';this.style.boxShadow='none'">
+                            <button type="button" class="pass-toggle" onclick="rTogglePass('rPass','rEye1')" tabindex="-1">
+                                <i class="bi bi-eye" id="rEye1"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div style="margin-bottom:16px;">
+                        <label
+                            style="display:block;font-size:.78rem;font-weight:600;color:#1a2340;margin-bottom:6px;">Confirm
+                            Password</label>
+                        <div class="pass-wrap">
+                            <input type="password" id="rPassConfirm" required placeholder="Re‑enter your password"
+                                style="width:100%;padding:11px 14px;padding-right:44px;border:1.5px solid #dde3f0;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.88rem;color:#1a2340;outline:none;transition:border-color .2s,box-shadow .2s;"
+                                onfocus="this.style.borderColor='#1d8cf8';this.style.boxShadow='0 0 0 3px rgba(29,140,248,.12)'"
+                                onblur="this.style.borderColor='#dde3f0';this.style.boxShadow='none'">
+                            <button type="button" class="pass-toggle" onclick="rTogglePass('rPassConfirm','rEye2')" tabindex="-1">
+                                <i class="bi bi-eye" id="rEye2"></i>
+                            </button>
+                        </div>
                     </div>
 
                     <!-- Plan -->
@@ -2926,6 +3154,107 @@
                 padding-bottom: 9px !important;
                 font-size: .85rem !important;
             }
+        }
+        .pass-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .pass-wrap input {
+            flex: 1;
+            box-sizing: border-box;
+        }
+        .pass-toggle {
+            position: absolute;
+            right: 4px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            padding: 8px;
+            cursor: pointer;
+            color: #8898aa;
+            font-size: 1.15rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            transition: color .15s;
+        }
+        .pass-toggle:hover {
+            color: #1d8cf8;
+        }
+        html[data-theme="dark"] .pass-wrap input {
+            background: #0a1628;
+            border-color: rgba(255,255,255,0.12);
+            color: #e0e6ed;
+        }
+        html[data-theme="dark"] .pass-wrap input:focus {
+            border-color: #1d8cf8 !important;
+        }
+        html[data-theme="dark"] .pass-toggle {
+            color: #6b7a99;
+        }
+        html[data-theme="dark"] .pass-toggle:hover {
+            color: #60a5fa;
+        }
+        /* Register modal — dark mode */
+        html[data-theme="dark"] #registerModal .login-card {
+            background: #111e40 !important;
+        }
+        html[data-theme="dark"] #registerModal label {
+            color: #c8d0dc !important;
+        }
+        html[data-theme="dark"] #registerModal input,
+        html[data-theme="dark"] #registerModal select {
+            background: #0a1628 !important;
+            border-color: rgba(255,255,255,0.12) !important;
+            color: #e0e6ed !important;
+        }
+        html[data-theme="dark"] #registerModal input:focus,
+        html[data-theme="dark"] #registerModal select:focus {
+            border-color: #1d8cf8 !important;
+        }
+        html[data-theme="dark"] #registerModal select option {
+            background: #0a1628;
+            color: #e0e6ed;
+        }
+        html[data-theme="dark"] #registerModal .login-body {
+            background: transparent !important;
+        }
+        html[data-theme="dark"] #registerModal .bi {
+            color: #6b7a99;
+        }
+        html[data-theme="dark"] #registerModal input::placeholder {
+            color: #5a6a85 !important;
+        }
+        html[data-theme="dark"] #registerModal .pp-checkbox {
+            accent-color: #60a5fa;
+        }
+        html[data-theme="dark"] #registerModal label[style*="color:#6b7a99"] {
+            color: #8a96b0 !important;
+        }
+        /* Login modal — dark mode */
+        html[data-theme="dark"] #loginModal .login-card {
+            background: #111e40 !important;
+        }
+        html[data-theme="dark"] #loginModal label {
+            color: #c8d0dc !important;
+        }
+        html[data-theme="dark"] #loginModal input,
+        html[data-theme="dark"] #loginModal select {
+            background: #0a1628 !important;
+            border-color: rgba(255,255,255,0.12) !important;
+            color: #e0e6ed !important;
+        }
+        html[data-theme="dark"] #loginModal input:focus {
+            border-color: #1d8cf8 !important;
+        }
+        html[data-theme="dark"] #loginModal input::placeholder {
+            color: #5a6a85 !important;
+        }
+        html[data-theme="dark"] #loginModal .login-body {
+            background: transparent !important;
         }
     </style>
 
@@ -3323,11 +3652,24 @@
         }
 
         /* ── REGISTER MODAL OPEN/CLOSE ── */
+        function rTogglePass(inputId, eyeId) {
+            const input = document.getElementById(inputId);
+            const eye = document.getElementById(eyeId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                eye.className = 'bi bi-eye-slash';
+            } else {
+                input.type = 'password';
+                eye.className = 'bi bi-eye';
+            }
+        }
+
         function openRegisterModal(plan = 'Pro') {
             document.getElementById('rName').value = '';
             document.getElementById('rBusiness').value = '';
             document.getElementById('rEmail').value = '';
             document.getElementById('rPass').value = '';
+            document.getElementById('rPassConfirm').value = '';
 
             // Remember checkbox state
             const termsChecked = sessionStorage.getItem('pp_terms_agreed') === 'true';
@@ -3476,6 +3818,13 @@
         /* ── REGISTER HANDLER ── */
         async function rHandleRegister(e) {
             e.preventDefault();
+
+            const pass = document.getElementById('rPass').value;
+            const passConfirm = document.getElementById('rPassConfirm').value;
+            if (pass !== passConfirm) {
+                alert('Passwords do not match. Please re-enter them.');
+                return;
+            }
 
             const form = document.getElementById('rRegisterForm');
             if (!form.checkValidity()) {
@@ -3808,9 +4157,36 @@
         }
 
         function qwQtyUpdate() {
-            const v = parseInt(document.getElementById('qwQty').value, 10);
+            const slider = document.getElementById('qwQty');
+            const input = document.getElementById('qwQtyInput');
+            const v = parseInt(slider.value, 10);
             document.getElementById('qwQtyDisplay').textContent = v.toLocaleString();
+            if (document.activeElement !== input) input.value = v;
         }
+
+        // Two-way sync for quantity slider ↔ text input
+        document.addEventListener('DOMContentLoaded', function () {
+            const slider = document.getElementById('qwQty');
+            const input = document.getElementById('qwQtyInput');
+
+            slider.addEventListener('input', function () { input.value = this.value; qwQtyUpdate(); });
+            input.addEventListener('input', function () {
+                let raw = parseInt(this.value) || 50;
+                raw = Math.max(50, Math.min(10000, raw));
+                slider.value = raw;
+                qwQtyUpdate();
+            });
+            input.addEventListener('change', function () {
+                let clamped = parseInt(this.value) || 50;
+                clamped = Math.max(50, Math.min(10000, clamped));
+                this.value = clamped;
+                slider.value = clamped;
+                qwQtyUpdate();
+            });
+
+            // Restore cart from sessionStorage
+            qwCartLoad();
+        });
 
         function qwFmt(n) { return '₱' + n.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
 
@@ -3819,8 +4195,42 @@
             const fn = document.getElementById('qwFName').value.trim();
             const ln = document.getElementById('qwLName').value.trim();
             const email = document.getElementById('qwEmail').value.trim();
+            if (!fn || !ln || !email) {
+                document.getElementById('qwError').textContent = 'Please fill in your name and email first (Step 1).';
+                document.getElementById('qwError').style.display = 'block';
+                qwNext(1);
+                return;
+            }
+
+            // Combined mode: cart has items
+            if (qwCartItems.length > 0) {
+                window._qwCombined = true;
+                const items = qwCartItems.map((it, i) =>
+                    '<div style="padding:8px 0;' + (i < qwCartItems.length - 1 ? 'border-bottom:1px solid #e8ecf4;' : '') + '">' +
+                        '<div style="font-weight:600;">' + it.product + ' × ' + it.qty.toLocaleString() + '</div>' +
+                        '<div style="font-size:.78rem;color:#8898aa;margin-top:3px;">' +
+                            it.sizeWidth + '"×' + it.sizeHeight + '" | ' + it.paper + ' | ' + it.finish +
+                            (it.bleed ? ' | Bleed: ' + it.bleed : '') +
+                        '</div>' +
+                        '<div style="font-size:.78rem;color:#8898aa;">' +
+                            it.turnaround + ' | ' + it.shipping +
+                        '</div>' +
+                    '</div>'
+                ).join('');
+                const body = '<div style="margin-bottom:8px;font-weight:700;">Items (' + qwCartItems.length + ')</div>' + items;
+                qwOpenConfirmModal('You are about to generate a combined quotation for ' + qwCartItems.length + ' items.', body);
+                return;
+            }
+
+            // Single item mode
             const phone = document.getElementById('qwPhone').value.trim();
             const product = document.getElementById('qwProduct').value;
+            if (!product) {
+                document.getElementById('qwError').textContent = 'Please select a product type (Step 2).';
+                document.getElementById('qwError').style.display = 'block';
+                qwNext(2);
+                return;
+            }
             const w = parseFloat(document.getElementById('qwW').value) || 4;
             const h = parseFloat(document.getElementById('qwH').value) || 6;
             const paper = document.getElementById('qwPaper').value;
@@ -3830,19 +4240,14 @@
             const turnaround = document.getElementById('qwTurnaround').value;
             const shipping = document.getElementById('qwShipping').value;
 
-            // Tiered per-unit pricing
             let rate = 10.00;
             if (qty >= 7500) rate = 3.00;
             else if (qty >= 5000) rate = 3.75;
             else if (qty >= 2500) rate = 5.00;
             else if (qty >= 1000) rate = 7.50;
             const baseCost = qty * rate;
-
-            // Finishing fees
             const finishFees = { 'Uncoated': 0, 'Matte AQ': 950, 'Gloss AQ': 1250, 'UV Coating': 2300 };
             const finishFee = finishFees[finish] || 0;
-
-            // Shipping + turnaround matrix
             let shipFee = 0;
             if (shipping !== 'Pickup In-Store') {
                 if (turnaround.includes('3–5')) {
@@ -3856,33 +4261,327 @@
             const total = baseCost + finishFee + shipFee;
             const qid = 'QT-' + Math.floor(100000 + Math.random() * 900000);
             const today = new Date().toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric' });
+            const notes = document.getElementById('qwNotes').value.trim();
+            window._qwPendingData = { id: qid, date: today, name: fn + ' ' + ln, email, phone: phone || 'N/A', product, size: w + '" × ' + h + '"', paper, finish, bleed, qty, turnaround, shipping, notes, rate, baseCost, finishFee, shipFee, total };
 
-            qwQuoteData = { id: qid, date: today, name: fn + ' ' + ln, email, phone: phone || 'N/A', product, size: w + '" × ' + h + '"', paper, finish, bleed, qty, turnaround, shipping, rate, baseCost, finishFee, shipFee, total };
+            window._qwCombined = false;
+            const body = '<table style="width:100%;border-collapse:collapse;font-size:.82rem;">' +
+                '<tr><td style="padding:5px 0;color:#8898aa;font-weight:600;">Product</td><td style="padding:5px 0;text-align:right;font-weight:700;">' + product + '</td></tr>' +
+                '<tr><td style="padding:5px 0;color:#8898aa;font-weight:600;">Quantity</td><td style="padding:5px 0;text-align:right;font-weight:700;">' + qty.toLocaleString() + ' units</td></tr>' +
+                '<tr><td style="padding:5px 0;color:#8898aa;font-weight:600;">Dimensions</td><td style="padding:5px 0;text-align:right;font-weight:700;">' + w + '" × ' + h + '"</td></tr>' +
+                '<tr><td style="padding:5px 0;color:#8898aa;font-weight:600;">Paper</td><td style="padding:5px 0;text-align:right;font-weight:700;">' + paper + '</td></tr>' +
+                '<tr><td style="padding:5px 0;color:#8898aa;font-weight:600;">Finishing</td><td style="padding:5px 0;text-align:right;font-weight:700;">' + finish + '</td></tr>' +
+                '<tr><td style="padding:5px 0;color:#8898aa;font-weight:600;">Bleed</td><td style="padding:5px 0;text-align:right;font-weight:700;">' + (bleed || '—') + '</td></tr>' +
+                '<tr><td style="padding:5px 0;color:#8898aa;font-weight:600;">Turnaround</td><td style="padding:5px 0;text-align:right;font-weight:700;">' + turnaround + '</td></tr>' +
+                '<tr><td style="padding:5px 0;color:#8898aa;font-weight:600;">Shipping</td><td style="padding:5px 0;text-align:right;font-weight:700;">' + shipping + '</td></tr>' +
+                (notes ? '<tr><td style="padding:5px 0;color:#8898aa;font-weight:600;">Notes</td><td style="padding:5px 0;text-align:right;font-weight:700;">' + notes + '</td></tr>' : '') +
+                '<tr><td style="padding:5px 0;color:#8898aa;font-weight:600;">Estimated Total</td><td style="padding:5px 0;text-align:right;font-weight:800;color:#f97316;font-size:.95rem;">' + qwFmt(total) + '</td></tr>' +
+            '</table>';
+            qwOpenConfirmModal('Review your quotation details below.', body);
+        }
 
-            // Populate summary
-            document.getElementById('qwSumId').textContent = qid;
-            document.getElementById('qwSumName').textContent = fn + ' ' + ln;
-            document.getElementById('qwSumEmail').textContent = email;
-            document.getElementById('qwSumPhone').textContent = phone || 'N/A';
-            document.getElementById('qwSumProduct').textContent = product;
-            document.getElementById('qwSumSize').textContent = w + '" × ' + h + '"';
-            document.getElementById('qwSumPaper').textContent = paper;
-            document.getElementById('qwSumFinish').textContent = finish;
-            document.getElementById('qwSumBleed').textContent = bleed;
-            document.getElementById('qwSumQty').textContent = qty.toLocaleString() + ' units';
-            document.getElementById('qwSumTA').textContent = turnaround;
-            document.getElementById('qwSumShip').textContent = shipping;
-            document.getElementById('qwLblBase').textContent = 'Base Print Cost (' + qty.toLocaleString() + ' units @ ' + qwFmt(rate) + '/unit)';
-            document.getElementById('qwValBase').textContent = qwFmt(baseCost);
-            document.getElementById('qwLblFinish').textContent = 'Finishing & Coating Fee (' + finish + ')';
-            document.getElementById('qwValFinish').textContent = qwFmt(finishFee);
+        function qwExecuteSubmit() {
+            qwCloseConfirmModal();
+            if (window._qwCombined) {
+                qwCartSubmit();
+                return;
+            }
+            const q = window._qwPendingData;
+            if (!q) return;
+
+            document.getElementById('qwSumId').textContent = q.id;
+            document.getElementById('qwSumName').textContent = q.name;
+            document.getElementById('qwSumEmail').textContent = q.email;
+            document.getElementById('qwSumPhone').textContent = q.phone;
+            document.getElementById('qwSumProduct').textContent = q.product;
+            document.getElementById('qwSumSize').textContent = q.size;
+            document.getElementById('qwSumPaper').textContent = q.paper;
+            document.getElementById('qwSumFinish').textContent = q.finish;
+            document.getElementById('qwSumBleed').textContent = q.bleed;
+            document.getElementById('qwSumQty').textContent = q.qty.toLocaleString() + ' units';
+            document.getElementById('qwSumTA').textContent = q.turnaround;
+            document.getElementById('qwSumShip').textContent = q.shipping;
+            const notesEl = document.getElementById('qwSumNotes');
+            const notesRow = document.getElementById('qwSumNotesRow');
+            if (q.notes) {
+                notesEl.textContent = q.notes;
+                notesRow.style.display = '';
+            } else {
+                notesRow.style.display = 'none';
+            }
+            document.getElementById('qwLblBase').textContent = 'Base Print Cost (' + q.qty.toLocaleString() + ' units @ ' + qwFmt(q.rate) + '/unit)';
+            document.getElementById('qwValBase').textContent = qwFmt(q.baseCost);
+            document.getElementById('qwLblFinish').textContent = 'Finishing & Coating Fee (' + q.finish + ')';
+            document.getElementById('qwValFinish').textContent = qwFmt(q.finishFee);
             document.getElementById('qwLblShip').textContent = 'Turnaround & Shipping Fee';
-            document.getElementById('qwValShip').textContent = qwFmt(shipFee);
-            document.getElementById('qwValTotal').textContent = qwFmt(total);
+            document.getElementById('qwValShip').textContent = qwFmt(q.shipFee);
+            document.getElementById('qwValTotal').textContent = qwFmt(q.total);
 
+            qwQuoteData = q;
+            document.getElementById('qwCartSection').style.display = 'none';
+            document.getElementById('qwSumSpecsSection').style.display = 'block';
+            document.getElementById('qwSumMultiSection').style.display = 'none';
             document.getElementById('qwFormSection').style.display = 'none';
             document.getElementById('qwSummarySection').style.display = 'block';
             document.getElementById('quotation').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // ═══════════════════════════════════════════════════════
+        //  Quotation Cart — Multi-Product Quoting
+        // ═══════════════════════════════════════════════════════
+        const qwCartItems = [];
+
+        function qwCartRender() {
+            const section = document.getElementById('qwCartSection');
+            const container = document.getElementById('qwCartItems');
+            const count = document.getElementById('qwCartCount');
+
+            qwCartSave();
+
+            if (!qwCartItems.length) {
+                section.style.display = 'none';
+                return;
+            }
+            section.style.display = 'block';
+            count.textContent = qwCartItems.length;
+
+            container.innerHTML = qwCartItems.map((item, i) => {
+                const meta = item.sizeWidth + '"×' + item.sizeHeight + '" | ' + item.paper + ' | ' + item.finish;
+                return '<div class="qw-cart-item-box">' +
+                    '<div class="qw-cart-item-row">' +
+                        '<span class="qw-cart-item-name">' + item.product + ' × ' + item.qty.toLocaleString() + '</span>' +
+                        '<span class="qw-cart-item-actions">' +
+                            '<button class="qw-cart-item-edit" onclick="qwCartEdit(' + i + ')" title="Edit">✎</button>' +
+                            '<button class="qw-cart-item-remove" onclick="qwCartRemove(' + i + ')" title="Remove">×</button>' +
+                        '</span>' +
+                    '</div>' +
+                    '<div class="qw-cart-item-row">' +
+                        '<span class="qw-cart-item-meta">' + meta + '</span>' +
+                    '</div>' +
+                '</div>';
+            }).join('');
+
+            document.getElementById('quotation').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function qwCartAdd() {
+            qwClearError();
+            const fn = document.getElementById('qwFName').value.trim();
+            const ln = document.getElementById('qwLName').value.trim();
+            const email = document.getElementById('qwEmail').value.trim();
+            if (!fn || !ln || !email) {
+                document.getElementById('qwError').textContent = 'Please fill in your name and email first (Step 1).';
+                document.getElementById('qwError').style.display = 'block';
+                qwNext(1);
+                return;
+            }
+            const product = document.getElementById('qwProduct').value;
+            if (!product) {
+                document.getElementById('qwError').textContent = 'Please select a product type (Step 2).';
+                document.getElementById('qwError').style.display = 'block';
+                qwNext(2);
+                return;
+            }
+            const w = parseFloat(document.getElementById('qwW').value) || 4;
+            const h = parseFloat(document.getElementById('qwH').value) || 6;
+            const paper = document.getElementById('qwPaper').value;
+            const finish = document.getElementById('qwFinish').value;
+            const bleed = document.getElementById('qwBleed').value;
+            const qty = parseInt(document.getElementById('qwQty').value, 10);
+            const turnaround = document.getElementById('qwTurnaround').value;
+            const shipping = document.getElementById('qwShipping').value;
+
+            let rate = 10.00;
+            if (qty >= 7500) rate = 3.00;
+            else if (qty >= 5000) rate = 3.75;
+            else if (qty >= 2500) rate = 5.00;
+            else if (qty >= 1000) rate = 7.50;
+            const baseCost = qty * rate;
+            const finishFees = { 'Uncoated': 0, 'Matte AQ': 950, 'Gloss AQ': 1250, 'UV Coating': 2300 };
+            const finishFee = finishFees[finish] || 0;
+            let shipFee = 0;
+            if (shipping !== 'Pickup In-Store') {
+                if (turnaround.includes('3–5')) {
+                    shipFee = shipping === 'Within Metro Manila' ? 150 : shipping.includes('Luzon') ? 280 : 420;
+                } else if (turnaround.includes('2 Business')) {
+                    shipFee = shipping === 'Within Metro Manila' ? 350 : shipping.includes('Luzon') ? 500 : 750;
+                } else {
+                    shipFee = shipping === 'Within Metro Manila' ? 650 : shipping.includes('Luzon') ? 900 : 1200;
+                }
+            }
+            const total = baseCost + finishFee + shipFee;
+
+            const notes = document.getElementById('qwNotes').value.trim();
+            qwCartItems.push({ product, sizeWidth: w, sizeHeight: h, paper, finish, bleed, qty, turnaround, shipping, notes, baseCost, finishFee, shipFee, total });
+            qwCartSave();
+            qwCartRender();
+            qwResetFormFields();
+            document.getElementById('qwCartAddBtn').textContent = '+ Add to Cart';
+            showQwToast('Added ' + product + ' × ' + qty.toLocaleString() + ' to cart!');
+        }
+
+        // Persist cart across refresh
+        function qwCartSave() {
+            try { sessionStorage.setItem('pp_cart_items', JSON.stringify(qwCartItems)); } catch (e) {}
+        }
+        function qwCartLoad() {
+            try {
+                const raw = sessionStorage.getItem('pp_cart_items');
+                if (raw) { const arr = JSON.parse(raw); if (Array.isArray(arr) && arr.length) { qwCartItems.push(...arr); qwCartRender(); } }
+            } catch (e) {}
+        }
+
+        function qwResetFormFields() {
+            // Preserve contact info (step 1), reset everything else
+            document.getElementById('qwProduct').value = '';
+            document.getElementById('qwQty').value = 2500;
+            document.getElementById('qwQtyInput').value = 2500;
+            document.querySelectorAll('.qw-product-card').forEach(c => c.classList.remove('selected'));
+            document.getElementById('qwStdSize').value = '4x6';
+            qwSizeChange();
+            qwQtyUpdate();
+            document.getElementById('qwNotes').value = '';
+            qwClearError();
+            document.querySelectorAll('.qw-pane').forEach(p => p.classList.remove('active'));
+            document.getElementById('qwPane2').classList.add('active');
+            document.querySelectorAll('.qw-step').forEach(s => s.classList.remove('active', 'done'));
+            document.getElementById('qwInd1').classList.add('done');
+            document.getElementById('qwInd2').classList.add('active');
+            qwCurrentStep = 2;
+        }
+
+        function qwCartRemove(index) {
+            qwCartItems.splice(index, 1);
+            qwCartSave();
+            qwCartRender();
+            if (!qwCartItems.length) showQwToast('Cart is now empty.');
+        }
+
+        function qwCartEdit(index) {
+            const item = qwCartItems[index];
+            qwCartItems.splice(index, 1);
+            qwCartSave();
+            qwCartRender();
+
+            document.getElementById('qwProduct').value = item.product;
+            document.querySelectorAll('.qw-product-card').forEach(c => {
+                c.classList.remove('selected');
+                if (c.textContent.trim() === item.product) c.classList.add('selected');
+            });
+
+            const stdSize = document.getElementById('qwStdSize');
+            const sizeStr = item.sizeWidth + 'x' + item.sizeHeight;
+            const validSizes = ['4x6','5x7','5.5x8.5','8.5x11','8.27x11.69','11x17'];
+            if (validSizes.includes(sizeStr)) {
+                stdSize.value = sizeStr;
+                qwSizeChange();
+            } else {
+                stdSize.value = '';
+                document.getElementById('qwW').value = item.sizeWidth;
+                document.getElementById('qwH').value = item.sizeHeight;
+            }
+
+            document.getElementById('qwPaper').value = item.paper;
+            document.getElementById('qwFinish').value = item.finish;
+            document.getElementById('qwBleed').value = item.bleed;
+            document.getElementById('qwTurnaround').value = item.turnaround;
+            document.getElementById('qwShipping').value = item.shipping;
+            document.getElementById('qwNotes').value = item.notes || '';
+
+            document.getElementById('qwQty').value = item.qty;
+            document.getElementById('qwQtyInput').value = item.qty;
+            qwQtyUpdate();
+
+            qwClearError();
+            document.querySelectorAll('.qw-pane').forEach(p => p.classList.remove('active'));
+            document.getElementById('qwPane3').classList.add('active');
+            document.querySelectorAll('.qw-step').forEach(s => s.classList.remove('active', 'done'));
+            document.getElementById('qwInd1').classList.add('done');
+            document.getElementById('qwInd2').classList.add('done');
+            document.getElementById('qwInd3').classList.add('active');
+            qwCurrentStep = 3;
+
+            document.getElementById('qwCartAddBtn').textContent = '✓ Save Changes';
+            document.getElementById('quotation').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            showQwToast('Editing ' + item.product + ' — save your changes when done.');
+        }
+
+        function qwCartSubmit() {
+            if (!qwCartItems.length) return;
+
+            const fn = document.getElementById('qwFName').value.trim();
+            const ln = document.getElementById('qwLName').value.trim();
+            const email = document.getElementById('qwEmail').value.trim();
+            const phone = document.getElementById('qwPhone').value.trim();
+            const fullName = fn + ' ' + ln;
+
+            const qid = 'QT-' + Math.floor(100000 + Math.random() * 900000);
+            const today = new Date().toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric' });
+
+            // Populate client info
+            document.getElementById('qwSumId').textContent = qid;
+            document.getElementById('qwSumName').textContent = fullName;
+            document.getElementById('qwSumEmail').textContent = email;
+            document.getElementById('qwSumPhone').textContent = phone || 'N/A';
+
+            // Populate multi-item table
+            const tbody = document.getElementById('qwSumMultiBody');
+            tbody.innerHTML = qwCartItems.map(item => {
+                const size = item.sizeWidth + '" × ' + item.sizeHeight + '"';
+                const notesHtml = item.notes ? '<tr><td colspan="9" style="padding:0 0 8px 0;font-size:.78rem;color:#8898aa;"><em>Notes: ' + item.notes + '</em></td></tr>' : '';
+                return '<tr>' +
+                    '<td style="padding:6px 0;">' + item.product + '</td>' +
+                    '<td style="padding:6px 0;">' + size + '</td>' +
+                    '<td style="padding:6px 0;">' + item.paper + '</td>' +
+                    '<td style="padding:6px 0;">' + item.finish + '</td>' +
+                    '<td style="padding:6px 0;">' + (item.bleed || '—') + '</td>' +
+                    '<td style="text-align:right;padding:6px 0;">' + item.qty.toLocaleString() + '</td>' +
+                    '<td style="padding:6px 0;">' + (item.turnaround || '—') + '</td>' +
+                    '<td style="padding:6px 0;">' + (item.shipping || '—') + '</td>' +
+                    '<td style="text-align:right;padding:6px 0;font-weight:700;">' + qwFmt(item.total) + '</td>' +
+                '</tr>' + notesHtml;
+            }).join('');
+            const grandTotal = qwCartItems.reduce((s, it) => s + it.total, 0);
+            // Add grand total row
+            tbody.innerHTML += '<tr style="border-top:2px solid var(--border);">' +
+                '<td colspan="8" style="padding:8px 0;text-align:right;font-weight:700;">Grand Total</td>' +
+                '<td style="padding:8px 0;text-align:right;font-weight:800;color:#f97316;font-size:1.1rem;">' + qwFmt(grandTotal) + '</td>' +
+            '</tr>';
+            document.getElementById('qwSumMultiCount').textContent = '(' + qwCartItems.length + ' items)';
+            document.getElementById('qwSumSpecsSection').style.display = 'none';
+            document.getElementById('qwSumMultiSection').style.display = 'block';
+
+            // Update price block in summary
+            document.getElementById('qwLblBase').textContent = 'Total Base Print Cost';
+            document.getElementById('qwValBase').textContent = qwFmt(qwCartItems.reduce((s, it) => s + it.baseCost + it.finishFee, 0));
+            document.getElementById('qwLblFinish').textContent = 'Finishing Fees (combined)';
+            document.getElementById('qwValFinish').textContent = qwFmt(qwCartItems.reduce((s, it) => s + it.finishFee, 0));
+            document.getElementById('qwLblShip').textContent = 'Shipping Fees (combined)';
+            document.getElementById('qwValShip').textContent = qwFmt(qwCartItems.reduce((s, it) => s + it.shipFee, 0));
+            document.getElementById('qwValTotal').textContent = qwFmt(grandTotal);
+
+            document.getElementById('qwCartSection').style.display = 'none';
+            document.getElementById('qwFormSection').style.display = 'none';
+            document.getElementById('qwSummarySection').style.display = 'block';
+
+            qwQuoteData = { id: qid, date: today, name: fullName, email, phone: phone || 'N/A', items: qwCartItems, total: grandTotal };
+            // Clear cart from sessionStorage — quote is now in the summary view
+            try { sessionStorage.removeItem('pp_cart_items'); } catch (e) {}
+            document.getElementById('quotation').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function showQwToast(msg) {
+            let el = document.getElementById('qwToast');
+            if (!el) {
+                el = document.createElement('div');
+                el.id = 'qwToast';
+                el.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;padding:14px 28px;border-radius:12px;font-weight:600;font-size:.9rem;z-index:9999;box-shadow:0 8px 30px rgba(0,0,0,.25);opacity:0;transition:opacity .3s;';
+                document.body.appendChild(el);
+            }
+            el.textContent = msg;
+            el.style.opacity = '1';
+            clearTimeout(el._hide);
+            el._hide = setTimeout(() => { el.style.opacity = '0'; }, 2800);
         }
 
         function qwReset() {
@@ -3892,6 +4591,7 @@
             document.getElementById('qwPhone').value = '';
             document.getElementById('qwProduct').value = '';
             document.getElementById('qwQty').value = 2500;
+            document.getElementById('qwQtyInput').value = 2500;
             document.querySelectorAll('.qw-product-card').forEach(c => c.classList.remove('selected'));
             qwQtyUpdate();
             qwClearError();
@@ -3901,8 +4601,12 @@
             document.getElementById('qwInd1').classList.add('active');
             qwCurrentStep = 1;
             qwQuoteData = null;
+            qwCartItems.length = 0;
+            qwCartRender();
             document.getElementById('qwSummarySection').style.display = 'none';
             document.getElementById('qwFormSection').style.display = 'block';
+            document.getElementById('qwSumSpecsSection').style.display = 'block';
+            document.getElementById('qwSumMultiSection').style.display = 'none';
             document.getElementById('quotation').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
@@ -3978,17 +4682,32 @@
                         <tr><td class="l">Phone</td><td class="v">${q.phone}</td><td class="l"></td><td class="v"></td></tr>
                     </table>
                     <div class="pdf-sec-lbl">Project Specifications</div>
+                    ${q.items ? `
+                    <table class="pdf-table" style="font-size:12px;">
+                        <thead><tr style="background:#f4f6fb;"><th style="padding:8px 14px;text-align:left;">Product</th><th style="padding:8px 14px;text-align:left;">Size</th><th style="padding:8px 14px;text-align:left;">Paper</th><th style="padding:8px 14px;text-align:left;">Finish</th><th style="padding:8px 14px;text-align:left;">Bleed</th><th style="padding:8px 14px;text-align:right;">Qty</th><th style="padding:8px 14px;text-align:left;">Turnaround</th><th style="padding:8px 14px;text-align:left;">Shipping</th><th style="padding:8px 14px;text-align:right;">Total</th></tr></thead>
+                        ${q.items.map(it => {
+                            const n = it.notes ? '<tr><td colspan="9" style="padding:2px 14px 8px;font-size:11px;color:#8898aa;font-style:italic;">Notes: ' + it.notes + '</td></tr>' : '';
+                            return '<tr><td class="v">' + it.product + '</td><td class="v">' + it.sizeWidth + '"×' + it.sizeHeight + '"</td><td class="v">' + it.paper + '</td><td class="v">' + it.finish + '</td><td class="v">' + (it.bleed || '—') + '</td><td class="v" style="text-align:right;">' + it.qty.toLocaleString() + '</td><td class="v">' + (it.turnaround || '—') + '</td><td class="v">' + (it.shipping || '—') + '</td><td class="v" style="text-align:right;">' + fmtP(it.total) + '</td></tr>' + n;
+                        }).join('')}
+                    </table>
+                    ` : `
                     <table class="pdf-table">
                         <tr><td class="l">Product</td><td class="v">${q.product}</td><td class="l">Dimensions</td><td class="v">${q.size}</td></tr>
                         <tr><td class="l">Paper Weight</td><td class="v">${q.paper}</td><td class="l">Finishing</td><td class="v">${q.finish}</td></tr>
                         <tr><td class="l">Bleed</td><td class="v">${q.bleed}</td><td class="l">Quantity</td><td class="v">${q.qty.toLocaleString()} units</td></tr>
                         <tr><td class="l">Turnaround</td><td class="v">${q.turnaround}</td><td class="l">Shipping</td><td class="v">${q.shipping}</td></tr>
+                        ${q.notes ? '<tr><td class="l">Additional Notes</td><td class="v" colspan="3">' + q.notes + '</td></tr>' : ''}
                     </table>
+                    `}
                     <div class="pdf-sec-lbl">Price Estimate Breakdown</div>
                     <div class="pdf-price-box">
+                        ${q.items ? `
+                        <div class="pdf-pr"><span class="pl">Combined Estimate (${q.items.length} items)</span><span>${fmtP(q.items.reduce((s,it) => s + it.baseCost + it.finishFee + it.shipFee, 0))}</span></div>
+                        ` : `
                         <div class="pdf-pr"><span class="pl">Base Print Cost (${q.qty.toLocaleString()} units @ PHP ${q.rate.toFixed(2)}/unit)</span><span>${fmtP(q.baseCost)}</span></div>
                         <div class="pdf-pr"><span class="pl">Finishing &amp; Coating Fee (${q.finish})</span><span>${fmtP(q.finishFee)}</span></div>
                         <div class="pdf-pr"><span class="pl">Turnaround &amp; Shipping</span><span>${fmtP(q.shipFee)}</span></div>
+                        `}
                         <div class="pdf-tot"><div class="pdf-tot-l">Estimated Total</div><div class="pdf-tot-v">${fmtP(q.total)}</div></div>
                     </div>
                     <div class="pdf-note">All prices in Philippine Peso • Final invoice may vary • VAT not included</div>
@@ -4078,6 +4797,18 @@
             const base = location.href.replace(/[^\/]*$/, '');
             const fmtP = n => '&#8369;' + n.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             const w = window.open('', '_blank', 'width=860,height=1000');
+                        let specHtml, priceHtml;
+            if (q.items) {
+                const itemsTable = q.items.map(it => {
+                    const n = it.notes ? '<tr><td colspan="9" style="padding:2px 14px 8px;font-size:11px;color:#8898aa;font-style:italic;">Notes: ' + it.notes + '</td></tr>' : '';
+                    return '<tr><td class="v">' + it.product + '</td><td class="v">' + it.sizeWidth + '"×' + it.sizeHeight + '"</td><td class="v">' + it.paper + '</td><td class="v">' + it.finish + '</td><td class="v">' + (it.bleed || '—') + '</td><td class="v" style="text-align:right;">' + it.qty.toLocaleString() + '</td><td class="v">' + (it.turnaround || '—') + '</td><td class="v">' + (it.shipping || '—') + '</td><td class="v" style="text-align:right;">' + fmtP(it.total) + '</td></tr>' + n;
+                }).join('');
+                specHtml = '<table><thead><tr style="background:#f4f6fb;font-size:11px;"><th style="padding:8px 14px;text-align:left;">Product</th><th style="padding:8px 14px;text-align:left;">Size</th><th style="padding:8px 14px;text-align:left;">Paper</th><th style="padding:8px 14px;text-align:left;">Finish</th><th style="padding:8px 14px;text-align:left;">Bleed</th><th style="padding:8px 14px;text-align:right;">Qty</th><th style="padding:8px 14px;text-align:left;">Turnaround</th><th style="padding:8px 14px;text-align:left;">Shipping</th><th style="padding:8px 14px;text-align:right;">Total</th></tr></thead>' + itemsTable + '</table>';
+                priceHtml = '<div class="pr"><span class="pl">Combined Estimate (' + q.items.length + ' items)</span><span>' + fmtP(q.items.reduce((s,it) => s + it.baseCost + it.finishFee + it.shipFee, 0)) + '</span></div>';
+            } else {
+                specHtml = '<table><tr><td class="l">Product</td><td class="v">' + q.product + '</td><td class="l">Dimensions</td><td class="v">' + q.size + '</td></tr><tr><td class="l">Paper Weight</td><td class="v">' + q.paper + '</td><td class="l">Finishing</td><td class="v">' + q.finish + '</td></tr><tr><td class="l">Bleed</td><td class="v">' + q.bleed + '</td><td class="l">Quantity</td><td class="v">' + q.qty.toLocaleString() + ' units</td></tr><tr><td class="l">Turnaround</td><td class="v">' + q.turnaround + '</td><td class="l">Shipping</td><td class="v">' + q.shipping + '</td></tr>' + (q.notes ? '<tr><td class="l">Additional Notes</td><td class="v" colspan="3">' + q.notes + '</td></tr>' : '') + '</table>';
+                priceHtml = '<div class="pr"><span class="pl">Base Print Cost (' + q.qty.toLocaleString() + ' units @ PHP ' + q.rate.toFixed(2) + '/unit)</span><span>' + fmtP(q.baseCost) + '</span></div><div class="pr"><span class="pl">Finishing &amp; Coating Fee (' + q.finish + ')</span><span>' + fmtP(q.finishFee) + '</span></div><div class="pr"><span class="pl">Turnaround &amp; Shipping</span><span>' + fmtP(q.shipFee) + '</span></div>';
+            }
             w.document.write(`<!DOCTYPE html><html><head><title>PrintPro Quotation ${q.id}</title><style>
 *{box-sizing:border-box;margin:0;padding:0;}body{font-family:Arial,sans-serif;color:#1a2340;background:#fff;position:relative;min-height:100vh;}
 .wm{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-15deg);opacity:0.04;z-index:0;pointer-events:none;width:500px;}
@@ -4111,12 +4842,10 @@ td.l{width:22%;font-weight:600;color:#6b7a99;background:#f4f6fb;}td.v{font-weigh
 <div class="sec-lbl">Client Details</div>
 <table><tr><td class="l">Full Name</td><td class="v">${q.name}</td><td class="l">Email</td><td class="v">${q.email}</td></tr><tr><td class="l">Phone</td><td class="v">${q.phone}</td><td class="l"></td><td class="v"></td></tr></table>
 <div class="sec-lbl">Project Specifications</div>
-<table><tr><td class="l">Product</td><td class="v">${q.product}</td><td class="l">Dimensions</td><td class="v">${q.size}</td></tr><tr><td class="l">Paper Weight</td><td class="v">${q.paper}</td><td class="l">Finishing</td><td class="v">${q.finish}</td></tr><tr><td class="l">Bleed</td><td class="v">${q.bleed}</td><td class="l">Quantity</td><td class="v">${q.qty.toLocaleString()} units</td></tr><tr><td class="l">Turnaround</td><td class="v">${q.turnaround}</td><td class="l">Shipping</td><td class="v">${q.shipping}</td></tr></table>
+${specHtml}
 <div class="sec-lbl">Price Estimate Breakdown</div>
 <div class="price-box">
-<div class="pr"><span class="pl">Base Print Cost (${q.qty.toLocaleString()} units @ PHP ${q.rate.toFixed(2)}/unit)</span><span>${fmtP(q.baseCost)}</span></div>
-<div class="pr"><span class="pl">Finishing &amp; Coating Fee (${q.finish})</span><span>${fmtP(q.finishFee)}</span></div>
-<div class="pr"><span class="pl">Turnaround &amp; Shipping</span><span>${fmtP(q.shipFee)}</span></div>
+${priceHtml}
 <div class="tot"><div class="tot-l">Estimated Total</div><div class="tot-v">${fmtP(q.total)}</div></div>
 </div>
 <div class="note">All prices in Philippine Peso • Final invoice may vary • VAT not included</div>
@@ -4126,6 +4855,41 @@ td.l{width:22%;font-weight:600;color:#6b7a99;background:#f4f6fb;}td.v{font-weigh
 </body></html>`);
             w.document.close();
         }
+    </script>
+
+    <!-- Quote Confirmation Modal -->
+    <div id="qwConfirmModal"
+        style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(10,18,42,0.85);backdrop-filter:blur(8px);z-index:9999;justify-content:center;align-items:center;opacity:0;transition:opacity .2s;">
+        <div id="qwConfirmContent"
+            style="background:#fff;border-radius:18px;width:95%;max-width:480px;padding:32px;box-shadow:0 20px 60px rgba(0,0,0,0.35);transform:scale(0.93);transition:transform .2s;">
+            <div style="text-align:center;margin-bottom:20px;">
+                <h4 style="font-family:'Sora',sans-serif;font-weight:800;color:#0d1b3e;margin:0 0 6px;">Confirm Quotation</h4>
+                <p style="color:#8898aa;font-size:.85rem;margin:0;" id="qwConfirmDesc">Review your details before generating the quotation.</p>
+            </div>
+            <div id="qwConfirmBody" style="background:#f8f9ff;border-radius:12px;padding:16px;margin-bottom:20px;font-size:.82rem;color:#0d1b3e;"></div>
+            <div style="display:flex;gap:10px;">
+                <button onclick="qwCloseConfirmModal()" style="flex:1;padding:11px;border:1px solid #dde3f0;border-radius:10px;background:#fff;color:#344767;font-size:.88rem;font-weight:600;cursor:pointer;">Cancel</button>
+                <button id="qwConfirmBtn" onclick="qwExecuteSubmit()" style="flex:2;padding:11px;border:none;border-radius:10px;background:linear-gradient(90deg,#f97316,#fbbf24);color:#fff;font-size:.88rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;">✓ Confirm & Generate Quote</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        function qwOpenConfirmModal(desc, bodyHtml) {
+            document.getElementById('qwConfirmDesc').textContent = desc;
+            document.getElementById('qwConfirmBody').innerHTML = bodyHtml;
+            const modal = document.getElementById('qwConfirmModal');
+            modal.style.display = 'flex';
+            setTimeout(() => { modal.style.opacity = '1'; document.getElementById('qwConfirmContent').style.transform = 'scale(1)'; }, 10);
+        }
+        function qwCloseConfirmModal() {
+            const modal = document.getElementById('qwConfirmModal');
+            modal.style.opacity = '0';
+            document.getElementById('qwConfirmContent').style.transform = 'scale(0.93)';
+            setTimeout(() => { modal.style.display = 'none'; }, 200);
+        }
+        document.getElementById('qwConfirmModal').addEventListener('click', function(e) {
+            if (e.target === this) qwCloseConfirmModal();
+        });
     </script>
 
 </body>

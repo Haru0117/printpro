@@ -48,8 +48,20 @@ try {
     $total_amount = floatval($_POST['total_price'] ?? 0.00);
     $notes        = trim($_POST['notes'] ?? '');
 
-    // ── Artwork File Upload Handling ──
+    // ── Artwork File Handling ──
     $artwork_path = null;
+
+    // Check for saved_file_id (pre-uploaded file from tbl_user_files)
+    if (empty($artwork_path) && !empty($_POST['saved_file_id'])) {
+        $sfid = intval($_POST['saved_file_id']);
+        $stmt = $pdo->prepare("SELECT file_path FROM tbl_user_files WHERE id = ? AND user_id = ?");
+        $stmt->execute([$sfid, $user_id]);
+        $sf = $stmt->fetch();
+        if ($sf && !empty($sf['file_path'])) {
+            $artwork_path = $sf['file_path'];
+        }
+    }
+
     if (isset($_FILES['artwork_file']) && $_FILES['artwork_file']['error'] === UPLOAD_ERR_OK) {
         $file = $_FILES['artwork_file'];
         $fileName = basename($file['name']);
