@@ -2255,7 +2255,7 @@
                         <p class="plan-desc mb-4">Perfect for small print shops just getting started with digital order
                             management.</p>
                         <ul class="plan-features flex-grow-1 mb-4">
-                            <li><i class="bi bi-check-circle-fill"></i> Up to 200 jobs/month</li>
+                            <li><i class="bi bi-check-circle-fill"></i> <strong>25,000</strong> monthly credit maximum</li>
                             <li><i class="bi bi-check-circle-fill"></i> Real-time tracking</li>
                             <li><i class="bi bi-check-circle-fill"></i> Basic analytics</li>
                             <li><i class="bi bi-check-circle-fill"></i> Email support</li>
@@ -2273,7 +2273,7 @@
                         <p class="plan-desc mb-4">Designed for growing teams managing multiple customers and high-volume
                             daily orders.</p>
                         <ul class="plan-features flex-grow-1 mb-4">
-                            <li><i class="bi bi-check-circle-fill"></i> Up to 2,000 jobs/month</li>
+                            <li><i class="bi bi-check-circle-fill"></i> <strong>75,000</strong> monthly credit maximum</li>
                             <li><i class="bi bi-check-circle-fill"></i> Advanced analytics</li>
                             <li><i class="bi bi-check-circle-fill"></i> Global fulfillment</li>
                             <li><i class="bi bi-check-circle-fill"></i> Priority support</li>
@@ -2291,7 +2291,7 @@
                         <p class="plan-desc mb-4">For high-volume print operations with custom workflows and dedicated
                             SLA guarantees.</p>
                         <ul class="plan-features flex-grow-1 mb-4">
-                            <li><i class="bi bi-check-circle-fill"></i> Unlimited jobs</li>
+                            <li><i class="bi bi-check-circle-fill"></i> <strong>Unlimited</strong> monthly credits</li>
                             <li><i class="bi bi-check-circle-fill"></i> Custom integrations</li>
                             <li><i class="bi bi-check-circle-fill"></i> Dedicated account manager</li>
                             <li><i class="bi bi-check-circle-fill"></i> 99.99% uptime SLA</li>
@@ -4358,6 +4358,7 @@
                     '<div class="qw-cart-item-row">' +
                         '<span class="qw-cart-item-meta">' + meta + '</span>' +
                     '</div>' +
+                    (item.notes ? '<div class="qw-cart-item-row"><span class="qw-cart-item-meta" style="color:#8898aa;font-style:italic;font-size:.78rem;">Notes: ' + item.notes + '</span></div>' : '') +
                 '</div>';
             }).join('');
 

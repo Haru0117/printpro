@@ -335,6 +335,7 @@ try {
                     <div style="font-size: .75rem; font-weight: 700; color: var(--navy); margin-bottom: 8px;">SELECTED FILE:</div>
                     <div class="file-card" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: rgba(29, 140, 248, 0.05); border: 1px solid rgba(29, 140, 248, 0.2); border-radius: 8px;">
                       <div style="display: flex; align-items: center; gap: 8px;">
+                        <img id="previewImage" style="display:none;width:44px;height:44px;object-fit:cover;border-radius:6px;flex-shrink:0;">
                         <span id="previewFileIcon" style="font-size: 1.5rem;">📄</span>
                         <div style="text-align: left;">
                           <div id="previewFileName" style="font-size: .8rem; font-weight: 600; color: var(--navy); word-break: break-all; max-width: 250px;">artwork.pdf</div>
@@ -884,6 +885,18 @@ try {
             document.getElementById('upload-preview').style.display = 'block';
             document.getElementById('upload-area').style.borderColor = 'var(--success)';
             document.getElementById('upload-area').style.background = 'rgba(45, 206, 137, 0.05)';
+
+            const isImage = file.type && file.type.startsWith('image/');
+            const imgEl = document.getElementById('previewImage');
+            const iconEl = document.getElementById('previewFileIcon');
+            if (isImage) {
+                imgEl.src = URL.createObjectURL(file);
+                imgEl.style.display = 'block';
+                iconEl.style.display = 'none';
+            } else {
+                imgEl.style.display = 'none';
+                iconEl.style.display = 'inline';
+            }
         }
     }
 
@@ -894,6 +907,11 @@ try {
         document.getElementById('upload-preview').style.display = 'none';
         document.getElementById('sumArtwork').textContent = 'None';
         document.getElementById('sumArtwork').style.color = 'var(--muted)';
+
+        const imgEl = document.getElementById('previewImage');
+        if (imgEl.src && imgEl.src.startsWith('blob:')) URL.revokeObjectURL(imgEl.src);
+        imgEl.style.display = 'none';
+        document.getElementById('previewFileIcon').style.display = 'inline';
         
         const uploadArea = document.getElementById('upload-area');
         if (uploadArea) {

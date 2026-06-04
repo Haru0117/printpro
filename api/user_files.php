@@ -105,7 +105,7 @@ try {
     } elseif ($method === 'GET') {
         // Get user's files
         $stmt = $pdo->prepare("
-            SELECT id, filename, original_filename, file_size, mime_type, uploaded_at
+            SELECT id, filename, original_filename, file_path, file_size, mime_type, uploaded_at
             FROM tbl_user_files
             WHERE user_id = ?
             ORDER BY uploaded_at DESC

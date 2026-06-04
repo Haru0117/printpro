@@ -1067,10 +1067,15 @@
 
                 <div class="a-page" id="page-users">
                     <div class="card border-0 shadow-sm overflow-hidden" style="border-radius:16px;">
+                        <!-- ── TOOLBAR / BULK ACTION BAR ── -->
                         <div
                             class="p-4 border-bottom d-flex flex-wrap justify-content-between align-items-center bg-light-subtle gap-3">
                             <h6 class="fw-bold m-0">User Management</h6>
                             <div class="d-flex flex-wrap gap-2 align-items-center">
+                                <button class="btn btn-outline-danger btn-sm" id="bulkDeleteBtn" onclick="deleteSelectedUsers()" disabled
+                                    style="opacity:0.4;pointer-events:none;transition:all .2s;">
+                                    <i class="bi bi-trash3"></i> Delete Selected (<span id="bulkDeleteCount">0</span>)
+                                </button>
                                 <select class="form-select form-select-sm" id="userRoleFilter" style="width: 130px;"
                                     onchange="filterAndSortUsers()">
                                     <option value="all">All Roles</option>
@@ -1097,6 +1102,7 @@
                             <table class="table" id="usersTable">
                                 <thead>
                                     <tr>
+                                        <th style="width:40px;"><input type="checkbox" id="selectAllUsers" onchange="toggleSelectAll(this)"></th>
                                         <th>User</th>
                                         <th>Business</th>
                                         <th>Role</th>
@@ -1131,6 +1137,7 @@
                                         <th>Email</th>
                                         <th>Business</th>
                                         <th>Plan</th>
+                                        <th>Monthly Credits</th>
                                         <th>Status</th>
                                         <th>Renews On</th>
                                         <th>Actions</th>
@@ -2292,6 +2299,8 @@
             });
 
             renderUsers(filtered);
+            document.getElementById('selectAllUsers').checked = false;
+            updateBulkDeleteBtn();
         }
 
         function renderUsers(data = state.users) {
@@ -2304,6 +2313,7 @@
                     : `<span class="text-muted small">—</span>`;
                 return `
                 <tr>
+                    <td><input type="checkbox" class="user-select-checkbox" value="${u.id}" onchange="updateBulkDeleteBtn()"></td>
                     <td>
                         <div class="d-flex align-items-center gap-3">
                             <div class="rounded-circle bg-primary-subtle text-primary d-flex align-items-center justify-content-center fw-bold" style="width:40px; height:40px; flex-shrink:0;">
@@ -2327,7 +2337,7 @@
                         </div>
                     </td>
                 </tr>`;
-            }).join('') || '<tr><td colspan="7" class="text-center p-4 text-muted">No users found.</td></tr>';
+            }).join('') || '<tr><td colspan="8" class="text-center p-4 text-muted">No users found.</td></tr>';
         }
 
         function openUserEditModal(id) {
@@ -2398,6 +2408,54 @@
             } catch (e) { showToast('Network error', 'danger'); }
         }
 
+        // ── Bulk user selection & delete ──
+        function toggleSelectAll(masterCheckbox) {
+            document.querySelectorAll('.user-select-checkbox').forEach(cb => cb.checked = masterCheckbox.checked);
+            updateBulkDeleteBtn();
+        }
+
+        function updateBulkDeleteBtn() {
+            const checked = document.querySelectorAll('.user-select-checkbox:checked');
+            const btn = document.getElementById('bulkDeleteBtn');
+            const count = document.getElementById('bulkDeleteCount');
+            if (checked.length > 0) {
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                btn.style.pointerEvents = '';
+                btn.classList.remove('btn-outline-danger');
+                btn.classList.add('btn-danger');
+                count.textContent = checked.length;
+            } else {
+                btn.disabled = true;
+                btn.style.opacity = '0.4';
+                btn.style.pointerEvents = 'none';
+                btn.classList.remove('btn-danger');
+                btn.classList.add('btn-outline-danger');
+                count.textContent = '0';
+            }
+        }
+
+        async function deleteSelectedUsers() {
+            const checked = document.querySelectorAll('.user-select-checkbox:checked');
+            if (!checked.length) return;
+            const ids = Array.from(checked).map(cb => parseInt(cb.value));
+            if (!confirm(`Are you sure you want to delete ${ids.length} selected user(s)? This action cannot be undone.`)) return;
+            try {
+                const res = await fetch('api/bulk_delete_users.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ids })
+                });
+                const json = await res.json();
+                if (json.success) {
+                    showToast(json.message, 'success');
+                    loadUsers();
+                } else {
+                    showToast(json.message || 'Bulk delete failed', 'danger');
+                }
+            } catch (e) { showToast('Network error', 'danger'); }
+        }
+
         function viewUserProfile(id) {
             const u = state.users.find(x => x.id == id);
             if (!u) return;
@@ -2450,6 +2508,18 @@
                             </select>
                         </div>
                     </td>
+                    <td style="min-width:140px;">
+                        ${s.monthly_limit !== null && s.monthly_limit !== undefined
+                            ? `<div style="font-size:.72rem;">
+                                <span style="font-weight:600;">₱${Number(s.monthly_used || 0).toLocaleString()}</span>
+                                <span style="color:var(--muted);"> / ₱${Number(s.monthly_limit).toLocaleString()}</span>
+                               </div>
+                               <div style="height:4px;background:#e8ecf4;border-radius:2px;margin-top:3px;overflow:hidden;">
+                                   <div style="height:100%;width:${Math.min(100, (s.monthly_used / s.monthly_limit) * 100)}%;background:${(s.monthly_used / s.monthly_limit) > 0.8 ? '#f5365c' : '#2dce89'};border-radius:2px;transition:width .3s;"></div>
+                               </div>`
+                            : `<span class="text-muted small">Unlimited</span>`
+                        }
+                    </td>
                     <td>
                         <span class="badge-status ${(s.sub_status || '').toLowerCase() === 'active' ? 'badge-success' :
                         (s.sub_status || '').toLowerCase() === 'suspended' ? 'badge-danger' : 'badge-warning'}">
@@ -2464,7 +2534,7 @@
                         </button>
                     </td>
                 </tr>`;
-            }).join('') || '<tr><td colspan="7" class="text-center p-4 text-muted">No matching subscriptions.</td></tr>';
+            }).join('') || '<tr><td colspan="8" class="text-center p-4 text-muted">No matching subscriptions.</td></tr>';
         }
 
         async function adminChangePlan(userId, newPlan, selectEl) {
@@ -2539,6 +2609,7 @@
             const now = Date.now();
             if (specsCache && (now - specsCacheTime) < SPECS_CACHE_DURATION) {
                 state.specs = specsCache;
+                renderSpecs();
                 return;
             }
 
@@ -2556,6 +2627,10 @@
 
         function renderSpecs() {
             const tbody = document.querySelector('#specsTable tbody');
+            if (!state.specs || !state.specs.length) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center p-4 text-muted">No specifications found.</td></tr>';
+                return;
+            }
             tbody.innerHTML = state.specs.map(s => `
                 <tr>
                     <td class="text-capitalize small fw-bold">${s.spec_type}</td>

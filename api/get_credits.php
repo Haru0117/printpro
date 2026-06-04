@@ -10,6 +10,8 @@ if (!isset($_SESSION['user_id'])) {
 require_once '../includes/db.php';
 
 try {
+    $user_id = $_SESSION['user_id'];
+
     // Get current balance
     $stmt = $pdo->prepare("
         SELECT cc.balance 
@@ -17,9 +19,38 @@ try {
         JOIN clients c ON cc.client_id = c.id 
         WHERE c.user_id = ?
     ");
-    $stmt->execute([$_SESSION['user_id']]);
+    $stmt->execute([$user_id]);
     $row = $stmt->fetch();
     $balance = $row ? floatval($row['balance']) : 0;
+
+    // Get subscription plan & monthly limit
+    $plan_limits = [
+        'free'     => 0,
+        'pro'      => 25000,
+        'premium'  => 75000,
+        'premium+' => PHP_INT_MAX,
+    ];
+    $stmt = $pdo->prepare("SELECT subscription_plan FROM users WHERE id = ?");
+    $stmt->execute([$user_id]);
+    $user_row = $stmt->fetch();
+    $plan = strtolower($user_row['subscription_plan'] ?? 'free');
+    $plan_label = $user_row['subscription_plan'] ?? 'Free';
+    $monthly_limit = $plan_limits[$plan] ?? 0;
+
+    // Get monthly usage
+    $monthly_used = 0;
+    if ($monthly_limit < PHP_INT_MAX) {
+        $stmt = $pdo->prepare("
+            SELECT COALESCE(SUM(amount), 0) 
+            FROM credit_transactions ct
+            JOIN clients c ON ct.client_id = c.id
+            WHERE c.user_id = ? 
+              AND ct.transaction_type = 'deduct'
+              AND DATE_FORMAT(ct.created_at, '%Y-%m') = DATE_FORMAT(NOW(), '%Y-%m')
+        ");
+        $stmt->execute([$user_id]);
+        $monthly_used = floatval($stmt->fetchColumn());
+    }
 
     // Get recent transactions
     $stmt = $pdo->prepare("
@@ -32,7 +63,7 @@ try {
         ORDER BY ct.created_at DESC
         LIMIT 50
     ");
-    $stmt->execute([$_SESSION['user_id']]);
+    $stmt->execute([$user_id]);
     $transactions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Format transactions for frontend
@@ -43,10 +74,14 @@ try {
     }, $transactions);
 
     echo json_encode([
-        'success'     => true,
-        'balance'     => number_format($balance, 2),
-        'balance_raw' => $balance,
-        'transactions' => $formatted_trans,
+        'success'        => true,
+        'balance'        => number_format($balance, 2),
+        'balance_raw'    => $balance,
+        'plan'           => $plan_label,
+        'monthly_limit'  => $monthly_limit >= PHP_INT_MAX ? null : $monthly_limit,
+        'monthly_used'   => $monthly_used,
+        'monthly_remaining' => $monthly_limit >= PHP_INT_MAX ? null : max(0, $monthly_limit - $monthly_used),
+        'transactions'   => $formatted_trans,
     ]);
 
 } catch (Exception $e) {

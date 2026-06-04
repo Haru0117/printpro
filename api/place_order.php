@@ -101,7 +101,25 @@ try {
         }
     }
 
-    // ── 4. Check client credits (BEFORE creating the order) ──────────────
+    // ── 4. Validate specs are still active ────────────────────────────────
+    if (!empty($paper_weight)) {
+        $stmt = $pdo->prepare("SELECT id FROM tbl_materials WHERE name = ? AND is_active = 1 LIMIT 1");
+        $stmt->execute([$paper_weight]);
+        if (!$stmt->fetch()) {
+            echo json_encode(['success' => false, 'message' => "The selected paper/material '$paper_weight' is no longer available. Please choose another."]);
+            exit;
+        }
+    }
+    if (!in_array($finish, ['None', 'Uncoated', ''])) {
+        $stmt = $pdo->prepare("SELECT id FROM tbl_finishes WHERE name = ? AND is_active = 1 LIMIT 1");
+        $stmt->execute([$finish]);
+        if (!$stmt->fetch()) {
+            echo json_encode(['success' => false, 'message' => "The selected finish '$finish' is no longer available. Please choose another."]);
+            exit;
+        }
+    }
+
+    // ── 5. Check client credits (BEFORE creating the order) ──────────────
     $stmt = $pdo->prepare("SELECT balance FROM client_credits WHERE client_id = ?");
     $stmt->execute([$client_id]);
     $credit_row = $stmt->fetch();
@@ -118,7 +136,32 @@ try {
         exit;
     }
 
-    // ── 5. Parse turnaround & shipping ──────────────────────────────────────
+    // ── 6. Check monthly credit limit based on subscription plan ────────
+    $stmt = $pdo->prepare("SELECT subscription_plan FROM users WHERE id = ?");
+    $stmt->execute([$user_id]);
+    $user_row = $stmt->fetch();
+    $plan = strtolower($user_row['subscription_plan'] ?? 'free');
+
+    $plan_limits = [
+        'free'     => 0,
+        'pro'      => 25000,
+        'premium'  => 75000,
+        'premium+' => PHP_INT_MAX,
+    ];
+    $monthly_limit = $plan_limits[$plan] ?? 0;
+
+    if ($monthly_limit < PHP_INT_MAX) {
+        $stmt = $pdo->prepare("SELECT COALESCE(SUM(amount), 0) FROM credit_transactions WHERE client_id = ? AND transaction_type = 'deduct' AND DATE_FORMAT(created_at, '%Y-%m') = DATE_FORMAT(NOW(), '%Y-%m')");
+        $stmt->execute([$client_id]);
+        $monthly_used = floatval($stmt->fetchColumn());
+
+        if (($monthly_used + $total_amount) > $monthly_limit) {
+            echo json_encode(['success' => false, 'message' => 'Monthly credit limit reached. Your ' . ucfirst($plan) . ' plan is capped at ₱' . number_format($monthly_limit, 0) . ' in credits per month (₱' . number_format($monthly_used, 0) . ' used). Please upgrade your plan or wait until next month.']);
+            exit;
+        }
+    }
+
+    // ── 7. Parse turnaround & shipping ──────────────────────────────────────
     $turnaround_map = ['standard' => 'Standard', 'rush' => 'Rush', 'priority' => 'Priority'];
     $turnaround_raw = strtolower($_POST['turnaround'] ?? 'standard');
     $turnaround = $turnaround_map[$turnaround_raw] ?? 'Standard';
@@ -137,13 +180,13 @@ try {
     $add_days = $days_map[$turnaround] ?? 3;
     $due_date = date('Y-m-d', strtotime("+{$add_days} weekdays"));
 
-    // ── 3. Auto-generate order number (PPR-XXX) ──────────────────────────────
+    // ── 8. Auto-generate order number (PPR-XXX) ──────────────────────────────
     $stmt = $pdo->query("SELECT MAX(id) AS max_id FROM orders");
     $row = $stmt->fetch();
     $next_num = intval($row['max_id'] ?? 0) + 1;
     $order_number = 'PPR-' . str_pad($next_num, 3, '0', STR_PAD_LEFT);
 
-    // ── 4. Insert the order ───────────────────────────────────────────────────
+    // ── 9. Insert the order ───────────────────────────────────────────────────
     $stmt = $pdo->prepare("
         INSERT INTO orders (
             order_number, client_id, job_name,
@@ -189,7 +232,7 @@ try {
 
     $order_id = $pdo->lastInsertId();
 
-    // ── 5. Deduct credits and record transaction ────────────────────────────
+    // ── 10. Deduct credits and record transaction ───────────────────────────
     $pdo->beginTransaction();
 
     try {

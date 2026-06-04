@@ -1129,6 +1129,11 @@
             color: #344767;
         }
 
+        #tplFilterPills .pt-btn {
+            min-width: 92px;
+            justify-content: center;
+        }
+
         .dim-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -2955,6 +2960,8 @@
             }
         }
 
+        @keyframes spin { to { transform: rotate(360deg); } }
+
         .flyer-size-badge {
             position: absolute;
             top: 10px;
@@ -3019,7 +3026,7 @@
         }
 
         /* Hover badge on the tpl-card thumbnail */
-        #boldSummerFlyerCard .tpl-preview-badge {
+        .tpl-card .tpl-preview-badge {
             position: absolute;
             bottom: 8px;
             right: 8px;
@@ -3036,7 +3043,7 @@
             pointer-events: none;
         }
 
-        #boldSummerFlyerCard:hover .tpl-preview-badge {
+        .tpl-card:hover .tpl-preview-badge {
             opacity: 1;
             transform: translateY(0);
         }
@@ -4690,6 +4697,13 @@
                                                     No files uploaded yet
                                                 </div>
                                             </div>
+                                            <div id="saved-file-preview" style="display:none; margin-top:12px;">
+                                                <div style="font-size:.75rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Preview</div>
+                                                <div style="display:flex;align-items:center;gap:12px;padding:12px;background:rgba(29,140,248,.05);border:1px solid rgba(29,140,248,.2);border-radius:8px;">
+                                                    <img id="savedFilePreviewImg" style="width:60px;height:60px;object-fit:cover;border-radius:6px;flex-shrink:0;">
+                                                    <span id="savedFilePreviewName" style="font-size:.85rem;font-weight:600;color:var(--navy);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+                                                </div>
+                                            </div>
                                         </div>
 
                                         <!-- Special Instructions (Optional) -->
@@ -4828,249 +4842,33 @@
                                     <p style="font-size:.75rem;color:var(--muted);margin:0;">Browse and customize
                                         ready-made print designs</p>
                                 </div>
-                                <div style="display:flex;gap:8px;">
-                                    <select class="form-control-sm-pp" style="width:auto;">
-                                        <option>All Categories</option>
-                                        <option>Flyers</option>
-                                        <option>Brochures</option>
-                                        <option>Cards</option>
-                                        <option>Banners</option>
-                                    </select>
-                                    <select class="form-control-sm-pp" style="width:auto;">
-                                        <option>All Plans</option>
-                                        <option>Free</option>
-                                        <option>Pro</option>
-                                    </select>
-                                </div>
                             </div>
 
                             <!-- Filter pills -->
-                            <div style="display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;">
-                                <button class="pt-btn active"
+                            <div id="tplFilterPills" style="display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;">
+                                <button class="pt-btn active" data-cat="all"
                                     style="flex-direction:row;padding:5px 14px;gap:5px;font-size:.75rem;">All</button>
-                                <button class="pt-btn"
+                                <button class="pt-btn" data-cat="Flyer"
                                     style="flex-direction:row;padding:5px 14px;gap:5px;font-size:.75rem;"><i
                                         class="bi bi-card-image" style="font-size:.9rem;"></i>Flyers</button>
-                                <button class="pt-btn"
+                                <button class="pt-btn" data-cat="Brochure"
                                     style="flex-direction:row;padding:5px 14px;gap:5px;font-size:.75rem;"><i
                                         class="bi bi-book-half" style="font-size:.9rem;"></i>Brochures</button>
-                                <button class="pt-btn"
+                                <button class="pt-btn" data-cat="Card"
                                     style="flex-direction:row;padding:5px 14px;gap:5px;font-size:.75rem;"><i
                                         class="bi bi-badge-cc" style="font-size:.9rem;"></i>Cards</button>
-                                <button class="pt-btn"
+                                <button class="pt-btn" data-cat="Poster"
                                     style="flex-direction:row;padding:5px 14px;gap:5px;font-size:.75rem;"><i
                                         class="bi bi-card-text" style="font-size:.9rem;"></i>Posters</button>
-                                <button class="pt-btn"
+                                <button class="pt-btn" data-cat="Mailer"
                                     style="flex-direction:row;padding:5px 14px;gap:5px;font-size:.75rem;"><i
                                         class="bi bi-envelope-open" style="font-size:.9rem;"></i>Mailers</button>
                             </div>
 
-                            <div class="tpl-grid">
-                                <div class="tpl-card" id="boldSummerFlyerCard" onclick="openFlyerPreview()"
-                                    title="Click to preview Bold Summer Flyer">
-                                    <!-- Thumbnail: 4:6 aspect ratio enforced via padding-top:150% -->
-                                    <div
-                                        style="position:relative;width:100%;padding-top:150%;overflow:hidden;background:linear-gradient(135deg,#d0e8ff,#e8f4ff);">
-                                        <!-- Skeleton pulse shown while image loads -->
-                                        <div id="cardFlyerSkeleton"
-                                            style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--muted);font-size:.72rem;">
-                                            <i class="bi bi-image"
-                                                style="font-size:1.8rem;color:var(--accent);animation:pulse-img 1.4s ease-in-out infinite;"></i>
-                                        </div>
-                                        <!-- Actual flyer image -->
-                                        <img src="https://i.pinimg.com/1200x/de/82/95/de82953c41f315a84cf0c25ce3021d52.jpg"
-                                            alt="Bold Summer Flyer — 4×6 print template thumbnail" draggable="false"
-                                            style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;display:block;opacity:0;transition:opacity 0.45s ease;"
-                                            onload="this.style.opacity='1'; var sk=document.getElementById('cardFlyerSkeleton'); if(sk) sk.style.display='none';"
-                                            onerror="var sk=document.getElementById('cardFlyerSkeleton'); if(sk){sk.innerHTML='<i class=\'bi bi-image\' style=\'font-size:1.8rem;color:var(--accent);\'></i>';}">
-                                        <!-- Hover "Preview" badge -->
-                                        <span class="tpl-preview-badge"><i class="bi bi-eye me-1"></i>Preview</span>
-                                    </div>
-                                    <div class="tpl-info">
-                                        <div class="tpl-name">Bold Summer Flyer</div>
-                                        <div class="tpl-meta">4"×6" · Flyer</div><span class="tpl-tag free">Free</span>
-                                    </div>
-                                </div>
-                                <!-- Tri-Fold Corporate -->
-                                <div class="tpl-card"
-                                    onclick="openTemplatePreview('Tri-Fold Corporate','8.5&quot;×11&quot; · Brochure','popular','https://i.pinimg.com/1200x/9b/54/e5/9b54e53896d2229dd07d3c19bfc81551.jpg','8.5&quot; × 11&quot;')"
-                                    title="Click to preview Tri-Fold Corporate">
-                                    <div
-                                        style="position:relative;width:100%;padding-top:150%;overflow:hidden;background:linear-gradient(135deg,#e0f7f7,#d0eeff);">
-                                        <div class="tpl-sk"
-                                            style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
-                                            <i class="bi bi-image"
-                                                style="font-size:1.8rem;color:var(--teal);animation:pulse-img 1.4s ease-in-out infinite;"></i>
-                                        </div>
-                                        <img src="https://i.pinimg.com/1200x/9b/54/e5/9b54e53896d2229dd07d3c19bfc81551.jpg"
-                                            alt="Tri-Fold Corporate" draggable="false"
-                                            style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;opacity:0;transition:opacity 0.45s ease;"
-                                            onload="this.style.opacity='1';this.previousElementSibling.style.display='none';">
-                                        <span class="tpl-preview-badge"><i class="bi bi-eye me-1"></i>Preview</span>
-                                    </div>
-                                    <div class="tpl-info">
-                                        <div class="tpl-name">Tri-Fold Corporate</div>
-                                        <div class="tpl-meta">8.5"×11" · Brochure</div><span
-                                            class="tpl-tag popular">Popular</span>
-                                    </div>
-                                </div>
-                                <!-- Minimalist Business Card -->
-                                <div class="tpl-card"
-                                    onclick="openTemplatePreview('Minimalist Business Card','3.5&quot;×2&quot; · Card','free','https://i.pinimg.com/1200x/46/df/06/46df06f79f7360394f9bca0686fb057c.jpg','3.5&quot; × 2&quot;')"
-                                    title="Click to preview Minimalist Business Card">
-                                    <div
-                                        style="position:relative;width:100%;padding-top:150%;overflow:hidden;background:linear-gradient(135deg,#e6f9ef,#d0eeff);">
-                                        <div class="tpl-sk"
-                                            style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
-                                            <i class="bi bi-image"
-                                                style="font-size:1.8rem;color:var(--success);animation:pulse-img 1.4s ease-in-out infinite;"></i>
-                                        </div>
-                                        <img src="https://i.pinimg.com/1200x/46/df/06/46df06f79f7360394f9bca0686fb057c.jpg"
-                                            alt="Minimalist Business Card" draggable="false"
-                                            style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;opacity:0;transition:opacity 0.45s ease;"
-                                            onload="this.style.opacity='1';this.previousElementSibling.style.display='none';">
-                                        <span class="tpl-preview-badge"><i class="bi bi-eye me-1"></i>Preview</span>
-                                    </div>
-                                    <div class="tpl-info">
-                                        <div class="tpl-name">Minimalist Business Card</div>
-                                        <div class="tpl-meta">3.5"×2" · Card</div><span class="tpl-tag free">Free</span>
-                                    </div>
-                                </div>
-                                <!-- Event Poster — Vivid -->
-                                <div class="tpl-card"
-                                    onclick="openTemplatePreview('Event Poster — Vivid','11&quot;×17&quot; · Poster','pro','https://i.pinimg.com/736x/17/c9/8b/17c98b6d75c004149bc6823f0f340ede.jpg','11&quot; × 17&quot;')"
-                                    title="Click to preview Event Poster — Vivid">
-                                    <div
-                                        style="position:relative;width:100%;padding-top:150%;overflow:hidden;background:linear-gradient(135deg,#ede0ff,#d0e0ff);">
-                                        <div class="tpl-sk"
-                                            style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
-                                            <i class="bi bi-image"
-                                                style="font-size:1.8rem;color:var(--purple);animation:pulse-img 1.4s ease-in-out infinite;"></i>
-                                        </div>
-                                        <img src="https://i.pinimg.com/736x/17/c9/8b/17c98b6d75c004149bc6823f0f340ede.jpg"
-                                            alt="Event Poster — Vivid" draggable="false"
-                                            style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;opacity:0;transition:opacity 0.45s ease;"
-                                            onload="this.style.opacity='1';this.previousElementSibling.style.display='none';">
-                                        <span class="tpl-preview-badge"><i class="bi bi-eye me-1"></i>Preview</span>
-                                    </div>
-                                    <div class="tpl-info">
-                                        <div class="tpl-name">Event Poster — Vivid</div>
-                                        <div class="tpl-meta">11"×17" · Poster</div><span class="tpl-tag pro">Pro</span>
-                                    </div>
-                                </div>
-                                <!-- Direct Mail EDDM -->
-                                <div class="tpl-card"
-                                    onclick="openTemplatePreview('Direct Mail EDDM','6.25&quot;×9&quot; · Mailer','pro','https://i.pinimg.com/1200x/4a/07/8b/4a078b6b8bf796a6e5ecacfaeb24b74d.jpg','6.25&quot; × 9&quot;')"
-                                    title="Click to preview Direct Mail EDDM">
-                                    <div
-                                        style="position:relative;width:100%;padding-top:150%;overflow:hidden;background:linear-gradient(135deg,#fff0e6,#ffe0cc);">
-                                        <div class="tpl-sk"
-                                            style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
-                                            <i class="bi bi-image"
-                                                style="font-size:1.8rem;color:var(--warning);animation:pulse-img 1.4s ease-in-out infinite;"></i>
-                                        </div>
-                                        <img src="https://i.pinimg.com/1200x/4a/07/8b/4a078b6b8bf796a6e5ecacfaeb24b74d.jpg"
-                                            alt="Direct Mail EDDM" draggable="false"
-                                            style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;opacity:0;transition:opacity 0.45s ease;"
-                                            onload="this.style.opacity='1';this.previousElementSibling.style.display='none';">
-                                        <span class="tpl-preview-badge"><i class="bi bi-eye me-1"></i>Preview</span>
-                                    </div>
-                                    <div class="tpl-info">
-                                        <div class="tpl-name">Direct Mail EDDM</div>
-                                        <div class="tpl-meta">6.25"×9" · Mailer</div><span
-                                            class="tpl-tag pro">Pro</span>
-                                    </div>
-                                </div>
-                                <!-- Annual Report Booklet -->
-                                <div class="tpl-card"
-                                    onclick="openTemplatePreview('Annual Report Booklet','8.5&quot;×11&quot; · Booklet','popular','https://i.pinimg.com/736x/31/f6/0f/31f60fbbdb82b6f8c381b2e1b71374c1.jpg','8.5&quot; × 11&quot;')"
-                                    title="Click to preview Annual Report Booklet">
-                                    <div
-                                        style="position:relative;width:100%;padding-top:150%;overflow:hidden;background:linear-gradient(135deg,#d0e8ff,#e8f4ff);">
-                                        <div class="tpl-sk"
-                                            style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
-                                            <i class="bi bi-image"
-                                                style="font-size:1.8rem;color:var(--accent);animation:pulse-img 1.4s ease-in-out infinite;"></i>
-                                        </div>
-                                        <img src="https://i.pinimg.com/736x/31/f6/0f/31f60fbbdb82b6f8c381b2e1b71374c1.jpg"
-                                            alt="Annual Report Booklet" draggable="false"
-                                            style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;opacity:0;transition:opacity 0.45s ease;"
-                                            onload="this.style.opacity='1';this.previousElementSibling.style.display='none';">
-                                        <span class="tpl-preview-badge"><i class="bi bi-eye me-1"></i>Preview</span>
-                                    </div>
-                                    <div class="tpl-info">
-                                        <div class="tpl-name">Annual Report Booklet</div>
-                                        <div class="tpl-meta">8.5"×11" · Booklet</div><span
-                                            class="tpl-tag popular">Popular</span>
-                                    </div>
-                                </div>
-                                <!-- Real Estate Flyer -->
-                                <div class="tpl-card"
-                                    onclick="openTemplatePreview('Real Estate Flyer','5.5&quot;×8.5&quot; · Flyer','free','https://i.pinimg.com/1200x/ee/f7/b1/eef7b178b7a22c7085597de124338cad.jpg','5.5&quot; × 8.5&quot;')"
-                                    title="Click to preview Real Estate Flyer">
-                                    <div
-                                        style="position:relative;width:100%;padding-top:150%;overflow:hidden;background:linear-gradient(135deg,#e0f7f7,#d0eeff);">
-                                        <div class="tpl-sk"
-                                            style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
-                                            <i class="bi bi-image"
-                                                style="font-size:1.8rem;color:var(--teal);animation:pulse-img 1.4s ease-in-out infinite;"></i>
-                                        </div>
-                                        <img src="https://i.pinimg.com/1200x/ee/f7/b1/eef7b178b7a22c7085597de124338cad.jpg"
-                                            alt="Real Estate Flyer" draggable="false"
-                                            style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;opacity:0;transition:opacity 0.45s ease;"
-                                            onload="this.style.opacity='1';this.previousElementSibling.style.display='none';">
-                                        <span class="tpl-preview-badge"><i class="bi bi-eye me-1"></i>Preview</span>
-                                    </div>
-                                    <div class="tpl-info">
-                                        <div class="tpl-name">Real Estate Flyer</div>
-                                        <div class="tpl-meta">5.5"×8.5" · Flyer</div><span
-                                            class="tpl-tag free">Free</span>
-                                    </div>
-                                </div>
-                                <!-- Luxury Foil Card -->
-                                <div class="tpl-card"
-                                    onclick="openTemplatePreview('Luxury Foil Card','3.5&quot;×2&quot; · Card','pro','https://i.pinimg.com/736x/f4/a1/00/f4a100dada92eef87598b57702a0db0f.jpg','3.5&quot; × 2&quot;')"
-                                    title="Click to preview Luxury Foil Card">
-                                    <div
-                                        style="position:relative;width:100%;padding-top:150%;overflow:hidden;background:linear-gradient(135deg,#ede0ff,#d0e0ff);">
-                                        <div class="tpl-sk"
-                                            style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
-                                            <i class="bi bi-image"
-                                                style="font-size:1.8rem;color:var(--purple);animation:pulse-img 1.4s ease-in-out infinite;"></i>
-                                        </div>
-                                        <img src="https://i.pinimg.com/736x/f4/a1/00/f4a100dada92eef87598b57702a0db0f.jpg"
-                                            alt="Luxury Foil Card" draggable="false"
-                                            style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;opacity:0;transition:opacity 0.45s ease;"
-                                            onload="this.style.opacity='1';this.previousElementSibling.style.display='none';">
-                                        <span class="tpl-preview-badge"><i class="bi bi-eye me-1"></i>Preview</span>
-                                    </div>
-                                    <div class="tpl-info">
-                                        <div class="tpl-name">Luxury Foil Card</div>
-                                        <div class="tpl-meta">3.5"×2" · Card</div><span class="tpl-tag pro">Pro</span>
-                                    </div>
-                                </div>
-                                <!-- Sale Promo Poster -->
-                                <div class="tpl-card"
-                                    onclick="openTemplatePreview('Sale Promo Poster','18&quot;×24&quot; · Poster','popular','https://i.pinimg.com/1200x/be/5e/cf/be5ecfd4c4e8079b345312e8c222cbf9.jpg','18&quot; × 24&quot;')"
-                                    title="Click to preview Sale Promo Poster">
-                                    <div
-                                        style="position:relative;width:100%;padding-top:150%;overflow:hidden;background:linear-gradient(135deg,#e6f9ef,#d0ffee);">
-                                        <div class="tpl-sk"
-                                            style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
-                                            <i class="bi bi-image"
-                                                style="font-size:1.8rem;color:var(--success);animation:pulse-img 1.4s ease-in-out infinite;"></i>
-                                        </div>
-                                        <img src="https://i.pinimg.com/1200x/be/5e/cf/be5ecfd4c4e8079b345312e8c222cbf9.jpg"
-                                            alt="Sale Promo Poster" draggable="false"
-                                            style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;opacity:0;transition:opacity 0.45s ease;"
-                                            onload="this.style.opacity='1';this.previousElementSibling.style.display='none';">
-                                        <span class="tpl-preview-badge"><i class="bi bi-eye me-1"></i>Preview</span>
-                                    </div>
-                                    <div class="tpl-info">
-                                        <div class="tpl-name">Sale Promo Poster</div>
-                                        <div class="tpl-meta">18"×24" · Poster</div><span
-                                            class="tpl-tag popular">Popular</span>
-                                    </div>
+                            <div id="tplGrid" class="tpl-grid" style="min-height:200px;">
+                                <div style="grid-column:1/-1;text-align:center;padding:40px 0;color:var(--muted);font-size:.85rem;">
+                                    <i class="bi bi-arrow-repeat" style="font-size:1.6rem;display:block;margin-bottom:8px;opacity:.4;animation:spin 1s linear infinite;"></i>
+                                    Loading templates...
                                 </div>
                             </div>
                         </div>
@@ -5390,6 +5188,20 @@
                                         <div class="client-sub-plan" id="subPlanName"
                                             style="font-family: 'Sora', sans-serif; font-size: 1.2rem; font-weight: 800; margin-bottom: 12px;">
                                             Loading…</div>
+
+                                        <!-- Monthly Credit Usage -->
+                                        <div id="monthlyCreditSection" style="margin-bottom: 16px; display: none;">
+                                            <div style="font-size: .75rem; color: rgba(255,255,255,.6); margin-bottom: 6px;">
+                                                MONTHLY CREDITS</div>
+                                            <div style="display: flex; justify-content: space-between; font-size: .78rem; margin-bottom: 4px;">
+                                                <span style="color: rgba(255,255,255,.6);">Used</span>
+                                                <span><span id="monthlyUsedDisplay">₱0</span> / <span id="monthlyLimitDisplay">₱25,000</span></span>
+                                            </div>
+                                            <div style="height: 6px; background: rgba(255,255,255,.1); border-radius: 3px; overflow: hidden;">
+                                                <div id="monthlyUsageBar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #2dce89, #45eba0); border-radius: 3px; transition: width .5s ease;"></div>
+                                            </div>
+                                            <div id="monthlyRemainingDisplay" style="font-size: .7rem; color: rgba(255,255,255,.4); margin-top: 4px;"></div>
+                                        </div>
 
                                         <div
                                             style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;">
@@ -6065,12 +5877,18 @@
             if (id === 'billing' && typeof walletLoad === 'function') walletLoad();
             if (id === 'track') loadTrackOrders();
             if (id === 'create') {
-                // Initialize the interactive wizard
                 setTimeout(() => {
                     if (typeof initializeWizard === 'function') {
                         initializeWizard();
                     }
+                    if (window._pendingTemplate) {
+                        applyTemplate(window._pendingTemplate);
+                        window._pendingTemplate = null;
+                    }
                 }, 100);
+            }
+            if (id === 'templates') {
+                if (typeof loadTemplates === 'function') loadTemplates();
             }
         }
 
@@ -6201,6 +6019,29 @@
                 }
 
                 walletRenderTransactions(data.transactions || []);
+
+                // ── Monthly credit limit display ──
+                const monthlySection = document.getElementById('monthlyCreditSection');
+                if (monthlySection) {
+                    if (data.monthly_limit !== null && data.monthly_limit !== undefined) {
+                        monthlySection.style.display = 'block';
+                        const used = parseFloat(data.monthly_used || 0);
+                        const limit = parseFloat(data.monthly_limit);
+                        const remaining = Math.max(0, limit - used);
+                        const pct = limit > 0 ? Math.min(100, (used / limit) * 100) : 0;
+
+                        document.getElementById('monthlyUsedDisplay').textContent = fmt(used);
+                        document.getElementById('monthlyLimitDisplay').textContent = '₱' + limit.toLocaleString('en-PH', { minimumFractionDigits: 0 });
+                        document.getElementById('monthlyUsageBar').style.width = pct + '%';
+                        document.getElementById('monthlyRemainingDisplay').textContent = remaining > 0 ? (remaining.toLocaleString('en-PH', { minimumFractionDigits: 0 }) + ' credits remaining') : 'Limit reached';
+                    } else {
+                        monthlySection.style.display = 'block';
+                        document.getElementById('monthlyUsedDisplay').textContent = 'Unlimited';
+                        document.getElementById('monthlyLimitDisplay').textContent = 'Unlimited';
+                        document.getElementById('monthlyUsageBar').style.width = '0%';
+                        document.getElementById('monthlyRemainingDisplay').textContent = '';
+                    }
+                }
 
                 // ── Load subscription info ──
                 billingLoadSubscription();
@@ -6679,9 +6520,10 @@
             const qtyInput = document.getElementById('qtyVal');
 
             function clampQty(val) {
-                val = parseInt(val) || 50;
-                val = Math.max(50, Math.min(10000, val));   // hard cap at 10 000
-                return val;                                   // no rounding, step=1 for precision
+                var minQ = getMinQty();
+                val = parseInt(val) || minQ;
+                val = Math.max(minQ, Math.min(10000, val));
+                return val;
             }
 
             // Debounce function to reduce API calls
@@ -6708,11 +6550,11 @@
 
                 // Input → slider (live as user types — clamp immediately)
                 qtyInput.addEventListener('input', () => {
-                    const raw = parseInt(qtyInput.value) || 50;
-                    const clamped = Math.max(50, Math.min(10000, raw));
-                    // If user typed over the cap, correct it right away
+                    var minQ = getMinQty();
+                    const raw = parseInt(qtyInput.value) || minQ;
+                    const clamped = Math.max(minQ, Math.min(10000, raw));
                     if (raw > 10000) qtyInput.value = 10000;
-                    if (raw < 50 && qtyInput.value.length > 0) qtyInput.value = 50;
+                    if (raw < minQ && qtyInput.value.length > 0) qtyInput.value = minQ;
                     qtySlider.value = clamped;
                     debouncedUpdatePricing();
                 });
@@ -7398,7 +7240,7 @@
         const stepValidations = {
             1: () => !!document.querySelector('.product-types .pt-btn.active'),
             2: () => !!document.getElementById('paperSelect').value,
-            3: () => parseInt(document.getElementById('qtyVal').value) >= 50,
+            3: () => parseInt(document.getElementById('qtyVal').value) >= getMinQty(),
             4: () => (uploadedFiles && uploadedFiles.length > 0) || !!window.selectedSavedFileId
         };
 
@@ -7722,6 +7564,10 @@
             const createPage = document.getElementById('c-create');
             if (!createPage || !createPage.classList.contains('active')) return;
 
+            // Skip when user is typing in an input, textarea, or select
+            const tag = e.target.tagName;
+            if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+
             if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
                 e.preventDefault();
                 nextStep();
@@ -7836,8 +7682,9 @@
             // Read quantity from the number input (source of truth); fall back to slider
             const qtyInput = document.getElementById('qtyVal');
             const qtySlider = document.getElementById('qtySlider');
-            let qty = qtyInput ? parseInt(qtyInput.value) || 50 : parseInt(qtySlider.value);
-            qty = Math.max(50, Math.min(10000, qty)); // hard cap — never send > 10,000
+            var minQ = getMinQty();
+            let qty = qtyInput ? parseInt(qtyInput.value) || minQ : parseInt(qtySlider.value);
+            qty = Math.max(minQ, Math.min(10000, qty));
 
             const paperId = document.getElementById('paperSelect').value;
             const sizeId = document.getElementById('sizeSelect').value;
@@ -7953,12 +7800,12 @@
                         if (badge) badge.style.display = 'none';
                     }
 
-                    if (summaryTotal) summaryTotal.textContent = '₱' + d.grand_total.toLocaleString(undefined, { minimumFractionDigits: 2 });
-                    if (sumSubtotal) sumSubtotal.textContent = '₱' + d.subtotal_final.toLocaleString(undefined, { minimumFractionDigits: 2 });
-                    if (sumTax) sumTax.textContent = '₱' + d.vat_tax.toLocaleString(undefined, { minimumFractionDigits: 2 });
+                    if (summaryTotal) summaryTotal.textContent = '₱' + (d.grand_total || 0).toLocaleString(undefined, { minimumFractionDigits: 2 });
+                    if (sumSubtotal) sumSubtotal.textContent = '₱' + (d.subtotal_final || 0).toLocaleString(undefined, { minimumFractionDigits: 2 });
+                    if (sumTax) sumTax.textContent = '₱' + (d.vat_tax || 0).toLocaleString(undefined, { minimumFractionDigits: 2 });
 
                     const sumShipping = document.getElementById('sumShipping');
-                    if (sumShipping) sumShipping.textContent = '₱' + d.shipping_cost.toLocaleString(undefined, { minimumFractionDigits: 2 });
+                    if (sumShipping) sumShipping.textContent = '₱' + (d.shipping_cost || 0).toLocaleString(undefined, { minimumFractionDigits: 2 });
 
                     // New breakdown fields
                     const fmt2 = (n) => '₱' + (n || 0).toLocaleString(undefined, { minimumFractionDigits: 2 });
@@ -8026,6 +7873,7 @@
                     handleSizeChange(document.getElementById('sizeSelect'));
                 }
             }
+            applyMinQty();
             updatePricing();
         }
 
@@ -8175,28 +8023,17 @@
                         previewArea.style.display = 'block';
                         Array.from(files).forEach(file => {
                             uploadedFiles.push(file);
-                            const card = document.createElement('div');
-                            card.className = 'file-card';
-                            card.style.padding = '12px';
-                            card.style.marginBottom = '8px';
-                            card.style.border = '1px solid var(--border)';
-                            card.style.borderRadius = '8px';
-                            card.style.display = 'flex';
-                            card.style.justifyContent = 'space-between';
-                            card.style.alignItems = 'center';
-                            card.innerHTML = `
-                                <span style="font-size: 0.85rem;">${file.name}</span>
-                                <button type="button" onclick="removeFile(this, '${file.name}')" style="background: none; border: none; color: #dc3545; cursor: pointer; font-size: 1.2rem;">&times;</button>
-                            `;
-                            previewList.appendChild(card);
+                            previewList.appendChild(buildFileCard(file));
                         });
                         document.getElementById('sumArtwork').textContent = uploadedFiles.length + ' file(s) selected';
                         artworkAttached();
 
-                        // Clear selection from account
+                        // Clear selection from account and saved file preview
                         document.querySelectorAll('#account-files .file-card').forEach(c => {
                             c.classList.remove('active');
                         });
+                        const sfp = document.getElementById('saved-file-preview');
+                        if (sfp) sfp.style.display = 'none';
 
                         // Save files to database
                         saveFilesToDatabase(files);
@@ -8204,47 +8041,69 @@
                 });
 
                 fileInput.addEventListener('change', (e) => {
-                    console.log('File input change event triggered');
                     const files = e.target.files;
-                    console.log('Files selected:', files);
                     if (files.length > 0) {
                         previewArea.style.display = 'block';
                         Array.from(files).forEach(file => {
                             uploadedFiles.push(file);
-                            const card = document.createElement('div');
-                            card.className = 'file-card';
-                            card.style.padding = '12px';
-                            card.style.marginBottom = '8px';
-                            card.style.border = '1px solid var(--border)';
-                            card.style.borderRadius = '8px';
-                            card.style.display = 'flex';
-                            card.style.justifyContent = 'space-between';
-                            card.style.alignItems = 'center';
-                            card.innerHTML = `
-                                <span style="font-size: 0.85rem;">${file.name}</span>
-                                <button type="button" onclick="removeFile(this, '${file.name}')" style="background: none; border: none; color: #dc3545; cursor: pointer; font-size: 1.2rem;">&times;</button>
-                            `;
-                            previewList.appendChild(card);
+                            previewList.appendChild(buildFileCard(file));
                         });
                         document.getElementById('sumArtwork').textContent = uploadedFiles.length + ' file(s) selected';
                         artworkAttached();
 
-                        // Clear selection from account
+                        // Clear selection from account and saved file preview
                         document.querySelectorAll('#account-files .file-card').forEach(c => {
                             c.classList.remove('active');
                         });
+                        const sfp2 = document.getElementById('saved-file-preview');
+                        if (sfp2) sfp2.style.display = 'none';
 
                         // Save files to database
-                        console.log('Calling saveFilesToDatabase...');
                         saveFilesToDatabase(files);
                     }
                 });
             }
         });
 
+        function buildFileCard(file) {
+            const card = document.createElement('div');
+            card.className = 'file-card';
+            card.style.padding = '12px';
+            card.style.marginBottom = '8px';
+            card.style.border = '1px solid var(--border)';
+            card.style.borderRadius = '8px';
+            card.style.display = 'flex';
+            card.style.alignItems = 'center';
+            card.style.gap = '12px';
+
+            const isImage = file.type && file.type.startsWith('image/');
+            let previewHtml = '';
+            if (isImage) {
+                const url = URL.createObjectURL(file);
+                card.dataset.previewUrl = url;
+                previewHtml = `<img src="${url}" style="width:44px;height:44px;object-fit:cover;border-radius:6px;flex-shrink:0;">`;
+            } else {
+                previewHtml = `<div style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:#f0f4ff;border-radius:6px;flex-shrink:0;font-size:1.2rem;color:#8898aa;"><i class="bi bi-file-earmark"></i></div>`;
+            }
+
+            card.innerHTML = `
+                ${previewHtml}
+                <div style="flex:1;min-width:0;">
+                    <div style="font-size:.85rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${file.name}</div>
+                    <div style="font-size:.7rem;color:var(--muted);">${(file.size / 1024).toFixed(1)} KB</div>
+                </div>
+                <button type="button" onclick="removeFile(this, '${file.name.replace(/'/g, "\\'")}')" style="background:none;border:none;color:#dc3545;cursor:pointer;font-size:1.2rem;flex-shrink:0;">&times;</button>
+            `;
+            return card;
+        }
+
         function removeFile(btn, name) {
+            const card = btn.parentElement;
+            if (card.dataset.previewUrl) {
+                URL.revokeObjectURL(card.dataset.previewUrl);
+            }
             uploadedFiles = uploadedFiles.filter(f => f.name !== name);
-            btn.parentElement.remove();
+            card.remove();
             if (uploadedFiles.length === 0) {
                 document.getElementById('upload-preview').style.display = 'none';
                 document.getElementById('sumArtwork').textContent = 'None';
@@ -8332,14 +8191,14 @@
                 `;
                 card.onclick = (e) => {
                     if (e.target.tagName !== 'BUTTON') {
-                        selectSavedFile(file.id, file.original_filename);
+                        selectSavedFile(file.id, file.original_filename, e);
                     }
                 };
                 container.appendChild(card);
             });
         }
 
-        async function selectSavedFile(fileId, filename) {
+        async function selectSavedFile(fileId, filename, clickEvent) {
             // Clear manual uploads
             uploadedFiles = [];
             document.getElementById('upload-preview').style.display = 'none';
@@ -8351,7 +8210,8 @@
                 c.style.background = 'transparent';
                 c.style.borderColor = 'var(--border)';
             });
-            const clicked = event.target.closest('.file-card');
+            const evt = clickEvent || event;
+            const clicked = evt.target.closest('.file-card');
             if (clicked) {
                 clicked.classList.add('active');
                 clicked.style.background = 'rgba(29, 140, 248, .06)';
@@ -8366,6 +8226,24 @@
 
             // Mark artwork as attached — clears the red notice
             artworkAttached();
+
+            // Show preview for the selected saved file
+            const fileData = savedFiles.find(f => f.id === fileId);
+            const previewEl = document.getElementById('saved-file-preview');
+            const previewImg = document.getElementById('savedFilePreviewImg');
+            const previewName = document.getElementById('savedFilePreviewName');
+            if (fileData && previewEl) {
+                const ext = (fileData.original_filename || '').split('.').pop().toLowerCase();
+                const isImage = ['png', 'jpg', 'jpeg', 'gif', 'webp'].includes(ext);
+                if (isImage && fileData.file_path) {
+                    previewImg.src = fileData.file_path.replace(/^\.\.\//, '');
+                    previewImg.style.display = 'block';
+                } else {
+                    previewImg.style.display = 'none';
+                }
+                previewName.textContent = fileData.original_filename || filename;
+                previewEl.style.display = 'block';
+            }
         }
 
         async function deleteSavedFile(fileId) {
@@ -8420,6 +8298,109 @@
             _origShowCP(id, navEl);
             if (id === 'create') orderWalletCheck();
         };
+
+        // ── Template → Wizard Pre-fill ────────────────────────────────────
+        var _productTypeMap = {
+            'Flyer': 'Flyers',
+            'Brochure': 'Brochures',
+            'Card': 'Cards',
+            'Poster': 'Posters',
+            'Mailer': 'Mailers',
+            'Booklet': 'Booklets'
+        };
+
+        var _minQtyMap = {
+            'Flyers': 50,
+            'Brochures': 50,
+            'Booklets': 25,
+            'Posters': 10,
+            'Mailers': 50,
+            'Cards': 100,
+            'Custom': 10
+        };
+
+        function getMinQty() {
+            var btn = document.querySelector('.product-types .pt-btn.active');
+            var name = btn ? btn.textContent.trim() : 'Flyers';
+            return _minQtyMap[name] || 50;
+        }
+
+        function applyMinQty() {
+            var minQty = getMinQty();
+            var slider = document.getElementById('qtySlider');
+            var input = document.getElementById('qtyVal');
+            if (slider) slider.min = minQty;
+            if (input) {
+                input.min = minQty;
+                input.title = 'Enter print quantity (min ' + minQty + ', max 10,000)';
+                if (parseInt(input.value) < minQty) input.value = minQty;
+                if (slider && parseInt(slider.value) < minQty) slider.value = minQty;
+            }
+        }
+
+        function applyTemplate(tpl) {
+            try {
+                var productType = _productTypeMap[tpl.category] || 'Flyers';
+                var btn = Array.from(document.querySelectorAll('.product-types .pt-btn'))
+                    .find(function (b) { return b.textContent.trim() === productType; });
+                if (!btn) { console.warn('applyTemplate: no button for', productType); return; }
+                document.querySelectorAll('.product-types .pt-btn').forEach(function (b) { b.classList.remove('active'); });
+                btn.classList.add('active');
+                document.getElementById('sumProduct').textContent = productType;
+                var config = productSpecsConfig[productType];
+                if (config) {
+                    populateSelect('sizeSelect', 'size', config.sizes);
+                    populateSelect('paperSelect', 'paper', config.papers);
+                    populateSelect('finishSelect', 'finish', config.finishes);
+                }
+                applyMinQty();
+                setTimeout(function () {
+                    try {
+                        function norm(s) {
+                            return s.replace(/\s*([×x])\s*/g, ' $1 ').replace(/\(.*?\)/g, '').trim().toLowerCase();
+                        }
+                        function matchOption(selId, searchText) {
+                            var sel = document.getElementById(selId);
+                            if (!sel || !searchText) return false;
+                            var sn = norm(searchText);
+                            for (var i = 0; i < sel.options.length; i++) {
+                                if (sel.options[i].disabled) continue;
+                                var on = norm(sel.options[i].text);
+                                if (on === sn) { sel.selectedIndex = i; return true; }
+                            }
+                            for (var k = 0; k < sel.options.length; k++) {
+                                if (sel.options[k].disabled) continue;
+                                var ok = norm(sel.options[k].text);
+                                if (ok.indexOf(sn) !== -1 || sn.indexOf(ok) !== -1) {
+                                    sel.selectedIndex = k; return true;
+                                }
+                            }
+                            return false;
+                        }
+
+                        if (tpl.size) matchOption('sizeSelect', tpl.size);
+                        if (tpl.paper_weight) matchOption('paperSelect', tpl.paper_weight);
+                        if (tpl.finish) matchOption('finishSelect', tpl.finish);
+                        if (tpl.size_width && tpl.size_height) {
+                            var cw = document.getElementById('customWidth');
+                            var ch = document.getElementById('customHeight');
+                            if (cw) cw.value = tpl.size_width;
+                            if (ch) ch.value = tpl.size_height;
+                        }
+                        if (tpl.bleed !== undefined) {
+                            var bs = document.getElementById('bleedSelect');
+                            if (bs) bs.value = tpl.bleed == 1 ? 'With Bleed (0.125")' : 'No Bleed (Exact Size)';
+                        }
+                        updatePricing();
+                        for (var i = 2; i <= 4; i++) {
+                            var el = document.getElementById('prog-step-' + i);
+                            if (el) el.classList.remove('disabled');
+                        }
+                        goToStep(3);
+                    } catch (e2) { console.error('applyTemplate (inner):', e2); }
+                }, 50);
+            } catch (e) { console.error('applyTemplate (outer):', e); }
+        }
 
         async function placeOrder() {
             if (!currentPricingData) {
@@ -8506,7 +8487,7 @@
             }
 
             const _qtyInput = document.getElementById('qtyVal');
-            const _qty = Math.max(50, Math.min(10000, parseInt(_qtyInput?.value || document.getElementById('qtySlider').value) || 50));
+            const _qty = Math.max(getMinQty(), Math.min(10000, parseInt(_qtyInput?.value || document.getElementById('qtySlider').value) || getMinQty()));
 
             const formData = new FormData();
             formData.append('product_type', productType);
@@ -8533,6 +8514,7 @@
                 const data = await res.json();
                 if (data.success) {
                     closeOrderConfirmModal();
+                    resetOrderForm();
                     showToast('Order ' + data.order_number + ' placed successfully!', 'success');
                     if (typeof walletLoad === 'function') walletLoad();
                     if (typeof orderWalletCheck === 'function') orderWalletCheck();
@@ -8626,7 +8608,7 @@
             const shipping = document.getElementById('shippingSelect').value || 'free';
             const notes = document.getElementById('orderNotes')?.value || '';
             const _qtyInput = document.getElementById('qtyVal');
-            const quantity = Math.max(50, Math.min(10000, parseInt(_qtyInput?.value || document.getElementById('qtySlider').value) || 50));
+            const quantity = Math.max(getMinQty(), Math.min(10000, parseInt(_qtyInput?.value || document.getElementById('qtySlider').value) || getMinQty()));
 
             const item = { productType, sizeWidth, sizeHeight, paperWeight, finish, bleed, quantity, turnaround, shipping, notes, lineTotal: totalCost };
 
@@ -8686,6 +8668,8 @@
             window.selectedSavedFileId = null;
             const fp = document.getElementById('filePreviews');
             if (fp) fp.innerHTML = '';
+            const savedPreview = document.getElementById('saved-file-preview');
+            if (savedPreview) savedPreview.style.display = 'none';
             artworkRemoved();
             // Reset summary
             document.getElementById('sumQty').textContent = '500';
@@ -8851,8 +8835,7 @@
                 popular: 'background:rgba(29,140,248,.15);color:#1d8cf8;'
             };
 
-            function buildModal(name, meta, tag, imgSrc, size) {
-                // Remove any existing modal first
+            function buildModal(tpl) {
                 const old = document.getElementById('flyerPreviewBackdrop');
                 if (old) old.remove();
 
@@ -8860,16 +8843,18 @@
                 backdrop.id = 'flyerPreviewBackdrop';
                 backdrop.setAttribute('role', 'dialog');
                 backdrop.setAttribute('aria-modal', 'true');
-                backdrop.setAttribute('aria-label', name + ' Preview');
+                backdrop.setAttribute('aria-label', tpl.name + ' Preview');
 
+                const tag = tpl.plan_required === 'pro' ? 'pro' : (tpl.is_popular == 1 ? 'popular' : 'free');
                 const tagStyle = TAG_STYLES[tag] || TAG_STYLES.free;
                 const tagLabel = tag.charAt(0).toUpperCase() + tag.slice(1);
+                const meta = tpl.size + ' · ' + tpl.category;
 
                 backdrop.innerHTML = `
                     <div class="flyer-modal" id="flyerModalBox">
                         <div class="flyer-modal-header">
                             <div>
-                                <div class="flyer-modal-title">${name}</div>
+                                <div class="flyer-modal-title">${tpl.name}</div>
                                 <div class="flyer-modal-meta">
                                     <span style="${tagStyle}padding:1px 7px;border-radius:8px;font-weight:700;">${tagLabel}</span>
                                     <span>${meta}</span>
@@ -8884,9 +8869,9 @@
                                 <i class="bi bi-image"></i>
                                 <span>Loading preview…</span>
                             </div>
-                            <span class="flyer-size-badge">${size} &nbsp;|&nbsp; 300 DPI Print-Ready</span>
-                            <img id="flyerPreviewImg" src="${imgSrc}"
-                                alt="${name} preview" draggable="false"
+                            <span class="flyer-size-badge">${tpl.size} &nbsp;|&nbsp; 300 DPI Print-Ready</span>
+                            <img id="flyerPreviewImg" src="${tpl.thumbnail_url}"
+                                alt="${tpl.name} preview" draggable="false"
                                 onload="this.classList.add('img-loaded'); var sk=document.getElementById('flyerSkeleton'); if(sk) sk.style.opacity='0';"
                                 onerror="var sk=document.getElementById('flyerSkeleton'); if(sk) sk.innerHTML='<i class=\'bi bi-exclamation-circle\' style=\'color:var(--warning);font-size:2rem;\'></i><span>Preview unavailable</span>';">
                         </div>
@@ -8894,7 +8879,7 @@
                             <button class="btn-preview-cancel" onclick="closeFlyerPreview()">
                                 <i class="bi bi-x me-1"></i>Close
                             </button>
-                            <button class="btn-use-template" onclick="closeFlyerPreview(); showClientPage('create', null);">
+                            <button class="btn-use-template" id="useTemplateBtn">
                                 <i class="bi bi-lightning-charge-fill me-1"></i>Use Template
                             </button>
                         </div>
@@ -8913,27 +8898,22 @@
                 });
 
                 document.body.appendChild(backdrop);
+
+                document.getElementById('useTemplateBtn').addEventListener('click', function () {
+                    closeFlyerPreview();
+                    window._pendingTemplate = tpl;
+                    showClientPage('create', null);
+                });
             }
 
-            window.openTemplatePreview = function (name, meta, tag, imgSrc, size) {
-                buildModal(name, meta, tag, imgSrc, size);
+            window.openTemplatePreview = function (tpl) {
+                buildModal(tpl);
                 requestAnimationFrame(function () {
                     requestAnimationFrame(function () {
                         const bd = document.getElementById('flyerPreviewBackdrop');
                         if (bd) { bd.classList.add('visible'); document.body.style.overflow = 'hidden'; }
                     });
                 });
-            };
-
-            /* Alias kept for the Bold Summer Flyer card */
-            window.openFlyerPreview = function () {
-                window.openTemplatePreview(
-                    'Bold Summer Flyer',
-                    '4&quot; &times; 6&quot; &nbsp;&middot;&nbsp; Flyer',
-                    'free',
-                    'https://i.pinimg.com/1200x/de/82/95/de82953c41f315a84cf0c25ce3021d52.jpg',
-                    '4&quot; &times; 6&quot;'
-                );
             };
 
             window.closeFlyerPreview = function () {
@@ -8948,6 +8928,80 @@
                     }
                 });
             };
+
+            // ── Template System (static data — no DB needed) ────────────────────
+            var _tplFilterCat = 'all';
+
+            var _templatesData = [
+                { id:1, name:'Bold Summer Flyer', category:'Flyer', size:'4"×6"', plan_required:'free', is_popular:0, paper_weight:'100lb Text (Standard)', finish:'UV Coating', bleed:1, size_width:4.00, size_height:6.00, thumbnail_url:'https://i.pinimg.com/1200x/de/82/95/de82953c41f315a84cf0c25ce3021d52.jpg' },
+                { id:2, name:'Tri-Fold Corporate', category:'Brochure', size:'8.5"×11"', plan_required:'free', is_popular:1, paper_weight:'100lb Text', finish:'Gloss AQ', bleed:1, size_width:8.50, size_height:11.00, thumbnail_url:'https://i.pinimg.com/1200x/9b/54/e5/9b54e53896d2229dd07d3c19bfc81551.jpg' },
+                { id:3, name:'Minimalist Business Card', category:'Card', size:'3.5"×2"', plan_required:'free', is_popular:0, paper_weight:'14pt Cardstock', finish:'Gloss UV', bleed:1, size_width:3.50, size_height:2.00, thumbnail_url:'https://i.pinimg.com/1200x/46/df/06/46df06f79f7360394f9bca0686fb057c.jpg' },
+                { id:4, name:'Event Poster — Vivid', category:'Poster', size:'11"×17"', plan_required:'pro', is_popular:0, paper_weight:'100lb Gloss Text', finish:'Gloss Lamination', bleed:1, size_width:11.00, size_height:17.00, thumbnail_url:'https://i.pinimg.com/736x/17/c9/8b/17c98b6d75c004149bc6823f0f340ede.jpg' },
+                { id:5, name:'Direct Mail EDDM', category:'Mailer', size:'6.25"×9"', plan_required:'pro', is_popular:0, paper_weight:'100lb Text (Standard)', finish:'Uncoated', bleed:1, size_width:6.25, size_height:9.00, thumbnail_url:'https://i.pinimg.com/1200x/4a/07/8b/4a078b6b8bf796a6e5ecacfaeb24b74d.jpg' },
+                { id:6, name:'Annual Report Booklet', category:'Booklet', size:'8.5"×11"', plan_required:'free', is_popular:1, paper_weight:'80lb Text', finish:'Matte AQ', bleed:1, size_width:8.50, size_height:11.00, thumbnail_url:'https://i.pinimg.com/736x/31/f6/0f/31f60fbbdb82b6f8c381b2e1b71374c1.jpg' },
+                { id:7, name:'Real Estate Flyer', category:'Flyer', size:'5.5"×8.5"', plan_required:'free', is_popular:0, paper_weight:'100lb Text (Standard)', finish:'UV Coating', bleed:1, size_width:5.50, size_height:8.50, thumbnail_url:'https://i.pinimg.com/1200x/ee/f7/b1/eef7b178b7a22c7085597de124338cad.jpg' },
+                { id:8, name:'Luxury Foil Card', category:'Card', size:'3.5"×2"', plan_required:'pro', is_popular:0, paper_weight:'14pt Cardstock', finish:'Gloss UV', bleed:1, size_width:3.50, size_height:2.00, thumbnail_url:'https://i.pinimg.com/736x/f4/a1/00/f4a100dada92eef87598b57702a0db0f.jpg' },
+                { id:9, name:'Sale Promo Poster', category:'Poster', size:'18"×24"', plan_required:'free', is_popular:1, paper_weight:'100lb Gloss Text', finish:'Gloss Lamination', bleed:1, size_width:18.00, size_height:24.00, thumbnail_url:'https://i.pinimg.com/1200x/be/5e/cf/be5ecfd4c4e8079b345312e8c222cbf9.jpg' },
+            ];
+
+            window.loadTemplates = function () {
+                var grid = document.getElementById('tplGrid');
+                if (!grid) return;
+                renderTemplates();
+            };
+
+            function renderTemplates() {
+                var grid = document.getElementById('tplGrid');
+                if (!grid) return;
+                var filtered = _tplFilterCat === 'all'
+                    ? _templatesData
+                    : _templatesData.filter(function(t) { return t.category === _tplFilterCat; });
+                if (filtered.length === 0) {
+                    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px 0;color:var(--muted);font-size:.85rem;"><i class="bi bi-folder2-open" style="font-size:1.6rem;display:block;margin-bottom:8px;opacity:.2;"></i>No templates found for this category.</div>';
+                    return;
+                }
+                var gradients = [
+                    'linear-gradient(135deg,#d0e8ff,#e8f4ff)',
+                    'linear-gradient(135deg,#e0f7f7,#d0eeff)',
+                    'linear-gradient(135deg,#e6f9ef,#d0eeff)',
+                    'linear-gradient(135deg,#ede0ff,#d0e0ff)',
+                    'linear-gradient(135deg,#fff0e6,#ffe0cc)',
+                    'linear-gradient(135deg,#d0e8ff,#e8f4ff)',
+                    'linear-gradient(135deg,#e0f7f7,#d0eeff)',
+                    'linear-gradient(135deg,#ede0ff,#d0e0ff)',
+                    'linear-gradient(135deg,#e6f9ef,#d0ffee)',
+                ];
+                grid.innerHTML = filtered.map(function(tpl, i) {
+                    var tag = tpl.plan_required === 'pro' ? 'pro' : (tpl.is_popular == 1 ? 'popular' : 'free');
+                    var tagLabel = tag.charAt(0).toUpperCase() + tag.slice(1);
+                    var bg = gradients[i % gradients.length];
+                    var img = tpl.thumbnail_url || '';
+                    var json = JSON.stringify(tpl).replace(/"/g, '&quot;');
+                    return '<div class="tpl-card" onclick="openTemplatePreview(' + json + ')" title="Click to preview ' + tpl.name + '">'
+                        + '<div style="position:relative;width:100%;padding-top:150%;overflow:hidden;background:' + bg + ';">'
+                        + '<div class="tpl-sk" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">'
+                        + '<i class="bi bi-image" style="font-size:1.8rem;color:var(--accent);animation:pulse-img 1.4s ease-in-out infinite;"></i></div>'
+                        + '<img src="' + img + '" alt="' + tpl.name + '" draggable="false" loading="lazy"'
+                        + ' style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;opacity:0;transition:opacity 0.45s ease;"'
+                        + ' onload="this.style.opacity=\'1\';this.previousElementSibling.style.display=\'none\';"'
+                        + ' onerror="this.style.opacity=\'1\';this.previousElementSibling.innerHTML=\'Image unavailable\';"'
+                        + '><span class="tpl-preview-badge"><i class="bi bi-eye me-1"></i>Preview</span></div>'
+                        + '<div class="tpl-info">'
+                        + '<div class="tpl-name">' + tpl.name + '</div>'
+                        + '<div class="tpl-meta">' + tpl.size + ' &middot; ' + tpl.category + '</div>'
+                        + '<span class="tpl-tag ' + tag + '">' + tagLabel + '</span></div></div>';
+                }).join('');
+            }
+
+            // Filter pill click handlers
+            document.querySelectorAll('#tplFilterPills .pt-btn').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    document.querySelectorAll('#tplFilterPills .pt-btn').forEach(function (b) { b.classList.remove('active'); });
+                    this.classList.add('active');
+                    _tplFilterCat = this.getAttribute('data-cat') || 'all';
+                    renderTemplates();
+                });
+            });
 
             // Setup drag and drop for upload area
             const uploadArea = document.getElementById('upload-area');
@@ -9072,9 +9126,8 @@
                         starred: false,
                         recent: true,
                         shared: false,
-                        filePath: file.file_path
+                        filePath: (file.file_path || '').replace(/^\.\.\//, '')
                     }));
-                    console.log('Loaded files into file manager:', fmFiles);
                 }
             } catch (e) {
                 console.error('Error loading files for file manager:', e);
@@ -9165,11 +9218,39 @@
 
         function fmOpenItem(id) {
             const f = fmFiles.find(file => file.id === id);
-            if (f && f.type === 'folder') {
+            if (!f) return;
+            if (f.type === 'folder') {
                 fmToast(`Opening folder: ${f.name}`);
-            } else if (f) {
-                fmToast(`Previewing: ${f.name}`);
+                return;
             }
+            if (f.type === 'image' && f.filePath) {
+                // Show image preview in a lightbox
+                let backdrop = document.getElementById('fm-preview-backdrop');
+                if (!backdrop) {
+                    backdrop = document.createElement('div');
+                    backdrop.id = 'fm-preview-backdrop';
+                    backdrop.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;cursor:pointer;';
+                    backdrop.innerHTML = `
+                        <button style="position:absolute;top:20px;right:24px;background:none;border:none;color:#fff;font-size:2rem;cursor:pointer;z-index:1;">&times;</button>
+                        <img id="fm-preview-img" style="max-width:90vw;max-height:90vh;object-fit:contain;border-radius:8px;box-shadow:0 20px 60px rgba(0,0,0,.5);">
+                    `;
+                    document.body.appendChild(backdrop);
+                    backdrop.addEventListener('click', (e) => {
+                        if (e.target === backdrop || e.target.tagName === 'BUTTON') {
+                            backdrop.remove();
+                        }
+                    });
+                    document.addEventListener('keydown', function fmEsc(e) {
+                        if (e.key === 'Escape' && document.getElementById('fm-preview-backdrop')) {
+                            backdrop.remove();
+                            document.removeEventListener('keydown', fmEsc);
+                        }
+                    });
+                }
+                document.getElementById('fm-preview-img').src = f.filePath;
+                return;
+            }
+            fmToast(`Previewing: ${f.name}`);
         }
 
         function fmSearch(query) {

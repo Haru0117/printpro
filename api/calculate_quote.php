@@ -69,13 +69,14 @@ function calculateOrderTotal($pdo, $params)
     // ── Step 3: Material Multiplier ──────────────────────────────────────────
     $material_multiplier = 1.0;
     try {
-        $stmt = $pdo->prepare("SELECT multiplier FROM tbl_materials WHERE name = :name LIMIT 1");
+        $stmt = $pdo->prepare("SELECT multiplier FROM tbl_materials WHERE name = :name AND is_active = 1 LIMIT 1");
         $stmt->execute(['name' => $material]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        if ($row)
-            $material_multiplier = floatval($row['multiplier']);
+        if (!$row)
+            throw new Exception("The selected paper/material '$material' is no longer available.");
+        $material_multiplier = floatval($row['multiplier']);
     } catch (PDOException $e) {
-        $material_multiplier = 1.0;
+        throw new Exception("The selected paper/material '$material' is no longer available.");
     }
 
     // ── Step 4: Finish Add-ons ───────────────────────────────────────────────
@@ -83,15 +84,15 @@ function calculateOrderTotal($pdo, $params)
     $per_unit_fee = 0.0;
     if (!in_array($finish, ['None', 'Uncoated', ''])) {
         try {
-            $stmt = $pdo->prepare("SELECT setup_fee, per_unit_fee FROM tbl_finishes WHERE name = :name LIMIT 1");
+            $stmt = $pdo->prepare("SELECT setup_fee, per_unit_fee FROM tbl_finishes WHERE name = :name AND is_active = 1 LIMIT 1");
             $stmt->execute(['name' => $finish]);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            if ($row) {
-                $setup_fee = floatval($row['setup_fee']);
-                $per_unit_fee = floatval($row['per_unit_fee']);
-            }
+            if (!$row)
+                throw new Exception("The selected finish '$finish' is no longer available.");
+            $setup_fee = floatval($row['setup_fee']);
+            $per_unit_fee = floatval($row['per_unit_fee']);
         } catch (PDOException $e) {
-            $setup_fee = 0.0;
+            throw new Exception("The selected finish '$finish' is no longer available.");
         }
     }
 
@@ -183,7 +184,11 @@ if ($method === 'POST' || $method === 'GET') {
     if (empty($params)) {
         $response = ['success' => false, 'message' => 'No parameters received', 'debug' => $rawInput ?? 'empty'];
     } else {
-        $response = calculateOrderTotal($pdo, $params);
+        try {
+            $response = calculateOrderTotal($pdo, $params);
+        } catch (Exception $e) {
+            $response = ['success' => false, 'message' => $e->getMessage()];
+        }
     }
 } elseif ($method === 'CLI') {
     // Quick CLI test
